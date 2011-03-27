@@ -1,4 +1,4 @@
-// $Id: Serializer.cpp 6582 2010-07-16 11:23:35Z FloSoft $
+// $Id: Serializer.cpp 7095 2011-03-27 20:15:08Z OLiver $
 //
 // Copyright (c) 2005 - 2010 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -21,6 +21,7 @@
 // Header
 #include "main.h"
 #include "Serializer.h"
+#include "BinaryFile.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Makros / Defines
@@ -30,3 +31,21 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+
+
+void Serializer::WriteToFile(BinaryFile& file)
+{
+	file.WriteUnsignedInt(GetLength());
+	file.WriteRawData(GetData(), GetLength());
+}
+
+void Serializer::ReadFromFile(BinaryFile& file)
+{
+	Clear();
+
+	unsigned buffer_size;
+	buffer_size = file.ReadUnsignedInt();
+	Realloc(buffer_size);
+	SetLength(buffer_size);
+	file.ReadRawData(GetDataWritable(), buffer_size);
+}

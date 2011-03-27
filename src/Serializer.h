@@ -1,4 +1,4 @@
-// $Id: Serializer.h 6582 2010-07-16 11:23:35Z FloSoft $
+// $Id: Serializer.h 7095 2011-03-27 20:15:08Z OLiver $
 //
 // Copyright (c) 2005 - 2010 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -20,6 +20,8 @@
 #define SERIALIZER_H_INCLUDED
 
 #pragma once
+
+class BinaryFile;
 
 /// Klasse die einen Buffer zum Serialisieren verwaltet und entsprechende Methoden zum Lesen/Schreiben bereitstellt. 
 /// Implementiert einen FIFO (push fügt ans ende, pop entfernt am anfang)
@@ -69,6 +71,12 @@ public:
 	{
 		return data;
 	}
+
+	/// Schreibt den Buffer in eine Datei
+	void WriteToFile(BinaryFile& file);
+	/// Liest den Buffer aus einer Datei
+	virtual void ReadFromFile(BinaryFile& file);
+
 
 	/// Kopiermethoden
 
