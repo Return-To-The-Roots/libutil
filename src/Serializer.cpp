@@ -1,4 +1,4 @@
-// $Id: Serializer.cpp 7095 2011-03-27 20:15:08Z OLiver $
+// $Id: Serializer.cpp 7099 2011-03-28 10:26:03Z FloSoft $
 //
 // Copyright (c) 2005 - 2010 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -31,8 +31,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-
-
 void Serializer::WriteToFile(BinaryFile& file)
 {
 	file.WriteUnsignedInt(GetLength());
@@ -49,3 +47,4 @@ void Serializer::ReadFromFile(BinaryFile& file)
 	SetLength(buffer_size);
 	file.ReadRawData(GetDataWritable(), buffer_size);
 }
+
