@@ -1,4 +1,4 @@
-// $Id: UPnP.cpp 7182 2011-04-17 18:45:53Z FloSoft $
+// $Id: UPnP.cpp 7185 2011-04-18 07:39:12Z FloSoft $
 //
 // Copyright (c) 2005 - 2010 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -75,7 +75,6 @@
 #endif
 
 #ifndef _MSC_VER
-	#define STATICLIB
 	#include <miniupnpc/miniupnpc.h>
 	#include <miniupnpc/upnpcommands.h>
 #endif // _WIN32
