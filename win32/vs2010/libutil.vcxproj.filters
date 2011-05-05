@@ -50,6 +50,9 @@
     <ClCompile Include="..\..\src\UPnP.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\BinaryFile.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\colors.h">
@@ -107,6 +110,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\build_version.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\BinaryFile.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

@@ -91,6 +91,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\BinaryFile.cpp" />
     <ClCompile Include="..\..\src\error.cpp" />
     <ClCompile Include="..\..\src\files.cpp" />
     <ClCompile Include="..\..\src\Log.cpp" />
@@ -108,6 +109,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\build_paths.h" />
     <ClInclude Include="..\..\..\build_version.h" />
+    <ClInclude Include="..\..\src\BinaryFile.h" />
     <ClInclude Include="..\..\src\colors.h" />
     <ClInclude Include="..\..\src\error.h" />
     <ClInclude Include="..\..\src\files.h" />
