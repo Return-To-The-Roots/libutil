@@ -128,6 +128,16 @@
     <ClInclude Include="..\..\src\SocketSet.h" />
     <ClInclude Include="..\..\src\UPnP.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\libendian\win32\vs2010\libendian.vcxproj">
+      <Project>{1c4d182c-4502-4a05-b1f3-9dd5214c3dee}</Project>
+      <Private>true</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
