@@ -1,4 +1,4 @@
-// $Id: files.h 7357 2011-08-10 09:50:19Z FloSoft $
+// $Id: files.h 7360 2011-08-10 11:04:39Z FloSoft $
 //
 // Copyright (c) 2005 - 2010 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -70,7 +70,7 @@
 #endif // !DRIVERDIR
 
 #ifndef SETTINGSDIR
-#	ifdef defined(_WIN32)
+#	if defined(_WIN32)
 #		define SETTINGSDIR "~/Return To The Roots"
 #	elif defined(__APPLE__)
 #		define SETTINGSDIR "~/Library/Application Support/Return To The Roots"
