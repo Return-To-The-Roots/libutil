@@ -1,4 +1,4 @@
-// $Id: files.h 6582 2010-07-16 11:23:35Z FloSoft $
+// $Id: files.h 7357 2011-08-10 09:50:19Z FloSoft $
 //
 // Copyright (c) 2005 - 2010 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -70,8 +70,10 @@
 #endif // !DRIVERDIR
 
 #ifndef SETTINGSDIR
-#	ifdef _WIN32
-#		define SETTINGSDIR "~/Siedler II.5 RttR"
+#	ifdef defined(_WIN32)
+#		define SETTINGSDIR "~/Return To The Roots"
+#	elif defined(__APPLE__)
+#		define SETTINGSDIR "~/Library/Application Support/Return To The Roots"
 #	else
 #		define SETTINGSDIR "~/.s25rttr"
 #	endif
