@@ -1,6 +1,6 @@
-// $Id: UPnP.cpp 7185 2011-04-18 07:39:12Z FloSoft $
+// $Id: UPnP.cpp 7521 2011-09-08 20:45:55Z FloSoft $
 //
-// Copyright (c) 2005 - 2010 Settlers Freaks (sf-team at siedler25.org)
+// Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
 // This file is part of Return To The Roots.
 //
