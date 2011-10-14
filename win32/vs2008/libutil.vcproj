@@ -217,15 +217,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\Messages.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\MyTime.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\SerializableArray.cpp"
 				>
 			</File>
 			<File
