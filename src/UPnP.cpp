@@ -1,4 +1,4 @@
-// $Id: UPnP.cpp 7521 2011-09-08 20:45:55Z FloSoft $
+// $Id: UPnP.cpp 7746 2012-01-03 23:41:49Z marcus $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -208,7 +208,12 @@ bool UPnP::OpenPort(const unsigned short& port)
 #else
 	int hr;
 	UPNPDev* devicelist = NULL;
+#ifdef UPNPDISCOVER_SUCCESS
+	int upnperror = 0;
+	devicelist = upnpDiscover(2000, NULL, NULL, 0, 0 /* ipv6 */, &upnperror);
+#else
 	devicelist = upnpDiscover(2000, NULL, NULL, 0);
+#endif
 	if(!devicelist)
 		return false;
 
@@ -221,7 +226,12 @@ bool UPnP::OpenPort(const unsigned short& port)
 	{
 		std::stringstream p;
 		p << port;
+
+#ifdef UPNPDISCOVER_SUCCESS
+		hr = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype, p.str().c_str(), p.str().c_str(), lanAddr, "Return To The Roots", "TCP", NULL, NULL);
+#else
 		hr = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype, p.str().c_str(), p.str().c_str(), lanAddr, "Return To The Roots", "TCP", NULL);
+#endif
 	}
 
 	freeUPNPDevlist(devicelist);
@@ -264,7 +274,12 @@ void UPnP::ClosePort()
 #else
 	int hr;
 	UPNPDev* devicelist = NULL;
+#ifdef UPNPDISCOVER_SUCCESS
+	int upnperror = 0;
+	devicelist = upnpDiscover(2000, NULL, NULL, 0, 0 /* ipv6 */, &upnperror);
+#else
 	devicelist = upnpDiscover(2000, NULL, NULL, 0);
+#endif
 	if(!devicelist)
 		return;
 
