@@ -37,7 +37,7 @@
  */
 bool BinaryFile::Open(const char * const filename, const OpenFileMode of)
 {
-	static const char * modes[] = {"wb","w+b","rb"};
+	static const char * modes[] = {"w+b","a+b","rb"};
 	return ((file = fopen(filename,modes[of])) ? true : false);
 }
 
