@@ -1,4 +1,4 @@
-// $Id: main.h 7521 2011-09-08 20:45:55Z FloSoft $
+// $Id: main.h 8476 2012-10-31 15:13:00Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -52,6 +52,7 @@
     #include <assert.h>
 #endif
 #else
+	#include <string.h>
 	#include <unistd.h>
 	#include <stdarg.h>
 	#include <signal.h>
