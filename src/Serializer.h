@@ -1,4 +1,4 @@
-// $Id: Serializer.h 7521 2011-09-08 20:45:55Z FloSoft $
+// $Id: Serializer.h 8504 2012-11-12 17:59:40Z marcus $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -58,6 +58,11 @@ public:
 		buffer_length = 0;
 		length = 0;
 		pos = 0;
+	}
+
+	unsigned GetPos() const
+	{
+		return pos;
 	}
 
 	/// Getter
