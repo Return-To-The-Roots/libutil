@@ -1,4 +1,4 @@
-// $Id: UPnP.cpp 7746 2012-01-03 23:41:49Z marcus $
+// $Id: UPnP.cpp 8724 2013-05-16 12:30:16Z marcus $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -26,7 +26,7 @@
 	#undef DATADIR
 
 	#include <iphlpapi.h>
-	
+
 	#ifdef _MSC_VER
 		#pragma comment(lib, "iphlpapi.lib")
 
@@ -66,7 +66,7 @@
 			return A2WBSTR(lp);
 		}
 	#endif
-	
+
 	#ifndef _WIN32_WINNT
 		#define _WIN32_WINNT 0x501
 	#endif
@@ -125,7 +125,7 @@ bool UPnP::OpenPort(const unsigned short& port)
 	HRESULT hr;
 
 	CoInitialize(NULL);
-	
+
 	IUPnPNAT* upnpnat;
 	hr = CoCreateInstance (CLSID_UPnPNAT, NULL, CLSCTX_INPROC_SERVER, IID_IUPnPNAT, (void**)&upnpnat);
 	if(FAILED(hr) || !upnpnat)
@@ -202,7 +202,7 @@ bool UPnP::OpenPort(const unsigned short& port)
 		hr = E_NOINTERFACE;
 
 	SetLastError(hr);
-	
+
 	if(SUCCEEDED(hr) && upnpspm)
 		return true;
 #else
@@ -249,7 +249,7 @@ void UPnP::ClosePort()
 
 #ifdef _MSC_VER
 	HRESULT hr;
-	
+
 	IUPnPNAT* upnpnat;
 	hr = CoCreateInstance (CLSID_UPnPNAT, NULL, CLSCTX_INPROC_SERVER, IID_IUPnPNAT, (void**)&upnpnat);
 	if(FAILED(hr) || !upnpnat)
@@ -322,7 +322,7 @@ std::vector<std::string> UPnP::GetAllv4Addresses()
 	if(GetAdaptersInfo(pAdapterInfo, &OutBufLen) == NO_ERROR)
 	{
 		PIP_ADAPTER_INFO pAdapter = pAdapterInfo;
-        while (pAdapter) 
+        while (pAdapter)
 		{
 			std::string address = pAdapter->IpAddressList.IpAddress.String;
 			if(address != "0.0.0.0")
@@ -346,7 +346,7 @@ std::vector<std::string> UPnP::GetAllv4Addresses()
 
 			if (family == AF_INET || family == AF_INET6)
 			{
-				if( getnameinfo(ifa->ifa_addr, 
+				if( getnameinfo(ifa->ifa_addr,
 						(family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6),
 						address, NI_MAXHOST, NULL, 0, NI_NUMERICHOST) == 0)
 					addresses.push_back(address);
@@ -363,7 +363,7 @@ std::vector<std::string> UPnP::GetAllv4Addresses()
 	struct hostent *hosts = gethostbyname(host);
 	if(hosts)
 	{
-		for (int i = 0; hosts->h_addr_list[i] != 0; ++i) 
+		for (int i = 0; hosts->h_addr_list[i] != 0; ++i)
 		{
 			struct in_addr addr;
 			memcpy(&addr, hosts->h_addr_list[i], sizeof(struct in_addr));

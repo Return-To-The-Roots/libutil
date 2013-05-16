@@ -1,4 +1,4 @@
-// $Id: Socket.cpp 7521 2011-09-08 20:45:55Z FloSoft $
+// $Id: Socket.cpp 8724 2013-05-16 12:30:16Z marcus $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -166,7 +166,7 @@ void Socket::Close(void)
  *
  *  @author FloSoft
  */
-bool Socket::Listen(unsigned short port, bool use_ipv6)
+bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
 {
 	bool ipv6 = use_ipv6;
 	bool error = false;
@@ -226,7 +226,7 @@ bool Socket::Listen(unsigned short port, bool use_ipv6)
 
 			continue;
 		}
-	
+
 		// und Horchen
 		if(listen(sock, 10))
 		{
@@ -244,8 +244,9 @@ bool Socket::Listen(unsigned short port, bool use_ipv6)
 	while(error);
 
 	// try to open portforwarding if we're using ipv4
-	if(!ipv6 && !upnp_.OpenPort(port))
-		LOG.getlasterror("Automatisches Erstellen des Portforwardings mit UPnP fehlgeschlagen\nFehler");
+	if (use_upnp)
+		if(!ipv6 && !upnp_.OpenPort(port))
+			LOG.getlasterror("Automatisches Erstellen des Portforwardings mit UPnP fehlgeschlagen\nFehler");
 
 	// Status setzen
 	status = LISTEN;
@@ -415,7 +416,7 @@ bool Socket::Connect(const std::string &hostname, const unsigned short port, boo
 #else
 		ioctl(sock, FIONBIO, &argp);
 #endif
-	
+
 		std::string ip;
 		IpToString(it->addr->ai_addr, ip);
 		LOG.lprintf("Verbinde mit %s%s:%d\n", (typ != PROXY_NONE ? "Proxy " : ""), ip.c_str(), (typ != PROXY_NONE ? proxy_port : port));
@@ -471,10 +472,10 @@ bool Socket::Connect(const std::string &hostname, const unsigned short port, boo
 								if(!it->ipv6)
 									sscanf(it->host.c_str(), "%c.%c.%c.%c", &proxyinit[4], &proxyinit[5], &proxyinit[6], &proxyinit[7]);
 							}
-							strcpy(&proxyinit[8], "siedler25"); // userid 
+							strcpy(&proxyinit[8], "siedler25"); // userid
 
 							Send(proxyinit, 18);
-							
+
 							int proxy_timeout = 0;
 							while(BytesWaiting() < 8 && proxy_timeout < 8)
 							{
@@ -502,12 +503,12 @@ bool Socket::Connect(const std::string &hostname, const unsigned short port, boo
 							return false;
 						} break;
 					}
-					
+
 					// Verbindung hergestellt
 					done = true;
 				}
 
-				Sleep(250);
+				Sleep(50);
 
 				++timeout;
 				if(timeout > 8)
@@ -782,7 +783,7 @@ std::string &Socket::IpToString(const sockaddr *addr, std::string &buffer)
 
 #ifdef _WIN32
 	size_t size = 0;
-	if (addr->sa_family == AF_INET) 
+	if (addr->sa_family == AF_INET)
 		size = sizeof(sockaddr_in);
 	else
 		size = sizeof(sockaddr_in6);
@@ -792,7 +793,7 @@ std::string &Socket::IpToString(const sockaddr *addr, std::string &buffer)
 	sockaddr *copy = (sockaddr *)calloc(1, size);
 	memcpy(copy, addr, size);
 
-	if (addr->sa_family == AF_INET) 
+	if (addr->sa_family == AF_INET)
 		((sockaddr_in *)copy)->sin_port = 0;
 	else
 		((sockaddr_in6 *)copy)->sin6_port = 0;
