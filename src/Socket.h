@@ -1,4 +1,4 @@
-// $Id: Socket.h 8724 2013-05-16 12:30:16Z marcus $
+// $Id: Socket.h 8744 2013-05-21 07:21:55Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -75,7 +75,7 @@ public:
 	void Close(void);
 
 	/// setzt das Socket auf Listen.
-	bool Listen(unsigned short port, bool use_ipv6, bool use_upnp);
+	bool Listen(unsigned short port, bool use_ipv6 = false, bool use_upnp = true);
 
 	/// akzeptiert eingehende Verbindungsversuche.
 	bool Accept(Socket& client);
