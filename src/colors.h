@@ -1,4 +1,4 @@
-// $Id: colors.h 7521 2011-09-08 20:45:55Z FloSoft $
+// $Id: colors.h 8825 2013-08-02 20:30:43Z marcus $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -45,13 +45,14 @@ const unsigned COLOR_BLACK = 0xFF444444;
 const unsigned COLOR_WHITE = 0xFFFFFFFF;
 const unsigned COLOR_ORANGE = 0xFFFF8000;
 const unsigned COLOR_BROWN = 0xFF6C4337;
+const unsigned COLOR_PURPLE = 0xFF7F00FF;
 /// const unsigned COLOR_GHOST = 0x05FFFFFF; Demos Ghost-Farbe
 const unsigned COLOR_SHADOW = 0x40000000;
 const unsigned COLOR_GREY = 0xFFCCCCCC;
 const unsigned COLOR_WINDOWBROWN = 0xFF886034;
 
 /// Spielerfarben
-const unsigned int PLAYER_COLORS_COUNT = 10;
+const unsigned int PLAYER_COLORS_COUNT = 11;
 
 const unsigned int COLORS[PLAYER_COLORS_COUNT] =
 {
@@ -65,6 +66,7 @@ const unsigned int COLORS[PLAYER_COLORS_COUNT] =
 	COLOR_WHITE, // Weiﬂ
 	COLOR_ORANGE, // Orange
 	COLOR_BROWN, // Braun
+	COLOR_PURPLE, // Lila
 ///	COLOR_GHOST // Durchsichtig
 };
 
