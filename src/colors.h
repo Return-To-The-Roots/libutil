@@ -1,4 +1,4 @@
-// $Id: colors.h 8825 2013-08-02 20:30:43Z marcus $
+// $Id: colors.h 8827 2013-08-03 15:42:22Z marcus $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -56,14 +56,14 @@ const unsigned int PLAYER_COLORS_COUNT = 11;
 
 const unsigned int COLORS[PLAYER_COLORS_COUNT] =
 {
-	COLOR_BLUE, // Blau
-	COLOR_RED, // Rot
-	COLOR_YELLOW, // Gelb
-	COLOR_GREEN, // Grün
-	COLOR_MAGENTA, // Magenta
+	0xFF0079DB,	// COLOR_BLUE, // Blau
+	0xFFD70000,	// COLOR_RED, // Rot
+	0xFFCBCB00,	//COLOR_YELLOW, // Gelb
+	0xFF41C371,	// COLOR_GREEN, // Gruen
+	0xFF9A75BE,	// COLOR_MAGENTA, // Magenta
 	COLOR_CYAN, // Cyan,
-	COLOR_BLACK, // Schwarz
-	COLOR_WHITE, // Weiß
+	0xFF4D4D4D,	// COLOR_BLACK, // Schwarz
+	COLOR_WHITE, // Weiss
 	COLOR_ORANGE, // Orange
 	COLOR_BROWN, // Braun
 	COLOR_PURPLE, // Lila
