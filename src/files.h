@@ -1,4 +1,4 @@
-// $Id: files.h 7521 2011-09-08 20:45:55Z FloSoft $
+// $Id: files.h 8915 2013-08-27 18:34:30Z jh $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -187,7 +187,7 @@ const char * const FILE_PATHS[] =
 	/*101 */RTTRDIR "",                               // unbenutzt
 	/*102 */GAMEDIR "/GFX/PICS/SETUP013.LBM",         // Optionen
 	/*103 */GAMEDIR "/GFX/PICS/SETUP015.LBM",         // Freies Spiel
-	/*104 */RTTRDIR "/LSTS/splash.bmp"                // Splash
+	/*104 */RTTRDIR "/splash.bmp"                // Splash
 };
 
 const unsigned int FILE_SPLASH_ID = 104;
