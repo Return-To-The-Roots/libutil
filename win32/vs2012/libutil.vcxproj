@@ -93,6 +93,9 @@
     <Lib>
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
+    <PreBuildEvent>
+      <Command>"$(OutDir)prebuild-mutex.exe" "prebuild" "$(SolutionName)" "$(ProjectName)"  "$(ProjectDir)..\..\.." "$(OutDir)"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -115,6 +118,9 @@
     <Lib>
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
+    <PreBuildEvent>
+      <Command>"$(OutDir)prebuild-mutex.exe" "prebuild" "$(SolutionName)" "$(ProjectName)"  "$(ProjectDir)..\..\.." "$(OutDir)"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
