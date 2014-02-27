@@ -1,4 +1,4 @@
-// $Id: files.h 8915 2013-08-27 18:34:30Z jh $
+// $Id: files.h 9198 2014-02-27 10:16:16Z marcus $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -203,16 +203,16 @@ const std::string FILE_LOAD_IDS[] = {
 
 const std::string CONFIG_NAME = "config";
 const unsigned int GFXSET_COUNT = 3;
-const unsigned int NATION_COUNT = 4;
+const unsigned int NATION_COUNT = 5;
 
 const std::string NATION_ICON_IDS[NATION_COUNT] = {
-	"afr_icon", "jap_icon", "rom_icon", "vik_icon"
+	"afr_icon", "jap_icon", "rom_icon", "vik_icon", "bab_icon"
 };
 
 const std::string NATION_GFXSET_Z[GFXSET_COUNT][NATION_COUNT] = {
-	{"afr_z", "jap_z", "rom_z", "vik_z"},
-	{"afr_z", "jap_z", "rom_z", "vik_z"},
-	{"wafr_z", "wjap_z", "wrom_z", "wvik_z"}
+	{"afr_z", "jap_z", "rom_z", "vik_z", "bab_z"},
+	{"afr_z", "jap_z", "rom_z", "vik_z", "bab_z"},
+	{"wafr_z", "wjap_z", "wrom_z", "wvik_z", "wbab_z"}
 };
 
 const std::string MAP_GFXSET_Z[GFXSET_COUNT] = {
