@@ -1,4 +1,4 @@
-// $Id: files.cpp 7521 2011-09-08 20:45:55Z FloSoft $
+// $Id: files.cpp 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -54,45 +54,45 @@ static char THIS_FILE[] = __FILE__;
 
 #ifdef _WIN32
 
-typedef HRESULT (WINAPI* LPSHGetKnownFolderPath)(REFKNOWNFOLDERID rfid, DWORD dwFlags, HANDLE hToken, PWSTR *ppszPath);
+typedef HRESULT (WINAPI* LPSHGetKnownFolderPath)(REFKNOWNFOLDERID rfid, DWORD dwFlags, HANDLE hToken, PWSTR* ppszPath);
 
 static LPSHGetKnownFolderPath gSHGetKnownFolderPath = NULL;
 static HINSTANCE gShell32DLLInst = NULL;
 
 static LPSTR UnicodeToAnsi(LPCWSTR s)
 {
-	if (s==NULL) 
-		return NULL;
+    if (s == NULL)
+        return NULL;
 
-	int cw = lstrlenW(s);
-	if (cw==0)
-	{
-		CHAR *psz = new CHAR[1];
-		*psz = '\0';
-		return psz;
-	}
-	
-	int cc = WideCharToMultiByte(CP_ACP, 0, s, cw, NULL, 0, NULL, NULL);
+    int cw = lstrlenW(s);
+    if (cw == 0)
+    {
+        CHAR* psz = new CHAR[1];
+        *psz = '\0';
+        return psz;
+    }
 
-	if (cc==0)
-		return NULL;
+    int cc = WideCharToMultiByte(CP_ACP, 0, s, cw, NULL, 0, NULL, NULL);
 
-	CHAR *psz = new CHAR[cc + 1];
-	
-	cc = WideCharToMultiByte(CP_ACP, 0, s, cw, psz, cc, NULL, NULL);
-	if (cc == 0) 
-	{
-		delete[] psz;
-		return NULL;
-	}
-	
-	psz[cc] = '\0';
-	return psz;
+    if (cc == 0)
+        return NULL;
+
+    CHAR* psz = new CHAR[cc + 1];
+
+    cc = WideCharToMultiByte(CP_ACP, 0, s, cw, psz, cc, NULL, NULL);
+    if (cc == 0)
+    {
+        delete[] psz;
+        return NULL;
+    }
+
+    psz[cc] = '\0';
+    return psz;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
- *  Wrapper um SHGetKnownFolderPath, unter Vista und Größer benutzt es das 
+ *  Wrapper um SHGetKnownFolderPath, unter Vista und Größer benutzt es das
  *  originale SHGetKnownFolderPath, ansonsten SHGetFolderPath.
  *
  *  @param[in] rfid
@@ -102,35 +102,35 @@ static LPSTR UnicodeToAnsi(LPCWSTR s)
  *
  *  @author FloSoft
  */
-static HRESULT mySHGetKnownFolderPath(REFKNOWNFOLDERID rfid, std::string &path)
+static HRESULT mySHGetKnownFolderPath(REFKNOWNFOLDERID rfid, std::string& path)
 {
-	HRESULT retval = S_FALSE;
-	LPWSTR ppszPath = NULL;
+    HRESULT retval = S_FALSE;
+    LPWSTR ppszPath = NULL;
 
-	if(!gShell32DLLInst)
-		gShell32DLLInst = LoadLibraryW(L"Shell32.dll");
-	
-	if(gShell32DLLInst && !gSHGetKnownFolderPath)
-		gSHGetKnownFolderPath = (LPSHGetKnownFolderPath)GetProcAddress(gShell32DLLInst, "SHGetKnownFolderPath");
+    if(!gShell32DLLInst)
+        gShell32DLLInst = LoadLibraryW(L"Shell32.dll");
 
-	if(gSHGetKnownFolderPath)
-		retval = gSHGetKnownFolderPath(rfid, KF_FLAG_CREATE, NULL, &ppszPath);
-	else if(rfid == FOLDERID_Documents)
-	{
-		ppszPath = (LPWSTR)CoTaskMemAlloc(MAX_PATH * sizeof(WCHAR));
-		if(SUCCEEDED(SHGetFolderPathW(NULL, CSIDL_PERSONAL|CSIDL_FLAG_CREATE, NULL, 0, ppszPath)))
-			retval = S_OK;
-	}
+    if(gShell32DLLInst && !gSHGetKnownFolderPath)
+        gSHGetKnownFolderPath = (LPSHGetKnownFolderPath)GetProcAddress(gShell32DLLInst, "SHGetKnownFolderPath");
 
-	if(ppszPath)
-	{
-		LPSTR ppszPathA = UnicodeToAnsi(ppszPath);
-		path = ppszPathA;
-		CoTaskMemFree(ppszPath);
-		delete[] ppszPathA;
-	}
+    if(gSHGetKnownFolderPath)
+        retval = gSHGetKnownFolderPath(rfid, KF_FLAG_CREATE, NULL, &ppszPath);
+    else if(rfid == FOLDERID_Documents)
+    {
+        ppszPath = (LPWSTR)CoTaskMemAlloc(MAX_PATH * sizeof(WCHAR));
+        if(SUCCEEDED(SHGetFolderPathW(NULL, CSIDL_PERSONAL | CSIDL_FLAG_CREATE, NULL, 0, ppszPath)))
+            retval = S_OK;
+    }
 
-	return retval;
+    if(ppszPath)
+    {
+        LPSTR ppszPathA = UnicodeToAnsi(ppszPath);
+        path = ppszPathA;
+        CoTaskMemFree(ppszPath);
+        delete[] ppszPathA;
+    }
+
+    return retval;
 }
 #endif
 
@@ -147,44 +147,44 @@ static HRESULT mySHGetKnownFolderPath(REFKNOWNFOLDERID rfid, std::string &path)
  */
 std::string GetFilePath(std::string file)
 {
-	std::string to = file;
+    std::string to = file;
 
-	// ist der Pfad ein Home-Dir?
-	if(file.at(0) == '~') 
-	{
-		std::stringstream s;
+    // ist der Pfad ein Home-Dir?
+    if(file.at(0) == '~')
+    {
+        std::stringstream s;
 #ifdef _WIN32
-		std::string path = "";
+        std::string path = "";
 
-		// "$User\Saved Games"
-		if(mySHGetKnownFolderPath(FOLDERID_SavedGames, path) != S_OK)
-		{
-			// "$Documents\My Games"
-			if(mySHGetKnownFolderPath(FOLDERID_Documents, path) == S_OK)
-			{
-				path += "\\My Games";
-			}
-		}
+        // "$User\Saved Games"
+        if(mySHGetKnownFolderPath(FOLDERID_SavedGames, path) != S_OK)
+        {
+            // "$Documents\My Games"
+            if(mySHGetKnownFolderPath(FOLDERID_Documents, path) == S_OK)
+            {
+                path += "\\My Games";
+            }
+        }
 
-		s << path;
+        s << path;
 
-		// Kein Pfad gefunden, $AppData verwenden
-		if(s.str() == "")
-			s << getenv("APPDATA");
+        // Kein Pfad gefunden, $AppData verwenden
+        if(s.str() == "")
+            s << getenv("APPDATA");
 
 // linux, apple
 #else
-		// $Home verwenden
-		s << getenv("HOME");
+        // $Home verwenden
+        s << getenv("HOME");
 #endif
 
-		s << file.substr(1);
+        s << file.substr(1);
 
-		to = s.str();
-	}
+        to = s.str();
+    }
 
-	std::replace(to.begin(), to.end(), '\\', '/');
-	return to;
+    std::replace(to.begin(), to.end(), '\\', '/');
+    return to;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -199,13 +199,13 @@ std::string GetFilePath(std::string file)
  */
 bool FileExists(std::string file)
 {
-	FILE *test = fopen(GetFilePath(file).c_str(), "rb");
-	if(test)
-	{
-		fclose(test);
-		return true;
-	}
-	return false;
+    FILE* test = fopen(GetFilePath(file).c_str(), "rb");
+    if(test)
+    {
+        fclose(test);
+        return true;
+    }
+    return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -220,31 +220,31 @@ bool FileExists(std::string file)
  */
 bool IsDir(std::string dir)
 {
-	if(dir.at(dir.size()-1) == '/')
-		dir.erase(dir.size()-1, 1);
+    if(dir.at(dir.size() - 1) == '/')
+        dir.erase(dir.size() - 1, 1);
 
 #ifdef _WIN32
-	std::string path = GetFilePath(dir).c_str();
-	std::replace(path.begin(), path.end(), '/', '\\');
+    std::string path = GetFilePath(dir).c_str();
+    std::replace(path.begin(), path.end(), '/', '\\');
 
-	HANDLE test;
-	WIN32_FIND_DATAA wfd;
+    HANDLE test;
+    WIN32_FIND_DATAA wfd;
 
-	test = FindFirstFileA(path.c_str(), &wfd);
-	if(test != INVALID_HANDLE_VALUE)
-	{
-		FindClose(test);
-		if( (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY)
-			return true;
-	}
+    test = FindFirstFileA(path.c_str(), &wfd);
+    if(test != INVALID_HANDLE_VALUE)
+    {
+        FindClose(test);
+        if( (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY)
+            return true;
+    }
 #else
-	DIR *test = opendir(GetFilePath(dir).c_str());
-	if(test)
-	{
-		closedir(test);
-		return true;
-	}
+    DIR* test = opendir(GetFilePath(dir).c_str());
+    if(test)
+    {
+        closedir(test);
+        return true;
+    }
 #endif // !_WIN32
 
-	return false;
+    return false;
 }

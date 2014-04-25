@@ -1,4 +1,4 @@
-// $Id: UPnP.h 7521 2011-09-08 20:45:55Z FloSoft $
+// $Id: UPnP.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -23,17 +23,17 @@
 
 class UPnP
 {
-public:
-	UPnP();
-	~UPnP();
+    public:
+        UPnP();
+        ~UPnP();
 
-	bool OpenPort(const unsigned short& port);
-	void ClosePort();
+        bool OpenPort(const unsigned short& port);
+        void ClosePort();
 
-	std::vector<std::string> GetAllv4Addresses();
+        std::vector<std::string> GetAllv4Addresses();
 
-private:
-	unsigned short remote_port_;
+    private:
+        unsigned short remote_port_;
 };
 
 #endif // !UPNP_H_INCLUDED

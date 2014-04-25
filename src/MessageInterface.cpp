@@ -1,4 +1,4 @@
-// $Id: MessageInterface.cpp 7521 2011-09-08 20:45:55Z FloSoft $
+// $Id: MessageInterface.cpp 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -23,7 +23,7 @@
 #include "MessageInterface.h"
 
 ///////////////////////////////////////////////////////////////////////////////
-/** 
+/**
  *  Null-Nachricht.
  *
  *  @author FloSoft
@@ -33,7 +33,7 @@ void MessageInterface::OnNMSNull(unsigned int id)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-/** 
+/**
  *  Dead-Nachricht.
  *
  *  @author FloSoft

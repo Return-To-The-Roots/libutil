@@ -1,4 +1,4 @@
-// $Id: Messages.h 7521 2011-09-08 20:45:55Z FloSoft $
+// $Id: Messages.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -26,12 +26,12 @@
 
 #include "Protocol.h"
 
-/* 
+/*
  * das Klassenkommentar ist alles Client-Sicht, für Server-Sicht ist alles andersrum
- * 
+ *
  * Konstruktor ohne Parameter ist allgemein nur zum Empfangen (immer noop!)
  * run-Methode ist Auswertung der Daten
- * 
+ *
  * Konstruktor(en) mit Parametern (wenns auch nur der "reserved"-Parameter ist)
  * ist zum Verschicken der Nachrichten gedacht!
  */
@@ -40,17 +40,17 @@
 /// eingehende Null-Nachricht
 class Message_Null : public Message
 {
-public:
-	Message_Null(void) : Message(NMS_NULL_MSG) { }
-	Message_Null(bool reserved) : Message(NMS_NULL_MSG) 
-	{
-		LOG.write(">>> NMS_NULL_MSG\n");
-	}
-	void run(MessageInterface *callback, unsigned int id) 
-	{
-		LOG.write("<<< NMS_NULL_MSG\n");
-		callback->OnNMSNull(id);
-	}
+    public:
+        Message_Null(void) : Message(NMS_NULL_MSG) { }
+        Message_Null(bool reserved) : Message(NMS_NULL_MSG)
+        {
+            LOG.write(">>> NMS_NULL_MSG\n");
+        }
+        void run(MessageInterface* callback, unsigned int id)
+        {
+            LOG.write("<<< NMS_NULL_MSG\n");
+            callback->OnNMSNull(id);
+        }
 };
 
 
@@ -58,17 +58,17 @@ public:
 /// eingehende Dead-Nachricht
 class Message_Dead : public Message
 {
-public:
-	Message_Dead(void) : Message(NMS_DEAD_MSG) { }
-	Message_Dead(bool reserved) : Message(NMS_DEAD_MSG) 
-	{
-		LOG.write(">>> NMS_DEAD_MSG\n");
-	}
-	void run(MessageInterface *callback, unsigned int id) 
-	{
-		LOG.write("<<< NMS_DEAD_MSG\n");
-		callback->OnNMSDead(id);
-	}
+    public:
+        Message_Dead(void) : Message(NMS_DEAD_MSG) { }
+        Message_Dead(bool reserved) : Message(NMS_DEAD_MSG)
+        {
+            LOG.write(">>> NMS_DEAD_MSG\n");
+        }
+        void run(MessageInterface* callback, unsigned int id)
+        {
+            LOG.write("<<< NMS_DEAD_MSG\n");
+            callback->OnNMSDead(id);
+        }
 };
 
 #endif // !MESSAGES_H_INCLUDED

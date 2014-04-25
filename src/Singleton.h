@@ -1,4 +1,4 @@
-// $Id: Singleton.h 7521 2011-09-08 20:45:55Z FloSoft $
+// $Id: Singleton.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -26,24 +26,24 @@
 template <typename T>
 class Singleton
 {
-protected:
-	// Instanz anlegen verboten
-	Singleton() { }
-	Singleton(const Singleton&);	 
-	Singleton& operator = (const Singleton&); 
+    protected:
+        // Instanz anlegen verboten
+        Singleton() { }
+        Singleton(const Singleton&);
+        Singleton& operator = (const Singleton&);
 
-public:
-	// Globaler Zugriff auf einzige Instanz
-	inline static T& inst() {	return me; }
+    public:
+        // Globaler Zugriff auf einzige Instanz
+        inline static T& inst() {   return me; }
 
-private:
-	static T me; 
+    private:
+        static T me;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 // Template-Fix ?!?
 #if _MSCVER <= 710
-	template<typename T> T Singleton<T>::me; 
+template<typename T> T Singleton<T>::me;
 #endif // _MSCVER > 710
 
 #endif // SINGLETON_H_INCLUDED

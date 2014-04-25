@@ -1,4 +1,4 @@
-// $Id: MyTime.cpp 7521 2011-09-08 20:45:55Z FloSoft $
+// $Id: MyTime.cpp 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -25,9 +25,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Makros / Defines
 #if defined _WIN32 && defined _DEBUG && defined _MSC_VER
-	#define new new(_NORMAL_BLOCK, THIS_FILE, __LINE__)
-	#undef THIS_FILE
-	static char THIS_FILE[] = __FILE__;
+#define new new(_NORMAL_BLOCK, THIS_FILE, __LINE__)
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ Time::~Time(void)
  */
 unser_time_t Time::CurrentTime(void)
 {
-	return (unser_time_t)time(NULL);
+    return (unser_time_t)time(NULL);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -73,14 +73,14 @@ unser_time_t Time::CurrentTime(void)
  */
 unser_time_t Time::CurrentTick(void)
 {
-	unser_time_t ticks;
+    unser_time_t ticks;
 #ifdef _WIN32
-	ticks = GetTickCount();
+    ticks = GetTickCount();
 #else
-	tms tm;
-	ticks = times(&tm);
+    tms tm;
+    ticks = times(&tm);
 #endif // !_WIN32
-	return ticks;
+    return ticks;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -95,44 +95,44 @@ unser_time_t Time::CurrentTick(void)
  *
  *  @author FloSoft
  */
-char *Time::FormatTime(char *ziel, const char *format, unser_time_t *time)
+char* Time::FormatTime(char* ziel, const char* format, unser_time_t* time)
 {
-	if(!ziel || !format)
-		return NULL;
+    if(!ziel || !format)
+        return NULL;
 
-	unser_time_t cur = CurrentTime();
+    unser_time_t cur = CurrentTime();
 
-	if(!time)
-		time = &cur;
+    if(!time)
+        time = &cur;
 
-	tm *time_data = localtime((time_t*)time);
-	if(!time_data)
-		return ziel;
+    tm* time_data = localtime((time_t*)time);
+    if(!time_data)
+        return ziel;
 
-	for(unsigned int i = 0, j = 0; i < strlen(format); ++i)
-	{
-		bool b = false;
-		if(format[i] == '%')
-		{
-			b = true;
-			switch(format[++i])
-			{
-			case 'Y': j += sprintf(&ziel[j], "%4d", 1900 + time_data->tm_year); break;
-			case 'm': j += sprintf(&ziel[j], "%02d", time_data->tm_mon+1); break;
-			case 'd': j += sprintf(&ziel[j], "%02d", time_data->tm_mday); break;
-			case 'H': j += sprintf(&ziel[j], "%02d", time_data->tm_hour); break;
-			case 'i': j += sprintf(&ziel[j], "%02d", time_data->tm_min); break;
-			case 's': j += sprintf(&ziel[j], "%02d", time_data->tm_sec); break;
-			default: b = false; break;
-			}
-		}
-		
-		if(!b)
-		{
-			ziel[j] = format[i];
-			ziel[++j] = '\0';
-		}
-	}
+    for(unsigned int i = 0, j = 0; i < strlen(format); ++i)
+    {
+        bool b = false;
+        if(format[i] == '%')
+        {
+            b = true;
+            switch(format[++i])
+            {
+                case 'Y': j += sprintf(&ziel[j], "%4d", 1900 + time_data->tm_year); break;
+                case 'm': j += sprintf(&ziel[j], "%02d", time_data->tm_mon+1); break;
+                case 'd': j += sprintf(&ziel[j], "%02d", time_data->tm_mday); break;
+                case 'H': j += sprintf(&ziel[j], "%02d", time_data->tm_hour); break;
+                case 'i': j += sprintf(&ziel[j], "%02d", time_data->tm_min); break;
+                case 's': j += sprintf(&ziel[j], "%02d", time_data->tm_sec); break;
+                default: b = false; break;
+            }
+        }
 
-	return ziel;
+        if(!b)
+        {
+            ziel[j] = format[i];
+            ziel[++j] = '\0';
+        }
+    }
+
+    return ziel;
 }

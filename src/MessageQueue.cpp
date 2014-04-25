@@ -1,4 +1,4 @@
-// $Id: MessageQueue.cpp 7521 2011-09-08 20:45:55Z FloSoft $
+// $Id: MessageQueue.cpp 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -25,9 +25,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Makros / Defines
 #if defined _WIN32 && defined _DEBUG && defined _MSC_VER
-	#define new new(_NORMAL_BLOCK, THIS_FILE, __LINE__)
-	#undef THIS_FILE
-	static char THIS_FILE[] = __FILE__;
+#define new new(_NORMAL_BLOCK, THIS_FILE, __LINE__)
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@
  */
 MessageQueue::~MessageQueue(void)
 {
-	clear();
+    clear();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -50,18 +50,18 @@ MessageQueue::~MessageQueue(void)
  */
 MessageQueue::MessageQueue(const MessageQueue& mq) : messages(mq.messages.size()), createfunction(mq.createfunction)
 {
-	for(unsigned i = 0;i<mq.messages.size();++i)
-		messages[i] = mq.messages[i]->duplicate();
+    for(unsigned i = 0; i < mq.messages.size(); ++i)
+        messages[i] = mq.messages[i]->duplicate();
 }
 
 /// Zuweisungsoperator, da Messages kopiert werden müssen
 MessageQueue& MessageQueue::operator=(const MessageQueue& mq)
 {
-	messages.resize(mq.messages.size());
-	for(unsigned i = 0;i<mq.messages.size();++i)
-		messages[i] = mq.messages[i]->duplicate();
+    messages.resize(mq.messages.size());
+    for(unsigned i = 0; i < mq.messages.size(); ++i)
+        messages[i] = mq.messages[i]->duplicate();
 
-	return *this;
+    return *this;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -72,9 +72,9 @@ MessageQueue& MessageQueue::operator=(const MessageQueue& mq)
  */
 void MessageQueue::clear(void)
 {
-	for(QueueIt It = messages.begin(); It < messages.end(); ++It)
-		delete (*It);
-	messages.clear();
+    for(QueueIt It = messages.begin(); It < messages.end(); ++It)
+        delete (*It);
+    messages.clear();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -85,70 +85,70 @@ void MessageQueue::clear(void)
  */
 void MessageQueue::pop(void)
 {
-	if(messages.size() == 0)
-		return;
+    if(messages.size() == 0)
+        return;
 
-	QueueIt It = messages.begin();
-	delete (*It);
+    QueueIt It = messages.begin();
+    delete (*It);
 
-	messages.erase(It);
+    messages.erase(It);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 /// ruft eine nachricht ab und hängt sie in die queue
-bool MessageQueue::recv(Socket *sock, bool wait)
+bool MessageQueue::recv(Socket* sock, bool wait)
 {
-	if(!sock)
-		return false;
+    if(!sock)
+        return false;
 
-	// Nachricht abrufen
-	int error = -1;
-	Message *msg = Message::recv(sock, error, wait, createfunction);
+    // Nachricht abrufen
+    int error = -1;
+    Message* msg = Message::recv(sock, error, wait, createfunction);
 
-	if(msg)
-	{
-		push(msg);
-		return true;
-	}
+    if(msg)
+    {
+        push(msg);
+        return true;
+    }
 
-	// noch nicht alles empfangen, true liefern für okay (error == -1 bedeutet fehler
-	return (error >= 0);
+    // noch nicht alles empfangen, true liefern für okay (error == -1 bedeutet fehler
+    return (error >= 0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 /*
- *  
+ *
  *
  *  @author FloSoft
  */
-bool MessageQueue::send(Socket *sock, int max, unsigned int sizelimit)
+bool MessageQueue::send(Socket* sock, int max, unsigned int sizelimit)
 {
-	if(!sock || !sock->isValid())
-		return false;
+    if(!sock || !sock->isValid())
+        return false;
 
-	// send-queue abarbeiten
-	int count = 0;
-	for(QueueIt It = messages.begin(); It < messages.end(); It = messages.begin())
-	{
-		if(count > max)
-			break;
+    // send-queue abarbeiten
+    int count = 0;
+    for(QueueIt It = messages.begin(); It < messages.end(); It = messages.begin())
+    {
+        if(count > max)
+            break;
 
-		// maximal 1 großes Paket verschicken
-		if(count > 0 && (*It)->GetLength() > sizelimit)
-			break;
+        // maximal 1 großes Paket verschicken
+        if(count > 0 && (*It)->GetLength() > sizelimit)
+            break;
 
-		if((*It)->getId() > 0)
-		{
-			if(!(*It)->send(sock))
-			{
-				LOG.lprintf("Sending Message to server failed\n");
-				return false;
-			}
-		}
+        if((*It)->getId() > 0)
+        {
+            if(!(*It)->send(sock))
+            {
+                LOG.lprintf("Sending Message to server failed\n");
+                return false;
+            }
+        }
 
-		pop();
+        pop();
 
-		++count;
-	}
-	return true;
+        ++count;
+    }
+    return true;
 }

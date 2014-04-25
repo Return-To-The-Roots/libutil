@@ -1,4 +1,4 @@
-// $Id: MessageInterface.h 7521 2011-09-08 20:45:55Z FloSoft $
+// $Id: MessageInterface.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -23,15 +23,15 @@
 
 class MessageInterface
 {
-protected:
-	virtual ~MessageInterface() {}
+    protected:
+        virtual ~MessageInterface() {}
 
-public:
-	/// Null-Nachricht.
-	virtual void OnNMSNull(unsigned int id);
+    public:
+        /// Null-Nachricht.
+        virtual void OnNMSNull(unsigned int id);
 
-	/// Dead-Nachricht.
-	virtual void OnNMSDead(unsigned int id);
+        /// Dead-Nachricht.
+        virtual void OnNMSDead(unsigned int id);
 };
 
 #endif //!MESSAGEINTERFACE_H_INCLUDED

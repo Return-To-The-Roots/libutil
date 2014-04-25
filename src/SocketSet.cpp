@@ -1,4 +1,4 @@
-// $Id: SocketSet.cpp 7521 2011-09-08 20:45:55Z FloSoft $
+// $Id: SocketSet.cpp 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -27,9 +27,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Makros / Defines
 #if defined _WIN32 && defined _DEBUG && defined _MSC_VER
-	#define new new(_NORMAL_BLOCK, THIS_FILE, __LINE__)
-	#undef THIS_FILE
-	static char THIS_FILE[] = __FILE__;
+#define new new(_NORMAL_BLOCK, THIS_FILE, __LINE__)
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@
  */
 SocketSet::SocketSet(void)
 {
-	Clear();
+    Clear();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -51,9 +51,9 @@ SocketSet::SocketSet(void)
  */
 void SocketSet::Clear(void)
 {
-	FD_ZERO(&set);
+    FD_ZERO(&set);
 
-	highest = INVALID_SOCKET;
+    highest = INVALID_SOCKET;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -65,19 +65,19 @@ void SocketSet::Clear(void)
  *  @author OLiver
  *  @author FloSoft
  */
-void SocketSet::Add(Socket &sock)
+void SocketSet::Add(Socket& sock)
 {
-	// Socket holen
-	SOCKET s = *sock.GetSocket();
-	if(s == INVALID_SOCKET)
-		return;
+    // Socket holen
+    SOCKET s = *sock.GetSocket();
+    if(s == INVALID_SOCKET)
+        return;
 
-	// hinzufügen
-	FD_SET(s, &set);
+    // hinzufügen
+    FD_SET(s, &set);
 
-	// neues größtes Socket setzen
-	if(s > highest || highest == INVALID_SOCKET)
-		highest = s;
+    // neues größtes Socket setzen
+    if(s > highest || highest == INVALID_SOCKET)
+        highest = s;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -93,27 +93,27 @@ void SocketSet::Add(Socket &sock)
  */
 int SocketSet::Select(int timeout, int which)
 {
-	if(highest == INVALID_SOCKET)
-		return SOCKET_ERROR;
+    if(highest == INVALID_SOCKET)
+        return SOCKET_ERROR;
 
-	timeval tv;
-	tv.tv_sec = 0;
-	tv.tv_usec = timeout;
+    timeval tv;
+    tv.tv_sec = 0;
+    tv.tv_usec = timeout;
 
-	fd_set *read, *write, *except;
-	read = write = except = NULL;
+    fd_set* read, *write, *except;
+    read = write = except = NULL;
 
-	// unser Set zuweisen
-	switch(which)
-	{
-	case 0: { read   = &set; } break;
-	case 1: { write  = &set; } break;
-	default:
-	case 2: { except = &set; } break;
-	}
+    // unser Set zuweisen
+    switch(which)
+    {
+        case 0: { read   = &set; } break;
+        case 1: { write  = &set; } break;
+        default:
+        case 2: { except = &set; } break;
+    }
 
-	// Select ausführen
-	return select( (int)highest + 1, read, write, except, &tv);
+    // Select ausführen
+    return select( (int)highest + 1, read, write, except, &tv);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -127,18 +127,18 @@ int SocketSet::Select(int timeout, int which)
  *  @author OLiver
  *  @author FloSoft
  */
-bool SocketSet::InSet(Socket &sock)
+bool SocketSet::InSet(Socket& sock)
 {
-	SOCKET s = *sock.GetSocket();
+    SOCKET s = *sock.GetSocket();
 
-	// Bei ungültigem Socket ists nicht drin!
-	if(s == INVALID_SOCKET)
-		return false;
+    // Bei ungültigem Socket ists nicht drin!
+    if(s == INVALID_SOCKET)
+        return false;
 
-	// Ist unser Socket im Set?
-	if(FD_ISSET(s, &set))
-		return true;
+    // Ist unser Socket im Set?
+    if(FD_ISSET(s, &set))
+        return true;
 
-	// nein, nicht drin
-	return false;
+    // nein, nicht drin
+    return false;
 }

@@ -1,4 +1,4 @@
-// $Id: error.cpp 7521 2011-09-08 20:45:55Z FloSoft $
+// $Id: error.cpp 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -25,13 +25,13 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Makros / Defines
 #if defined _WIN32 && defined _DEBUG && defined _MSC_VER
-	#define new new(_NORMAL_BLOCK, THIS_FILE, __LINE__)
-	#undef THIS_FILE
-	static char THIS_FILE[] = __FILE__;
+#define new new(_NORMAL_BLOCK, THIS_FILE, __LINE__)
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
-/** 
+/**
  *  Fatal-Error-Handler.
  *  Gibt "FATAL ERROR: "+Text auf @p stderr aus
  *
@@ -41,21 +41,21 @@
  *  @author FloSoft
  *
  */
-int fatal_error(const char *format, ...)
+int fatal_error(const char* format, ...)
 {
-	va_list list;
-	va_start(list, format);
-	LOG.lprintf("\n\nFATAL ERROR: ");
-	LOG.lvprintf(format, list);
-	LOG.lprintf("\n");
+    va_list list;
+    va_start(list, format);
+    LOG.lprintf("\n\nFATAL ERROR: ");
+    LOG.lvprintf(format, list);
+    LOG.lprintf("\n");
 
-	va_end(list);
+    va_end(list);
 
-	return EXIT_FAILURE;
+    return EXIT_FAILURE;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-/** 
+/**
  *  Error-Handler.
  *  Gibt "ERROR: "+Text auf @p stderr aus
  *
@@ -65,17 +65,17 @@ int fatal_error(const char *format, ...)
  *  @author FloSoft
  *
  */
-int error(const char *format, ...)
+int error(const char* format, ...)
 {
-	va_list list;
-	va_start(list, format);
-	LOG.lprintf("\n\nERROR: ");
-	LOG.lvprintf(format, list);
-	LOG.lprintf("\n");
+    va_list list;
+    va_start(list, format);
+    LOG.lprintf("\n\nERROR: ");
+    LOG.lvprintf(format, list);
+    LOG.lprintf("\n");
 
-	va_end(list);
+    va_end(list);
 
-	return EXIT_FAILURE;
+    return EXIT_FAILURE;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -87,17 +87,17 @@ int error(const char *format, ...)
  *  @param[in] ...    beliebige Parameter der Funktion
  *
  *  @author FloSoft
- *  
+ *
  */
-int warning(const char *format, ...)
+int warning(const char* format, ...)
 {
-	va_list list;
-	va_start(list, format);
-	LOG.lprintf("\n\nWARNING: ");
-	LOG.lvprintf(format, list);
-	LOG.lprintf("\n");
+    va_list list;
+    va_start(list, format);
+    LOG.lprintf("\n\nWARNING: ");
+    LOG.lvprintf(format, list);
+    LOG.lprintf("\n");
 
-	va_end(list);
+    va_end(list);
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

@@ -1,4 +1,4 @@
-// $Id: SerializableArray.h 7521 2011-09-08 20:45:55Z FloSoft $
+// $Id: SerializableArray.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -26,204 +26,204 @@
 template <class Type, class Allocator = Type>
 class SerializableArray
 {
-public:
-	///////////////////////////////////////////////////////////////////////////////
-	/**
-	 *  Konstruktor von @p SerializableArray.
-	 *
-	 *  @author FloSoft
-	 */
-	SerializableArray(void)
-	{
-	}
+    public:
+        ///////////////////////////////////////////////////////////////////////////////
+        /**
+         *  Konstruktor von @p SerializableArray.
+         *
+         *  @author FloSoft
+         */
+        SerializableArray(void)
+        {
+        }
 
-	///////////////////////////////////////////////////////////////////////////////
-	/**
-	 *  Destruktor von @p SerializableArray.
-	 *
-	 *  @author FloSoft
-	 */
-	~SerializableArray(void)
-	{
-	}
+        ///////////////////////////////////////////////////////////////////////////////
+        /**
+         *  Destruktor von @p SerializableArray.
+         *
+         *  @author FloSoft
+         */
+        ~SerializableArray(void)
+        {
+        }
 
-	///////////////////////////////////////////////////////////////////////////////
-	/**
-	 *  Einfügefunktion
-	 *
-	 *  @author FloSoft
-	 */
-	inline void push_back(const Type &item)
-	{
-		elements.push_back(item);
-	}
+        ///////////////////////////////////////////////////////////////////////////////
+        /**
+         *  Einfügefunktion
+         *
+         *  @author FloSoft
+         */
+        inline void push_back(const Type& item)
+        {
+            elements.push_back(item);
+        }
 
-	///////////////////////////////////////////////////////////////////////////////
-	/**
-	 *  Zuweisungsoperator.
-	 *
-	 *  @author FloSoft
-	 */
-	template<class T, class A>
-	SerializableArray& operator= (const SerializableArray<T, A> &other)
-	{
-		return copy(other);
-	}
+        ///////////////////////////////////////////////////////////////////////////////
+        /**
+         *  Zuweisungsoperator.
+         *
+         *  @author FloSoft
+         */
+        template<class T, class A>
+        SerializableArray& operator= (const SerializableArray<T, A> &other)
+        {
+            return copy(other);
+        }
 
-	///////////////////////////////////////////////////////////////////////////////
-	/**
-	 *  Zuweisungsoperator, spezifisch
-	 *
-	 *  @author FloSoft
-	 */
-	SerializableArray& operator= (const SerializableArray &other)
-	{
-		return copy(other);
-	}
+        ///////////////////////////////////////////////////////////////////////////////
+        /**
+         *  Zuweisungsoperator, spezifisch
+         *
+         *  @author FloSoft
+         */
+        SerializableArray& operator= (const SerializableArray& other)
+        {
+            return copy(other);
+        }
 
-	///////////////////////////////////////////////////////////////////////////////
-	/**
-	 *  Kopierfunktion
-	 *
-	 *  @author FloSoft
-	 */
-	template<class T, class A>
-	SerializableArray& copy(const SerializableArray<T, A> &other)
-	{
-		clear();
+        ///////////////////////////////////////////////////////////////////////////////
+        /**
+         *  Kopierfunktion
+         *
+         *  @author FloSoft
+         */
+        template<class T, class A>
+        SerializableArray& copy(const SerializableArray<T, A> &other)
+        {
+            clear();
 
-		elements.reserve(other.getCount());
+            elements.reserve(other.getCount());
 
-		for(unsigned int i = 0; i < other.getCount(); ++i)
-		{
-			Type N = *other.getElement(i);
-			elements.push_back(N);
-		}
+            for(unsigned int i = 0; i < other.getCount(); ++i)
+            {
+                Type N = *other.getElement(i);
+                elements.push_back(N);
+            }
 
-		return *this;
-	}
+            return *this;
+        }
 
-	///////////////////////////////////////////////////////////////////////////////
-	/**
-	 *  Array-Operatoren
-	 *
-	 *  @author FloSoft
-	 */
-	inline Type&       operator[](unsigned int i)       { return elements.at(i); }
-	inline const Type& operator[](unsigned int i) const { return elements.at(i); }
+        ///////////////////////////////////////////////////////////////////////////////
+        /**
+         *  Array-Operatoren
+         *
+         *  @author FloSoft
+         */
+        inline Type&       operator[](unsigned int i)       { return elements.at(i); }
+        inline const Type& operator[](unsigned int i) const { return elements.at(i); }
 
-	///////////////////////////////////////////////////////////////////////////////
-	/**
-	 *  räumt die Liste auf.
-	 *
-	 *  @author FloSoft
-	 */
-	inline void clear(void)
-	{
-		elements.clear();
-	}
+        ///////////////////////////////////////////////////////////////////////////////
+        /**
+         *  räumt die Liste auf.
+         *
+         *  @author FloSoft
+         */
+        inline void clear(void)
+        {
+            elements.clear();
+        }
 
-	///////////////////////////////////////////////////////////////////////////////
-	/*
-	 *  serialisiert die Daten.
-	 *
-	 *  @param[in,out] data Datensatz, muss groß genug sein
-	 *
-	 *  @return liefert die Größe der Daten zurück.
-	 *
-	 *  @author FloSoft
-	 */
-	inline void serialize(Message *msg) const
-	{
-		unsigned int count = elements.size();
+        ///////////////////////////////////////////////////////////////////////////////
+        /*
+         *  serialisiert die Daten.
+         *
+         *  @param[in,out] data Datensatz, muss groß genug sein
+         *
+         *  @return liefert die Größe der Daten zurück.
+         *
+         *  @author FloSoft
+         */
+        inline void serialize(Message* msg) const
+        {
+            unsigned int count = elements.size();
 
-		if(msg)
-			msg->PushUnsignedInt(count);
+            if(msg)
+                msg->PushUnsignedInt(count);
 
-		for(unsigned int i = 0; i < count; ++i)
-			elements[i].serialize(msg);
-	}
+            for(unsigned int i = 0; i < count; ++i)
+                elements[i].serialize(msg);
+        }
 
-	///////////////////////////////////////////////////////////////////////////////
-	/*
-	 *  deserialisiert die Daten.
-	 *
-	 *  @param[in] data Datensatz, muss groß genug sein
-	 *
-	 *  @return liefert die Größe der gelesenen Daten zurück.
-	 *
-	 *  @author FloSoft
-	 */
-	inline void deserialize(Message *msg)
-	{
-		if(!msg)
-			return;
+        ///////////////////////////////////////////////////////////////////////////////
+        /*
+         *  deserialisiert die Daten.
+         *
+         *  @param[in] data Datensatz, muss groß genug sein
+         *
+         *  @return liefert die Größe der gelesenen Daten zurück.
+         *
+         *  @author FloSoft
+         */
+        inline void deserialize(Message* msg)
+        {
+            if(!msg)
+                return;
 
-		unsigned int count = msg->PopUnsignedInt();
+            unsigned int count = msg->PopUnsignedInt();
 
-		clear();
+            clear();
 
-		elements.reserve(count);
+            elements.reserve(count);
 
-		for(unsigned int i = 0; i < count; ++i)
-		{
-			elements.push_back(Allocator(i, msg));
-		}
-	}
+            for(unsigned int i = 0; i < count; ++i)
+            {
+                elements.push_back(Allocator(i, msg));
+            }
+        }
 
-	///////////////////////////////////////////////////////////////////////////////
-	/**
-	 *  liefert ein Element der Liste.
-	 *
-	 *  @author FloSoft
-	 */
-	inline const Type *getElement(unsigned int i) const
-	{
-		if(i < elements.size())
-			return &elements.at(i);
+        ///////////////////////////////////////////////////////////////////////////////
+        /**
+         *  liefert ein Element der Liste.
+         *
+         *  @author FloSoft
+         */
+        inline const Type* getElement(unsigned int i) const
+        {
+            if(i < elements.size())
+                return &elements.at(i);
 
-		return NULL;
-	}
+            return NULL;
+        }
 
-	///////////////////////////////////////////////////////////////////////////////
-	/**
-	 *  liefert ein Element der Liste.
-	 *
-	 *  @author FloSoft
-	 */
-	inline Type *getElement(unsigned int i)
-	{
-		if(i < elements.size())
-			return &elements.at(i);
+        ///////////////////////////////////////////////////////////////////////////////
+        /**
+         *  liefert ein Element der Liste.
+         *
+         *  @author FloSoft
+         */
+        inline Type* getElement(unsigned int i)
+        {
+            if(i < elements.size())
+                return &elements.at(i);
 
-		return NULL;
-	}
-	
-	///////////////////////////////////////////////////////////////////////////////
-	/**
-	 *  liefert die Anzahl der Elemente.
-	 *
-	 *  @author FloSoft
-	 */
-	inline unsigned int getCount(void) const
-	{
-		return elements.size(); 
-	}
-	
-	///////////////////////////////////////////////////////////////////////////////
-	/**
-	 *  ändert die Größe des Arrays
-	 *
-	 *  @author OLiver
-	 */
-	void resize(const unsigned count)
-	{
-		return elements.resize(count);
-	}
+            return NULL;
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////
+        /**
+         *  liefert die Anzahl der Elemente.
+         *
+         *  @author FloSoft
+         */
+        inline unsigned int getCount(void) const
+        {
+            return elements.size();
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////
+        /**
+         *  ändert die Größe des Arrays
+         *
+         *  @author OLiver
+         */
+        void resize(const unsigned count)
+        {
+            return elements.resize(count);
+        }
 
 
-private:
-	std::vector<Type> elements;		///< Die Elemente
+    private:
+        std::vector<Type> elements;     ///< Die Elemente
 };
 
 #endif // SERIALIZABLEARRAY_H_INCLUDED

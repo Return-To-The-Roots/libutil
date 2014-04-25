@@ -1,4 +1,4 @@
-// $Id: MessageQueue.h 7521 2011-09-08 20:45:55Z FloSoft $
+// $Id: MessageQueue.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -22,40 +22,40 @@
 //class Socket;
 class MessageQueue
 {
-public:
-	MessageQueue(Message *(*createfunction)(unsigned short)) : createfunction(createfunction) {}
-	MessageQueue(const MessageQueue& mq);
-	~MessageQueue(void);
+    public:
+        MessageQueue(Message * (*createfunction)(unsigned short)) : createfunction(createfunction) {}
+        MessageQueue(const MessageQueue& mq);
+        ~MessageQueue(void);
 
-	MessageQueue& operator=(const MessageQueue& mq);
+        MessageQueue& operator=(const MessageQueue& mq);
 
-private:
-	typedef std::vector<Message *> Queue;
-	typedef std::vector<Message *>::iterator QueueIt;
-	Queue messages;
-	Message *(*createfunction)(unsigned short);
+    private:
+        typedef std::vector<Message*> Queue;
+        typedef std::vector<Message*>::iterator QueueIt;
+        Queue messages;
+        Message* (*createfunction)(unsigned short);
 
-public:
-	void clear(void);
+    public:
+        void clear(void);
 
-	/// flusht die Queue, verschickt alle Elemente.
-	bool flush(Socket *sock) { return send(sock, messages.size(), 0xFFFFFFFF); }
+        /// flusht die Queue, verschickt alle Elemente.
+        bool flush(Socket* sock) { return send(sock, messages.size(), 0xFFFFFFFF); }
 
-	/// liefert die Größe der Queue
-	unsigned int count() { return messages.size(); }
+        /// liefert die Größe der Queue
+        unsigned int count() { return messages.size(); }
 
-	/// verschickt Pakete der Queue, maximal @p max, mit einem maximal @p sizelimit groß (aber beliebig viele kleine)
-	bool send(Socket *sock, int max, unsigned int sizelimit = 512);
-	bool recv(Socket *sock, bool wait = false);
+        /// verschickt Pakete der Queue, maximal @p max, mit einem maximal @p sizelimit groß (aber beliebig viele kleine)
+        bool send(Socket* sock, int max, unsigned int sizelimit = 512);
+        bool recv(Socket* sock, bool wait = false);
 
-public:
-	/// hängt ein Element hinten an.
-	void push(Message *message) { messages.push_back(message); }
-	/// liefert das vorderste Element der Queue.
-	Message *front() { return (messages.size() > 0 ? (*messages.begin()) : NULL); }
-	/// entfernt das vorderste Element aus der Queue.
-	void pop(void);
-	
+    public:
+        /// hängt ein Element hinten an.
+        void push(Message* message) { messages.push_back(message); }
+        /// liefert das vorderste Element der Queue.
+        Message* front() { return (messages.size() > 0 ? (*messages.begin()) : NULL); }
+        /// entfernt das vorderste Element aus der Queue.
+        void pop(void);
+
 };
 
 #endif // LOBBYMESSAGEQUEUE_H_INCLUDED

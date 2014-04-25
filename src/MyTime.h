@@ -1,4 +1,4 @@
-// $Id: MyTime.h 7521 2011-09-08 20:45:55Z FloSoft $
+// $Id: MyTime.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -24,30 +24,30 @@
 #include "Singleton.h"
 
 #ifdef _WIN32
-	#if defined __CYGWIN__ || defined __CYGWIN32__ || defined __MINGW__
-		#include <sys/types.h>
-	#endif
-	typedef unsigned __int64 unser_time_t;
+#if defined __CYGWIN__ || defined __CYGWIN32__ || defined __MINGW__
+#include <sys/types.h>
+#endif
+typedef unsigned __int64 unser_time_t;
 #else
-#	include <stdint.h>
-	typedef int64_t unser_time_t;
-#endif 
+#   include <stdint.h>
+typedef int64_t unser_time_t;
+#endif
 
 /// Time Klasse.
 class Time : public Singleton<Time>
 {
-public:
-	/// Konstruktor von @p Time.
-	Time(void);
-	/// Desktruktor von @p Time.
-	~Time(void);
+    public:
+        /// Konstruktor von @p Time.
+        Time(void);
+        /// Desktruktor von @p Time.
+        ~Time(void);
 
-	/// liefert die aktuelle Zeit.
-	unser_time_t CurrentTime(void);
-	/// liefert die aktuellen Ticks.
-	unser_time_t CurrentTick(void);
-	/// formatiert einen Zeitstring.
-	char *FormatTime(char *ziel, const char *format, unser_time_t *time);
+        /// liefert die aktuelle Zeit.
+        unser_time_t CurrentTime(void);
+        /// liefert die aktuellen Ticks.
+        unser_time_t CurrentTick(void);
+        /// formatiert einen Zeitstring.
+        char* FormatTime(char* ziel, const char* format, unser_time_t* time);
 };
 
 #define TIME Time::inst()

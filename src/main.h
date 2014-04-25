@@ -1,4 +1,4 @@
-// $Id: main.h 8476 2012-10-31 15:13:00Z FloSoft $
+// $Id: main.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -28,49 +28,49 @@
 #define WIN32_LEAN_AND_MEAN
 
 #ifdef _WIN32
-	#include <windows.h>
-	
-	#ifndef __CYGWIN__
-		#include <conio.h>
-	#endif
+#include <windows.h>
 
-	#include <ws2tcpip.h>
-	
-	#ifdef __CYGWIN__
-		#ifndef AI_ALL
-		#define AI_ALL            0x0010
-		#endif
-		
-		#ifndef AI_ADDRCONFIG
-		#define AI_ADDRCONFIG     0x0020
-		#endif
-	#endif
+#ifndef __CYGWIN__
+#include <conio.h>
+#endif
+
+#include <ws2tcpip.h>
+
+#ifdef __CYGWIN__
+#ifndef AI_ALL
+#define AI_ALL            0x0010
+#endif
+
+#ifndef AI_ADDRCONFIG
+#define AI_ADDRCONFIG     0x0020
+#endif
+#endif
 
 #ifdef _MSC_VER
-	#include <crtdbg.h>
+#include <crtdbg.h>
 #else
-    #include <assert.h>
+#include <assert.h>
 #endif
 #else
-	#include <string.h>
-	#include <unistd.h>
-	#include <stdarg.h>
-	#include <signal.h>
-	#include <dirent.h>
-	#include <dlfcn.h>
-	#include <netdb.h>
-	#include <netinet/in.h>
-	#include <netinet/tcp.h>
-	#include <sys/types.h>
-	#include <sys/socket.h>
-	#include <sys/select.h>
-	#include <sys/ioctl.h>
-	#include <sys/times.h>
-	#include <sys/stat.h>
-	#include <sys/times.h>
-	#include <arpa/inet.h>
-	#include <assert.h>
-	#include <errno.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdarg.h>
+#include <signal.h>
+#include <dirent.h>
+#include <dlfcn.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/select.h>
+#include <sys/ioctl.h>
+#include <sys/times.h>
+#include <sys/stat.h>
+#include <sys/times.h>
+#include <arpa/inet.h>
+#include <assert.h>
+#include <errno.h>
 #endif // !_WIN32
 
 #include <cstdarg>
@@ -85,17 +85,17 @@
 #include <vector>
 
 #if defined _WIN32 && defined _DEBUG
-	#include <crtdbg.h>
+#include <crtdbg.h>
 #endif // _WIN32 && _DEBUG
 
 #ifdef _WIN32
 
 #ifdef _MSC_VER
-	#define getch _getch
-	#ifndef snprintf
-		#define snprintf _snprintf
-	#endif
-	#define assert _ASSERT
+#define getch _getch
+#ifndef snprintf
+#define snprintf _snprintf
+#endif
+#define assert _ASSERT
 #endif
 
 #endif // _WIN32

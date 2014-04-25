@@ -25,9 +25,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Makros / Defines
 #if defined _WIN32 && defined _DEBUG && defined _MSC_VER
-	#define new new(_NORMAL_BLOCK, THIS_FILE, __LINE__)
-	#undef THIS_FILE
-	static char THIS_FILE[] = __FILE__;
+#define new new(_NORMAL_BLOCK, THIS_FILE, __LINE__)
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -35,10 +35,10 @@
  *
  *  @author OLiver
  */
-bool BinaryFile::Open(const char * const filename, const OpenFileMode of)
+bool BinaryFile::Open(const char* const filename, const OpenFileMode of)
 {
-	static const char * modes[] = {"w+b","a+b","rb"};
-	return ((file = fopen(filename,modes[of])) ? true : false);
+    static const char* modes[] = {"w+b", "a+b", "rb"};
+    return ((file = fopen(filename, modes[of])) ? true : false);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -48,14 +48,14 @@ bool BinaryFile::Open(const char * const filename, const OpenFileMode of)
  */
 bool BinaryFile::Close()
 {
-	bool result = false;
+    bool result = false;
 
-	if(file)
-		result = (fclose(file)==0);
+    if(file)
+        result = (fclose(file) == 0);
 
-	file = 0;
+    file = 0;
 
-	return result;
+    return result;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -65,10 +65,10 @@ bool BinaryFile::Close()
  */
 void BinaryFile::WriteShortString(const std::string& str)
 {
-	assert(str.length() < 255);
-	unsigned char length = static_cast<unsigned char>(str.length())+1;
-	WriteUnsignedChar(length);
-	WriteRawData((unsigned char*)str.c_str(),length);
+    assert(str.length() < 255);
+    unsigned char length = static_cast<unsigned char>(str.length()) + 1;
+    WriteUnsignedChar(length);
+    WriteRawData((unsigned char*)str.c_str(), length);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -78,9 +78,9 @@ void BinaryFile::WriteShortString(const std::string& str)
  */
 void BinaryFile::WriteLongString(const std::string& str)
 {
-	unsigned length = unsigned(str.length())+1;
-	WriteUnsignedInt(length);
-	WriteRawData((unsigned char*)str.c_str(),length);
+    unsigned length = unsigned(str.length()) + 1;
+    WriteUnsignedInt(length);
+    WriteRawData((unsigned char*)str.c_str(), length);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -90,12 +90,12 @@ void BinaryFile::WriteLongString(const std::string& str)
  */
 void BinaryFile::ReadShortString(std::string& str)
 {
-	unsigned char length;
-	length = ReadUnsignedChar();
-	char * tmp = new char[length];
-	ReadRawData((unsigned char*)tmp,length);
-	str = tmp;
-	delete [] tmp;
+    unsigned char length;
+    length = ReadUnsignedChar();
+    char* tmp = new char[length];
+    ReadRawData((unsigned char*)tmp, length);
+    str = tmp;
+    delete [] tmp;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -105,10 +105,10 @@ void BinaryFile::ReadShortString(std::string& str)
  */
 void BinaryFile::ReadLongString(std::string& str)
 {
-	unsigned length;
-	length = ReadUnsignedInt();
-	char * tmp = new char[length];
-	ReadRawData((unsigned char*)tmp,length);
-	str = tmp;
-	delete [] tmp;
+    unsigned length;
+    length = ReadUnsignedInt();
+    char* tmp = new char[length];
+    ReadRawData((unsigned char*)tmp, length);
+    str = tmp;
+    delete [] tmp;
 }

@@ -1,4 +1,4 @@
-// $Id: Message.h 7521 2011-09-08 20:45:55Z FloSoft $
+// $Id: Message.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -30,40 +30,40 @@ class Socket;
 
 class Message : public Serializer
 {
-public:
-	/// Konstruktor von @p Message.
-	Message(unsigned short id) : id(id) {}
-	/// Konstruktor, um Message aus vorhandenem Datenblock heraus zu erstellen
-	Message(const unsigned id, const unsigned char * const data, const unsigned length) : Serializer(data, length), id(id) {}
+    public:
+        /// Konstruktor von @p Message.
+        Message(unsigned short id) : id(id) {}
+        /// Konstruktor, um Message aus vorhandenem Datenblock heraus zu erstellen
+        Message(const unsigned id, const unsigned char* const data, const unsigned length) : Serializer(data, length), id(id) {}
 
-	virtual unsigned short getId() const { return id; }
-	bool send(Socket *sock);
+        virtual unsigned short getId() const { return id; }
+        bool send(Socket* sock);
 
-	static Message *recv(Socket *sock, int &error, bool wait, Message *(*createfunction)(unsigned short));
-	static Message *create_base(unsigned short id);
+        static Message* recv(Socket* sock, int& error, bool wait, Message * (*createfunction)(unsigned short));
+        static Message* create_base(unsigned short id);
 
-	virtual Message *create(unsigned short id) const { return create_base(id); }
-	virtual Message *duplicate() const;
+        virtual Message* create(unsigned short id) const { return create_base(id); }
+        virtual Message* duplicate() const;
 
-	virtual void run(MessageInterface *callback, unsigned int id) = 0;
+        virtual void run(MessageInterface* callback, unsigned int id) = 0;
 
-protected:
-	Message& operator=(const Message& other)
-	{
-		id = other.id;
+    protected:
+        Message& operator=(const Message& other)
+        {
+            id = other.id;
 
-		copy(other);
+            copy(other);
 
-		return *this;
-	}
+            return *this;
+        }
 
-private:
-	Message(void) {}
-	
-	int recv(Socket *sock, unsigned int length);
+    private:
+        Message(void) {}
 
-protected:
-	unsigned short id;
+        int recv(Socket* sock, unsigned int length);
+
+    protected:
+        unsigned short id;
 };
 
 #endif //!MESSAGE_H_INCLUDED

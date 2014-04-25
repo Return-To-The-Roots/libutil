@@ -1,4 +1,4 @@
-// $Id: SocketSet.h 7521 2011-09-08 20:45:55Z FloSoft $
+// $Id: SocketSet.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -26,25 +26,25 @@ class Socket;
 /// FD_Set-Wrapper-Klasse für portable TCP/IP-Verbindungen
 class SocketSet
 {
-public:
-	/// Standardkonstruktor von @p SocketSet.
-	SocketSet();
+    public:
+        /// Standardkonstruktor von @p SocketSet.
+        SocketSet();
 
-	/// räumt das @p SocketSet auf.
-	void Clear(void);
+        /// räumt das @p SocketSet auf.
+        void Clear(void);
 
-	/// fügt ein @p Socket zum @p SocketSet hinzu.
-	void Add(Socket &sock);
+        /// fügt ein @p Socket zum @p SocketSet hinzu.
+        void Add(Socket& sock);
 
-	/// führt einen Select auf dem @p SocketSet aus.
-	int Select(int timeout, int which = 2);
+        /// führt einen Select auf dem @p SocketSet aus.
+        int Select(int timeout, int which = 2);
 
-	/// ist ein @p Socket im @p SocketSet?
-	bool InSet(Socket &sock);
+        /// ist ein @p Socket im @p SocketSet?
+        bool InSet(Socket& sock);
 
-private:
-	fd_set set;     ///< Das fd_set
-	SOCKET highest; ///< Höchste Socket des Sets
+    private:
+        fd_set set;     ///< Das fd_set
+        SOCKET highest; ///< Höchste Socket des Sets
 };
 
 #endif // SOCKETSET_H_INCLUDED

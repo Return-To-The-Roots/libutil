@@ -1,4 +1,4 @@
-// $Id: error.h 7521 2011-09-08 20:45:55Z FloSoft $
+// $Id: error.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -22,12 +22,12 @@
 #pragma once
 
 /// Fatal-Error-Handler.
-int fatal_error(const char *format, ...);
+int fatal_error(const char* format, ...);
 
 /// Error-Handler.
-int error(const char *format, ...);
+int error(const char* format, ...);
 
 /// Warning-Handler.
-int warning(const char *format, ...);
+int warning(const char* format, ...);
 
 #endif // !ERROR_H_INCLUDED

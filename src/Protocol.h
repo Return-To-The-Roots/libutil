@@ -1,4 +1,4 @@
-// $Id: Protocol.h 6460 2010-05-31 11:42:38Z FloSoft $
+// $Id: Protocol.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005-2009 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -23,9 +23,9 @@
 
 enum
 {
-	NMS_NULL_MSG = 0x0000,
+    NMS_NULL_MSG = 0x0000,
 
-	NMS_DEAD_MSG = 0xFFFF
+    NMS_DEAD_MSG = 0xFFFF
 };
 
 #endif //!PROTOCOL_H_INCLUDED

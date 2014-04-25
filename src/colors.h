@@ -1,4 +1,4 @@
-// $Id: colors.h 8827 2013-08-03 15:42:22Z marcus $
+// $Id: colors.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -24,21 +24,21 @@
 /// Texturfarben
 enum TextureColor
 {
-	TC_GREY = 0,
-	TC_RED1,
-	TC_GREEN1,
-	TC_GREEN2,
-	TC_RED2,
-	TC_BRICKS,
-	TC_INVISIBLE
+    TC_GREY = 0,
+    TC_RED1,
+    TC_GREEN1,
+    TC_GREEN2,
+    TC_RED2,
+    TC_BRICKS,
+    TC_INVISIBLE
 };
 
 
 /// Farbkonstanten
 const unsigned COLOR_BLUE = 0xFF0073FF;
 const unsigned COLOR_RED = 0xFFFF0000;
-const unsigned COLOR_YELLOW	= 0xFFFFFF00;
-const unsigned COLOR_GREEN	= 0xFF00FF00;
+const unsigned COLOR_YELLOW = 0xFFFFFF00;
+const unsigned COLOR_GREEN  = 0xFF00FF00;
 const unsigned COLOR_MAGENTA = 0xFFFF00FF;
 const unsigned COLOR_CYAN = 0xFF00FFFF;
 const unsigned COLOR_BLACK = 0xFF444444;
@@ -56,18 +56,18 @@ const unsigned int PLAYER_COLORS_COUNT = 11;
 
 const unsigned int COLORS[PLAYER_COLORS_COUNT] =
 {
-	0xFF0079DB,	// COLOR_BLUE, // Blau
-	0xFFD70000,	// COLOR_RED, // Rot
-	0xFFCBCB00,	//COLOR_YELLOW, // Gelb
-	0xFF41C371,	// COLOR_GREEN, // Gruen
-	0xFF9A75BE,	// COLOR_MAGENTA, // Magenta
-	COLOR_CYAN, // Cyan,
-	0xFF4D4D4D,	// COLOR_BLACK, // Schwarz
-	COLOR_WHITE, // Weiss
-	COLOR_ORANGE, // Orange
-	COLOR_BROWN, // Braun
-	COLOR_PURPLE, // Lila
-///	COLOR_GHOST // Durchsichtig
+    0xFF0079DB, // COLOR_BLUE, // Blau
+    0xFFD70000, // COLOR_RED, // Rot
+    0xFFCBCB00, //COLOR_YELLOW, // Gelb
+    0xFF41C371, // COLOR_GREEN, // Gruen
+    0xFF9A75BE, // COLOR_MAGENTA, // Magenta
+    COLOR_CYAN, // Cyan,
+    0xFF4D4D4D, // COLOR_BLACK, // Schwarz
+    COLOR_WHITE, // Weiss
+    COLOR_ORANGE, // Orange
+    COLOR_BROWN, // Braun
+    COLOR_PURPLE, // Lila
+/// COLOR_GHOST // Durchsichtig
 };
 
 /// Liefert die transparente Farbkomponente zurück.
@@ -89,9 +89,9 @@ inline unsigned SetGreen(const unsigned int color, const unsigned int green) { r
 inline unsigned SetBlue( const unsigned int color, const unsigned int blue ) { return (( color & 0xFFFFFF00) | ( blue       ) ); }
 
 /// Erzeugt eine fertige Farbe aus einzelnen Farbkomponenten
-inline unsigned MakeColor(const unsigned int alpha, const unsigned int red, const unsigned int green, const unsigned int blue) 
-{ 
-	return ((alpha << 24) | (red << 16) | (green << 8) |  blue);
+inline unsigned MakeColor(const unsigned int alpha, const unsigned int red, const unsigned int green, const unsigned int blue)
+{
+    return ((alpha << 24) | (red << 16) | (green << 8) |  blue);
 }
 
 #endif // COLORS_H_INCLUDED

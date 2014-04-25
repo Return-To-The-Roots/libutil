@@ -1,4 +1,4 @@
-// $Id: Socket.cpp 8724 2013-05-16 12:30:16Z marcus $
+// $Id: Socket.cpp 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -25,9 +25,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Makros / Defines
 #if defined _WIN32 && defined _DEBUG && defined _MSC_VER
-	#define new new(_NORMAL_BLOCK, THIS_FILE, __LINE__)
-	#undef THIS_FILE
-	static char THIS_FILE[] = __FILE__;
+#define new new(_NORMAL_BLOCK, THIS_FILE, __LINE__)
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -64,8 +64,8 @@ Socket::Socket(const SOCKET so, STATUS st) : status(st), sock(so)
  */
 void Socket::Set(const SOCKET so, STATUS st)
 {
-	sock = so;
-	status = st;
+    sock = so;
+    status = st;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -79,14 +79,14 @@ void Socket::Set(const SOCKET so, STATUS st)
 bool Socket::Initialize(void)
 {
 #ifdef _WIN32
-	// obligatorische WSAStartup unter Windows
-	WSAData wsa;
-	if(WSAStartup(MAKEWORD(2,0), &wsa))
-		return false;
+    // obligatorische WSAStartup unter Windows
+    WSAData wsa;
+    if(WSAStartup(MAKEWORD(2, 0), &wsa))
+        return false;
 #endif // _WIN32
 
-	// Erfolg melden
-	return true;
+    // Erfolg melden
+    return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -98,8 +98,8 @@ bool Socket::Initialize(void)
 void Socket::Shutdown(void)
 {
 #ifdef _WIN32
-	// obligatorische WSACleanup unter Windows
-	WSACleanup();
+    // obligatorische WSACleanup unter Windows
+    WSACleanup();
 #endif // _WIN32
 }
 
@@ -113,27 +113,27 @@ void Socket::Shutdown(void)
  */
 bool Socket::Create(int family)
 {
-	// socket ggf. schließen
-	Close();
+    // socket ggf. schließen
+    Close();
 
-	// ist unser Socket schon initialisiert?
-	if(status == INVALID)
-	{
-		// nein, dann Neues erzeugen
-		sock = socket(family, SOCK_STREAM, 0);
+    // ist unser Socket schon initialisiert?
+    if(status == INVALID)
+    {
+        // nein, dann Neues erzeugen
+        sock = socket(family, SOCK_STREAM, 0);
 
-		// Ist es gültig?
-		status = (INVALID_SOCKET == sock ? INVALID : VALID);
+        // Ist es gültig?
+        status = (INVALID_SOCKET == sock ? INVALID : VALID);
 
-		// Nagle deaktivieren
-		int disable = 1;
-		SetSockOpt(TCP_NODELAY, &disable, sizeof(int), IPPROTO_TCP);
+        // Nagle deaktivieren
+        int disable = 1;
+        SetSockOpt(TCP_NODELAY, &disable, sizeof(int), IPPROTO_TCP);
 
-		int enable = 1;
-		SetSockOpt(SO_REUSEADDR, &enable, sizeof(int), SOL_SOCKET);
-	}
+        int enable = 1;
+        SetSockOpt(SO_REUSEADDR, &enable, sizeof(int), SOL_SOCKET);
+    }
 
-	return (status != INVALID);
+    return (status != INVALID);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -144,16 +144,16 @@ bool Socket::Create(int family)
  */
 void Socket::Close(void)
 {
-	upnp_.ClosePort();
+    upnp_.ClosePort();
 
-	if(status != INVALID)
-	{
-		// Socket schliessen
-		closesocket(sock);
+    if(status != INVALID)
+    {
+        // Socket schliessen
+        closesocket(sock);
 
-		// auf ungültig setzen
-		Set(INVALID_SOCKET, INVALID);
-	}
+        // auf ungültig setzen
+        Set(INVALID_SOCKET, INVALID);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -168,91 +168,92 @@ void Socket::Close(void)
  */
 bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
 {
-	bool ipv6 = use_ipv6;
-	bool error = false;
-	int versuch = 0;
+    bool ipv6 = use_ipv6;
+    bool error = false;
+    int versuch = 0;
 
-	// Adresse initialisieren
-	size_t size = 0;
+    // Adresse initialisieren
+    size_t size = 0;
 
-	do {
-		sockaddr_storage addrs;
-		memset(&addrs, 0, sizeof(sockaddr_storage));
+    do
+    {
+        sockaddr_storage addrs;
+        memset(&addrs, 0, sizeof(sockaddr_storage));
 
-		if(ipv6)
-		{
-			Create(AF_INET6);
-			size = sizeof(sockaddr_in6);
-		}
-		else
-		{
-			Create(AF_INET);
-			size = sizeof(sockaddr_in);
-		}
+        if(ipv6)
+        {
+            Create(AF_INET6);
+            size = sizeof(sockaddr_in6);
+        }
+        else
+        {
+            Create(AF_INET);
+            size = sizeof(sockaddr_in);
+        }
 
-		if(ipv6)
-		{
-			sockaddr_in6 *addr = (sockaddr_in6*)&addrs;
-			addr->sin6_family  = AF_INET6;
-			addr->sin6_port    = htons(port);
-		}
-		else
-		{
-			sockaddr_in *addr = (sockaddr_in*)&addrs;
-			addr->sin_family   = AF_INET;
-			addr->sin_port     = htons(port);
-		}
+        if(ipv6)
+        {
+            sockaddr_in6* addr = (sockaddr_in6*)&addrs;
+            addr->sin6_family  = AF_INET6;
+            addr->sin6_port    = htons(port);
+        }
+        else
+        {
+            sockaddr_in* addr = (sockaddr_in*)&addrs;
+            addr->sin_family   = AF_INET;
+            addr->sin_port     = htons(port);
+        }
 
-		// Bei Fehler jeweils nochmal mit ipv4 probieren
-		if(status != VALID)
-		{
-			ipv6 = !ipv6;
-			error = true;
-			++versuch;
-			if(versuch > 1)
-				return false;
+        // Bei Fehler jeweils nochmal mit ipv4 probieren
+        if(status != VALID)
+        {
+            ipv6 = !ipv6;
+            error = true;
+            ++versuch;
+            if(versuch > 1)
+                return false;
 
-			continue;
-		}
+            continue;
+        }
 
-		// Binden
-		if(bind(sock, (sockaddr*)&addrs, size) == SOCKET_ERROR)
-		{
-			ipv6 = !ipv6;
-			error = true;
-			++versuch;
-			if(versuch > 1)
-				return false;
+        // Binden
+        if(bind(sock, (sockaddr*)&addrs, size) == SOCKET_ERROR)
+        {
+            ipv6 = !ipv6;
+            error = true;
+            ++versuch;
+            if(versuch > 1)
+                return false;
 
-			continue;
-		}
+            continue;
+        }
 
-		// und Horchen
-		if(listen(sock, 10))
-		{
-			ipv6 = !ipv6;
-			error = true;
-			++versuch;
-			if(versuch > 1)
-				return false;
+        // und Horchen
+        if(listen(sock, 10))
+        {
+            ipv6 = !ipv6;
+            error = true;
+            ++versuch;
+            if(versuch > 1)
+                return false;
 
-			continue;
-		}
+            continue;
+        }
 
-		error = false;
-	}
-	while(error);
+        error = false;
+    }
+    while(error);
 
-	// try to open portforwarding if we're using ipv4
-	if (use_upnp)
-		if(!ipv6 && !upnp_.OpenPort(port))
-			LOG.getlasterror("Automatisches Erstellen des Portforwardings mit UPnP fehlgeschlagen\nFehler");
+    // try to open portforwarding if we're using ipv4
+    if (use_upnp)
+        if(!ipv6 && !upnp_.OpenPort(port))
+            LOG.getlasterror("Automatisches Erstellen des Portforwardings mit UPnP fehlgeschlagen\nFehler");
 
-	// Status setzen
-	status = LISTEN;
+    // Status setzen
+    status = LISTEN;
 
-	// und Alles gut :-)
-	return true;
+    // und Alles gut :-)
+    return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -267,23 +268,23 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
  */
 bool Socket::Accept(Socket& client)
 {
-	if(status != LISTEN)
-		return false;
+    if(status != LISTEN)
+        return false;
 
-	// Verbindung annehmen
-	SOCKET tmp = accept(sock, 0, 0);
-	if(tmp == INVALID_SOCKET)
-		return false;
+    // Verbindung annehmen
+    SOCKET tmp = accept(sock, 0, 0);
+    if(tmp == INVALID_SOCKET)
+        return false;
 
-	// Nagle deaktivieren
-	int disable = 1;
-	setsockopt(tmp, IPPROTO_TCP, TCP_NODELAY, (char*)&disable, sizeof(int));
+    // Nagle deaktivieren
+    int disable = 1;
+    setsockopt(tmp, IPPROTO_TCP, TCP_NODELAY, (char*)&disable, sizeof(int));
 
-	// Status setzen
-	client.Set(tmp, CONNECT);
+    // Status setzen
+    client.Set(tmp, CONNECT);
 
-	// Alles gut :-)
-	return true;
+    // Alles gut :-)
+    return true;
 }
 
 
@@ -295,67 +296,67 @@ bool Socket::Accept(Socket& client)
  *
  *  @author FloSoft
  */
-std::vector<Socket::HostAddr> Socket::HostToIp(const std::string &hostname, const unsigned int port, bool get_ipv6)
+std::vector<Socket::HostAddr> Socket::HostToIp(const std::string& hostname, const unsigned int port, bool get_ipv6)
 {
-	std::vector<HostAddr> ips;
-	char dport[256];
-	snprintf(dport, 255, "%d", port);
+    std::vector<HostAddr> ips;
+    char dport[256];
+    snprintf(dport, 255, "%d", port);
 
-	// no dns resolution for localhost
-	if(hostname == "localhost")
-	{
-		HostAddr h;
-		h.host = "localhost";
-		h.port = dport;
-		h.ipv6 = get_ipv6;
-		ips.push_back(h);
+    // no dns resolution for localhost
+    if(hostname == "localhost")
+    {
+        HostAddr h;
+        h.host = "localhost";
+        h.port = dport;
+        h.ipv6 = get_ipv6;
+        ips.push_back(h);
 
-		return ips;
-	}
+        return ips;
+    }
 
-	addrinfo hints;
-	memset(&hints, 0, sizeof(addrinfo));
+    addrinfo hints;
+    memset(&hints, 0, sizeof(addrinfo));
 
-	hints.ai_flags = AI_ADDRCONFIG | AI_ALL;
-	hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = AI_ADDRCONFIG | AI_ALL;
+    hints.ai_socktype = SOCK_STREAM;
 
-	if(get_ipv6)
-		hints.ai_family = AF_INET6;
-	else
-		hints.ai_family = AF_INET;
+    if(get_ipv6)
+        hints.ai_family = AF_INET6;
+    else
+        hints.ai_family = AF_INET;
 
-	addrinfo *res;
-	if(getaddrinfo(hostname.c_str(), dport, &hints, &res) != 0)
-		return ips; // "DNS Error"
+    addrinfo* res;
+    if(getaddrinfo(hostname.c_str(), dport, &hints, &res) != 0)
+        return ips; // "DNS Error"
 
-	addrinfo *addr = res;
-	while(addr != NULL)
-	{
-		HostAddr h;
+    addrinfo* addr = res;
+    while(addr != NULL)
+    {
+        HostAddr h;
 
-		h.port = dport;
+        h.port = dport;
 
-		if(addr->ai_family == AF_INET6)
-			h.ipv6 = true;
+        if(addr->ai_family == AF_INET6)
+            h.ipv6 = true;
 
-		IpToString(addr->ai_addr, h.host);
+        IpToString(addr->ai_addr, h.host);
 
-		addr = addr->ai_next;
+        addr = addr->ai_next;
 
-		ips.push_back(h);
-	}
+        ips.push_back(h);
+    }
 
-	freeaddrinfo(res);
+    freeaddrinfo(res);
 
-	return ips;
+    return ips;
 }
 
 void Socket::Sleep(unsigned int ms)
 {
 #ifdef _WIN32
-	::Sleep(250);
+    ::Sleep(250);
 #else
-	usleep(ms * 1000);
+    usleep(ms * 1000);
 #endif
 }
 
@@ -370,182 +371,182 @@ void Socket::Sleep(unsigned int ms)
  *
  *  @author FloSoft
  */
-bool Socket::Connect(const std::string &hostname, const unsigned short port, bool use_ipv6, const Socket::PROXY_TYPE typ, const std::string proxy_hostname, const unsigned int proxy_port)
+bool Socket::Connect(const std::string& hostname, const unsigned short port, bool use_ipv6, const Socket::PROXY_TYPE typ, const std::string proxy_hostname, const unsigned int proxy_port)
 {
-	if(typ == PROXY_SOCKS4)
-		use_ipv6 = false;
+    if(typ == PROXY_SOCKS4)
+        use_ipv6 = false;
 
-	std::vector<HostAddr> proxy_ips;
-	if(typ != PROXY_NONE)
-	{
-		proxy_ips = HostToIp(std::string(proxy_hostname), proxy_port, use_ipv6);
-		if(proxy_ips.size() == 0)
-			return false;
-	}
+    std::vector<HostAddr> proxy_ips;
+    if(typ != PROXY_NONE)
+    {
+        proxy_ips = HostToIp(std::string(proxy_hostname), proxy_port, use_ipv6);
+        if(proxy_ips.size() == 0)
+            return false;
+    }
 
-	// TODO: socks v5 kann remote resolven
-	std::vector<HostAddr> ips = HostToIp(std::string(hostname), port, use_ipv6);
-	if(ips.size() == 0)
-		return false;
+    // TODO: socks v5 kann remote resolven
+    std::vector<HostAddr> ips = HostToIp(std::string(hostname), port, use_ipv6);
+    if(ips.size() == 0)
+        return false;
 
-	bool done = false;
+    bool done = false;
 
-	std::vector<HostAddr>::const_iterator start, end;
+    std::vector<HostAddr>::const_iterator start, end;
 
-	// do not use proxy for connecting to localhost
-	if(typ != PROXY_NONE && hostname != "localhost")
-	{
-		start = proxy_ips.begin();
-		end = proxy_ips.end();
-	}
-	else
-	{
-		start = ips.begin();
-		end = ips.end();
-	}
+    // do not use proxy for connecting to localhost
+    if(typ != PROXY_NONE && hostname != "localhost")
+    {
+        start = proxy_ips.begin();
+        end = proxy_ips.end();
+    }
+    else
+    {
+        start = ips.begin();
+        end = ips.end();
+    }
 
-	for(std::vector<HostAddr>::const_iterator it = start; it != end; ++it)
-	{
-		if(!Create(it->ipv6 ? AF_INET6 : AF_INET))
-			continue;
+    for(std::vector<HostAddr>::const_iterator it = start; it != end; ++it)
+    {
+        if(!Create(it->ipv6 ? AF_INET6 : AF_INET))
+            continue;
 
-		// aktiviere non-blocking
-		unsigned long argp = 1;
+        // aktiviere non-blocking
+        unsigned long argp = 1;
 #ifdef _WIN32
-		ioctlsocket(sock, FIONBIO, &argp);
+        ioctlsocket(sock, FIONBIO, &argp);
 #else
-		ioctl(sock, FIONBIO, &argp);
+        ioctl(sock, FIONBIO, &argp);
 #endif
 
-		std::string ip;
-		IpToString(it->addr->ai_addr, ip);
-		LOG.lprintf("Verbinde mit %s%s:%d\n", (typ != PROXY_NONE ? "Proxy " : ""), ip.c_str(), (typ != PROXY_NONE ? proxy_port : port));
+        std::string ip;
+        IpToString(it->addr->ai_addr, ip);
+        LOG.lprintf("Verbinde mit %s%s:%d\n", (typ != PROXY_NONE ? "Proxy " : ""), ip.c_str(), (typ != PROXY_NONE ? proxy_port : port));
 
-		// Und schließlich Verbinden
-		if(connect(sock, it->addr->ai_addr, it->addr->ai_addrlen) != SOCKET_ERROR)
-		{
-			done = true;
-			break;
-		}
+        // Und schließlich Verbinden
+        if(connect(sock, it->addr->ai_addr, it->addr->ai_addrlen) != SOCKET_ERROR)
+        {
+            done = true;
+            break;
+        }
 #ifdef _WIN32
-		if(WSAGetLastError() == WSAEWOULDBLOCK)
+        if(WSAGetLastError() == WSAEWOULDBLOCK)
 #else
-		if(errno == EINPROGRESS || errno == EWOULDBLOCK)
+        if(errno == EINPROGRESS || errno == EWOULDBLOCK)
 #endif
-		{
-			int timeout = 0;
-			while(!done)
-			{
-				SocketSet sw, se;
-				sw.Add(*this);
-				se.Add(*this);
+        {
+            int timeout = 0;
+            while(!done)
+            {
+                SocketSet sw, se;
+                sw.Add(*this);
+                se.Add(*this);
 
-				if(sw.Select(0, 1) == 1 || se.Select(0, 2) != 0)
-				{
-					unsigned int err;
-					socklen_t len = sizeof(unsigned int);
-					getsockopt(sock, SOL_SOCKET, SO_ERROR, (char*)&err, &len);
+                if(sw.Select(0, 1) == 1 || se.Select(0, 2) != 0)
+                {
+                    unsigned int err;
+                    socklen_t len = sizeof(unsigned int);
+                    getsockopt(sock, SOL_SOCKET, SO_ERROR, (char*)&err, &len);
 
-					if(err != 0)
-					{
+                    if(err != 0)
+                    {
 #ifdef _WIN32
-						WSASetLastError(err);
+                        WSASetLastError(err);
 #else
-						errno = err;
+                        errno = err;
 #endif
-						break;
-					}
+                        break;
+                    }
 
-					switch(typ)
-					{
-					default:
-						break;
-					case PROXY_SOCKS4:
-						{
-							char proxyinit[18];
+                    switch(typ)
+                    {
+                        default:
+                            break;
+                        case PROXY_SOCKS4:
+                        {
+                            char proxyinit[18];
 
-							proxyinit[0] = 4; // socks v4
-							proxyinit[1] = 1; // 1=connect
-							*(unsigned short*)(&proxyinit[2]) = htons(port);
-							for(std::vector<HostAddr>::const_iterator it = ips.begin(); it != ips.end(); ++it)
-							{
-								if(!it->ipv6)
-									sscanf(it->host.c_str(), "%c.%c.%c.%c", &proxyinit[4], &proxyinit[5], &proxyinit[6], &proxyinit[7]);
-							}
-							strcpy(&proxyinit[8], "siedler25"); // userid
+                            proxyinit[0] = 4; // socks v4
+                            proxyinit[1] = 1; // 1=connect
+                            *(unsigned short*)(&proxyinit[2]) = htons(port);
+                            for(std::vector<HostAddr>::const_iterator it = ips.begin(); it != ips.end(); ++it)
+                            {
+                                if(!it->ipv6)
+                                    sscanf(it->host.c_str(), "%c.%c.%c.%c", &proxyinit[4], &proxyinit[5], &proxyinit[6], &proxyinit[7]);
+                            }
+                            strcpy(&proxyinit[8], "siedler25"); // userid
 
-							Send(proxyinit, 18);
+                            Send(proxyinit, 18);
 
-							int proxy_timeout = 0;
-							while(BytesWaiting() < 8 && proxy_timeout < 8)
-							{
-								Sleep(250);
-								++proxy_timeout;
-							}
+                            int proxy_timeout = 0;
+                            while(BytesWaiting() < 8 && proxy_timeout < 8)
+                            {
+                                Sleep(250);
+                                ++proxy_timeout;
+                            }
 
-							if(proxy_timeout >= 8)
-							{
-								LOG.lprintf("Proxy error: connection timed out\n");
-								return false;
-							}
+                            if(proxy_timeout >= 8)
+                            {
+                                LOG.lprintf("Proxy error: connection timed out\n");
+                                return false;
+                            }
 
-							Recv(proxyinit, 8);
+                            Recv(proxyinit, 8);
 
-							if(proxyinit[0] != 0 || proxyinit[1] != 90)
-							{
-								LOG.lprintf("Proxy error: got %d: connection rejected or failed or other error\n", proxyinit[1]);
-								return false;
-							}
-						} break;
-					case PROXY_SOCKS5:
-						{
-							// not implemented
-							return false;
-						} break;
-					}
+                            if(proxyinit[0] != 0 || proxyinit[1] != 90)
+                            {
+                                LOG.lprintf("Proxy error: got %d: connection rejected or failed or other error\n", proxyinit[1]);
+                                return false;
+                            }
+                        } break;
+                        case PROXY_SOCKS5:
+                        {
+                            // not implemented
+                            return false;
+                        } break;
+                    }
 
-					// Verbindung hergestellt
-					done = true;
-				}
+                    // Verbindung hergestellt
+                    done = true;
+                }
 
-				Sleep(50);
+                Sleep(50);
 
-				++timeout;
-				if(timeout > 8)
-				{
+                ++timeout;
+                if(timeout > 8)
+                {
 #ifdef _WIN32
-					WSASetLastError(WSAETIMEDOUT);
+                    WSASetLastError(WSAETIMEDOUT);
 #else
-					errno = ETIMEDOUT;
+                    errno = ETIMEDOUT;
 #endif
-					break;
-				}
-			}
-			if(done)
-				break;
-		}
-		LOG.getlasterror("Verbindung fehlgeschlagen\nFehler");
-	}
+                    break;
+                }
+            }
+            if(done)
+                break;
+        }
+        LOG.getlasterror("Verbindung fehlgeschlagen\nFehler");
+    }
 
-	if(!done)
-	{
-		LOG.lprintf("Fehler beim Verbinden mit %s:%d\n", hostname.c_str(), port);
-		return false;
-	}
-	LOG.lprintf("Verbindung erfolgreich hergestellt mit %s:%d\n", hostname.c_str(), port);
+    if(!done)
+    {
+        LOG.lprintf("Fehler beim Verbinden mit %s:%d\n", hostname.c_str(), port);
+        return false;
+    }
+    LOG.lprintf("Verbindung erfolgreich hergestellt mit %s:%d\n", hostname.c_str(), port);
 
-	// deaktiviere non-blocking
-	unsigned long argp = 0;
+    // deaktiviere non-blocking
+    unsigned long argp = 0;
 #ifdef _WIN32
-	ioctlsocket(sock, FIONBIO, &argp);
+    ioctlsocket(sock, FIONBIO, &argp);
 #else
-	ioctl(sock, FIONBIO, &argp);
+    ioctl(sock, FIONBIO, &argp);
 #endif
 
-	status = CONNECT;
+    status = CONNECT;
 
-	// Alles ok
-	return true;
+    // Alles ok
+    return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -561,13 +562,13 @@ bool Socket::Connect(const std::string &hostname, const unsigned short port, boo
  *  @author OLiver
  *  @author FloSoft
  */
-int Socket::Recv(void *buffer, int length, bool block)
+int Socket::Recv(void* buffer, int length, bool block)
 {
-	if(status == INVALID)
-		return -1;
+    if(status == INVALID)
+        return -1;
 
-	// und empfangen
-	return recv(sock, reinterpret_cast<char*>(buffer), length, (block ? 0 : MSG_PEEK) );
+    // und empfangen
+    return recv(sock, reinterpret_cast<char*>(buffer), length, (block ? 0 : MSG_PEEK) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -582,13 +583,13 @@ int Socket::Recv(void *buffer, int length, bool block)
  *  @author OLiver
  *  @author FloSoft
  */
-int Socket::Send(const void *buffer, int length)
+int Socket::Send(const void* buffer, int length)
 {
-	if(status == INVALID)
-		return -1;
+    if(status == INVALID)
+        return -1;
 
-	// und verschicken
-	return send(sock, reinterpret_cast<const char*>(buffer), length, 0);
+    // und verschicken
+    return send(sock, reinterpret_cast<const char*>(buffer), length, 0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -605,7 +606,7 @@ int Socket::Send(const void *buffer, int length)
  */
 bool Socket::SetSockOpt(int nOptionName, const void* lpOptionValue, int nOptionLen, int nLevel)
 {
-	return (SOCKET_ERROR != setsockopt(sock, nLevel, nOptionName, (char*)lpOptionValue, nOptionLen));
+    return (SOCKET_ERROR != setsockopt(sock, nLevel, nOptionName, (char*)lpOptionValue, nOptionLen));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -619,14 +620,14 @@ bool Socket::SetSockOpt(int nOptionName, const void* lpOptionValue, int nOptionL
  *  @author OLiver
  *  @author FloSoft
  */
-Socket &Socket::operator =(const Socket &sock)
+Socket& Socket::operator =(const Socket& sock)
 {
-	// Daten setzen
-	Set(sock.sock, sock.status);
+    // Daten setzen
+    Set(sock.sock, sock.status);
 
-	upnp_ = sock.upnp_;
+    upnp_ = sock.upnp_;
 
-	return *this;
+    return *this;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -640,13 +641,13 @@ Socket &Socket::operator =(const Socket &sock)
  *  @author OLiver
  *  @author FloSoft
  */
-Socket &Socket::operator =(const SOCKET &sock)
+Socket& Socket::operator =(const SOCKET& sock)
 {
-	// Daten setzen
-	this->sock = sock;
-	status = (INVALID_SOCKET == sock ? INVALID : VALID);
+    // Daten setzen
+    this->sock = sock;
+    status = (INVALID_SOCKET == sock ? INVALID : VALID);
 
-	return *this;
+    return *this;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -660,12 +661,12 @@ Socket &Socket::operator =(const SOCKET &sock)
  *  @author OLiver
  *  @author FloSoft
  */
-bool Socket::operator >(const Socket &sock)
+bool Socket::operator >(const Socket& sock)
 {
-	if(this->sock > sock.sock)
-		return true;
+    if(this->sock > sock.sock)
+        return true;
 
-	return false;
+    return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -679,11 +680,11 @@ bool Socket::operator >(const Socket &sock)
  */
 int Socket::BytesWaiting(void)
 {
-	unsigned int received;
-	if(BytesWaiting(&received) != 0)
-		return -1;
+    unsigned int received;
+    if(BytesWaiting(&received) != 0)
+        return -1;
 
-	return (int)received;
+    return (int)received;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -697,15 +698,15 @@ int Socket::BytesWaiting(void)
  *  @author OLiver
  *  @author FloSoft
  */
-int Socket::BytesWaiting(unsigned int *received)
+int Socket::BytesWaiting(unsigned int* received)
 {
 #ifdef _WIN32
-	DWORD dwReceived;
-	int retval = ioctlsocket(sock, FIONREAD, &dwReceived);
-	*received = dwReceived;
-	return retval;
+    DWORD dwReceived;
+    int retval = ioctlsocket(sock, FIONREAD, &dwReceived);
+    *received = dwReceived;
+    return retval;
 #else
-	return ioctl(sock, FIONREAD, received);
+    return ioctl(sock, FIONREAD, received);
 #endif
 }
 
@@ -720,16 +721,16 @@ int Socket::BytesWaiting(unsigned int *received)
  */
 std::string Socket::GetPeerIP(void)
 {
-	std::string ip;
-	sockaddr_storage peer;
-	socklen_t length = sizeof(sockaddr_storage);
+    std::string ip;
+    sockaddr_storage peer;
+    socklen_t length = sizeof(sockaddr_storage);
 
-	// Remotehost-Adresse holen
-	if(getpeername(sock, (sockaddr*)&peer, &length) == SOCKET_ERROR)
-		return ip;
+    // Remotehost-Adresse holen
+    if(getpeername(sock, (sockaddr*)&peer, &length) == SOCKET_ERROR)
+        return ip;
 
-	// in Text verwandeln
-	return IpToString((sockaddr*)&peer, ip);
+    // in Text verwandeln
+    return IpToString((sockaddr*)&peer, ip);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -743,16 +744,16 @@ std::string Socket::GetPeerIP(void)
  */
 std::string Socket::GetSockIP(void)
 {
-	std::string ip;
-	sockaddr_storage peer;
-	socklen_t length = sizeof(sockaddr_storage);
+    std::string ip;
+    sockaddr_storage peer;
+    socklen_t length = sizeof(sockaddr_storage);
 
-	// Localhost-Adresse holen
-	if(getsockname(sock, (sockaddr*)&peer, &length) == SOCKET_ERROR)
-		return ip;
+    // Localhost-Adresse holen
+    if(getsockname(sock, (sockaddr*)&peer, &length) == SOCKET_ERROR)
+        return ip;
 
-	// in Text verwandeln
-	return IpToString((sockaddr*)&peer, ip);
+    // in Text verwandeln
+    return IpToString((sockaddr*)&peer, ip);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -764,10 +765,10 @@ std::string Socket::GetSockIP(void)
  *  @author OLiver
  *  @author FloSoft
  */
-SOCKET *Socket::GetSocket(void)
+SOCKET* Socket::GetSocket(void)
 {
-	// Zeiger auf Socket liefern
-	return &sock;
+    // Zeiger auf Socket liefern
+    return &sock;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -777,50 +778,53 @@ SOCKET *Socket::GetSocket(void)
  *  @author OLiver
  *  @author FloSoft
  */
-std::string &Socket::IpToString(const sockaddr *addr, std::string &buffer)
+std::string& Socket::IpToString(const sockaddr* addr, std::string& buffer)
 {
-	static char temp[256];
+    static char temp[256];
 
 #ifdef _WIN32
-	size_t size = 0;
-	if (addr->sa_family == AF_INET)
-		size = sizeof(sockaddr_in);
-	else
-		size = sizeof(sockaddr_in6);
+    size_t size = 0;
+    if (addr->sa_family == AF_INET)
+        size = sizeof(sockaddr_in);
+    else
+        size = sizeof(sockaddr_in6);
 
-	assert(size != 0);
+    assert(size != 0);
 
-	sockaddr *copy = (sockaddr *)calloc(1, size);
-	memcpy(copy, addr, size);
+    sockaddr* copy = (sockaddr*)calloc(1, size);
+    memcpy(copy, addr, size);
 
-	if (addr->sa_family == AF_INET)
-		((sockaddr_in *)copy)->sin_port = 0;
-	else
-		((sockaddr_in6 *)copy)->sin6_port = 0;
+    if (addr->sa_family == AF_INET)
+        ((sockaddr_in*)copy)->sin_port = 0;
+    else
+        ((sockaddr_in6*)copy)->sin6_port = 0;
 
-	DWORD le = GetLastError();
-	DWORD templen = sizeof(temp);
-	WSAAddressToStringA(copy, size, NULL, temp, &templen);
-	SetLastError(le);
+    DWORD le = GetLastError();
+    DWORD templen = sizeof(temp);
+    WSAAddressToStringA(copy, size, NULL, temp, &templen);
+    SetLastError(le);
 
-	free(copy);
+    free(copy);
 #else
-	void *ip;
+    void* ip;
 
-	if (addr->sa_family == AF_INET) {
-		ip = &(((sockaddr_in *)addr)->sin_addr);
-	} else {
-		ip = &(((sockaddr_in6 *)addr)->sin6_addr);
-	}
+    if (addr->sa_family == AF_INET)
+    {
+        ip = &(((sockaddr_in*)addr)->sin_addr);
+    }
+    else
+    {
+        ip = &(((sockaddr_in6*)addr)->sin6_addr);
+    }
 
-	inet_ntop(addr->sa_family, ip, temp, sizeof(temp));
+    inet_ntop(addr->sa_family, ip, temp, sizeof(temp));
 #endif
 
-	buffer = temp;
+    buffer = temp;
 
-	int pos = buffer.find("::ffff:");
-	if(pos != -1)
-		buffer.replace(pos, 7, "");
+    int pos = buffer.find("::ffff:");
+    if(pos != -1)
+        buffer.replace(pos, 7, "");
 
-	return buffer;
+    return buffer;
 }

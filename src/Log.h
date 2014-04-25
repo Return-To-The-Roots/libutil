@@ -1,4 +1,4 @@
-// $Id: Log.h 7521 2011-09-08 20:45:55Z FloSoft $
+// $Id: Log.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -24,31 +24,31 @@
 /// Log Klasse.
 class Log : public Singleton<Log>
 {
-public:
-	/// Konstruktor von @p Log.
-	Log(void);
-	/// Desktruktor von @p Log.
-	~Log(void);
+    public:
+        /// Konstruktor von @p Log.
+        Log(void);
+        /// Desktruktor von @p Log.
+        ~Log(void);
 
-	/// öffnet das Log (falls noch nicht offen)
-	void open(void);
+        /// öffnet das Log (falls noch nicht offen)
+        void open(void);
 
-	void getlasterror(const char *text);
+        void getlasterror(const char* text);
 
-	/// Schreibt gefärbte Daten ins Log und auf stdout.
-	void lcprintf(const unsigned int color, const char *format, ...);
-	/// Schreibt Daten ins Log und auf stdout.
-	void lprintf(const char *format, ...);
-	/// Schreibt Daten ins Log und auf stdout.
-	void lvprintf(const char *format, va_list list);
+        /// Schreibt gefärbte Daten ins Log und auf stdout.
+        void lcprintf(const unsigned int color, const char* format, ...);
+        /// Schreibt Daten ins Log und auf stdout.
+        void lprintf(const char* format, ...);
+        /// Schreibt Daten ins Log und auf stdout.
+        void lvprintf(const char* format, va_list list);
 
-	/// Schreibt Daten nur ins Log und auf stdout.
-	void write(const char *format, ...);
-	/// Schreibt Daten nur ins Log und auf stdout.
-	void vwrite(const char *format, va_list list);
+        /// Schreibt Daten nur ins Log und auf stdout.
+        void write(const char* format, ...);
+        /// Schreibt Daten nur ins Log und auf stdout.
+        void vwrite(const char* format, va_list list);
 
-private:
-	FILE *log; ///< das Logfile
+    private:
+        FILE* log; ///< das Logfile
 };
 
 #define LOG Log::inst()
