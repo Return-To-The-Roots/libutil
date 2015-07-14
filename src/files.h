@@ -190,6 +190,9 @@ const char* const FILE_PATHS[] =
     /*104 */RTTRDIR "/splash.bmp"                // Splash
 };
 
+const std::string UNIT_DATA_DIR = RTTRDIR "/Data/";  // Location with the data for all game units/objects (xml files)
+const std::string NATIONS_DATA_FILE = "nations.xml"; // filename for the xml containing the nation definitions
+
 const unsigned int FILE_SPLASH_ID = 104;
 
 const unsigned int FILE_LOAD_IDS_COUNT = 21;
@@ -231,5 +234,6 @@ const std::string TEX_GFXSET[GFXSET_COUNT] =
 std::string GetFilePath(std::string file);
 bool FileExists(std::string file);
 bool IsDir(std::string dir);
+int mkdir_p(const std::string& dir);
 
 #endif // FILES_H_INCLUDED
