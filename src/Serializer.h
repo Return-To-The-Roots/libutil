@@ -21,6 +21,12 @@
 
 #pragma once
 
+#ifdef _WIN32
+    #include <WinSock2.h>
+#else
+    #include <arpa/inet.h>
+#endif // _WIN32
+
 class BinaryFile;
 
 /// Klasse die einen Buffer zum Serialisieren verwaltet und entsprechende Methoden zum Lesen/Schreiben bereitstellt.
