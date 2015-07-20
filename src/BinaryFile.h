@@ -22,6 +22,7 @@
 #pragma once
 
 #include "../../libendian/src/libendian.h"
+#include <cstdio>
 
 // Öffnungsmethoden
 enum OpenFileMode
