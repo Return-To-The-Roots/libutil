@@ -25,14 +25,14 @@
 #ifdef _WIN32
     #ifdef _MSC_VER
         #include <crtdbg.h>
+        #define getch _getch
+        #ifndef snprintf
+            #define snprintf _snprintf
+        #endif
+        #define assert _ASSERT
     #else
         #include <assert.h>
     #endif
-    #define getch _getch
-    #ifndef snprintf
-        #define snprintf _snprintf
-    #endif
-    #define assert _ASSERT
 
 #else //_WIN32
 
