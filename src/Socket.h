@@ -25,13 +25,13 @@
 
     #include <ws2tcpip.h>
 
-    #ifdef __CYGWIN__
+    #if defined(__CYGWIN__) || defined(__MINGW32__) || defined(__MINGW64__)
         #ifndef AI_ALL
-        #define AI_ALL            0x0010
-    #endif
+            #define AI_ALL            0x0010
+        #endif
 
-    #ifndef AI_ADDRCONFIG
-        #define AI_ADDRCONFIG     0x0020
+        #ifndef AI_ADDRCONFIG
+            #define AI_ADDRCONFIG     0x0020
         #endif
     #endif
 

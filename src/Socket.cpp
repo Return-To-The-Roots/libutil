@@ -24,7 +24,9 @@
 #include "Log.h"
 #include "SocketSet.h"
 
-#ifndef _WIN32
+#ifdef _WIN32
+
+#else
     #include <netinet/tcp.h>
     #include <unistd.h>
     #include <sys/ioctl.h>
@@ -476,7 +478,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
 
                             proxyinit[0] = 4; // socks v4
                             proxyinit[1] = 1; // 1=connect
-                            *(unsigned short*)(&proxyinit[2]) = htons(port);
+                            *reinterpret_cast<unsigned short*>(&proxyinit[2]) = htons(port);
                             for(std::vector<HostAddr>::const_iterator it = ips.begin(); it != ips.end(); ++it)
                             {
                                 if(!it->ipv6)
