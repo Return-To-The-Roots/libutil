@@ -188,7 +188,11 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
 
     do
     {
-        sockaddr_storage addrs;
+        union{
+            sockaddr_storage addrs;
+            sockaddr_in addrV4;
+            sockaddr_in6 addrV6;
+        };
         memset(&addrs, 0, sizeof(sockaddr_storage));
 
         if(ipv6)
@@ -204,15 +208,13 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
 
         if(ipv6)
         {
-            sockaddr_in6* addr = (sockaddr_in6*)&addrs;
-            addr->sin6_family  = AF_INET6;
-            addr->sin6_port    = htons(port);
+            addrV6.sin6_family  = AF_INET6;
+            addrV6.sin6_port    = htons(port);
         }
         else
         {
-            sockaddr_in* addr = (sockaddr_in*)&addrs;
-            addr->sin_family   = AF_INET;
-            addr->sin_port     = htons(port);
+            addrV4.sin_family   = AF_INET;
+            addrV4.sin_port     = htons(port);
         }
 
         // Bei Fehler jeweils nochmal mit ipv4 probieren
@@ -474,11 +476,14 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
                             break;
                         case PROXY_SOCKS4:
                         {
-                            char proxyinit[18];
+                            union{
+                                char proxyinit[18];
+                                unsigned short proxyInitShort[9];
+                            };
 
                             proxyinit[0] = 4; // socks v4
                             proxyinit[1] = 1; // 1=connect
-                            *reinterpret_cast<unsigned short*>(&proxyinit[2]) = htons(port);
+                            proxyInitShort[1] = htons(port);
                             for(std::vector<HostAddr>::const_iterator it = ips.begin(); it != ips.end(); ++it)
                             {
                                 if(!it->ipv6)
