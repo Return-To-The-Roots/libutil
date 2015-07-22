@@ -21,6 +21,13 @@
 
 #pragma once
 
+#ifdef _WIN32
+    #include <winsock2.h>
+#else
+    #include <sys/select.h>
+    #define SOCKET int
+#endif // _WIN32
+
 class Socket;
 
 /// FD_Set-Wrapper-Klasse für portable TCP/IP-Verbindungen

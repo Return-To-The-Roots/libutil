@@ -21,6 +21,8 @@
 
 #pragma once
 
+#include <string>
+
 #ifndef PREFIX
 #   ifdef _WIN32
 #       define PREFIX "."

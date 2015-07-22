@@ -23,6 +23,7 @@
 
 #include "../../libendian/src/libendian.h"
 #include <cstdio>
+#include <string>
 
 // Öffnungsmethoden
 enum OpenFileMode

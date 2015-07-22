@@ -23,8 +23,8 @@
 
 #include "Message.h"
 #include "MessageInterface.h"
-
 #include "Protocol.h"
+#include "Log.h"
 
 /*
  * das Klassenkommentar ist alles Client-Sicht, für Server-Sicht ist alles andersrum

@@ -27,6 +27,8 @@
     #include <arpa/inet.h>
 #endif // _WIN32
 
+#include <string>
+
 class BinaryFile;
 
 /// Klasse die einen Buffer zum Serialisieren verwaltet und entsprechende Methoden zum Lesen/Schreiben bereitstellt.

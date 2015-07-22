@@ -22,15 +22,24 @@
 #ifdef _WIN32
     #define _CRTDBG_MAP_ALLOC
     #define WIN32_LEAN_AND_MEAN
-    #define WINVER _WIN32_WINNT_VISTA
-    #define _WIN32_WINNT _WIN32_WINNT_VISTA
+
+    // We need at least the win vista version for all required defines
+    #if defined _WIN32_WINNT && _WIN32_WINNT < 0x600
+        #undef _WIN32_WINNT
+    #endif
+    #ifndef _WIN32_WINNT
+        #define _WIN32_WINNT 0x600
+    #endif
+
     #ifdef _MSC_VER
         #include <crtdbg.h>
         #define getch _getch
         #ifndef snprintf
             #define snprintf _snprintf
         #endif
-        #define assert _ASSERT
+        #ifndef assert
+            #define assert _ASSERT
+        #endif
     #else
         #include <assert.h>
     #endif
@@ -38,5 +47,10 @@
 #else //_WIN32
 
 #endif //_WIN32
+
+#ifndef va_copy
+    /* WARNING - DANGER - ASSUMES TYPICAL STACK MACHINE */
+    #define va_copy(dst, src) ((void)((dst) = (src)))
+#endif
 
 #endif

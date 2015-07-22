@@ -19,8 +19,11 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header
-#include "main.h"
+#include "libUtilDefines.h"
 #include "MessageQueue.h"
+#include "Message.h"
+#include "Socket.h"
+#include "Log.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Makros / Defines
@@ -57,6 +60,9 @@ MessageQueue::MessageQueue(const MessageQueue& mq) : messages(mq.messages.size()
 /// Zuweisungsoperator, da Messages kopiert werden müssen
 MessageQueue& MessageQueue::operator=(const MessageQueue& mq)
 {
+    if(this == &mq)
+        return *this;
+    clear();
     messages.resize(mq.messages.size());
     for(unsigned i = 0; i < mq.messages.size(); ++i)
         messages[i] = mq.messages[i]->duplicate();

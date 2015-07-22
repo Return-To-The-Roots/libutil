@@ -19,6 +19,11 @@
 #ifndef MESSAGEQUEUE_H_INCLUDED
 #define MESSAGEQUEUE_H_INCLUDED
 
+#include <vector>
+
+class Message;
+class Socket;
+
 //class Socket;
 class MessageQueue
 {
@@ -52,7 +57,7 @@ class MessageQueue
         /// hängt ein Element hinten an.
         void push(Message* message) { messages.push_back(message); }
         /// liefert das vorderste Element der Queue.
-        Message* front() { return (messages.size() > 0 ? (*messages.begin()) : NULL); }
+        Message* front() { return (!messages.empty() ? messages.front() : NULL); }
         /// entfernt das vorderste Element aus der Queue.
         void pop(void);
 

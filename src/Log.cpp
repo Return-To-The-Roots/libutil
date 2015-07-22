@@ -19,10 +19,17 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header
-#include "main.h"
+#include "libUtilDefines.h"
 #include "Log.h"
-
+#include "MyTime.h"
+#include "files.h"
 #include "fileFuncs.h"
+#include "colors.h"
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
+#include <cstdarg>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Makros / Defines

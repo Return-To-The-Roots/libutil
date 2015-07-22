@@ -21,8 +21,6 @@
 
 #pragma once
 
-#include <stdexcept>
-
 #include "Serializer.h"
 
 class MessageInterface;

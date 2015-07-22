@@ -24,13 +24,13 @@
 #include "Singleton.h"
 
 #ifdef _WIN32
-#if defined __CYGWIN__ || defined __CYGWIN32__ || defined __MINGW__
-#include <sys/types.h>
-#endif
-typedef unsigned __int64 unser_time_t;
+    #if defined __CYGWIN__ || defined __CYGWIN32__ || defined __MINGW__
+        #include <sys/types.h>
+    #endif
+    typedef unsigned __int64 unser_time_t;
 #else
-#   include <stdint.h>
-typedef int64_t unser_time_t;
+    #include <stdint.h>
+    typedef int64_t unser_time_t;
 #endif
 
 /// Time Klasse.
