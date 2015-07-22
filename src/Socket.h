@@ -21,6 +21,8 @@
 
 #pragma once
 
+#include "libUtilDefines.h"
+
 #ifdef _WIN32
 
     #include <ws2tcpip.h>
