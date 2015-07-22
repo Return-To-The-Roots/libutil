@@ -16,7 +16,7 @@
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef FILE_FUNCS_H__
-#define FILE_FUNCS_H
+#define FILE_FUNCS_H__
 
 #include <string>
 
