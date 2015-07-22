@@ -19,8 +19,21 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header
-#include "main.h"
-#include "files.h"
+//#include "main.h"
+#include "build_paths.h"
+#include "fileFuncs.h"
+
+#include <sstream>
+#include <cstdlib>
+#include <cstdio>
+#include <algorithm>
+#ifdef _WIN32
+    #define WIN32_LEAN_AND_MEAN
+    #include <windows.h>
+#else
+    #include <dirent.h>
+    #include <sys/stat.h>
+#endif
 
 #ifdef _WIN32
 #undef DATADIR

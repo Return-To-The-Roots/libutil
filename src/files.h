@@ -231,9 +231,4 @@ const std::string TEX_GFXSET[GFXSET_COUNT] =
     "tex5", "tex6", "tex7"
 };
 
-std::string GetFilePath(std::string file);
-bool FileExists(std::string file);
-bool IsDir(std::string dir);
-int mkdir_p(const std::string& dir);
-
 #endif // FILES_H_INCLUDED

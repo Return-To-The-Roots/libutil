@@ -22,7 +22,7 @@
 #include "main.h"
 #include "Log.h"
 
-#include "files.h"
+#include "fileFuncs.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Makros / Defines
