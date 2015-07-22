@@ -19,10 +19,11 @@
 #ifndef LIB_UTIL_DEFINES_H__
 #define LIB_UTIL_DEFINES_H__
 
-#define _CRTDBG_MAP_ALLOC
-#define WIN32_LEAN_AND_MEAN
-
 #ifdef _WIN32
+    #define _CRTDBG_MAP_ALLOC
+    #define WIN32_LEAN_AND_MEAN
+    #define WINVER _WIN32_WINNT_VISTA
+    #define _WIN32_WINNT _WIN32_WINNT_VISTA
     #ifdef _MSC_VER
         #include <crtdbg.h>
         #define getch _getch

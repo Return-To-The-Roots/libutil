@@ -25,7 +25,7 @@
 
     #include <ws2tcpip.h>
 
-    #if defined(__CYGWIN__) || defined(__MINGW32__) || defined(__MINGW64__)
+    #if defined(__CYGWIN__)
         #ifndef AI_ALL
             #define AI_ALL            0x0010
         #endif

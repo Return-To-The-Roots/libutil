@@ -19,7 +19,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header
-//#include "main.h"
+#include "libUtilDefines.h"
 #include "build_paths.h"
 #include "fileFuncs.h"
 
