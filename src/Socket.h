@@ -22,23 +22,37 @@
 #pragma once
 
 #ifdef _WIN32
-#include <ws2tcpip.h>
-typedef int socklen_t;
+
+    #include <ws2tcpip.h>
+
+    #ifdef __CYGWIN__
+        #ifndef AI_ALL
+        #define AI_ALL            0x0010
+    #endif
+
+    #ifndef AI_ADDRCONFIG
+        #define AI_ADDRCONFIG     0x0020
+        #endif
+    #endif
+
+    typedef int socklen_t;
 #else
-#include <arpa/inet.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
+    #include <arpa/inet.h>
+    #include <sys/types.h>
+    #include <sys/socket.h>
+    #include <netdb.h>
 
-#define SOCKET int
-#define INVALID_SOCKET -1
-#define SOCKET_ERROR -1
-#define HINSTANCE void*
+    #define SOCKET int
+    #define INVALID_SOCKET -1
+    #define SOCKET_ERROR -1
+    #define HINSTANCE void*
 
-#define closesocket close
+    #define closesocket close
 #endif // !_WIN32
 
 #include "UPnP.h"
+#include <cstdlib>
+#include <cstring>
 
 ///Socket-Wrapper-Klasse für portable TCP/IP-Verbindungen
 class Socket

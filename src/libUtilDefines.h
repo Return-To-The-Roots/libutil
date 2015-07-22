@@ -1,6 +1,4 @@
-// $Id: UPnP.h 9359 2014-04-25 15:37:22Z FloSoft $
-//
-// Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
+// Copyright (c) 2005 - 2015 Settlers Freaks (sf-team at siedler25.org)
 //
 // This file is part of Return To The Roots.
 //
@@ -16,26 +14,22 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
-#ifndef UPNP_H_INCLUDED
-#define UPNP_H_INCLUDED
 
 #pragma once
-#include <vector>
-#include <string>
+#ifndef LIB_UTIL_DEFINES_H__
+#define LIB_UTIL_DEFINES_H__
 
-class UPnP
-{
-    public:
-        UPnP();
-        ~UPnP();
+#define _CRTDBG_MAP_ALLOC
+#define WIN32_LEAN_AND_MEAN
 
-        bool OpenPort(const unsigned short& port);
-        void ClosePort();
+#ifdef _WIN32
+    #ifdef _MSC_VER
+        #include <crtdbg.h>
+    #else
+        #include <assert.h>
+    #endif
+#else //_WIN32
 
-        std::vector<std::string> GetAllv4Addresses();
+#endif //_WIN32
 
-    private:
-        unsigned short remote_port_;
-};
-
-#endif // !UPNP_H_INCLUDED
+#endif

@@ -21,6 +21,9 @@
 
 #pragma once
 
+#include "Singleton.h"
+#include <cstdio>
+
 /// Log Klasse.
 class Log : public Singleton<Log>
 {

@@ -19,8 +19,17 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header
-#include "main.h"
+#include "libUtilDefines.h"
 #include "Socket.h"
+#include "Log.h"
+#include "SocketSet.h"
+
+#ifndef _WIN32
+    #include <netinet/tcp.h>
+    #include <unistd.h>
+    #include <sys/ioctl.h>
+    #include <errno.h>
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // Makros / Defines
