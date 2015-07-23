@@ -306,7 +306,7 @@ class Serializer
             {
                 // umkopieren (vergrößern)
                 unsigned char* ndata = new unsigned char[this->buffer_length];
-                memset(data + this->length, 0, sizeof(unsigned char)*(this->buffer_length - this->length));
+                memset(ndata + this->length, 0, sizeof(unsigned char)*(this->buffer_length - this->length));
                 memcpy(ndata, data, this->length);
 
                 delete[] data;
