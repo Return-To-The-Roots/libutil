@@ -25,7 +25,15 @@
 #include "SocketSet.h"
 
 #ifdef _WIN32
+    #if defined(__CYGWIN__) || defined(__MINGW32__)
+        #ifndef AI_ALL
+            #define AI_ALL            0x0010
+        #endif
 
+        #ifndef AI_ADDRCONFIG
+            #define AI_ADDRCONFIG     0x0020
+        #endif
+    #endif
 #else
     #include <netinet/tcp.h>
     #include <unistd.h>

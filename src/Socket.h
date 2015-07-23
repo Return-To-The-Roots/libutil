@@ -26,16 +26,6 @@
     #include <winsock2.h>
     #include <ws2tcpip.h>
 
-    #if defined(__CYGWIN__)
-        #ifndef AI_ALL
-            #define AI_ALL            0x0010
-        #endif
-
-        #ifndef AI_ADDRCONFIG
-            #define AI_ADDRCONFIG     0x0020
-        #endif
-    #endif
-
     typedef int socklen_t;
 #else
     #include <arpa/inet.h>
