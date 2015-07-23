@@ -245,7 +245,7 @@ class Serializer
             return htons(i);
         }
 
-        unsigned short checkByteOrder(unsigned char i)
+        unsigned char checkByteOrder(unsigned char i)
         {
             return i;
         }
