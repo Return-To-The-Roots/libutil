@@ -44,6 +44,9 @@
         #include <assert.h>
     #endif
 
+    #ifdef _DEBUG
+        #include <crtdbg.h>
+    #endif // _DEBUG
 #else //_WIN32
     #include <assert.h>
 #endif //_WIN32

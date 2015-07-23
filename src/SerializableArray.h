@@ -22,6 +22,7 @@
 #pragma once
 
 #include "Message.h"
+#include <vector>
 
 template <class Type, class Allocator = Type>
 class SerializableArray

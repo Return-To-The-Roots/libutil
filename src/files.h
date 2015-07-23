@@ -207,7 +207,6 @@ const std::string FILE_LOAD_IDS[] =
     "africa", "austra", "europe", "green", "japan", "namerica", "nasia", "samerica", "sasia"
 };
 
-const std::string CONFIG_NAME = "config";
 const unsigned int GFXSET_COUNT = 3;
 const unsigned int NATION_COUNT = 5;
 
