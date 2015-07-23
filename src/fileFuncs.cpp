@@ -40,7 +40,7 @@
 #include <shlobj.h>
 #endif
 
-#ifdef __CYGWIN__
+#if defined(__CYGWIN__) || defined (__MINGW32__)
 
 typedef GUID KNOWNFOLDERID;
 #define REFKNOWNFOLDERID const KNOWNFOLDERID &
