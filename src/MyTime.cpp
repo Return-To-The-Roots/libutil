@@ -23,8 +23,11 @@
 #include "MyTime.h"
 #include <ctime>
 #include <cstdio>
+#include <cstring>
 #ifdef _WIN32
     #include <windows.h>
+#else
+    #include <sys/times.h>
 #endif // _WIN32
 
 ///////////////////////////////////////////////////////////////////////////////

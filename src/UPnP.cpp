@@ -76,6 +76,8 @@
 #else // _WIN32
     #include <ifaddrs.h>
     #include <unistd.h>
+    #include <netdb.h>
+    #include <arpa/inet.h>
 #endif // _WIN32
 
 #ifndef _MSC_VER
@@ -85,6 +87,7 @@
 
 #include <algorithm>
 #include <sstream>
+#include <cstring>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Makros / Defines

@@ -45,7 +45,7 @@
     #endif
 
 #else //_WIN32
-
+    #include <assert.h>
 #endif //_WIN32
 
 #ifndef va_copy

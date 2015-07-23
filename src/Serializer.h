@@ -21,6 +21,8 @@
 
 #pragma once
 
+#include "libUtilDefines.h"
+
 #ifdef _WIN32
     #include <winsock2.h>
 #else
@@ -28,6 +30,7 @@
 #endif // _WIN32
 
 #include <string>
+#include <cstring>
 
 class BinaryFile;
 
@@ -104,41 +107,29 @@ class Serializer
         /// Sämtliche Integer
         inline void PushSignedInt(signed int i)
         {
-            ExtendMemory(4);
-            *((signed int*)&data[length]) = htonl(i);
-            this->length += 4;
+            Push(i);
         }
         inline void PushUnsignedInt(unsigned int i)
         {
-            ExtendMemory(4);
-            *((unsigned int*)&data[length]) = htonl(i);
-            this->length += 4;
+            Push(i);
         }
 
         inline void PushSignedShort(signed short int i)
         {
-            ExtendMemory(2);
-            *((signed short*)&data[length]) = htons(i);
-            this->length += 2;
+            Push(i);
         }
         inline void PushUnsignedShort(unsigned short int i)
         {
-            ExtendMemory(2);
-            *((unsigned short*)&data[length]) = htons(i);
-            this->length += 2;
+            Push(i);
         }
 
         inline void PushSignedChar(signed char i)
         {
-            ExtendMemory(1);
-            *((signed char*)&data[length]) = i;
-            this->length += 1;
+            Push(i);
         }
         inline void PushUnsignedChar(unsigned char i)
         {
-            ExtendMemory(1);
-            *((signed char*)&data[length]) = i;
-            this->length += 1;
+            Push(i);
         }
 
         inline void PushBool(bool b)
@@ -173,59 +164,30 @@ class Serializer
         /// Sämtliche Integer
         inline signed int PopSignedInt()
         {
-            assert(pos + 4 <= length);
-
-            signed int i = htonl(*((signed int*)&data[pos]));
-            pos += 4;
-
-            return i;
+            return Pop<signed int>();
         }
         inline unsigned int PopUnsignedInt()
         {
-            assert(pos + 4 <= length);
-
-            unsigned int i = htonl(*((unsigned int*)&data[pos]));
-            pos += 4;
-
-            return i;
+            return Pop<unsigned int>();
         }
 
         inline signed short PopSignedShort()
         {
-            assert(pos + 2 <= length);
-
-            signed short i = htons(*((signed short*)&data[pos]));
-            pos += 2;
-
-            return i;
+            return Pop<signed short>();
         }
         inline unsigned short PopUnsignedShort()
         {
-            assert(pos + 2 <= length);
-
-            unsigned short i = htons(*((unsigned short*)&data[pos]));
-            pos += 2;
-
-            return i;
+            return Pop<unsigned short>();
         }
 
         inline signed char PopSignedChar()
         {
-            assert(pos + 1 <= length);
-
-            signed char i = *((signed char*)&data[pos]);
-            pos += 1;
-
-            return i;
+            return Pop<signed char>();
         }
+
         inline unsigned char PopUnsignedChar()
         {
-            assert(pos + 1 <= length);
-
-            unsigned char i = *((unsigned char*)&data[pos]);
-            pos += 1;
-
-            return i;
+            return Pop<unsigned char>();
         }
 
         inline bool PopBool()
@@ -235,8 +197,6 @@ class Serializer
 
         inline std::string PopString()
         {
-            assert(pos + 1 <= length);
-
             std::string str;
             str.resize(PopUnsignedInt());
 
@@ -249,20 +209,69 @@ class Serializer
         }
 
     protected:
-        void copy(const Serializer& other)
+        Serializer& operator=(const Serializer& other)
         {
+            if(this == &other)
+                return *this;
+
+            Clear();
+
             data = new unsigned char[other.buffer_length];
             buffer_length = other.buffer_length;
             length = other.length;
             pos = other.pos;
             memcpy(data, other.data, length);
-        }
-
-        Serializer& operator=(const Serializer& other)
-        {
-            copy(other);
 
             return *this;
+        }
+
+        unsigned int checkByteOrder(unsigned int i)
+        {
+            return htonl(i);
+        }
+
+        signed int checkByteOrder(signed int i)
+        {
+            return htonl(i);
+        }
+
+        unsigned short checkByteOrder(unsigned short i)
+        {
+            return htons(i);
+        }
+
+        signed short checkByteOrder(signed short i)
+        {
+            return htons(i);
+        }
+
+        unsigned short checkByteOrder(unsigned char i)
+        {
+            return i;
+        }
+
+        signed char checkByteOrder(signed char i)
+        {
+            return i;
+        }
+
+        template<typename T>
+        T Pop()
+        {
+            assert(pos + sizeof(T) <= length);
+
+            T i = checkByteOrder( *reinterpret_cast<T*>(&data[pos]) );
+            pos += sizeof(T);
+
+            return i;
+        }
+
+        template<typename T>
+        void Push(const T i)
+        {
+            ExtendMemory(sizeof(T));
+            *reinterpret_cast<T*>(&data[length]) = checkByteOrder(i);
+            this->length += sizeof(T);
         }
 
         /// Schreibzugriff auf die Rohdaten
@@ -297,6 +306,7 @@ class Serializer
             {
                 // umkopieren (vergrößern)
                 unsigned char* ndata = new unsigned char[this->buffer_length];
+                memset(data + this->length, 0, sizeof(unsigned char)*(this->buffer_length - this->length));
                 memcpy(ndata, data, this->length);
 
                 delete[] data;

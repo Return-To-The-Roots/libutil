@@ -27,7 +27,10 @@
 #include "colors.h"
 
 #ifdef _WIN32
-#include <windows.h>
+    #include <windows.h>
+#else
+    #include <cstring>
+    #include <errno.h>
 #endif
 #include <cstdarg>
 

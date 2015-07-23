@@ -20,6 +20,7 @@
 #define MESSAGEQUEUE_H_INCLUDED
 
 #include <vector>
+#include <stddef.h>
 
 class Message;
 class Socket;

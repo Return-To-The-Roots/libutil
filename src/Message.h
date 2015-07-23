@@ -48,9 +48,12 @@ class Message : public Serializer
     protected:
         Message& operator=(const Message& other)
         {
+            if(this == &other)
+                return *this;
+
             id = other.id;
 
-            copy(other);
+            Serializer::operator =(other);
 
             return *this;
         }
