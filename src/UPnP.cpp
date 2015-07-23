@@ -188,7 +188,7 @@ bool UPnP::OpenPort(const unsigned short& port)
     }
 
     // otherwise use the first one
-    if(local_address == "" && addresses.size())
+    if(local_address == "" && !addresses.empty())
         local_address = addresses.front();
 
     // I hope we found one ...
