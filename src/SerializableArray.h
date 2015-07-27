@@ -1,4 +1,4 @@
-// $Id: SerializableArray.h 9359 2014-04-25 15:37:22Z FloSoft $
+ï»¿// $Id: SerializableArray.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -50,7 +50,7 @@ class SerializableArray
 
         ///////////////////////////////////////////////////////////////////////////////
         /**
-         *  Einfügefunktion
+         *  EinfÃ¼gefunktion
          *
          *  @author FloSoft
          */
@@ -115,7 +115,7 @@ class SerializableArray
 
         ///////////////////////////////////////////////////////////////////////////////
         /**
-         *  räumt die Liste auf.
+         *  rÃ¤umt die Liste auf.
          *
          *  @author FloSoft
          */
@@ -128,9 +128,9 @@ class SerializableArray
         /*
          *  serialisiert die Daten.
          *
-         *  @param[in,out] data Datensatz, muss groß genug sein
+         *  @param[in,out] data Datensatz, muss groÃŸ genug sein
          *
-         *  @return liefert die Größe der Daten zurück.
+         *  @return liefert die GrÃ¶ÃŸe der Daten zurÃ¼ck.
          *
          *  @author FloSoft
          */
@@ -149,9 +149,9 @@ class SerializableArray
         /*
          *  deserialisiert die Daten.
          *
-         *  @param[in] data Datensatz, muss groß genug sein
+         *  @param[in] data Datensatz, muss groÃŸ genug sein
          *
-         *  @return liefert die Größe der gelesenen Daten zurück.
+         *  @return liefert die GrÃ¶ÃŸe der gelesenen Daten zurÃ¼ck.
          *
          *  @author FloSoft
          */
@@ -213,7 +213,7 @@ class SerializableArray
 
         ///////////////////////////////////////////////////////////////////////////////
         /**
-         *  ändert die Größe des Arrays
+         *  Ã¤ndert die GrÃ¶ÃŸe des Arrays
          *
          *  @author OLiver
          */

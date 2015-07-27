@@ -1,4 +1,4 @@
-// $Id: files.cpp 9359 2014-04-25 15:37:22Z FloSoft $
+ï»¿// $Id: files.cpp 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -105,13 +105,13 @@ static LPSTR UnicodeToAnsi(LPCWSTR s)
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
- *  Wrapper um SHGetKnownFolderPath, unter Vista und Größer benutzt es das
+ *  Wrapper um SHGetKnownFolderPath, unter Vista und GrÃ¶ÃŸer benutzt es das
  *  originale SHGetKnownFolderPath, ansonsten SHGetFolderPath.
  *
  *  @param[in] rfid
  *  @param[in] path
  *
- *  @return liefert den Status zurück (S_OK bei OK)
+ *  @return liefert den Status zurÃ¼ck (S_OK bei OK)
  *
  *  @author FloSoft
  */
@@ -154,7 +154,7 @@ static HRESULT mySHGetKnownFolderPath(REFKNOWNFOLDERID rfid, std::string& path)
  *
  *  @param[in] file
  *
- *  @return liefert den umgeformten Pfad zurück
+ *  @return liefert den umgeformten Pfad zurÃ¼ck
  *
  *  @author FloSoft
  */
@@ -202,11 +202,11 @@ std::string GetFilePath(std::string file)
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
- *  prüft ob eine Datei existiert (bzw ob sie lesbar ist)
+ *  prÃ¼ft ob eine Datei existiert (bzw ob sie lesbar ist)
  *
  *  @param[in] file
  *
- *  @return liefert ja oder nein zurück
+ *  @return liefert ja oder nein zurÃ¼ck
  *
  *  @author FloSoft
  */
@@ -223,11 +223,11 @@ bool FileExists(std::string file)
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
- *  prüft ob eine Verzeichnis existiert (bzw ob es ein Verzeichnis ist)
+ *  prÃ¼ft ob eine Verzeichnis existiert (bzw ob es ein Verzeichnis ist)
  *
  *  @param[in] dir
  *
- *  @return liefert ja oder nein zurück
+ *  @return liefert ja oder nein zurÃ¼ck
  *
  *  @author FloSoft
  */

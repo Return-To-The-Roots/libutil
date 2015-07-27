@@ -1,4 +1,4 @@
-// $Id: Log.cpp 9359 2014-04-25 15:37:22Z FloSoft $
+ï»¿// $Id: Log.cpp 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -66,7 +66,7 @@ Log::~Log(void)
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
- *  öffnet das Log (falls noch nicht offen)
+ *  Ã¶ffnet das Log (falls noch nicht offen)
  *
  *  @author FloSoft
  */
@@ -86,7 +86,7 @@ void Log::open(void)
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
- *  Schreibt gefärbte Daten ins Log und auf stdout.
+ *  Schreibt gefÃ¤rbte Daten ins Log und auf stdout.
  *
  *  @author FloSoft
  */
@@ -249,7 +249,7 @@ void Log::vwrite(const char* format, va_list list)
 ///////////////////////////////////////////////////////////////////////////////
 /**
  *  Schreibt den zuletzt aufgetretetenen Systemfehler in lesbarer Form in
- *  stdout und Log, fügt "$text:" davor ein.
+ *  stdout und Log, fÃ¼gt "$text:" davor ein.
  *
  *  @author FloSoft
  */

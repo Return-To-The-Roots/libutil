@@ -1,4 +1,4 @@
-// $Id: Messages.h 9359 2014-04-25 15:37:22Z FloSoft $
+﻿// $Id: Messages.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -27,7 +27,7 @@
 #include "Log.h"
 
 /*
- * das Klassenkommentar ist alles Client-Sicht, f�r Server-Sicht ist alles andersrum
+ * das Klassenkommentar ist alles Client-Sicht, für Server-Sicht ist alles andersrum
  *
  * Konstruktor ohne Parameter ist allgemein nur zum Empfangen (immer noop!)
  * run-Methode ist Auswertung der Daten

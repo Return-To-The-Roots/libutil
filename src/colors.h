@@ -1,4 +1,4 @@
-// $Id: colors.h 9359 2014-04-25 15:37:22Z FloSoft $
+ï»¿// $Id: colors.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -70,20 +70,20 @@ const unsigned int COLORS[PLAYER_COLORS_COUNT] =
 /// COLOR_GHOST // Durchsichtig
 };
 
-/// Liefert die transparente Farbkomponente zurück.
+/// Liefert die transparente Farbkomponente zurÃ¼ck.
 inline unsigned GetAlpha(const unsigned int color) { return (( color & 0xFF000000) >> 24); }
-/// Liefert die rote Farbkomponente zurück.
+/// Liefert die rote Farbkomponente zurÃ¼ck.
 inline unsigned GetRed(  const unsigned int color) { return (( color & 0x00FF0000) >> 16); }
-/// Liefert die grüne Farbkomponente zurück.
+/// Liefert die grÃ¼ne Farbkomponente zurÃ¼ck.
 inline unsigned GetGreen(const unsigned int color) { return (( color & 0x0000FF00) >> 8 ); }
-/// Liefert die blaue Farbkomponente zurück.
+/// Liefert die blaue Farbkomponente zurÃ¼ck.
 inline unsigned GetBlue( const unsigned int color) { return (( color & 0x000000FF)      ); }
 
 /// Setzt die transparente Farbkomponente.
 inline unsigned SetAlpha(const unsigned int color, const unsigned int alpha) { return (( color & 0x00FFFFFF) | ( alpha << 24) ); }
 /// Setzt die rote Farbkomponente.
 inline unsigned SetRed(  const unsigned int color, const unsigned int red  ) { return (( color & 0xFF00FFFF) | ( red   << 16) ); }
-/// Setzt die grüne Farbkomponente.
+/// Setzt die grÃ¼ne Farbkomponente.
 inline unsigned SetGreen(const unsigned int color, const unsigned int green) { return (( color & 0xFFFF00FF) | ( green << 8 ) ); }
 /// Setzt die blaue Farbkomponente.
 inline unsigned SetBlue( const unsigned int color, const unsigned int blue ) { return (( color & 0xFFFFFF00) | ( blue       ) ); }

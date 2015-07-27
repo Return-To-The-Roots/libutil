@@ -1,4 +1,4 @@
-// $Id: BinaryFile.h 7093 2011-03-27 11:49:37Z OLiver $
+﻿// $Id: BinaryFile.h 7093 2011-03-27 11:49:37Z OLiver $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -25,7 +25,7 @@
 #include <cstdio>
 #include <string>
 
-// Öffnungsmethoden
+// Ã–ffnungsmethoden
 enum OpenFileMode
 {
     OFM_WRITE = 0,
@@ -33,16 +33,16 @@ enum OpenFileMode
     OFM_READ
 };
 
-/// Klasse für das Laden und Speichern von binären Dateien
+/// Klasse fÃ¼r das Laden und Speichern von binÃ¤ren Dateien
 class BinaryFile
 {
     public:
         BinaryFile() : file(0) {}
         ~BinaryFile() { Close(); }
 
-        /// Öffnet eine Datei: liefert true falls erfolgreich
+        /// Ã–ffnet eine Datei: liefert true falls erfolgreich
         bool Open(const char* const filename, const OpenFileMode of);
-        /// Schließt eine Datei: liefert true falls erfolgreich
+        /// SchlieÃŸt eine Datei: liefert true falls erfolgreich
         bool Close();
 
         /// Schreibmethoden
@@ -76,8 +76,8 @@ class BinaryFile
             libendian::le_write_c((char*)data, length, file);
         }
 
-        void WriteShortString(const std::string& str); /// Länge max 254
-        void WriteLongString(const std::string& str); /// Länge max 2^32-2
+        void WriteShortString(const std::string& str); /// LÃ¤nge max 254
+        void WriteLongString(const std::string& str); /// LÃ¤nge max 2^32-2
 
         /// Lesemethoden
         inline int ReadSignedInt(void)
@@ -121,8 +121,8 @@ class BinaryFile
             libendian::le_read_c((char*)data, length, file);
         }
 
-        void ReadShortString(std::string& str); /// Länge max 254
-        void ReadLongString(std::string& str); /// Länge max 2^32-2
+        void ReadShortString(std::string& str); /// LÃ¤nge max 254
+        void ReadLongString(std::string& str); /// LÃ¤nge max 2^32-2
 
         /// Setzt den Dateizeiger
         void Seek(const long pos, const int origin)
@@ -148,7 +148,7 @@ class BinaryFile
             return feof(file) ? true : false;
         }
 
-        /// Datei gültig?
+        /// Datei gÃ¼ltig?
         bool IsValid() const
         {
             return file ? true : false;

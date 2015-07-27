@@ -1,4 +1,4 @@
-// $Id: MessageQueue.h 9359 2014-04-25 15:37:22Z FloSoft $
+Ôªø// $Id: MessageQueue.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -47,15 +47,15 @@ class MessageQueue
         /// flusht die Queue, verschickt alle Elemente.
         bool flush(Socket* sock) { return send(sock, messages.size(), 0xFFFFFFFF); }
 
-        /// liefert die Grˆﬂe der Queue
+        /// liefert die Gr√∂√üe der Queue
         unsigned int count() { return messages.size(); }
 
-        /// verschickt Pakete der Queue, maximal @p max, mit einem maximal @p sizelimit groﬂ (aber beliebig viele kleine)
+        /// verschickt Pakete der Queue, maximal @p max, mit einem maximal @p sizelimit gro√ü (aber beliebig viele kleine)
         bool send(Socket* sock, int max, unsigned int sizelimit = 512);
         bool recv(Socket* sock, bool wait = false);
 
     public:
-        /// h‰ngt ein Element hinten an.
+        /// h√§ngt ein Element hinten an.
         void push(Message* message) { messages.push_back(message); }
         /// liefert das vorderste Element der Queue.
         Message* front() { return (!messages.empty() ? messages.front() : NULL); }

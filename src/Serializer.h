@@ -1,4 +1,4 @@
-// $Id: Serializer.h 9359 2014-04-25 15:37:22Z FloSoft $
+ï»¿// $Id: Serializer.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -35,7 +35,7 @@
 class BinaryFile;
 
 /// Klasse die einen Buffer zum Serialisieren verwaltet und entsprechende Methoden zum Lesen/Schreiben bereitstellt.
-/// Implementiert einen FIFO (push fügt ans ende, pop entfernt am anfang)
+/// Implementiert einen FIFO (push fÃ¼gt ans ende, pop entfernt am anfang)
 class Serializer
 {
     public:
@@ -61,7 +61,7 @@ class Serializer
             Clear();
         }
 
-        /// Aufräumen
+        /// AufrÃ¤umen
         inline void Clear()
         {
             delete[] data;
@@ -104,7 +104,7 @@ class Serializer
             this->length += length;
         }
 
-        /// Sämtliche Integer
+        /// SÃ¤mtliche Integer
         inline void PushSignedInt(signed int i)
         {
             Push(i);
@@ -161,7 +161,7 @@ class Serializer
             pos += length;
         }
 
-        /// Sämtliche Integer
+        /// SÃ¤mtliche Integer
         inline signed int PopSignedInt()
         {
             return Pop<signed int>();
@@ -280,19 +280,19 @@ class Serializer
             return data;
         }
 
-        /// Schreibzugriff auf die Länge
+        /// Schreibzugriff auf die LÃ¤nge
         void SetLength(const unsigned int length)
         {
             this->length = length;
         }
 
-        /// vergrößert den Speicher auf die nächst höhere 2er potenz zur Länge @p length.
+        /// vergrÃ¶ÃŸert den Speicher auf die nÃ¤chst hÃ¶here 2er potenz zur LÃ¤nge @p length.
         inline void Realloc(const unsigned int length)
         {
             if(this->buffer_length == 0)
                 this->buffer_length = 64;
 
-            // speicher vergrößern
+            // speicher vergrÃ¶ÃŸern
             while(this->buffer_length < length)
                 this->buffer_length *= 2;
 
@@ -304,7 +304,7 @@ class Serializer
             }
             else
             {
-                // umkopieren (vergrößern)
+                // umkopieren (vergrÃ¶ÃŸern)
                 unsigned char* ndata = new unsigned char[this->buffer_length];
                 memset(ndata + this->length, 0, sizeof(unsigned char)*(this->buffer_length - this->length));
                 memcpy(ndata, data, this->length);
@@ -324,9 +324,9 @@ class Serializer
     private:
         /// data mit den Daten
         unsigned char* data;
-        /// Länge des datas
+        /// LÃ¤nge des datas
         unsigned buffer_length;
-        /// Logische Länge
+        /// Logische LÃ¤nge
         unsigned length;
         /// Schreib/Leseposition
         unsigned pos;
