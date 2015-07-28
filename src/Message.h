@@ -1,4 +1,4 @@
-// $Id: Message.h 9359 2014-04-25 15:37:22Z FloSoft $
+﻿// $Id: Message.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -20,8 +20,6 @@
 #define MESSAGE_H_INCLUDED
 
 #pragma once
-
-#include <stdexcept>
 
 #include "Serializer.h"
 
@@ -50,9 +48,12 @@ class Message : public Serializer
     protected:
         Message& operator=(const Message& other)
         {
+            if(this == &other)
+                return *this;
+
             id = other.id;
 
-            copy(other);
+            Serializer::operator =(other);
 
             return *this;
         }

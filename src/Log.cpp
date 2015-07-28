@@ -1,4 +1,4 @@
-// $Id: Log.cpp 9359 2014-04-25 15:37:22Z FloSoft $
+ï»¿// $Id: Log.cpp 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -19,10 +19,20 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header
-#include "main.h"
+#include "libUtilDefines.h"
 #include "Log.h"
-
+#include "MyTime.h"
 #include "files.h"
+#include "fileFuncs.h"
+#include "colors.h"
+
+#ifdef _WIN32
+    #include <windows.h>
+#else
+    #include <cstring>
+    #include <errno.h>
+#endif
+#include <cstdarg>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Makros / Defines
@@ -56,7 +66,7 @@ Log::~Log(void)
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
- *  öffnet das Log (falls noch nicht offen)
+ *  Ã¶ffnet das Log (falls noch nicht offen)
  *
  *  @author FloSoft
  */
@@ -76,7 +86,7 @@ void Log::open(void)
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
- *  Schreibt gefärbte Daten ins Log und auf stdout.
+ *  Schreibt gefÃ¤rbte Daten ins Log und auf stdout.
  *
  *  @author FloSoft
  */
@@ -239,7 +249,7 @@ void Log::vwrite(const char* format, va_list list)
 ///////////////////////////////////////////////////////////////////////////////
 /**
  *  Schreibt den zuletzt aufgetretetenen Systemfehler in lesbarer Form in
- *  stdout und Log, fügt "$text:" davor ein.
+ *  stdout und Log, fÃ¼gt "$text:" davor ein.
  *
  *  @author FloSoft
  */

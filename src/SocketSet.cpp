@@ -1,4 +1,4 @@
-// $Id: SocketSet.cpp 9359 2014-04-25 15:37:22Z FloSoft $
+ï»¿// $Id: SocketSet.cpp 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -19,7 +19,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header
-#include "main.h"
+#include "libUtilDefines.h"
 #include "SocketSet.h"
 
 #include "Socket.h"
@@ -45,7 +45,7 @@ SocketSet::SocketSet(void)
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
- *  räumt das @p SocketSet auf.
+ *  rÃ¤umt das @p SocketSet auf.
  *
  *  @author OLiver
  */
@@ -58,9 +58,9 @@ void SocketSet::Clear(void)
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
- *  fügt ein @p Socket zum @p SocketSet hinzu.
+ *  fÃ¼gt ein @p Socket zum @p SocketSet hinzu.
  *
- *  @param[in] sock Socket welches hinzugefügt werden soll
+ *  @param[in] sock Socket welches hinzugefÃ¼gt werden soll
  *
  *  @author OLiver
  *  @author FloSoft
@@ -72,22 +72,22 @@ void SocketSet::Add(Socket& sock)
     if(s == INVALID_SOCKET)
         return;
 
-    // hinzufügen
+    // hinzufÃ¼gen
     FD_SET(s, &set);
 
-    // neues größtes Socket setzen
+    // neues grÃ¶ÃŸtes Socket setzen
     if(s > highest || highest == INVALID_SOCKET)
         highest = s;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
- *  führt einen Select auf dem @p SocketSet aus.
+ *  fÃ¼hrt einen Select auf dem @p SocketSet aus.
  *
  *  @param[in] wait  Timeout des Aufrufs
- *  @param[in] which Welcher der "Kanäle" soll abgefragt werden? (0 = read, 1 = write, 2 = error)
+ *  @param[in] which Welcher der "KanÃ¤le" soll abgefragt werden? (0 = read, 1 = write, 2 = error)
  *
- *  @return liefert SOCKET_ERROR bei Fehler, Null bei Timeout, größer Null für die Anzahl der bereiten Sockets im Set
+ *  @return liefert SOCKET_ERROR bei Fehler, Null bei Timeout, grÃ¶ÃŸer Null fÃ¼r die Anzahl der bereiten Sockets im Set
  *
  *  @author FloSoft
  */
@@ -112,7 +112,7 @@ int SocketSet::Select(int timeout, int which)
         case 2: { except = &set; } break;
     }
 
-    // Select ausführen
+    // Select ausfÃ¼hren
     return select( (int)highest + 1, read, write, except, &tv);
 }
 
@@ -131,7 +131,7 @@ bool SocketSet::InSet(Socket& sock)
 {
     SOCKET s = *sock.GetSocket();
 
-    // Bei ungültigem Socket ists nicht drin!
+    // Bei ungÃ¼ltigem Socket ists nicht drin!
     if(s == INVALID_SOCKET)
         return false;
 

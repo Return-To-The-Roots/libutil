@@ -1,4 +1,4 @@
-// $Id: UPnP.cpp 9359 2014-04-25 15:37:22Z FloSoft $
+﻿// $Id: UPnP.cpp 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -19,65 +19,76 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header
-#include "main.h"
+#include "libUtilDefines.h"
 #include "UPnP.h"
+#include "Log.h"
 
 #ifdef _WIN32
-#undef DATADIR
+    #undef DATADIR
 
-#include <iphlpapi.h>
+    #include <winsock2.h>
+    #include <windows.h>
+    #include <in6addr.h>
+    #include <iphlpapi.h>
 
-#ifdef _MSC_VER
-#pragma comment(lib, "iphlpapi.lib")
+    #ifdef _MSC_VER
+        #pragma comment(lib, "iphlpapi.lib")
 
-#include <ole2.h>
-#include <natupnp.h>
-//#include <atlconv.h>
+        #include <ole2.h>
+        #include <natupnp.h>
+        //#include <atlconv.h>
 
-inline BSTR A2WBSTR(LPCSTR lp, int nLen = -1)
-{
-    if (lp == NULL || nLen == 0)
-        return NULL;
-    BSTR str = NULL;
-
-    int nConvertedLen = MultiByteToWideChar(CP_THREAD_ACP, 0, lp, nLen, NULL, 0);
-
-    int nAllocLen = nConvertedLen;
-    if (nLen == -1)
-        nAllocLen -= 1;  // Don't allocate terminating '\0'
-    str = ::SysAllocStringLen(NULL, nAllocLen);
-
-    if (str != NULL)
-    {
-        int nResult;
-        nResult = MultiByteToWideChar(CP_THREAD_ACP, 0, lp, nLen, str, nConvertedLen);
-        if(nResult != nConvertedLen)
+        inline BSTR A2WBSTR(LPCSTR lp, int nLen = -1)
         {
-            SysFreeString(str);
-            return NULL;
+            if (lp == NULL || nLen == 0)
+                return NULL;
+            BSTR str = NULL;
+
+            int nConvertedLen = MultiByteToWideChar(CP_THREAD_ACP, 0, lp, nLen, NULL, 0);
+
+            int nAllocLen = nConvertedLen;
+            if (nLen == -1)
+                nAllocLen -= 1;  // Don't allocate terminating '\0'
+            str = ::SysAllocStringLen(NULL, nAllocLen);
+
+            if (str != NULL)
+            {
+                int nResult;
+                nResult = MultiByteToWideChar(CP_THREAD_ACP, 0, lp, nLen, str, nConvertedLen);
+                if(nResult != nConvertedLen)
+                {
+                    SysFreeString(str);
+                    return NULL;
+                }
+
+            }
+            return str;
         }
 
-    }
-    return str;
-}
+        inline BSTR A2BSTR(LPCSTR lp)
+        {
+            return A2WBSTR(lp);
+        }
+    #endif // _MSC_VER
 
-inline BSTR A2BSTR(LPCSTR lp)
-{
-    return A2WBSTR(lp);
-}
-#endif
-
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x501
-#endif
-#else
-#include <ifaddrs.h>
-#endif
+    #ifndef _WIN32_WINNT
+        #define _WIN32_WINNT 0x501
+    #endif
+#else // _WIN32
+    #include <ifaddrs.h>
+    #include <unistd.h>
+    #include <netdb.h>
+    #include <arpa/inet.h>
+#endif // _WIN32
 
 #ifndef _MSC_VER
-#include <miniupnpc/miniupnpc.h>
-#include <miniupnpc/upnpcommands.h>
+    #include <miniupnpc/miniupnpc.h>
+    #include <miniupnpc/upnpcommands.h>
 #endif // _WIN32
+
+#include <algorithm>
+#include <sstream>
+#include <cstring>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Makros / Defines
@@ -177,7 +188,7 @@ bool UPnP::OpenPort(const unsigned short& port)
     }
 
     // otherwise use the first one
-    if(local_address == "" && addresses.size())
+    if(local_address == "" && !addresses.empty())
         local_address = addresses.front();
 
     // I hope we found one ...

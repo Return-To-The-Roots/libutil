@@ -1,4 +1,4 @@
-// $Id: BinaryFile.cpp 7093 2011-03-27 11:49:37Z OLiver $
+﻿// $Id: BinaryFile.cpp 7093 2011-03-27 11:49:37Z OLiver $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -19,7 +19,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header
-#include "main.h"
+#include "libUtilDefines.h"
 #include "BinaryFile.h"
 
 ///////////////////////////////////////////////////////////////////////////////

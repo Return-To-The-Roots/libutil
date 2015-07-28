@@ -1,4 +1,4 @@
-// $Id: files.cpp 9359 2014-04-25 15:37:22Z FloSoft $
+ï»¿// $Id: files.cpp 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -19,15 +19,28 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header
-#include "main.h"
-#include "files.h"
+#include "libUtilDefines.h"
+#include "build_paths.h"
+#include "fileFuncs.h"
+
+#include <sstream>
+#include <cstdlib>
+#include <cstdio>
+#include <algorithm>
+#ifdef _WIN32
+    #define WIN32_LEAN_AND_MEAN
+    #include <windows.h>
+#else
+    #include <dirent.h>
+    #include <sys/stat.h>
+#endif
 
 #ifdef _WIN32
 #undef DATADIR
 #include <shlobj.h>
 #endif
 
-#ifdef __CYGWIN__
+#if defined(__CYGWIN__) || defined (__MINGW32__)
 
 typedef GUID KNOWNFOLDERID;
 #define REFKNOWNFOLDERID const KNOWNFOLDERID &
@@ -92,13 +105,13 @@ static LPSTR UnicodeToAnsi(LPCWSTR s)
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
- *  Wrapper um SHGetKnownFolderPath, unter Vista und Größer benutzt es das
+ *  Wrapper um SHGetKnownFolderPath, unter Vista und GrÃ¶ÃŸer benutzt es das
  *  originale SHGetKnownFolderPath, ansonsten SHGetFolderPath.
  *
  *  @param[in] rfid
  *  @param[in] path
  *
- *  @return liefert den Status zurück (S_OK bei OK)
+ *  @return liefert den Status zurÃ¼ck (S_OK bei OK)
  *
  *  @author FloSoft
  */
@@ -141,7 +154,7 @@ static HRESULT mySHGetKnownFolderPath(REFKNOWNFOLDERID rfid, std::string& path)
  *
  *  @param[in] file
  *
- *  @return liefert den umgeformten Pfad zurück
+ *  @return liefert den umgeformten Pfad zurÃ¼ck
  *
  *  @author FloSoft
  */
@@ -189,11 +202,11 @@ std::string GetFilePath(std::string file)
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
- *  prüft ob eine Datei existiert (bzw ob sie lesbar ist)
+ *  prÃ¼ft ob eine Datei existiert (bzw ob sie lesbar ist)
  *
  *  @param[in] file
  *
- *  @return liefert ja oder nein zurück
+ *  @return liefert ja oder nein zurÃ¼ck
  *
  *  @author FloSoft
  */
@@ -210,11 +223,11 @@ bool FileExists(std::string file)
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
- *  prüft ob eine Verzeichnis existiert (bzw ob es ein Verzeichnis ist)
+ *  prÃ¼ft ob eine Verzeichnis existiert (bzw ob es ein Verzeichnis ist)
  *
  *  @param[in] dir
  *
- *  @return liefert ja oder nein zurück
+ *  @return liefert ja oder nein zurÃ¼ck
  *
  *  @author FloSoft
  */
@@ -247,4 +260,37 @@ bool IsDir(std::string dir)
 #endif // !_WIN32
 
     return false;
+}
+
+int mkdir_p(const std::string& dir)
+{
+	if(IsDir(dir))
+		return 0;
+
+	if (
+#ifdef _WIN32
+		!CreateDirectoryA(dir.c_str(), NULL)
+#else
+		mkdir(dir.c_str(), 0750) < 0
+#endif
+		)
+	{
+		size_t slash = dir.rfind('/');
+		if (slash != std::string::npos)
+		{
+			std::string prefix = dir.substr(0, slash);
+			if(mkdir_p(prefix) == 0)
+			{
+				return (
+#ifdef _WIN32
+					CreateDirectoryA(dir.c_str(), NULL) ? 0 : -1
+#else
+					mkdir(dir.c_str(), 0750)
+#endif
+					);
+			}
+		}
+		return -1;
+	}
+	return 0;
 }

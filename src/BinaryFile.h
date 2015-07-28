@@ -1,4 +1,4 @@
-// $Id: BinaryFile.h 7093 2011-03-27 11:49:37Z OLiver $
+﻿// $Id: BinaryFile.h 7093 2011-03-27 11:49:37Z OLiver $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -22,6 +22,8 @@
 #pragma once
 
 #include "../../libendian/src/libendian.h"
+#include <cstdio>
+#include <string>
 
 // Öffnungsmethoden
 enum OpenFileMode

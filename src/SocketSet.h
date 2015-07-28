@@ -1,4 +1,4 @@
-// $Id: SocketSet.h 9359 2014-04-25 15:37:22Z FloSoft $
+ï»¿// $Id: SocketSet.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -21,22 +21,29 @@
 
 #pragma once
 
+#ifdef _WIN32
+    #include <winsock2.h>
+#else
+    #include <sys/select.h>
+    #define SOCKET int
+#endif // _WIN32
+
 class Socket;
 
-/// FD_Set-Wrapper-Klasse für portable TCP/IP-Verbindungen
+/// FD_Set-Wrapper-Klasse fÃ¼r portable TCP/IP-Verbindungen
 class SocketSet
 {
     public:
         /// Standardkonstruktor von @p SocketSet.
         SocketSet();
 
-        /// räumt das @p SocketSet auf.
+        /// rÃ¤umt das @p SocketSet auf.
         void Clear(void);
 
-        /// fügt ein @p Socket zum @p SocketSet hinzu.
+        /// fÃ¼gt ein @p Socket zum @p SocketSet hinzu.
         void Add(Socket& sock);
 
-        /// führt einen Select auf dem @p SocketSet aus.
+        /// fÃ¼hrt einen Select auf dem @p SocketSet aus.
         int Select(int timeout, int which = 2);
 
         /// ist ein @p Socket im @p SocketSet?
@@ -44,7 +51,7 @@ class SocketSet
 
     private:
         fd_set set;     ///< Das fd_set
-        SOCKET highest; ///< Höchste Socket des Sets
+        SOCKET highest; ///< HÃ¶chste Socket des Sets
 };
 
 #endif // SOCKETSET_H_INCLUDED

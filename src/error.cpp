@@ -1,4 +1,4 @@
-// $Id: error.cpp 9359 2014-04-25 15:37:22Z FloSoft $
+﻿// $Id: error.cpp 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -19,8 +19,11 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header
-#include "main.h"
+#include "libUtilDefines.h"
 #include "error.h"
+#include "Log.h"
+#include <cstdarg>
+#include <cstdlib>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Makros / Defines

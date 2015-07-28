@@ -1,4 +1,4 @@
-// $Id: MessageQueue.cpp 9359 2014-04-25 15:37:22Z FloSoft $
+ï»¿// $Id: MessageQueue.cpp 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -19,8 +19,11 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header
-#include "main.h"
+#include "libUtilDefines.h"
 #include "MessageQueue.h"
+#include "Message.h"
+#include "Socket.h"
+#include "Log.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Makros / Defines
@@ -54,9 +57,12 @@ MessageQueue::MessageQueue(const MessageQueue& mq) : messages(mq.messages.size()
         messages[i] = mq.messages[i]->duplicate();
 }
 
-/// Zuweisungsoperator, da Messages kopiert werden müssen
+/// Zuweisungsoperator, da Messages kopiert werden mÃ¼ssen
 MessageQueue& MessageQueue::operator=(const MessageQueue& mq)
 {
+    if(this == &mq)
+        return *this;
+    clear();
     messages.resize(mq.messages.size());
     for(unsigned i = 0; i < mq.messages.size(); ++i)
         messages[i] = mq.messages[i]->duplicate();
@@ -95,7 +101,7 @@ void MessageQueue::pop(void)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-/// ruft eine nachricht ab und hängt sie in die queue
+/// ruft eine nachricht ab und hÃ¤ngt sie in die queue
 bool MessageQueue::recv(Socket* sock, bool wait)
 {
     if(!sock)
@@ -111,7 +117,7 @@ bool MessageQueue::recv(Socket* sock, bool wait)
         return true;
     }
 
-    // noch nicht alles empfangen, true liefern für okay (error == -1 bedeutet fehler
+    // noch nicht alles empfangen, true liefern fÃ¼r okay (error == -1 bedeutet fehler
     return (error >= 0);
 }
 
@@ -133,7 +139,7 @@ bool MessageQueue::send(Socket* sock, int max, unsigned int sizelimit)
         if(count > max)
             break;
 
-        // maximal 1 großes Paket verschicken
+        // maximal 1 groÃŸes Paket verschicken
         if(count > 0 && (*It)->GetLength() > sizelimit)
             break;
 

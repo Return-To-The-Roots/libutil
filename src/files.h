@@ -1,4 +1,4 @@
-// $Id: files.h 9359 2014-04-25 15:37:22Z FloSoft $
+﻿// $Id: files.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -20,6 +20,8 @@
 #define FILES_H_INCLUDED
 
 #pragma once
+
+#include <string>
 
 #ifndef PREFIX
 #   ifdef _WIN32
@@ -103,20 +105,20 @@ const char* const FILE_PATHS[] =
     /* 17 */RTTRDIR "/COLORS.ACT",                    // Spezialpalette wegen Schriften usw
     /* 18 */RTTRDIR "",                               // unbenutzt
     /* 19 */GAMEDIR "",                               // unbenutzt
-    /* 20 */GAMEDIR "/GFX/TEXTURES/TEX5.LBM",         // Grünland
-    /* 21 */GAMEDIR "/GFX/TEXTURES/TEX6.LBM",         // Ödland
+    /* 20 */GAMEDIR "/GFX/TEXTURES/TEX5.LBM",         // GrÃ¼nland
+    /* 21 */GAMEDIR "/GFX/TEXTURES/TEX6.LBM",         // Ã–dland
     /* 22 */GAMEDIR "/GFX/TEXTURES/TEX7.LBM",         // Winterwelt
-    /* 23 */GAMEDIR "/DATA/MAP_0_Z.LST",              // Grünland
-    /* 24 */GAMEDIR "/DATA/MAP_1_Z.LST",              // Ödland
+    /* 23 */GAMEDIR "/DATA/MAP_0_Z.LST",              // GrÃ¼nland
+    /* 24 */GAMEDIR "/DATA/MAP_1_Z.LST",              // Ã–dland
     /* 25 */GAMEDIR "/DATA/MAP_2_Z.LST",              // Winterwelt
     /* 26 */GAMEDIR "/DATA/CBOB/ROM_BOBS.LST",
     /* 27 */GAMEDIR "/DATA/MBOB/AFR_Z.LST",           // Afrikaner
     /* 28 */GAMEDIR "/DATA/MBOB/JAP_Z.LST",           // Japaner
-    /* 29 */GAMEDIR "/DATA/MBOB/ROM_Z.LST",           // Römer
+    /* 29 */GAMEDIR "/DATA/MBOB/ROM_Z.LST",           // RÃ¶mer
     /* 30 */GAMEDIR "/DATA/MBOB/VIK_Z.LST",           // Wikinger
     /* 31 */GAMEDIR "/DATA/MBOB/WAFR_Z.LST",          // Afrikaner Winter
     /* 32 */GAMEDIR "/DATA/MBOB/WJAP_Z.LST",          // Japaner Winter
-    /* 33 */GAMEDIR "/DATA/MBOB/WROM_Z.LST",          // Römer Winter
+    /* 33 */GAMEDIR "/DATA/MBOB/WROM_Z.LST",          // RÃ¶mer Winter
     /* 34 */GAMEDIR "/DATA/MBOB/WVIK_Z.LST",          // Wikinger Winter
     /* 35 */GAMEDIR "/DATA/MBOB/AFR_ICON.LST",
     /* 36 */GAMEDIR "/DATA/MBOB/JAP_ICON.LST",
@@ -140,7 +142,7 @@ const char* const FILE_PATHS[] =
     /* 54 */RTTRDIR "",                               // unbenutzt
     /* 55 */SETTINGSDIR "/LSTS/SOUND.LST",            // Die konvertierte sound.lst
     /* 56 */RTTRDIR "/sound.scs",                     // Das konvertier-script
-    /* 57 */RTTRDIR "",                               // Basispfad fürn Soundconverter
+    /* 57 */RTTRDIR "",                               // Basispfad fÃ¼rn Soundconverter
     /* 58 */GAMEDIR "/DATA/MIS0BOBS.LST",
     /* 59 */GAMEDIR "/DATA/MIS1BOBS.LST",
     /* 60 */GAMEDIR "/DATA/MIS2BOBS.LST",
@@ -181,14 +183,17 @@ const char* const FILE_PATHS[] =
     /* 95 */RTTRDIR "/LSTS/",                         // systemweite lstfiles (immer bei start geladen)
     /* 96 */RTTRDIR "/LSTS/GAME/",                    // systemweite lstfiles (immer bei spielstart geladen)
     /* 97 */RTTRDIR "",                               // unbenutzt
-    /* 98 */SETTINGSDIR "/LSTS/",                     // persönliche lstfiles (immer bei start geladen)
-    /* 99 */SETTINGSDIR "/LSTS/GAME/",                // persönliche lstfiles (immer bei spielstart geladen)
+    /* 98 */SETTINGSDIR "/LSTS/",                     // persÃ¶nliche lstfiles (immer bei start geladen)
+    /* 99 */SETTINGSDIR "/LSTS/GAME/",                // persÃ¶nliche lstfiles (immer bei spielstart geladen)
     /*100 */SETTINGSDIR "",                           // unbenutzt
     /*101 */RTTRDIR "",                               // unbenutzt
     /*102 */GAMEDIR "/GFX/PICS/SETUP013.LBM",         // Optionen
     /*103 */GAMEDIR "/GFX/PICS/SETUP015.LBM",         // Freies Spiel
     /*104 */RTTRDIR "/splash.bmp"                // Splash
 };
+
+const std::string UNIT_DATA_DIR = RTTRDIR "/Data/";  // Location with the data for all game units/objects (xml files)
+const std::string NATIONS_DATA_FILE = "nations.xml"; // filename for the xml containing the nation definitions
 
 const unsigned int FILE_SPLASH_ID = 104;
 
@@ -202,7 +207,6 @@ const std::string FILE_LOAD_IDS[] =
     "africa", "austra", "europe", "green", "japan", "namerica", "nasia", "samerica", "sasia"
 };
 
-const std::string CONFIG_NAME = "config";
 const unsigned int GFXSET_COUNT = 3;
 const unsigned int NATION_COUNT = 5;
 
@@ -227,9 +231,5 @@ const std::string TEX_GFXSET[GFXSET_COUNT] =
 {
     "tex5", "tex6", "tex7"
 };
-
-std::string GetFilePath(std::string file);
-bool FileExists(std::string file);
-bool IsDir(std::string dir);
 
 #endif // FILES_H_INCLUDED

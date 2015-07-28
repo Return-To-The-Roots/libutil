@@ -1,4 +1,4 @@
-// $Id: Socket.h 9359 2014-04-25 15:37:22Z FloSoft $
+ï»¿// $Id: Socket.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -22,25 +22,30 @@
 #pragma once
 
 #ifdef _WIN32
-#include <ws2tcpip.h>
-typedef int socklen_t;
+
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+
+    typedef int socklen_t;
 #else
-#include <arpa/inet.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
+    #include <arpa/inet.h>
+    #include <sys/types.h>
+    #include <sys/socket.h>
+    #include <netdb.h>
 
-#define SOCKET int
-#define INVALID_SOCKET -1
-#define SOCKET_ERROR -1
-#define HINSTANCE void*
+    #define SOCKET int
+    #define INVALID_SOCKET -1
+    #define SOCKET_ERROR -1
+    #define HINSTANCE void*
 
-#define closesocket close
+    #define closesocket close
 #endif // !_WIN32
 
 #include "UPnP.h"
+#include <cstdlib>
+#include <cstring>
 
-///Socket-Wrapper-Klasse für portable TCP/IP-Verbindungen
+///Socket-Wrapper-Klasse fÃ¼r portable TCP/IP-Verbindungen
 class Socket
 {
     private:
@@ -59,13 +64,13 @@ class Socket
         /// Konstruktor von @p Socket.
         Socket(const SOCKET so, STATUS st);
 
-        /// Setzt ein Socket auf übergebene Werte.
+        /// Setzt ein Socket auf Ã¼bergebene Werte.
         void Set(const SOCKET so, STATUS st);
 
         /// Initialisiert die Socket-Bibliothek.
         static bool Initialize(void);
 
-        /// räumt die Socket-Bibliothek auf.
+        /// rÃ¤umt die Socket-Bibliothek auf.
         static void Shutdown(void);
 
         /// erstellt und initialisiert das Socket.
@@ -105,13 +110,13 @@ class Socket
         /// Zuweisungsoperator.
         Socket& operator =(const SOCKET& sock);
 
-        /// Größer-Vergleichsoperator.
+        /// GrÃ¶ÃŸer-Vergleichsoperator.
         bool operator >(const Socket& sock);
 
-        /// prüft auf wartende Bytes.
+        /// prÃ¼ft auf wartende Bytes.
         int BytesWaiting(void);
 
-        /// prüft auf wartende Bytes.
+        /// prÃ¼ft auf wartende Bytes.
         int BytesWaiting(unsigned int* dwReceived);
 
         /// liefert die IP des Remote-Hosts.
@@ -125,7 +130,7 @@ class Socket
 
         void Sleep(unsigned int ms);
 
-        /// liefert Ip-Adresse(n) für einen Hostnamen.
+        /// liefert Ip-Adresse(n) fÃ¼r einen Hostnamen.
         struct HostAddr
         {
             HostAddr() : host(""), port("0"), addr(NULL), ipv6(false), lookup(true) { }
@@ -202,7 +207,7 @@ class Socket
         };
         std::vector<HostAddr> HostToIp(const std::string& hostname, const unsigned int port, bool get_ipv6);
 
-        /// liefert einen string der übergebenen Ip.
+        /// liefert einen string der Ã¼bergebenen Ip.
         std::string& IpToString(const sockaddr* addr, std::string& buffer);
 
         /// liefert den Status des Sockets.

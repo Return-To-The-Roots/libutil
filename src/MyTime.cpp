@@ -1,4 +1,4 @@
-// $Id: MyTime.cpp 9359 2014-04-25 15:37:22Z FloSoft $
+﻿// $Id: MyTime.cpp 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -19,8 +19,16 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header
-#include "main.h"
+#include "libUtilDefines.h"
 #include "MyTime.h"
+#include <ctime>
+#include <cstdio>
+#include <cstring>
+#ifdef _WIN32
+    #include <windows.h>
+#else
+    #include <sys/times.h>
+#endif // _WIN32
 
 ///////////////////////////////////////////////////////////////////////////////
 // Makros / Defines
@@ -87,7 +95,7 @@ unser_time_t Time::CurrentTick(void)
 /**
  *  formatiert einen Zeitstring.
  *
- *  @param[in] ziel   Zielspeicher, muss gro� genug sein.
+ *  @param[in] ziel   Zielspeicher, muss groß genug sein.
  *  @param[in] format Formatstring (%Y=4 stelliges Jahr, %m 2 stelliges Monat, %D tag, %H Stunde, %i Minute, %s Sekunden)
  *  @param[in] time   zu benutzender Timestamp.
  *

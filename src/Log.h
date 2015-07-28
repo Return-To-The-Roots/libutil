@@ -1,4 +1,4 @@
-// $Id: Log.h 9359 2014-04-25 15:37:22Z FloSoft $
+﻿// $Id: Log.h 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -21,6 +21,9 @@
 
 #pragma once
 
+#include "Singleton.h"
+#include <cstdio>
+
 /// Log Klasse.
 class Log : public Singleton<Log>
 {
@@ -30,12 +33,12 @@ class Log : public Singleton<Log>
         /// Desktruktor von @p Log.
         ~Log(void);
 
-        /// öffnet das Log (falls noch nicht offen)
+        /// Ã¶ffnet das Log (falls noch nicht offen)
         void open(void);
 
         void getlasterror(const char* text);
 
-        /// Schreibt gefärbte Daten ins Log und auf stdout.
+        /// Schreibt gefÃ¤rbte Daten ins Log und auf stdout.
         void lcprintf(const unsigned int color, const char* format, ...);
         /// Schreibt Daten ins Log und auf stdout.
         void lprintf(const char* format, ...);

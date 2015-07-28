@@ -1,4 +1,4 @@
-// $Id: Socket.cpp 9359 2014-04-25 15:37:22Z FloSoft $
+ï»¿// $Id: Socket.cpp 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -19,8 +19,27 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header
-#include "main.h"
+#include "libUtilDefines.h"
 #include "Socket.h"
+#include "Log.h"
+#include "SocketSet.h"
+
+#ifdef _WIN32
+    #if defined(__CYGWIN__) || defined(__MINGW32__)
+        #ifndef AI_ALL
+            #define AI_ALL            0x0010
+        #endif
+
+        #ifndef AI_ADDRCONFIG
+            #define AI_ADDRCONFIG     0x0020
+        #endif
+    #endif
+#else
+    #include <netinet/tcp.h>
+    #include <unistd.h>
+    #include <sys/ioctl.h>
+    #include <errno.h>
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // Makros / Defines
@@ -55,7 +74,7 @@ Socket::Socket(const SOCKET so, STATUS st) : status(st), sock(so)
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
- *  Setzt ein Socket auf übergebene Werte.
+ *  Setzt ein Socket auf Ã¼bergebene Werte.
  *
  *  @param[in] so Socket welches benutzt werden soll
  *  @param[in] st Status der gesetzt werden soll
@@ -91,7 +110,7 @@ bool Socket::Initialize(void)
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
- *  räumt die Socket-Bibliothek auf.
+ *  rÃ¤umt die Socket-Bibliothek auf.
  *
  *  @author FloSoft
  */
@@ -113,7 +132,7 @@ void Socket::Shutdown(void)
  */
 bool Socket::Create(int family)
 {
-    // socket ggf. schließen
+    // socket ggf. schlieÃŸen
     Close();
 
     // ist unser Socket schon initialisiert?
@@ -122,7 +141,7 @@ bool Socket::Create(int family)
         // nein, dann Neues erzeugen
         sock = socket(family, SOCK_STREAM, 0);
 
-        // Ist es gültig?
+        // Ist es gÃ¼ltig?
         status = (INVALID_SOCKET == sock ? INVALID : VALID);
 
         // Nagle deaktivieren
@@ -151,7 +170,7 @@ void Socket::Close(void)
         // Socket schliessen
         closesocket(sock);
 
-        // auf ungültig setzen
+        // auf ungÃ¼ltig setzen
         Set(INVALID_SOCKET, INVALID);
     }
 }
@@ -177,7 +196,11 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
 
     do
     {
-        sockaddr_storage addrs;
+        union{
+            sockaddr_storage addrs;
+            sockaddr_in addrV4;
+            sockaddr_in6 addrV6;
+        };
         memset(&addrs, 0, sizeof(sockaddr_storage));
 
         if(ipv6)
@@ -193,15 +216,13 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
 
         if(ipv6)
         {
-            sockaddr_in6* addr = (sockaddr_in6*)&addrs;
-            addr->sin6_family  = AF_INET6;
-            addr->sin6_port    = htons(port);
+            addrV6.sin6_family  = AF_INET6;
+            addrV6.sin6_port    = htons(port);
         }
         else
         {
-            sockaddr_in* addr = (sockaddr_in*)&addrs;
-            addr->sin_family   = AF_INET;
-            addr->sin_port     = htons(port);
+            addrV4.sin_family   = AF_INET;
+            addrV4.sin_port     = htons(port);
         }
 
         // Bei Fehler jeweils nochmal mit ipv4 probieren
@@ -290,7 +311,7 @@ bool Socket::Accept(Socket& client)
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
- *  liefert Ip-Adresse(n) für einen Hostnamen.
+ *  liefert Ip-Adresse(n) fÃ¼r einen Hostnamen.
  *
  *  @param[in] hostname Ziel-Hostname/-ip
  *
@@ -422,7 +443,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
         IpToString(it->addr->ai_addr, ip);
         LOG.lprintf("Verbinde mit %s%s:%d\n", (typ != PROXY_NONE ? "Proxy " : ""), ip.c_str(), (typ != PROXY_NONE ? proxy_port : port));
 
-        // Und schließlich Verbinden
+        // Und schlieÃŸlich Verbinden
         if(connect(sock, it->addr->ai_addr, it->addr->ai_addrlen) != SOCKET_ERROR)
         {
             done = true;
@@ -463,11 +484,14 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
                             break;
                         case PROXY_SOCKS4:
                         {
-                            char proxyinit[18];
+                            union{
+                                char proxyinit[18];
+                                unsigned short proxyInitShort[9];
+                            };
 
                             proxyinit[0] = 4; // socks v4
                             proxyinit[1] = 1; // 1=connect
-                            *(unsigned short*)(&proxyinit[2]) = htons(port);
+                            proxyInitShort[1] = htons(port);
                             for(std::vector<HostAddr>::const_iterator it = ips.begin(); it != ips.end(); ++it)
                             {
                                 if(!it->ipv6)
@@ -615,7 +639,7 @@ bool Socket::SetSockOpt(int nOptionName, const void* lpOptionValue, int nOptionL
  *
  *  @param[in] sock Quellsocket von dem zugewiesen werden soll
  *
- *  @return liefert eine Referenz auf @p this zurück
+ *  @return liefert eine Referenz auf @p this zurÃ¼ck
  *
  *  @author OLiver
  *  @author FloSoft
@@ -636,7 +660,7 @@ Socket& Socket::operator =(const Socket& sock)
  *
  *  @param[in] sock Quellsocket von dem zugewiesen werden soll
  *
- *  @return liefert eine Referenz auf @p this zurück
+ *  @return liefert eine Referenz auf @p this zurÃ¼ck
  *
  *  @author OLiver
  *  @author FloSoft
@@ -652,11 +676,11 @@ Socket& Socket::operator =(const SOCKET& sock)
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
- *  Größer-Vergleichsoperator.
+ *  GrÃ¶ÃŸer-Vergleichsoperator.
  *
- *  @param[in] sock Socket mit dem auf größer verglichen werden soll
+ *  @param[in] sock Socket mit dem auf grÃ¶ÃŸer verglichen werden soll
  *
- *  @return liefert true falls @p this größer ist als @p sock
+ *  @return liefert true falls @p this grÃ¶ÃŸer ist als @p sock
  *
  *  @author OLiver
  *  @author FloSoft
@@ -671,7 +695,7 @@ bool Socket::operator >(const Socket& sock)
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
- *  prüft auf wartende Bytes.
+ *  prÃ¼ft auf wartende Bytes.
  *
  *  @return liefert die Menge der wartenden Bytes
  *
@@ -689,7 +713,7 @@ int Socket::BytesWaiting(void)
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
- *  prüft auf wartende Bytes.
+ *  prÃ¼ft auf wartende Bytes.
  *
  *  @param[in,out] dwReceived Menge der wartenden Bytes
  *
@@ -714,7 +738,7 @@ int Socket::BytesWaiting(unsigned int* received)
 /**
  *  liefert die IP des Remote-Hosts.
  *
- *  @return liefert @p buffer zurück oder @p "" bei Fehler
+ *  @return liefert @p buffer zurÃ¼ck oder @p "" bei Fehler
  *
  *  @author OLiver
  *  @author FloSoft
@@ -737,7 +761,7 @@ std::string Socket::GetPeerIP(void)
 /**
  *  liefert die IP des Lokalen-Hosts.
  *
- *  @return liefert @p buffer zurück oder @p "" bei Fehler
+ *  @return liefert @p buffer zurÃ¼ck oder @p "" bei Fehler
  *
  *  @author OLiver
  *  @author FloSoft
@@ -760,7 +784,7 @@ std::string Socket::GetSockIP(void)
 /**
  *  liefert einen Zeiger auf das Socket.
  *
- *  @return liefert die Adresse von @p sock zurück
+ *  @return liefert die Adresse von @p sock zurÃ¼ck
  *
  *  @author OLiver
  *  @author FloSoft
@@ -773,7 +797,7 @@ SOCKET* Socket::GetSocket(void)
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
- *  liefert einen string der übergebenen Ip.
+ *  liefert einen string der Ã¼bergebenen Ip.
  *
  *  @author OLiver
  *  @author FloSoft

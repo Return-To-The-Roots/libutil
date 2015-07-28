@@ -1,4 +1,4 @@
-// $Id: Message.cpp 9359 2014-04-25 15:37:22Z FloSoft $
+Ôªø// $Id: Message.cpp 9359 2014-04-25 15:37:22Z FloSoft $
 //
 // Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
 //
@@ -19,10 +19,12 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header
-#include "main.h"
+#include "libUtilDefines.h"
 #include "Message.h"
-
 #include "Messages.h"
+#include "Socket.h"
+#include "SocketSet.h"
+#include "MyTime.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
@@ -37,7 +39,7 @@ bool Message::send(Socket* sock)
     if(NULL == sock)
         return false;
 
-    // WTF? so groﬂe Nachricht darfs nicht geben
+    // WTF? so gro√üe Nachricht darfs nicht geben
     if(GetLength() > 1024000 - 6)
     {
         LOG.lprintf("BIG OOPS! Message with length %u exceeds maximum of %d!\n", GetLength(), 1024000 - 6);
@@ -164,7 +166,7 @@ Message* Message::recv(Socket* sock, int& error, bool wait, Message * (*createfu
         if(received == 0)
             return NULL;
 
-        // haben wir schon eine vollst‰ndige nachricht? (kleinste nachricht: 6 bytes)
+        // haben wir schon eine vollst√§ndige nachricht? (kleinste nachricht: 6 bytes)
         if(received < 6)
         {
             if(wait)

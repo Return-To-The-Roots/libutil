@@ -1,6 +1,4 @@
-﻿// $Id: libutil.h 7521 2011-09-08 20:45:55Z FloSoft $
-//
-// Copyright (c) 2005 - 2011 Settlers Freaks (sf-team at siedler25.org)
+﻿// Copyright (c) 2005 - 2015 Settlers Freaks (sf-team at siedler25.org)
 //
 // This file is part of Return To The Roots.
 //
@@ -16,21 +14,15 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
-#ifndef LIBUTIL_H_INCLUDED
-#define LIBUTIL_H_INCLUDED
 
-#pragma once
+#ifndef FILE_FUNCS_H__
+#define FILE_FUNCS_H__
 
-#include "files.h"
+#include <string>
 
-#include "error.h"
-#include "colors.h"
-#include "Serializer.h"
-#include "SerializableArray.h"
-#include "Singleton.h"
-#include "MyTime.h"
-#include "Log.h"
-#include "Socket.h"
-#include "SocketSet.h"
+std::string GetFilePath(std::string file);
+bool FileExists(std::string file);
+bool IsDir(std::string dir);
+int mkdir_p(const std::string& dir);
 
-#endif // !LIBUTIL_H_INCLUDED
+#endif
