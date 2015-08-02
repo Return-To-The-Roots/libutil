@@ -19,11 +19,24 @@
 #ifndef MESSAGEQUEUE_H_INCLUDED
 #define MESSAGEQUEUE_H_INCLUDED
 
-#include <vector>
+#include <queue>
 #include <stddef.h>
 
 class Message;
 class Socket;
+
+template<typename T, typename Container=std::deque<T> >
+class iterable_queue : public std::queue<T,Container>
+{
+public:
+    typedef typename Container::iterator iterator;
+    typedef typename Container::const_iterator const_iterator;
+
+    iterator begin() { return this->c.begin(); }
+    iterator end() { return this->c.end(); }
+    const_iterator begin() const { return this->c.begin(); }
+    const_iterator end() const { return this->c.end(); }
+};
 
 //class Socket;
 class MessageQueue
@@ -36,8 +49,8 @@ class MessageQueue
         MessageQueue& operator=(const MessageQueue& mq);
 
     private:
-        typedef std::vector<Message*> Queue;
-        typedef std::vector<Message*>::iterator QueueIt;
+        typedef iterable_queue<Message*> Queue;
+        typedef iterable_queue<Message*>::iterator QueueIt;
         Queue messages;
         Message* (*createfunction)(unsigned short);
 
@@ -56,11 +69,20 @@ class MessageQueue
 
     public:
         /// hängt ein Element hinten an.
-        void push(Message* message) { messages.push_back(message); }
+        void push(Message* message) { messages.push(message); }
         /// liefert das vorderste Element der Queue.
         Message* front() { return (!messages.empty() ? messages.front() : NULL); }
         /// entfernt das vorderste Element aus der Queue.
         void pop(void);
+        /// Returns the first element and removes it from the queue. Returns NULL if there is none
+        /// Caller is responsible for deleting it!
+        Message* popFront(){
+            if(messages.empty())
+                return NULL;
+            Message* msg = messages.front();
+            messages.pop();
+            return msg;
+        }
 
 };
 

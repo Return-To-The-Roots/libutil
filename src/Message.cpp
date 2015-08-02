@@ -68,19 +68,18 @@ bool Message::send(Socket* sock)
  */
 int Message::recv(Socket* sock, unsigned int length)
 {
-    if(length > 0)
+    if(!length)
+        return 0;
+    
+    EnsureSize(length);
+
+    int read = sock->Recv(GetDataWritable(), length);
+    SetLength(length);
+    if(length != (unsigned int)read )
     {
-        // Daten empfangen
-        Realloc(length);
+        LOG.lprintf("recv: data: only got %d bytes instead of %d\n", read, length);
 
-        int read = sock->Recv(GetDataWritable(), length);
-        SetLength(length);
-        if(length != (unsigned int)read )
-        {
-            LOG.lprintf("recv: data: only got %d bytes instead of %d\n", read, length);
-
-            return -1;
-        }
+        return -1;
     }
     return 0;
 }

@@ -7,7 +7,8 @@ LINK_DIRECTORIES("${CMAKE_SOURCE_DIR}/libendian/src")
 
 #################################################################################
 
-ADD_LIBRARY(s25util STATIC Log.cpp Socket.cpp SocketSet.cpp MyTime.cpp error.cpp MessageQueue.cpp MessageInterface.cpp Message.cpp Serializer.cpp fileFuncs.cpp UPnP.cpp BinaryFile.h BinaryFile.cpp)
+FILE(GLOB SRC_FILES *.cpp *.h)
+ADD_LIBRARY(s25util STATIC ${SRC_FILES})
 
 IF (MSVC)
 	SET( UPNC_LIB "")

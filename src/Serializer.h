@@ -29,8 +29,9 @@
     #include <arpa/inet.h>
 #endif // _WIN32
 
+#include "uvector.h"
 #include <string>
-#include <cstring>
+#include <algorithm>
 
 class BinaryFile;
 
@@ -40,20 +41,14 @@ class Serializer
 {
     public:
         Serializer(void)
-            : data(0), buffer_length(0), length(0), pos(0)
+            : data(0), length(0), pos(0)
         {
         }
 
         Serializer(const void* const data, const unsigned initial_size)
-            : data(new unsigned char[initial_size]), buffer_length(initial_size), length(initial_size), pos(0)
+            : data(initial_size), length(0), pos(0)
         {
-            memcpy(this->data, data, initial_size);
-        }
-
-        Serializer(const Serializer& two)
-            : data(new unsigned char[two.buffer_length]), buffer_length(two.buffer_length), length(two.length), pos(two.pos)
-        {
-            memcpy(data, two.data, length);
+            PushRawData(data, initial_size);
         }
 
         virtual ~Serializer()
@@ -64,9 +59,7 @@ class Serializer
         /// Aufräumen
         inline void Clear()
         {
-            delete[] data;
-            data = 0;
-            buffer_length = 0;
+            data.clear();
             length = 0;
             pos = 0;
         }
@@ -85,7 +78,7 @@ class Serializer
         /// Zugriff auf die Rohdaten
         const unsigned char* GetData(void) const
         {
-            return data;
+            return data.data();
         }
 
         /// Schreibt den Buffer in eine Datei
@@ -100,9 +93,12 @@ class Serializer
         inline void PushRawData(const void* const data, const unsigned length)
         {
             ExtendMemory(length);
-            memcpy(&this->data[this->length], data, length);
+            const char* const bData = reinterpret_cast<const char* const>(data);
+            std::copy(bData, bData + length, this->data.begin() + this->length);
             this->length += length;
         }
+
+
 
         /// Sämtliche Integer
         inline void PushSignedInt(signed int i)
@@ -146,18 +142,13 @@ class Serializer
 
         // Lesemethoden
 
-        /// Copy all data
-        inline void ToBuffer(unsigned char* const buffer)
-        {
-            memcpy(buffer, data, length);
-        }
-
         /// Rohdaten kopieren
         inline void PopRawData(void* const data, const unsigned length)
         {
             assert(pos + length <= this->length);
 
-            memcpy(data, &this->data[pos], length);
+            char* const bData = reinterpret_cast<char* const>(data);
+            std::copy(this->data.begin() + pos, this->data.begin() + pos + length, bData);
             pos += length;
         }
 
@@ -214,13 +205,9 @@ class Serializer
             if(this == &other)
                 return *this;
 
-            Clear();
-
-            data = new unsigned char[other.buffer_length];
-            buffer_length = other.buffer_length;
+            data = other.data;
             length = other.length;
             pos = other.pos;
-            memcpy(data, other.data, length);
 
             return *this;
         }
@@ -277,7 +264,7 @@ class Serializer
         /// Schreibzugriff auf die Rohdaten
         unsigned char* GetDataWritable(void)
         {
-            return data;
+            return data.data();
         }
 
         /// Schreibzugriff auf die Länge
@@ -286,46 +273,22 @@ class Serializer
             this->length = length;
         }
 
-        /// vergrößert den Speicher auf die nächst höhere 2er potenz zur Länge @p length.
-        inline void Realloc(const unsigned int length)
-        {
-            if(this->buffer_length == 0)
-                this->buffer_length = 64;
-
-            // speicher vergrößern
-            while(this->buffer_length < length)
-                this->buffer_length *= 2;
-
-            if(data == 0)
-            {
-                // neu anlegen
-                data = new unsigned char[this->buffer_length];
-                memset(data, 0, sizeof(unsigned char)*this->buffer_length);
-            }
-            else
-            {
-                // umkopieren (vergrößern)
-                unsigned char* ndata = new unsigned char[this->buffer_length];
-                memset(ndata + this->length, 0, sizeof(unsigned char)*(this->buffer_length - this->length));
-                memcpy(ndata, data, this->length);
-
-                delete[] data;
-                data = ndata;
-            }
-        }
-
         /// Erweitert ggf. Speicher um add_length
         inline void ExtendMemory(const unsigned add_length)
         {
-            if(length + add_length > this->buffer_length)
-                Realloc(length + add_length);
+            EnsureSize(length + add_length);
+        }
+
+        /// Makes sure the internal buffer is at least length bytes long
+        inline void EnsureSize(const unsigned length)
+        {
+            data.reserve(length);
+            data.resize(data.capacity());
         }
 
     private:
         /// data mit den Daten
-        unsigned char* data;
-        /// Länge des datas
-        unsigned buffer_length;
+        uvector<unsigned char> data;
         /// Logische Länge
         unsigned length;
         /// Schreib/Leseposition

@@ -43,8 +43,8 @@ void Serializer::ReadFromFile(BinaryFile& file)
 
     unsigned buffer_size;
     buffer_size = file.ReadUnsignedInt();
-    Realloc(buffer_size);
-    SetLength(buffer_size);
+    EnsureSize(buffer_size);
     file.ReadRawData(GetDataWritable(), buffer_size);
+    SetLength(buffer_size);
 }
 

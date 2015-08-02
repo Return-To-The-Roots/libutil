@@ -19,6 +19,10 @@
 #ifndef LIB_UTIL_DEFINES_H__
 #define LIB_UTIL_DEFINES_H__
 
+#ifndef NOMINMAX
+#   define NOMINMAX
+#endif
+
 #ifdef _WIN32
     #define _CRTDBG_MAP_ALLOC
     #define WIN32_LEAN_AND_MEAN

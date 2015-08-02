@@ -51,10 +51,11 @@ MessageQueue::~MessageQueue(void)
  *
  *  @author OLiver
  */
-MessageQueue::MessageQueue(const MessageQueue& mq) : messages(mq.messages.size()), createfunction(mq.createfunction)
+MessageQueue::MessageQueue(const MessageQueue& mq) : messages(mq.messages), createfunction(mq.createfunction)
 {
-    for(unsigned i = 0; i < mq.messages.size(); ++i)
-        messages[i] = mq.messages[i]->duplicate();
+    // Deep copy
+    for(QueueIt it = messages.begin(); it != messages.end(); ++it)
+        *it = (*it)->duplicate();
 }
 
 /// Zuweisungsoperator, da Messages kopiert werden müssen
@@ -63,9 +64,12 @@ MessageQueue& MessageQueue::operator=(const MessageQueue& mq)
     if(this == &mq)
         return *this;
     clear();
-    messages.resize(mq.messages.size());
-    for(unsigned i = 0; i < mq.messages.size(); ++i)
-        messages[i] = mq.messages[i]->duplicate();
+    messages = mq.messages;
+    createfunction = mq.createfunction;
+
+    // Deep copy
+    for(QueueIt it = messages.begin(); it != messages.end(); ++it)
+        *it = (*it)->duplicate();
 
     return *this;
 }
@@ -78,9 +82,11 @@ MessageQueue& MessageQueue::operator=(const MessageQueue& mq)
  */
 void MessageQueue::clear(void)
 {
-    for(QueueIt It = messages.begin(); It < messages.end(); ++It)
-        delete (*It);
-    messages.clear();
+    while(!messages.empty())
+    {
+        delete messages.front();
+        messages.pop();
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -91,13 +97,11 @@ void MessageQueue::clear(void)
  */
 void MessageQueue::pop(void)
 {
-    if(messages.size() == 0)
+    if(messages.empty())
         return;
 
-    QueueIt It = messages.begin();
-    delete (*It);
-
-    messages.erase(It);
+    delete messages.front();
+    messages.pop();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -134,18 +138,17 @@ bool MessageQueue::send(Socket* sock, int max, unsigned int sizelimit)
 
     // send-queue abarbeiten
     int count = 0;
-    for(QueueIt It = messages.begin(); It < messages.end(); It = messages.begin())
+    while(count <= max && !messages.empty())
     {
-        if(count > max)
-            break;
+        Message* msg = messages.front();
 
         // maximal 1 großes Paket verschicken
-        if(count > 0 && (*It)->GetLength() > sizelimit)
+        if(count > 0 && msg->GetLength() > sizelimit)
             break;
 
-        if((*It)->getId() > 0)
+        if(msg->getId() > 0)
         {
-            if(!(*It)->send(sock))
+            if(!msg->send(sock))
             {
                 LOG.lprintf("Sending Message to server failed\n");
                 return false;
