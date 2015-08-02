@@ -29,7 +29,7 @@
     #include <arpa/inet.h>
 #endif // _WIN32
 
-#include <vector>
+#include "uvector.h"
 #include <string>
 #include <algorithm>
 
@@ -288,7 +288,7 @@ class Serializer
 
     private:
         /// data mit den Daten
-        std::vector<unsigned char> data;
+        uvector<unsigned char> data;
         /// Logische Länge
         unsigned length;
         /// Schreib/Leseposition
