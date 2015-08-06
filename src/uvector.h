@@ -17,7 +17,8 @@
 
 #include <cstring>
 #include <stdexcept>
-#include <vector>
+#include <iterator>
+#include <cstddef>
 
 /// A (almost) vector compatible container that uses uninitialized memory
 template<typename Tp>
