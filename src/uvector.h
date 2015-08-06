@@ -17,6 +17,7 @@
 
 #include <cstring>
 #include <stdexcept>
+#include <vector>
 
 /// A (almost) vector compatible container that uses uninitialized memory
 template<typename Tp>
