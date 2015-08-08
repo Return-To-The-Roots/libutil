@@ -75,9 +75,13 @@
         #define _WIN32_WINNT 0x501
     #endif
 #else // _WIN32
+    #include <sys/types.h>
+    #include <sys/socket.h>
+
     #include <ifaddrs.h>
     #include <unistd.h>
     #include <netdb.h>
+    #include <netinet/in.h>
     #include <arpa/inet.h>
 #endif // _WIN32
 
