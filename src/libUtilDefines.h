@@ -55,9 +55,4 @@
     #include <assert.h>
 #endif //_WIN32
 
-#ifndef va_copy
-    /* WARNING - DANGER - ASSUMES TYPICAL STACK MACHINE */
-    #define va_copy(dst, src) ((void)((dst) = (src)))
-#endif
-
 #endif

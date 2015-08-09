@@ -21,8 +21,6 @@
 
 #pragma once
 
-#include "libUtilDefines.h"
-
 #ifdef _WIN32
     #include <winsock2.h>
 #else

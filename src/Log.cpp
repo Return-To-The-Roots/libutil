@@ -42,6 +42,11 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+#ifndef va_copy
+    /* WARNING - DANGER - ASSUMES TYPICAL STACK MACHINE */
+#   define va_copy(dst, src) ((void)((dst) = (src)))
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////
 /**
  *  Konstruktor von @p Log.
