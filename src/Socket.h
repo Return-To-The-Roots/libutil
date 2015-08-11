@@ -145,7 +145,13 @@ class Socket
             ~HostAddr()
             {
                 if(lookup)
-                    freeaddrinfo(addr);
+                {
+                    if(addr)
+                    {
+                        freeaddrinfo(addr);
+                        addr = NULL;
+                    }
+                }
                 else
                 {
                     free(addr->ai_addr);
@@ -157,7 +163,11 @@ class Socket
             // set
             void UpdateAddr()
             {
-                freeaddrinfo(addr);
+                if(addr)
+                {
+                    freeaddrinfo(addr);
+                    addr = NULL;
+                }
 
                 // do not use addr resolution for localhost
                 lookup = (host != "localhost");
@@ -174,7 +184,11 @@ class Socket
                     else
                         hints.ai_family = AF_INET;
 
-                    getaddrinfo(host.c_str(), port.c_str(), &hints, &addr);
+                    int error = getaddrinfo(host.c_str(), port.c_str(), &hints, &addr);
+                    if(error != 0)
+                    {
+                        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(error));
+                    }
                 }
                 else // fill with loopback
                 {

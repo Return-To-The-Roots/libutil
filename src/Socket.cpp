@@ -338,7 +338,11 @@ std::vector<Socket::HostAddr> Socket::HostToIp(const std::string& hostname, cons
     addrinfo hints;
     memset(&hints, 0, sizeof(addrinfo));
 
-    hints.ai_flags = AI_ADDRCONFIG | AI_ALL;
+    hints.ai_flags = AI_ADDRCONFIG;
+#ifndef __FreeBSD__
+    // Defined, but getaddrinfo complains about it on FreeBSD
+    hints.ai_flags |= AI_ALL;
+#endif
     hints.ai_socktype = SOCK_STREAM;
 
     if(get_ipv6)
@@ -347,8 +351,12 @@ std::vector<Socket::HostAddr> Socket::HostToIp(const std::string& hostname, cons
         hints.ai_family = AF_INET;
 
     addrinfo* res;
-    if(getaddrinfo(hostname.c_str(), dport, &hints, &res) != 0)
+    int error = getaddrinfo(hostname.c_str(), dport, &hints, &res);
+    if(error != 0)
+    {
+        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(error));
         return ips; // "DNS Error"
+    }
 
     addrinfo* addr = res;
     while(addr != NULL)
