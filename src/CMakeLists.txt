@@ -2,7 +2,15 @@
 ### $Id: CMakeLists.txt 7521 2011-09-08 20:45:55Z FloSoft $
 #################################################################################
 
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR} "${CMAKE_SOURCE_DIR}/libendian/src/" ${BOOST_INCLUDE_DIR})
+IF (NOT MSVC)
+	FIND_PACKAGE(Miniupnpc REQUIRED)
+ENDIF()
+
+
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}
+	"${CMAKE_SOURCE_DIR}/libendian/src/"
+	${BOOST_INCLUDE_DIR}
+	${MINIUPNPC_INCLUDE_DIR})
 LINK_DIRECTORIES("${CMAKE_SOURCE_DIR}/libendian/src")
 
 #################################################################################
