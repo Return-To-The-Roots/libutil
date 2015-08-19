@@ -2,7 +2,10 @@
 ### $Id: CMakeLists.txt 7521 2011-09-08 20:45:55Z FloSoft $
 #################################################################################
 
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR} "${CMAKE_SOURCE_DIR}/libendian/src/" ${BOOST_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}
+	"${CMAKE_SOURCE_DIR}/libendian/src/"
+	${BOOST_INCLUDE_DIR}
+	"/usr/local/include")
 LINK_DIRECTORIES("${CMAKE_SOURCE_DIR}/libendian/src")
 
 #################################################################################
