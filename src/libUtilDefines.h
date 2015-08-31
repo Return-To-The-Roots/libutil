@@ -38,7 +38,7 @@
     #ifdef _MSC_VER
         #include <crtdbg.h>
         #define getch _getch
-        #ifndef snprintf
+        #if !defined(snprintf) && _MSC_VER < 1800
             #define snprintf _snprintf
         #endif
         #ifndef assert
