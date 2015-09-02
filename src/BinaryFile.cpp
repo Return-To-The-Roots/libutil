@@ -1,5 +1,3 @@
-// $Id: BinaryFile.cpp 7093 2011-03-27 11:49:37Z OLiver $
-//
 // Copyright (c) 2005 - 2015 Settlers Freaks (sf-team at siedler25.org)
 //
 // This file is part of Return To The Roots.
