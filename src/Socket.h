@@ -43,6 +43,7 @@
 #include "UPnP.h"
 #include <cstdlib>
 #include <cstring>
+#include <iostream>
 
 ///Socket-Wrapper-Klasse für portable TCP/IP-Verbindungen
 class Socket
@@ -185,7 +186,7 @@ class Socket
                     int error = getaddrinfo(host.c_str(), port.c_str(), &hints, &addr);
                     if(error != 0)
                     {
-                        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(error));
+                        std::cerr << "getaddrinfo: " << gai_strerror(error) << "\n";
                     }
                 }
                 else // fill with loopback
