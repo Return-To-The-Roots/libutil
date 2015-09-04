@@ -21,10 +21,10 @@ ELSE()
 	SET( UPNC_LIB "miniupnpc")
 ENDIF()
 
-IF ( "${COMPILEFOR}" STREQUAL "windows" )
+IF ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows" )
 	TARGET_LINK_LIBRARIES(s25util ${UPNC_LIB} iphlpapi ws2_32 ${TARGET_LINK_LIBRARIES} )
-ELSE ( "${COMPILEFOR}" STREQUAL "windows" )
+ELSE ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows" )
 	TARGET_LINK_LIBRARIES(s25util ${UPNC_LIB} ${TARGET_LINK_LIBRARIES} )
-ENDIF ( "${COMPILEFOR}" STREQUAL "windows" )
+ENDIF ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows" )
 
 #################################################################################
