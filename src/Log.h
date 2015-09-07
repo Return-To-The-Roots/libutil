@@ -20,6 +20,7 @@
 #pragma once
 
 #include "Singleton.h"
+#include <cstdarg>
 #include <cstdio>
 
 /// Log Klasse.
