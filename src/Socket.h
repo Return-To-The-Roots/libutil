@@ -45,6 +45,32 @@
 #include <cstring>
 #include <iostream>
 
+/// liefert Ip-Adresse(n) für einen Hostnamen.
+struct HostAddr
+{
+    HostAddr(): host(""), port("0"), ipv6(false) {}
+
+    std::string host;
+    std::string port;
+    bool ipv6;
+};
+
+/// Resolves a host address
+class ResolvedAddr
+{
+    bool lookup;
+    addrinfo* addr;
+
+    // Do not copy
+    ResolvedAddr(const ResolvedAddr&);
+    ResolvedAddr operator=(const ResolvedAddr&);
+public:
+    ResolvedAddr(const HostAddr& hostAddr);
+    ~ResolvedAddr();
+
+    addrinfo& getAddr(){ return *addr; }
+};
+
 ///Socket-Wrapper-Klasse für portable TCP/IP-Verbindungen
 class Socket
 {
@@ -130,99 +156,10 @@ class Socket
 
         void Sleep(unsigned int ms);
 
-        /// liefert Ip-Adresse(n) für einen Hostnamen.
-        struct HostAddr
-        {
-            HostAddr() : host(""), port("0"), addr(NULL), ipv6(false), lookup(true) { }
-
-            // copy
-            HostAddr(const HostAddr& ha) : host(ha.host), port(ha.port), addr(NULL), ipv6(ha.ipv6), lookup(ha.lookup)
-            {
-                UpdateAddr();
-            }
-
-            ~HostAddr()
-            {
-                if(lookup)
-                {
-                    if(addr)
-                    {
-                        freeaddrinfo(addr);
-                        addr = NULL;
-                    }
-                }
-                else
-                {
-                    free(addr->ai_addr);
-                    delete addr;
-                    addr = NULL;
-                }
-            }
-
-            // set
-            void UpdateAddr()
-            {
-                if(addr)
-                {
-                    freeaddrinfo(addr);
-                    addr = NULL;
-                }
-
-                // do not use addr resolution for localhost
-                lookup = (host != "localhost");
-
-                if(lookup)
-                {
-                    addrinfo hints;
-                    memset(&hints, 0, sizeof(addrinfo));
-                    hints.ai_flags = AI_NUMERICHOST;
-                    hints.ai_socktype = SOCK_STREAM;
-
-                    if(ipv6)
-                        hints.ai_family = AF_INET6;
-                    else
-                        hints.ai_family = AF_INET;
-
-                    int error = getaddrinfo(host.c_str(), port.c_str(), &hints, &addr);
-                    if(error != 0)
-                    {
-                        std::cerr << "getaddrinfo: " << gai_strerror(error) << "\n";
-                    }
-                }
-                else // fill with loopback
-                {
-                    addr = new addrinfo;
-                    addr->ai_family = (ipv6 ? AF_INET6 : AF_INET);
-                    addr->ai_addrlen = (ipv6 ? sizeof(sockaddr_in6) : sizeof(sockaddr_in));
-                    addr->ai_addr = (sockaddr*)calloc(1, addr->ai_addrlen);
-
-                    if(ipv6)
-                    {
-                        sockaddr_in6* addr6 = (sockaddr_in6*)addr->ai_addr;
-                        addr6->sin6_family = AF_INET6;
-                        addr6->sin6_port = htons(atoi(port.c_str()));
-                        addr6->sin6_addr = in6addr_loopback;
-                    }
-                    else
-                    {
-                        sockaddr_in* addr4 = (sockaddr_in*)addr->ai_addr;
-                        addr4->sin_family = AF_INET;
-                        addr4->sin_port = htons(atoi(port.c_str()));
-                        addr4->sin_addr.s_addr = inet_addr("127.0.0.1");
-                    }
-                }
-            }
-
-            std::string host;
-            std::string port;
-            addrinfo* addr;
-            bool ipv6;
-            bool lookup;
-        };
         std::vector<HostAddr> HostToIp(const std::string& hostname, const unsigned int port, bool get_ipv6);
 
         /// liefert einen string der übergebenen Ip.
-        std::string& IpToString(const sockaddr* addr, std::string& buffer);
+        std::string IpToString(const sockaddr* addr);
 
         /// liefert den Status des Sockets.
         bool isValid(void) { return (status != INVALID); }

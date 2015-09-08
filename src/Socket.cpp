@@ -47,6 +47,71 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr)
+{
+    // do not use addr resolution for localhost
+    lookup = (hostAddr.host != "localhost");
+
+    if(lookup)
+    {
+        addrinfo hints;
+        memset(&hints, 0, sizeof(addrinfo));
+        hints.ai_flags = AI_NUMERICHOST;
+        hints.ai_socktype = SOCK_STREAM;
+
+        if(hostAddr.ipv6)
+            hints.ai_family = AF_INET6;
+        else
+            hints.ai_family = AF_INET;
+
+        int error = getaddrinfo(hostAddr.host.c_str(), hostAddr.port.c_str(), &hints, &addr);
+        if(error != 0)
+        {
+            std::cerr << "getaddrinfo: " << gai_strerror(error) << "\n";
+        }
+    }
+    else // fill with loopback
+    {
+        addr = new addrinfo;
+        addr->ai_family = (hostAddr.ipv6 ? AF_INET6 : AF_INET);
+        addr->ai_addrlen = (hostAddr.ipv6 ? sizeof(sockaddr_in6) : sizeof(sockaddr_in));
+        addr->ai_addr = (sockaddr*)calloc(1, addr->ai_addrlen);
+
+        if(hostAddr.ipv6)
+        {
+            sockaddr_in6* addr6 = (sockaddr_in6*)addr->ai_addr;
+            addr6->sin6_family = AF_INET6;
+            addr6->sin6_port = htons(atoi(hostAddr.port.c_str()));
+            addr6->sin6_addr = in6addr_loopback;
+        }
+        else
+        {
+            sockaddr_in* addr4 = (sockaddr_in*)addr->ai_addr;
+            addr4->sin_family = AF_INET;
+            addr4->sin_port = htons(atoi(hostAddr.port.c_str()));
+            addr4->sin_addr.s_addr = inet_addr("127.0.0.1");
+        }
+    }
+}
+
+ResolvedAddr::~ResolvedAddr()
+{
+    if(lookup)
+    {
+        if(addr)
+        {
+            freeaddrinfo(addr);
+            addr = NULL;
+        }
+    }
+    else
+    {
+        free(addr->ai_addr);
+        delete addr;
+        addr = NULL;
+    }
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 /**
  *  Standardkonstruktor von @p Socket.
@@ -315,7 +380,7 @@ bool Socket::Accept(Socket& client)
  *
  *  @author FloSoft
  */
-std::vector<Socket::HostAddr> Socket::HostToIp(const std::string& hostname, const unsigned int port, bool get_ipv6)
+std::vector<HostAddr> Socket::HostToIp(const std::string& hostname, const unsigned int port, bool get_ipv6)
 {
     std::vector<HostAddr> ips;
     char dport[256];
@@ -366,7 +431,7 @@ std::vector<Socket::HostAddr> Socket::HostToIp(const std::string& hostname, cons
         if(addr->ai_family == AF_INET6)
             h.ipv6 = true;
 
-        IpToString(addr->ai_addr, h.host);
+        h.host = IpToString(addr->ai_addr);
 
         addr = addr->ai_next;
 
@@ -445,12 +510,12 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
         ioctl(sock, FIONBIO, &argp);
 #endif
 
-        std::string ip;
-        IpToString(it->addr->ai_addr, ip);
+        ResolvedAddr addr(*it);
+        std::string ip = IpToString(addr.getAddr().ai_addr);
         LOG.lprintf("Verbinde mit %s%s:%d\n", (typ != PROXY_NONE ? "Proxy " : ""), ip.c_str(), (typ != PROXY_NONE ? proxy_port : port));
 
         // Und schließlich Verbinden
-        if(connect(sock, it->addr->ai_addr, it->addr->ai_addrlen) != SOCKET_ERROR)
+        if(connect(sock, addr.getAddr().ai_addr, addr.getAddr().ai_addrlen) != SOCKET_ERROR)
         {
             done = true;
             break;
@@ -751,16 +816,15 @@ int Socket::BytesWaiting(unsigned int* received)
  */
 std::string Socket::GetPeerIP(void)
 {
-    std::string ip;
     sockaddr_storage peer;
     socklen_t length = sizeof(sockaddr_storage);
 
     // Remotehost-Adresse holen
     if(getpeername(sock, (sockaddr*)&peer, &length) == SOCKET_ERROR)
-        return ip;
+        return "";
 
     // in Text verwandeln
-    return IpToString((sockaddr*)&peer, ip);
+    return IpToString((sockaddr*)&peer);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -774,16 +838,15 @@ std::string Socket::GetPeerIP(void)
  */
 std::string Socket::GetSockIP(void)
 {
-    std::string ip;
     sockaddr_storage peer;
     socklen_t length = sizeof(sockaddr_storage);
 
     // Localhost-Adresse holen
     if(getsockname(sock, (sockaddr*)&peer, &length) == SOCKET_ERROR)
-        return ip;
+        return "";
 
     // in Text verwandeln
-    return IpToString((sockaddr*)&peer, ip);
+    return IpToString((sockaddr*)&peer);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -808,7 +871,7 @@ SOCKET* Socket::GetSocket(void)
  *  @author OLiver
  *  @author FloSoft
  */
-std::string& Socket::IpToString(const sockaddr* addr, std::string& buffer)
+std::string Socket::IpToString(const sockaddr* addr)
 {
     static char temp[256];
 
@@ -850,7 +913,7 @@ std::string& Socket::IpToString(const sockaddr* addr, std::string& buffer)
     inet_ntop(addr->sa_family, ip, temp, sizeof(temp));
 #endif
 
-    buffer = temp;
+    std::string buffer = temp;
 
     int pos = buffer.find("::ffff:");
     if(pos != -1)
