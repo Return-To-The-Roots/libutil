@@ -10,10 +10,20 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}
 	${MINIUPNPC_INCLUDE_DIR})
 LINK_DIRECTORIES("${CMAKE_SOURCE_DIR}/libendian/src")
 
+INCLUDE(CheckCCompilerFlag)
+# Required for linking into shared libs (CMake 2.8.9 up could use the property below)
+CHECK_C_COMPILER_FLAG(-fPIC FLAG_FPIC_SUPPORTED)
+IF(FLAG_FPIC_SUPPORTED)
+	ADD_DEFINITIONS(-fPIC)
+ENDIF()
+
 #################################################################################
 
 FILE(GLOB SRC_FILES *.cpp *.h)
 ADD_LIBRARY(s25util STATIC ${SRC_FILES})
+
+# Required for linking into shared libs
+set_property(TARGET s25util PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 TARGET_LINK_LIBRARIES(s25util ${Boost_LIBRARIES})
 
