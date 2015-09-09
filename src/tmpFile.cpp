@@ -21,6 +21,7 @@
 #include <boost/filesystem.hpp>
 #include <fstream>
 #include <stdexcept>
+#include <iostream>
 #ifdef WIN32
 #   include <windows.h>
 #else
@@ -43,7 +44,7 @@ std::string createTempFile(std::ofstream& file, const std::string& ext/* = ".tmp
     {
         // Create a (hopefully) unique filePath
         bfs::path filePath = tmpPath;
-        filePath += bfs::unique_path();
+        filePath /= bfs::unique_path();
         filePath += ext;
         // If it exists, try again
         if(bfs::exists(filePath))
