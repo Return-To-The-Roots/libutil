@@ -21,8 +21,9 @@
 
 #include "Message.h"
 #include <vector>
+#include <algorithm>
 
-template <class Type, class Allocator = Type>
+template <typename Type>
 class SerializableArray
 {
     public:
@@ -33,17 +34,32 @@ class SerializableArray
          *  @author FloSoft
          */
         SerializableArray(void)
+        {}
+
+        template<class T>
+        SerializableArray(const SerializableArray<T> &other)
         {
+            elements.reserve(other.getCount());
+            std::copy(other.elements.begin(), other.elements.end(), std::back_inserter(elements));
         }
 
         ///////////////////////////////////////////////////////////////////////////////
         /**
-         *  Destruktor von @p SerializableArray.
+         *  Zuweisungsoperator.
          *
          *  @author FloSoft
          */
-        ~SerializableArray(void)
+        template<class T>
+        SerializableArray& operator= (const SerializableArray<T> &other)
         {
+            if(this == &other)
+                return *this;
+
+            elements.clear();
+            elements.reserve(other.getCount());
+            std::copy(other.elements.begin(), other.elements.end(), std::back_inserter(elements));
+
+            return *this;
         }
 
         ///////////////////////////////////////////////////////////////////////////////
@@ -55,51 +71,6 @@ class SerializableArray
         inline void push_back(const Type& item)
         {
             elements.push_back(item);
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////
-        /**
-         *  Zuweisungsoperator.
-         *
-         *  @author FloSoft
-         */
-        template<class T, class A>
-        SerializableArray& operator= (const SerializableArray<T, A> &other)
-        {
-            return copy(other);
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////
-        /**
-         *  Zuweisungsoperator, spezifisch
-         *
-         *  @author FloSoft
-         */
-        SerializableArray& operator= (const SerializableArray& other)
-        {
-            return copy(other);
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////
-        /**
-         *  Kopierfunktion
-         *
-         *  @author FloSoft
-         */
-        template<class T, class A>
-        SerializableArray& copy(const SerializableArray<T, A> &other)
-        {
-            clear();
-
-            elements.reserve(other.getCount());
-
-            for(unsigned int i = 0; i < other.getCount(); ++i)
-            {
-                Type N = *other.getElement(i);
-                elements.push_back(N);
-            }
-
-            return *this;
         }
 
         ///////////////////////////////////////////////////////////////////////////////
@@ -139,8 +110,8 @@ class SerializableArray
             if(msg)
                 msg->PushUnsignedInt(count);
 
-            for(unsigned int i = 0; i < count; ++i)
-                elements[i].serialize(msg);
+            for(typename std::vector<Type>::const_iterator it = elements.begin(); it!=elements.end(); ++it)
+                it->serialize(msg);
         }
 
         ///////////////////////////////////////////////////////////////////////////////
@@ -166,7 +137,7 @@ class SerializableArray
 
             for(unsigned int i = 0; i < count; ++i)
             {
-                elements.push_back(Allocator(i, msg));
+                elements.push_back(Type(i, msg));
             }
         }
 

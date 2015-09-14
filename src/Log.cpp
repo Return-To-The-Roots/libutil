@@ -77,13 +77,9 @@ void Log::open(void)
 {
     if(!log)
     {
-        // Dateiname erzeugen
-        char filename[256], time[80];
-        TIME.FormatTime(time, "%Y-%m-%d_%H-%i-%s", NULL);
+        std::string filePath = GetFilePath(FILE_PATHS[47]) + TIME.FormatTime("%Y-%m-%d_%H-%i-%s") + ".log";
 
-        sprintf(filename, "%s%s.log", GetFilePath(FILE_PATHS[47]).c_str(), time);
-
-        log = fopen(filename, "w");
+        log = fopen(filePath.c_str(), "w");
     }
 }
 
@@ -142,9 +138,7 @@ void Log::lcprintf(const unsigned int color, const char* format, ...)
         if (color == COLOR_BLACK)
             colorAttr |= BACKGROUND_BLUE;
         if (color == COLOR_BLACK || color == COLOR_ORANGE)
-            colorAttr |= BACKGROUND_GREEN;
-        if (color == COLOR_BLACK || color == COLOR_ORANGE)
-            colorAttr |= BACKGROUND_RED;
+            colorAttr |= BACKGROUND_GREEN | BACKGROUND_RED;
 
         // if color matches any but brown
         if (colorAttr != 0 && color != COLOR_BROWN)
@@ -234,10 +228,6 @@ void Log::vwrite(const char* format, va_list list)
 
     if(log)
     {
-        // timestamp erzeugen
-        char timestamp[256];
-        TIME.FormatTime(timestamp, "%Y.%m.%d - %H:%i:%s - ", NULL);
-
         // TODO workaround, buggy gettext?
 #ifdef _WIN32
 #   undef vfprintf

@@ -37,12 +37,12 @@ class Serializer
 {
     public:
         Serializer(void)
-            : data(0), length(0), pos(0)
+            : data_(0), length_(0), pos(0)
         {
         }
 
         Serializer(const void* const data, const unsigned initial_size)
-            : data(initial_size), length(0), pos(0)
+            : data_(initial_size), length_(0), pos(0)
         {
             PushRawData(data, initial_size);
         }
@@ -55,8 +55,8 @@ class Serializer
         /// Aufräumen
         inline void Clear()
         {
-            data.clear();
-            length = 0;
+            data_.clear();
+            length_ = 0;
             pos = 0;
         }
 
@@ -68,13 +68,13 @@ class Serializer
         /// Getter
         unsigned GetLength() const
         {
-            return length;
+            return length_;
         }
 
         /// Zugriff auf die Rohdaten
         const unsigned char* GetData(void) const
         {
-            return data.data();
+            return data_.data();
         }
 
         /// Schreibt den Buffer in eine Datei
@@ -90,8 +90,8 @@ class Serializer
         {
             ExtendMemory(length);
             const char* const bData = reinterpret_cast<const char* const>(data);
-            std::copy(bData, bData + length, this->data.begin() + this->length);
-            this->length += length;
+            std::copy(bData, bData + length, this->data_.begin() + this->length_);
+            this->length_ += length;
         }
 
 
@@ -141,10 +141,10 @@ class Serializer
         /// Rohdaten kopieren
         inline void PopRawData(void* const data, const unsigned length)
         {
-            assert(pos + length <= this->length);
+            assert(pos + length <= this->length_);
 
             char* const bData = reinterpret_cast<char* const>(data);
-            std::copy(this->data.begin() + pos, this->data.begin() + pos + length, bData);
+            std::copy(this->data_.begin() + pos, this->data_.begin() + pos + length, bData);
             pos += length;
         }
 
@@ -187,7 +187,7 @@ class Serializer
             std::string str;
             str.resize(PopUnsignedInt());
 
-            assert(pos + str.size() <= length);
+            assert(pos + str.size() <= length_);
 
             for(unsigned i = 0; i < str.length(); ++i)
                 str[i] = PopSignedChar();
@@ -196,13 +196,16 @@ class Serializer
         }
 
     protected:
+        Serializer(const Serializer& other): data_(other.data_), length_(other.length_), pos(other.pos)
+        {}
+
         Serializer& operator=(const Serializer& other)
         {
             if(this == &other)
                 return *this;
 
-            data = other.data;
-            length = other.length;
+            data_ = other.data_;
+            length_ = other.length_;
             pos = other.pos;
 
             return *this;
@@ -241,9 +244,9 @@ class Serializer
         template<typename T>
         T Pop()
         {
-            assert(pos + sizeof(T) <= length);
+            assert(pos + sizeof(T) <= length_);
 
-            T i = checkByteOrder( *reinterpret_cast<T*>(&data[pos]) );
+            T i = checkByteOrder( *reinterpret_cast<T*>(&data_[pos]) );
             pos += sizeof(T);
 
             return i;
@@ -253,40 +256,40 @@ class Serializer
         void Push(const T i)
         {
             ExtendMemory(sizeof(T));
-            *reinterpret_cast<T*>(&data[length]) = checkByteOrder(i);
-            this->length += sizeof(T);
+            *reinterpret_cast<T*>(&data_[length_]) = checkByteOrder(i);
+            this->length_ += sizeof(T);
         }
 
         /// Schreibzugriff auf die Rohdaten
         unsigned char* GetDataWritable(void)
         {
-            return data.data();
+            return data_.data();
         }
 
         /// Schreibzugriff auf die Länge
         void SetLength(const unsigned int length)
         {
-            this->length = length;
+            this->length_ = length;
         }
 
         /// Erweitert ggf. Speicher um add_length
         inline void ExtendMemory(const unsigned add_length)
         {
-            EnsureSize(length + add_length);
+            EnsureSize(length_ + add_length);
         }
 
         /// Makes sure the internal buffer is at least length bytes long
         inline void EnsureSize(const unsigned length)
         {
-            data.reserve(length);
-            data.resize(data.capacity());
+            data_.reserve(length);
+            data_.resize(data_.capacity());
         }
 
     private:
         /// data mit den Daten
-        uvector<unsigned char> data;
+        uvector<unsigned char> data_;
         /// Logische Länge
-        unsigned length;
+        unsigned length_;
         /// Schreib/Leseposition
         unsigned pos;
 };

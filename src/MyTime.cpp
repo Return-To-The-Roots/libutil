@@ -20,8 +20,10 @@
 #include "libUtilDefines.h"
 #include "MyTime.h"
 #include <ctime>
-#include <cstdio>
-#include <cstring>
+#include <string>
+#include <sstream>
+#include <iomanip>
+#include <iostream>
 #ifdef _WIN32
     #include <windows.h>
 #else
@@ -93,52 +95,71 @@ unser_time_t Time::CurrentTick(void)
 /**
  *  formatiert einen Zeitstring.
  *
- *  @param[in] ziel   Zielspeicher, muss groß genug sein.
  *  @param[in] format Formatstring (%Y=4 stelliges Jahr, %m 2 stelliges Monat, %D tag, %H Stunde, %i Minute, %s Sekunden)
  *  @param[in] time   zu benutzender Timestamp.
  *
- *  @return @p ziel
+ *  @return Formatted string
  *
  *  @author FloSoft
  */
-char* Time::FormatTime(char* ziel, const char* format, unser_time_t* time)
+std::string Time::FormatTime(const std::string& format, unser_time_t* time)
 {
-    if(!ziel || !format)
-        return NULL;
+    time_t inTime;
+    if(time)
+        inTime = *time;
+    else
+        inTime = CurrentTime();
 
-    unser_time_t cur = CurrentTime();
-
-    if(!time)
-        time = &cur;
-
-    tm* time_data = localtime((time_t*)time);
+    tm* time_data = localtime(&inTime);
     if(!time_data)
-        return ziel;
+        return "";
 
-    for(unsigned int i = 0, j = 0; i < strlen(format); ++i)
+    using std::setw;
+    std::stringstream res;
+    res << std::setfill('0');
+
+    bool isInFormat = false;
+    for(std::string::const_iterator c = format.begin(); c != format.end(); ++c)
     {
-        bool b = false;
-        if(format[i] == '%')
+        if(isInFormat)
         {
-            b = true;
-            switch(format[++i])
+            isInFormat = false;
+            switch(*c)
             {
-                case 'Y': j += sprintf(&ziel[j], "%4d", 1900 + time_data->tm_year); break;
-                case 'm': j += sprintf(&ziel[j], "%02d", time_data->tm_mon+1); break;
-                case 'd': j += sprintf(&ziel[j], "%02d", time_data->tm_mday); break;
-                case 'H': j += sprintf(&ziel[j], "%02d", time_data->tm_hour); break;
-                case 'i': j += sprintf(&ziel[j], "%02d", time_data->tm_min); break;
-                case 's': j += sprintf(&ziel[j], "%02d", time_data->tm_sec); break;
-                default: b = false; break;
+                case 'Y':
+                    res << setw(4) << (1900 + time_data->tm_year);
+                    break;
+                case 'm':
+                    res << setw(2) << (time_data->tm_mon+1);
+                    break;
+                case 'd':
+                    res << setw(2) << time_data->tm_mday;
+                    break;
+                case 'H':
+                    res << setw(2) << time_data->tm_hour;
+                    break;
+                case 'i':
+                    res << setw(2) << time_data->tm_min;
+                    break;
+                case 's':
+                    res << setw(2) << time_data->tm_sec;
+                    break;
+                case '%':
+                    res << '%';
+                    break;
+                default:
+                    std::cerr << "Invalid format string: " << format << std::endl;
+                    res << *c;
+                    break;
             }
-        }
-
-        if(!b)
-        {
-            ziel[j] = format[i];
-            ziel[++j] = '\0';
-        }
+        }else if(*c == '%')
+            isInFormat = true;
+        else
+            res << *c;
     }
 
-    return ziel;
+    if(isInFormat)
+        std::cerr << "Invalid format string: " << format << std::endl;
+
+    return res.str();
 }

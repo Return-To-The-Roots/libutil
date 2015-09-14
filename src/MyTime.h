@@ -20,6 +20,7 @@
 #pragma once
 
 #include "Singleton.h"
+#include <string>
 
 #ifdef _WIN32
     #if defined __CYGWIN__ || defined __CYGWIN32__ || defined __MINGW__
@@ -44,8 +45,10 @@ class Time : public Singleton<Time>
         unser_time_t CurrentTime(void);
         /// liefert die aktuellen Ticks.
         unser_time_t CurrentTick(void);
-        /// formatiert einen Zeitstring.
-        char* FormatTime(char* ziel, const char* format, unser_time_t* time);
+        /// Formats a time as a string
+        /// @param format Format to use  (%Y=4 year (4 digits), %m month, %D day, %H hour, %i minute, %s second (all 2 digits), %% -> %)
+        /// @param time Pointer to time to format or NULL to use current time
+        std::string FormatTime(const std::string& format, unser_time_t* time = NULL);
 };
 
 #define TIME Time::inst()

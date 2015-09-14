@@ -28,14 +28,14 @@ class Message : public Serializer
 {
     public:
         /// Konstruktor von @p Message.
-        Message(unsigned short id) : id(id) {}
+        Message(unsigned short id) : id_(id) {}
         /// Konstruktor, um Message aus vorhandenem Datenblock heraus zu erstellen
-        Message(const unsigned id, const unsigned char* const data, const unsigned length) : Serializer(data, length), id(id) {}
+        Message(const unsigned id, const unsigned char* const data, const unsigned length) : Serializer(data, length), id_(id) {}
 
-        virtual unsigned short getId() const { return id; }
-        bool send(Socket* sock);
+        virtual unsigned short getId() const { return id_; }
+        bool send(Socket& sock);
 
-        static Message* recv(Socket* sock, int& error, bool wait, Message * (*createfunction)(unsigned short));
+        static Message* recv(Socket& sock, int& error, bool wait, Message * (*createfunction)(unsigned short));
         static Message* create_base(unsigned short id);
 
         virtual Message* create(unsigned short id) const { return create_base(id); }
@@ -44,25 +44,25 @@ class Message : public Serializer
         virtual void run(MessageInterface* callback, unsigned int id) = 0;
 
     protected:
+        Message(const Message& other): Serializer(other), id_(other.id_)
+        {}
+
         Message& operator=(const Message& other)
         {
             if(this == &other)
                 return *this;
 
-            id = other.id;
-
             Serializer::operator =(other);
+            id_ = other.id_;
 
             return *this;
         }
 
     private:
-        Message(void) {}
-
-        int recv(Socket* sock, unsigned int length);
+        int recv(Socket& sock, unsigned int length);
 
     protected:
-        unsigned short id;
+        unsigned short id_;
 };
 
 #endif //!MESSAGE_H_INCLUDED

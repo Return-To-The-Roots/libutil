@@ -21,6 +21,7 @@
 #include "Socket.h"
 #include "Log.h"
 #include "SocketSet.h"
+#include <boost/lexical_cast.hpp>
 
 #ifdef _WIN32
     #if defined(__CYGWIN__) || defined(__MINGW32__)
@@ -38,6 +39,7 @@
     #include <sys/ioctl.h>
     #include <errno.h>
 #endif
+#include <iostream>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Makros / Defines
@@ -118,7 +120,7 @@ ResolvedAddr::~ResolvedAddr()
  *
  *  @author FloSoft
  */
-Socket::Socket(void) : status(INVALID), sock(INVALID_SOCKET)
+Socket::Socket() : status_(INVALID), socket_(INVALID_SOCKET), refCount_(NULL)
 {
 }
 
@@ -131,8 +133,33 @@ Socket::Socket(void) : status(INVALID), sock(INVALID_SOCKET)
  *
  *  @author FloSoft
  */
-Socket::Socket(const SOCKET so, STATUS st) : status(st), sock(so)
+Socket::Socket(const SOCKET so, Status st): status_(st), socket_(so), refCount_(new int32_t(1))
 {
+}
+
+Socket::Socket(const Socket& so): status_(so.status_), socket_(so.socket_), refCount_(so.refCount_)
+{
+    if(refCount_)
+        ++*refCount_;
+}
+
+Socket::~Socket()
+{
+    Close();
+}
+
+Socket& Socket::operator=(const Socket& rhs)
+{
+    if(this == &rhs)
+        return *this;
+    // Close our socket
+    Close();
+    // Get the other one
+    Set(rhs.socket_, rhs.status_);
+    refCount_ = rhs.refCount_;
+    if(refCount_)
+        ++*refCount_;
+    return *this;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -144,10 +171,10 @@ Socket::Socket(const SOCKET so, STATUS st) : status(st), sock(so)
  *
  *  @author FloSoft
  */
-void Socket::Set(const SOCKET so, STATUS st)
+void Socket::Set(const SOCKET socket, Status status)
 {
-    sock = so;
-    status = st;
+    socket_ = socket;
+    status_ = status;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -198,24 +225,21 @@ bool Socket::Create(int family)
     // socket ggf. schließen
     Close();
 
-    // ist unser Socket schon initialisiert?
-    if(status == INVALID)
-    {
-        // nein, dann Neues erzeugen
-        sock = socket(family, SOCK_STREAM, 0);
+    socket_ = socket(family, SOCK_STREAM, 0);
 
-        // Ist es gültig?
-        status = (INVALID_SOCKET == sock ? INVALID : VALID);
+    // Ist es gültig?
+    status_ = (INVALID_SOCKET == socket_ ? INVALID : VALID);
 
-        // Nagle deaktivieren
-        int disable = 1;
-        SetSockOpt(TCP_NODELAY, &disable, sizeof(int), IPPROTO_TCP);
+    // Nagle deaktivieren
+    int disable = 1;
+    SetSockOpt(TCP_NODELAY, &disable, sizeof(int), IPPROTO_TCP);
 
-        int enable = 1;
-        SetSockOpt(SO_REUSEADDR, &enable, sizeof(int), SOL_SOCKET);
-    }
+    int enable = 1;
+    SetSockOpt(SO_REUSEADDR, &enable, sizeof(int), SOL_SOCKET);
 
-    return (status != INVALID);
+    refCount_ = new int32_t(1);
+
+    return (status_ != INVALID);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -224,18 +248,28 @@ bool Socket::Create(int family)
  *
  *  @author FloSoft
  */
-void Socket::Close(void)
+void Socket::Close()
 {
-    upnp_.ClosePort();
-
-    if(status != INVALID)
+    // Check if we have a socket
+    if(!refCount_)
     {
-        // Socket schliessen
-        closesocket(sock);
-
-        // auf ungültig setzen
-        Set(INVALID_SOCKET, INVALID);
+        assert(status_ == INVALID && socket_ == INVALID_SOCKET);
+        return;
     }
+    // Decrease ref count (not thread safe!)
+    --*refCount_;
+    if(*refCount_ <= 0)
+    {
+        // Physically close socket, if no references left
+        upnp_.ClosePort();
+        if(socket_ != INVALID_SOCKET)
+            closesocket(socket_);
+        delete refCount_;
+    }
+
+    // Cleanup (even if the socket is still open, we just don't "have" it anymore)
+    Set(INVALID_SOCKET, INVALID);
+    refCount_ = NULL;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -289,7 +323,7 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
         }
 
         // Bei Fehler jeweils nochmal mit ipv4 probieren
-        if(status != VALID)
+        if(status_ != VALID)
         {
             ipv6 = !ipv6;
             error = true;
@@ -301,7 +335,7 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
         }
 
         // Binden
-        if(bind(sock, (sockaddr*)&addrs, size) == SOCKET_ERROR)
+        if(bind(socket_, (sockaddr*)&addrs, size) == SOCKET_ERROR)
         {
             ipv6 = !ipv6;
             error = true;
@@ -313,7 +347,7 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
         }
 
         // und Horchen
-        if(listen(sock, 10))
+        if(listen(socket_, 10))
         {
             ipv6 = !ipv6;
             error = true;
@@ -334,7 +368,7 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
             LOG.getlasterror("Automatisches Erstellen des Portforwardings mit UPnP fehlgeschlagen\nFehler");
 
     // Status setzen
-    status = LISTEN;
+    status_ = LISTEN;
 
     // und Alles gut :-)
     return true;
@@ -350,25 +384,25 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
  *
  *  @author FloSoft
  */
-bool Socket::Accept(Socket& client)
+Socket Socket::Accept()
 {
-    if(status != LISTEN)
-        return false;
+    if(status_ != LISTEN)
+        return Socket();
 
     // Verbindung annehmen
-    SOCKET tmp = accept(sock, 0, 0);
+    SOCKET tmp = accept(socket_, 0, 0);
     if(tmp == INVALID_SOCKET)
-        return false;
+        return Socket();
 
     // Nagle deaktivieren
     int disable = 1;
     setsockopt(tmp, IPPROTO_TCP, TCP_NODELAY, (char*)&disable, sizeof(int));
 
     // Status setzen
-    client.Set(tmp, CONNECT);
+    Socket client = Socket(tmp, CONNECT);
 
     // Alles gut :-)
-    return true;
+    return client;
 }
 
 
@@ -383,15 +417,14 @@ bool Socket::Accept(Socket& client)
 std::vector<HostAddr> Socket::HostToIp(const std::string& hostname, const unsigned int port, bool get_ipv6)
 {
     std::vector<HostAddr> ips;
-    char dport[256];
-    snprintf(dport, 255, "%d", port);
+    std::string sPort = boost::lexical_cast<std::string>(port);
 
     // no dns resolution for localhost
     if(hostname == "localhost")
     {
         HostAddr h;
         h.host = "localhost";
-        h.port = dport;
+        h.port = sPort;
         h.ipv6 = get_ipv6;
         ips.push_back(h);
 
@@ -414,7 +447,7 @@ std::vector<HostAddr> Socket::HostToIp(const std::string& hostname, const unsign
         hints.ai_family = AF_INET;
 
     addrinfo* res;
-    int error = getaddrinfo(hostname.c_str(), dport, &hints, &res);
+    int error = getaddrinfo(hostname.c_str(), sPort.c_str(), &hints, &res);
     if(error != 0)
     {
         fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(error));
@@ -426,7 +459,7 @@ std::vector<HostAddr> Socket::HostToIp(const std::string& hostname, const unsign
     {
         HostAddr h;
 
-        h.port = dport;
+        h.port = sPort;
 
         if(addr->ai_family == AF_INET6)
             h.ipv6 = true;
@@ -463,7 +496,7 @@ void Socket::Sleep(unsigned int ms)
  *
  *  @author FloSoft
  */
-bool Socket::Connect(const std::string& hostname, const unsigned short port, bool use_ipv6, const Socket::PROXY_TYPE typ, const std::string proxy_hostname, const unsigned int proxy_port)
+bool Socket::Connect(const std::string& hostname, const unsigned short port, bool use_ipv6, const Socket::PROXY_TYPE typ, const std::string& proxy_hostname, const unsigned int proxy_port)
 {
     if(typ == PROXY_SOCKS4)
         use_ipv6 = false;
@@ -505,9 +538,9 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
         // aktiviere non-blocking
         unsigned long argp = 1;
 #ifdef _WIN32
-        ioctlsocket(sock, FIONBIO, &argp);
+        ioctlsocket(socket_, FIONBIO, &argp);
 #else
-        ioctl(sock, FIONBIO, &argp);
+        ioctl(socket_, FIONBIO, &argp);
 #endif
 
         ResolvedAddr addr(*it);
@@ -515,7 +548,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
         LOG.lprintf("Verbinde mit %s%s:%d\n", (typ != PROXY_NONE ? "Proxy " : ""), ip.c_str(), (typ != PROXY_NONE ? proxy_port : port));
 
         // Und schließlich Verbinden
-        if(connect(sock, addr.getAddr().ai_addr, addr.getAddr().ai_addrlen) != SOCKET_ERROR)
+        if(connect(socket_, addr.getAddr().ai_addr, addr.getAddr().ai_addrlen) != SOCKET_ERROR)
         {
             done = true;
             break;
@@ -537,7 +570,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
                 {
                     unsigned int err;
                     socklen_t len = sizeof(unsigned int);
-                    getsockopt(sock, SOL_SOCKET, SO_ERROR, (char*)&err, &len);
+                    getsockopt(socket_, SOL_SOCKET, SO_ERROR, (char*)&err, &len);
 
                     if(err != 0)
                     {
@@ -633,12 +666,12 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
     // deaktiviere non-blocking
     unsigned long argp = 0;
 #ifdef _WIN32
-    ioctlsocket(sock, FIONBIO, &argp);
+    ioctlsocket(socket_, FIONBIO, &argp);
 #else
-    ioctl(sock, FIONBIO, &argp);
+    ioctl(socket_, FIONBIO, &argp);
 #endif
 
-    status = CONNECT;
+    status_ = CONNECT;
 
     // Alles ok
     return true;
@@ -659,11 +692,11 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
  */
 int Socket::Recv(void* buffer, int length, bool block)
 {
-    if(status == INVALID)
+    if(status_ == INVALID)
         return -1;
 
     // und empfangen
-    return recv(sock, reinterpret_cast<char*>(buffer), length, (block ? 0 : MSG_PEEK) );
+    return recv(socket_, reinterpret_cast<char*>(buffer), length, (block ? 0 : MSG_PEEK) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -680,11 +713,11 @@ int Socket::Recv(void* buffer, int length, bool block)
  */
 int Socket::Send(const void* buffer, int length)
 {
-    if(status == INVALID)
+    if(status_ == INVALID)
         return -1;
 
     // und verschicken
-    return send(sock, reinterpret_cast<const char*>(buffer), length, 0);
+    return send(socket_, reinterpret_cast<const char*>(buffer), length, 0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -701,48 +734,7 @@ int Socket::Send(const void* buffer, int length)
  */
 bool Socket::SetSockOpt(int nOptionName, const void* lpOptionValue, int nOptionLen, int nLevel)
 {
-    return (SOCKET_ERROR != setsockopt(sock, nLevel, nOptionName, (char*)lpOptionValue, nOptionLen));
-}
-
-///////////////////////////////////////////////////////////////////////////////
-/**
- *  Zuweisungsoperator.
- *
- *  @param[in] sock Quellsocket von dem zugewiesen werden soll
- *
- *  @return liefert eine Referenz auf @p this zurück
- *
- *  @author OLiver
- *  @author FloSoft
- */
-Socket& Socket::operator =(const Socket& sock)
-{
-    // Daten setzen
-    Set(sock.sock, sock.status);
-
-    upnp_ = sock.upnp_;
-
-    return *this;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-/**
- *  Zuweisungsoperator.
- *
- *  @param[in] sock Quellsocket von dem zugewiesen werden soll
- *
- *  @return liefert eine Referenz auf @p this zurück
- *
- *  @author OLiver
- *  @author FloSoft
- */
-Socket& Socket::operator =(const SOCKET& sock)
-{
-    // Daten setzen
-    this->sock = sock;
-    status = (INVALID_SOCKET == sock ? INVALID : VALID);
-
-    return *this;
+    return (SOCKET_ERROR != setsockopt(socket_, nLevel, nOptionName, (char*)lpOptionValue, nOptionLen));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -756,9 +748,9 @@ Socket& Socket::operator =(const SOCKET& sock)
  *  @author OLiver
  *  @author FloSoft
  */
-bool Socket::operator >(const Socket& sock)
+bool Socket::operator>(const Socket& sock)
 {
-    if(this->sock > sock.sock)
+    if(this->socket_ > sock.socket_)
         return true;
 
     return false;
@@ -797,11 +789,11 @@ int Socket::BytesWaiting(unsigned int* received)
 {
 #ifdef _WIN32
     DWORD dwReceived;
-    int retval = ioctlsocket(sock, FIONREAD, &dwReceived);
+    int retval = ioctlsocket(socket_, FIONREAD, &dwReceived);
     *received = dwReceived;
     return retval;
 #else
-    return ioctl(sock, FIONREAD, received);
+    return ioctl(socket_, FIONREAD, received);
 #endif
 }
 
@@ -820,7 +812,7 @@ std::string Socket::GetPeerIP(void)
     socklen_t length = sizeof(sockaddr_storage);
 
     // Remotehost-Adresse holen
-    if(getpeername(sock, (sockaddr*)&peer, &length) == SOCKET_ERROR)
+    if(getpeername(socket_, (sockaddr*)&peer, &length) == SOCKET_ERROR)
         return "";
 
     // in Text verwandeln
@@ -842,7 +834,7 @@ std::string Socket::GetSockIP(void)
     socklen_t length = sizeof(sockaddr_storage);
 
     // Localhost-Adresse holen
-    if(getsockname(sock, (sockaddr*)&peer, &length) == SOCKET_ERROR)
+    if(getsockname(socket_, (sockaddr*)&peer, &length) == SOCKET_ERROR)
         return "";
 
     // in Text verwandeln
@@ -851,17 +843,17 @@ std::string Socket::GetSockIP(void)
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
- *  liefert einen Zeiger auf das Socket.
+ *  Gets a reference to the Socket
  *
- *  @return liefert die Adresse von @p sock zurück
+ *  @return reference to @p socket_
  *
  *  @author OLiver
  *  @author FloSoft
  */
-SOCKET* Socket::GetSocket(void)
+SOCKET& Socket::GetSocket(void)
 {
     // Zeiger auf Socket liefern
-    return &sock;
+    return socket_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

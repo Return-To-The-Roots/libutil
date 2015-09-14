@@ -104,11 +104,8 @@ void MessageQueue::pop(void)
 
 ///////////////////////////////////////////////////////////////////////////////
 /// ruft eine nachricht ab und hängt sie in die queue
-bool MessageQueue::recv(Socket* sock, bool wait)
+bool MessageQueue::recv(Socket& sock, bool wait)
 {
-    if(!sock)
-        return false;
-
     // Nachricht abrufen
     int error = -1;
     Message* msg = Message::recv(sock, error, wait, createfunction);
@@ -129,9 +126,9 @@ bool MessageQueue::recv(Socket* sock, bool wait)
  *
  *  @author FloSoft
  */
-bool MessageQueue::send(Socket* sock, int max, unsigned int sizelimit)
+bool MessageQueue::send(Socket& sock, int max, unsigned int sizelimit)
 {
-    if(!sock || !sock->isValid())
+    if(!sock.isValid())
         return false;
 
     // send-queue abarbeiten

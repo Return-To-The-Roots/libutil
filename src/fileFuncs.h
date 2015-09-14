@@ -20,8 +20,8 @@
 
 #include <string>
 
-std::string GetFilePath(std::string file);
-bool FileExists(std::string file);
+std::string GetFilePath(const std::string& file);
+bool FileExists(const std::string& file);
 bool IsDir(std::string dir);
 int mkdir_p(const std::string& dir);
 

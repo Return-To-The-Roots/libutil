@@ -30,12 +30,9 @@
  *
  *  @author FloSoft
  */
-bool Message::send(Socket* sock)
+bool Message::send(Socket& sock)
 {
     static char buffer[1024001];
-
-    if(NULL == sock)
-        return false;
 
     // WTF? so große Nachricht darfs nicht geben
     if(GetLength() > 1024000 - 6)
@@ -48,11 +45,11 @@ bool Message::send(Socket* sock)
     unsigned int* length = (unsigned int*)&buffer[2];
     unsigned char* data = (unsigned char*)&buffer[6];
 
-    *id = this->id;
+    *id = this->id_;
     *length = GetLength();
     memcpy(data, GetData(), GetLength());
 
-    if(6 + GetLength() != (unsigned int)sock->Send(buffer, 6 + GetLength()))
+    if(6 + GetLength() != (unsigned int)sock.Send(buffer, 6 + GetLength()))
         return false;
 
     return true;
@@ -64,14 +61,14 @@ bool Message::send(Socket* sock)
  *
  *  @author FloSoft
  */
-int Message::recv(Socket* sock, unsigned int length)
+int Message::recv(Socket& sock, unsigned int length)
 {
     if(!length)
         return 0;
     
     EnsureSize(length);
 
-    int read = sock->Recv(GetDataWritable(), length);
+    int read = sock.Recv(GetDataWritable(), length);
     SetLength(length);
     if(length != (unsigned int)read )
     {
@@ -108,12 +105,9 @@ Message* Message::create_base(unsigned short id)
  *
  *  @author FloSoft
  */
-Message* Message::recv(Socket* sock, int& error, bool wait, Message * (*createfunction)(unsigned short))
+Message* Message::recv(Socket& sock, int& error, bool wait, Message * (*createfunction)(unsigned short))
 {
     error = -1;
-
-    if(sock == NULL)
-        return NULL;
 
     unser_time_t time = TIME.CurrentTick();
 
@@ -133,7 +127,7 @@ Message* Message::recv(Socket* sock, int& error, bool wait, Message * (*createfu
         set.Clear();
 
         // Socket hinzufgen
-        set.Add(*sock);
+        set.Add(sock);
 
         // liegen Daten an?
         int retval = set.Select(0, 0);
@@ -150,7 +144,7 @@ Message* Message::recv(Socket* sock, int& error, bool wait, Message * (*createfu
         }
 
         // liegen diese Daten an unserem Socket, bzw wieviele Bytes liegen an?
-        if(!set.InSet(*sock) || sock->BytesWaiting(&received) != 0)
+        if(!set.InSet(sock) || sock.BytesWaiting(&received) != 0)
         {
             if(wait)
                 continue;
@@ -182,7 +176,7 @@ Message* Message::recv(Socket* sock, int& error, bool wait, Message * (*createfu
     unsigned int* length = (unsigned int*)&block[2];
 
     // block empfangen
-    read = sock->Recv(block, 6, false);
+    read = sock.Recv(block, 6, false);
     if(read != 6)
     {
         LOG.write("recv: block: only got %d bytes instead of %d, waiting for next try\n", read, 6);
@@ -192,7 +186,7 @@ Message* Message::recv(Socket* sock, int& error, bool wait, Message * (*createfu
         return NULL;
     }
 
-    read = sock->BytesWaiting();
+    read = sock.BytesWaiting();
 
     static unsigned int blocktimeout = 0;
     if(read < (signed)((*length) + 6) )
@@ -207,7 +201,7 @@ Message* Message::recv(Socket* sock, int& error, bool wait, Message * (*createfu
     blocktimeout = 0;
 
     // Block nochmals abrufen (um ihn aus dem Cache zu entfernen)
-    read = sock->Recv(block, 6);
+    read = sock.Recv(block, 6);
     if(read != 6)
     {
         LOG.lprintf("recv: id,length: only got %d bytes instead of %d\n", read, 2);
@@ -232,7 +226,7 @@ Message* Message::recv(Socket* sock, int& error, bool wait, Message * (*createfu
  */
 Message* Message::duplicate(void) const
 {
-    Message* msg = create(id);
+    Message* msg = create(id_);
 
     *msg = *this;
 

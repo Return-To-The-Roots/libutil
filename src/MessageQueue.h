@@ -56,14 +56,14 @@ class MessageQueue
         void clear(void);
 
         /// flusht die Queue, verschickt alle Elemente.
-        bool flush(Socket* sock) { return send(sock, messages.size(), 0xFFFFFFFF); }
+        bool flush(Socket& sock) { return send(sock, messages.size(), 0xFFFFFFFF); }
 
         /// liefert die Größe der Queue
         unsigned int count() { return messages.size(); }
 
         /// verschickt Pakete der Queue, maximal @p max, mit einem maximal @p sizelimit groß (aber beliebig viele kleine)
-        bool send(Socket* sock, int max, unsigned int sizelimit = 512);
-        bool recv(Socket* sock, bool wait = false);
+        bool send(Socket& sock, int max, unsigned int sizelimit = 512);
+        bool recv(Socket& sock, bool wait = false);
 
     public:
         /// hängt ein Element hinten an.

@@ -156,7 +156,7 @@ static HRESULT mySHGetKnownFolderPath(REFKNOWNFOLDERID rfid, std::string& path)
  *
  *  @author FloSoft
  */
-std::string GetFilePath(std::string file)
+std::string GetFilePath(const std::string& file)
 {
     std::string to = file;
 
@@ -180,7 +180,7 @@ std::string GetFilePath(std::string file)
         s << path;
 
         // Kein Pfad gefunden, $AppData verwenden
-        if(s.str() == "")
+        if(s.str().empty())
             s << getenv("APPDATA");
 
 // linux, apple
@@ -208,7 +208,7 @@ std::string GetFilePath(std::string file)
  *
  *  @author FloSoft
  */
-bool FileExists(std::string file)
+bool FileExists(const std::string& file)
 {
     FILE* test = fopen(GetFilePath(file).c_str(), "rb");
     if(test)
@@ -235,7 +235,7 @@ bool IsDir(std::string dir)
         dir.erase(dir.size() - 1, 1);
 
 #ifdef _WIN32
-    std::string path = GetFilePath(dir).c_str();
+    std::string path = GetFilePath(dir);
     std::replace(path.begin(), path.end(), '/', '\\');
 
     HANDLE test;

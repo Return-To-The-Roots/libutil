@@ -66,7 +66,7 @@ void SocketSet::Clear(void)
 void SocketSet::Add(Socket& sock)
 {
     // Socket holen
-    SOCKET s = *sock.GetSocket();
+    SOCKET& s = sock.GetSocket();
     if(s == INVALID_SOCKET)
         return;
 
@@ -127,7 +127,7 @@ int SocketSet::Select(int timeout, int which)
  */
 bool SocketSet::InSet(Socket& sock)
 {
-    SOCKET s = *sock.GetSocket();
+    SOCKET& s = sock.GetSocket();
 
     // Bei ungültigem Socket ists nicht drin!
     if(s == INVALID_SOCKET)

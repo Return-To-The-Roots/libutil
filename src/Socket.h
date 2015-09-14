@@ -41,9 +41,9 @@
 #endif // !_WIN32
 
 #include "UPnP.h"
-#include <cstdlib>
-#include <cstring>
-#include <iostream>
+#include <string>
+#include <vector>
+#include <stdint.h>
 
 /// liefert Ip-Adresse(n) für einen Hostnamen.
 struct HostAddr
@@ -75,23 +75,21 @@ public:
 class Socket
 {
     private:
-        enum STATUS
+        enum Status
         {
             INVALID = INVALID_SOCKET,
             VALID = 0,
             LISTEN,
             CONNECT
-        } status;
+        };
 
     public:
-        /// Standardkonstruktor von @p Socket.
-        Socket(void);
+        Socket();
+        Socket(const SOCKET so, Status st);
+        Socket(const Socket& so);
+        ~Socket();
 
-        /// Konstruktor von @p Socket.
-        Socket(const SOCKET so, STATUS st);
-
-        /// Setzt ein Socket auf übergebene Werte.
-        void Set(const SOCKET so, STATUS st);
+        Socket& operator=(const Socket& so);
 
         /// Initialisiert die Socket-Bibliothek.
         static bool Initialize(void);
@@ -109,7 +107,7 @@ class Socket
         bool Listen(unsigned short port, bool use_ipv6 = false, bool use_upnp = true);
 
         /// akzeptiert eingehende Verbindungsversuche.
-        bool Accept(Socket& client);
+        Socket Accept();
 
         enum PROXY_TYPE
         {
@@ -119,7 +117,7 @@ class Socket
         };
 
         /// versucht eine Verbindung mit einem externen Host aufzubauen.
-        bool Connect(const std::string& hostname, const unsigned short port, bool use_ipv6, const PROXY_TYPE typ = PROXY_NONE, const std::string proxy_hostname = "", const unsigned int proxy_port = 0);
+        bool Connect(const std::string& hostname, const unsigned short port, bool use_ipv6, const PROXY_TYPE typ = PROXY_NONE, const std::string& proxy_hostname = "", const unsigned int proxy_port = 0);
 
         /// liest Daten vom Socket in einen Puffer.
         int Recv(void* buffer, int length, bool block = true);
@@ -130,14 +128,8 @@ class Socket
         /// setzt eine Socketoption.
         bool SetSockOpt(int nOptionName, const void* lpOptionValue, int nOptionLen, int nLevel = IPPROTO_TCP);
 
-        /// Zuweisungsoperator.
-        Socket& operator =(const Socket& sock);
-
-        /// Zuweisungsoperator.
-        Socket& operator =(const SOCKET& sock);
-
         /// Größer-Vergleichsoperator.
-        bool operator >(const Socket& sock);
+        bool operator>(const Socket& sock);
 
         /// prüft auf wartende Bytes.
         int BytesWaiting(void);
@@ -151,8 +143,8 @@ class Socket
         /// liefert die IP des Lokalen-Hosts.
         std::string GetSockIP(void);
 
-        /// liefert einen Zeiger auf das Socket.
-        SOCKET* GetSocket(void);
+        /// Gets a reference to the Socket.
+        SOCKET& GetSocket(void);
 
         void Sleep(unsigned int ms);
 
@@ -162,11 +154,27 @@ class Socket
         std::string IpToString(const sockaddr* addr);
 
         /// liefert den Status des Sockets.
-        bool isValid(void) { return (status != INVALID); }
+        bool isValid(void) { return (status_ != INVALID); }
+
+        friend void swap(Socket& s1, Socket&s2)
+        {
+            using std::swap;
+            swap(s1.status_, s2.status_);
+            swap(s1.socket_, s2.socket_);
+            swap(s1.upnp_, s2.upnp_);
+            swap(s1.refCount_, s2.refCount_);
+        }
 
     private:
-        SOCKET  sock; ///< Unser Socket
+        /// Setzt ein Socket auf übergebene Werte.
+        void Set(const SOCKET so, Status st);
+
+        Status status_;
+        SOCKET socket_; ///< Unser Socket
         UPnP upnp_; ///< UPnP Handle
+
+        /// Number of references to the socket, free only on <=0!
+        int32_t* refCount_;
 };
 
 #endif // SOCKET_H_INCLUDED
