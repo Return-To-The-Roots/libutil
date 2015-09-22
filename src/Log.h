@@ -32,12 +32,12 @@ class Log : public Singleton<Log>
         /// Desktruktor von @p Log.
         ~Log(void);
 
-        /// Ã¶ffnet das Log (falls noch nicht offen)
+        /// öffnet das Log (falls noch nicht offen)
         void open(void);
 
         void getlasterror(const char* text);
 
-        /// Schreibt gefÃ¤rbte Daten ins Log und auf stdout.
+        /// Schreibt gefärbte Daten ins Log und auf stdout.
         void lcprintf(const unsigned int color, const char* format, ...);
         /// Schreibt Daten ins Log und auf stdout.
         void lprintf(const char* format, ...);
