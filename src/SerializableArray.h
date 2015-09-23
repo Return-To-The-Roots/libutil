@@ -26,7 +26,11 @@
 template <typename Type>
 class SerializableArray
 {
+    typedef std::vector<Type> Storage;
     public:
+        typedef typename Storage::iterator iterator;
+        typedef typename Storage::const_iterator const_iterator;
+
         ///////////////////////////////////////////////////////////////////////////////
         /**
          *  Konstruktor von @p SerializableArray.
@@ -191,7 +195,22 @@ class SerializableArray
             return elements.resize(count);
         }
 
-
+        iterator begin()
+        {
+            return elements.begin();
+        }
+        const_iterator begin() const
+        {
+            return elements.begin();
+        }
+        iterator end()
+        {
+            return elements.end();
+        }
+        const_iterator end() const
+        {
+            return elements.end();
+        }
     private:
         std::vector<Type> elements;     ///< Die Elemente
 };
