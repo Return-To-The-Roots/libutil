@@ -15,10 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#include <cstring>
 #include <stdexcept>
 #include <iterator>
-#include <cstddef>
+#include <algorithm>
 
 /// A (almost) vector compatible container that uses uninitialized memory
 template<typename Tp>
@@ -60,14 +59,14 @@ public:
 
     ~uvector()
     {
-        delete data_;
+        delete[] data_;
         data_ = NULL;
     }
 
     uvector(const uvector& obj): data_(0), size_(0), capacity_(0)
     {
         resize(obj.size());
-        memcpy(data_, obj.data_, obj.size_ * sizeof(Tp));
+        std::copy(obj.data_, obj.data_ + obj.size_, data_);
     }
 
     uvector& operator=(const uvector& obj)
@@ -76,7 +75,7 @@ public:
             return *this;
 
         resize(obj.size());
-        memcpy(data_, obj.data_, obj.size_ * sizeof(Tp));
+        std::copy(obj.data_, obj.data_ + obj.size_, data_);
 
         return *this;
     }
@@ -98,8 +97,8 @@ public:
         while(newSize < size) newSize*=2;
         Ptr newData = new Tp[newSize];
         if(size_)
-            memcpy(newData, data_, size_ * sizeof(Tp));
-        delete data_;
+            std::copy(data_, data_ + size_, newData);
+        delete[] data_;
         data_ = newData;
         capacity_ = newSize;
     }
@@ -110,7 +109,7 @@ public:
         if(capacity_ > 64)
         {
             capacity_ = 0;
-            delete data_;
+            delete[] data_;
             data_ = NULL;
         }
     }
