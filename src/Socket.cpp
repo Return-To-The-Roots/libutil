@@ -544,7 +544,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
 #endif
 
         ResolvedAddr addr(*it);
-        std::string ip = IpToString(addr.getAddr().ai_addr);
+        std::string ip = IpToString(addr.getAddr().ai_addr); //-V807
         LOG.lprintf("Verbinde mit %s%s:%d\n", (typ != PROXY_NONE ? "Proxy " : ""), ip.c_str(), (typ != PROXY_NONE ? proxy_port : port));
 
         // Und schließlich Verbinden
