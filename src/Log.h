@@ -24,9 +24,11 @@
 #include <cstdio>
 
 /// Log Klasse.
-class Log : public Singleton<Log, SingletonPolicies::PhoenixSingleton>
+class Log : public Singleton<Log, SingletonPolicies::WithLongevity>
 {
     public:
+        static const unsigned Longevity = 100;
+
         /// Konstruktor von @p Log.
         Log(void);
         /// Desktruktor von @p Log.
