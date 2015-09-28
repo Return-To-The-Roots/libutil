@@ -24,7 +24,7 @@
 #include <cstdio>
 
 /// Log Klasse.
-class Log : public Singleton<Log>
+class Log : public Singleton<Log, OnDeadRefRecreate>
 {
     public:
         /// Konstruktor von @p Log.
