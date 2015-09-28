@@ -19,29 +19,84 @@
 
 #pragma once
 
+#include <stdexcept>
+#include <cstdlib>
+
+/// Policy that throws an exception on a dead ref
+struct OnDeadRefThrow
+{
+    template<typename T>
+    static void
+    onDeadRef(T)
+    {
+        throw std::runtime_error("Access to dead singleton detected!");
+    }
+};
+
+/// Policy that recreates the singleton on dead ref (Phoenix singleton)
+struct OnDeadRefRecreate
+{
+    template<typename T>
+    static void
+    onDeadRef(T* inst)
+    {
+        // Placement new
+        new(inst) T();
+        atexit(&T::KillMe);
+    }
+};
+
 ///////////////////////////////////////////////////////////////////////////////
-// Singleton-Template-Klasse
-template <typename T>
+/// Singleton-Template-class
+/// \tparam T Type of the singleton
+/// \tparam T_OnDeadRef Policy that handles dead references
+template <typename T, class T_OnDeadRef = OnDeadRefThrow>
 class Singleton
 {
+    typedef T_OnDeadRef OnDeadRef;
+
     protected:
-        // Instanz anlegen verboten
-        Singleton() { }
+        // protected ctor
+        Singleton() {
+            // Init invalid access detection
+            isDestroyed_ = false;
+        }
+    private:
         Singleton(const Singleton&);
         Singleton& operator = (const Singleton&);
 
     public:
-        // Globaler Zugriff auf einzige Instanz
-        inline static T& inst() {   return me; }
+        virtual ~Singleton()
+        {
+            isDestroyed_ = true;
+        }
+
+        // Used for manually destroying the singleton
+        // Do not use from user code!
+        static void KillMe()
+        {
+            me.~Singleton();
+        }
+
+        // Access to single instance
+        inline static T& inst() {
+            // Note: We rely on the fact that on the first call to this function
+            // "me" must have been constructed and therefore isDestroyed_ is set
+            if(isDestroyed_)
+                OnDeadRef::onDeadRef(&me);
+            return me;
+        }
 
     private:
         static T me;
+        static bool isDestroyed_;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 // Template-Fix ?!?
 #if _MSCVER <= 710
-template<typename T> T Singleton<T>::me;
+template<typename T, class T_OnDeadRef> T Singleton<T, T_OnDeadRef>::me;
+template<typename T, class T_OnDeadRef> bool Singleton<T, T_OnDeadRef>::isDestroyed_;
 #endif // _MSCVER > 710
 
 #endif // SINGLETON_H_INCLUDED
