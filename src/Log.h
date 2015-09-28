@@ -24,7 +24,7 @@
 #include <cstdio>
 
 /// Log Klasse.
-class Log : public Singleton<Log, OnDeadRefRecreate>
+class Log : public Singleton<Log, SingletonPolicies::PhoenixSingleton>
 {
     public:
         /// Konstruktor von @p Log.

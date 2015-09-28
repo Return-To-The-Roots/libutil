@@ -21,7 +21,7 @@ ENDIF()
 
 #################################################################################
 
-FILE(GLOB SRC_FILES *.cpp *.h)
+FILE(GLOB SRC_FILES *.cpp *.h *.hpp *.tpp)
 ADD_LIBRARY(s25util STATIC ${SRC_FILES})
 
 IF (NOT "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows" )
