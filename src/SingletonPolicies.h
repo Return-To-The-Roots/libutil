@@ -45,7 +45,7 @@ namespace SingletonPolicies{
 
     /// Policy that recreates the singleton on dead ref (Phoenix singleton)
     template<typename T>
-    struct PhoenixSingleton
+    struct Phoenix
     {
         static bool isDestroyedOnce;
 
@@ -63,16 +63,23 @@ namespace SingletonPolicies{
         }
     };
 
-    template<typename T> bool PhoenixSingleton<T>::isDestroyedOnce;
+    template<typename T> bool Phoenix<T>::isDestroyedOnce;
 
     /// Sets the longevity for a given destruction function
     /// Used for singletons. The dtor will be called with increasing longevity 
     void SetLongevity(unsigned longevity, DestructionFunPtr pFun);
 
+    /// Default implementation: Gets the longevity from the class constant Longevity
+    template<typename T>
+    unsigned GetLongevity(T*)
+    {
+        return T::Longevity;
+    }
+
     /// Policy that orders the destruction of singletons
     /// Assumes a visible function GetLongevity(T*) that returns the longevity of the object
     template<typename T>
-    struct SingletonWithLongevity
+    struct WithLongevity
     {
         static void
         OnDeadReference()
