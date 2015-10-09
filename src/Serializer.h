@@ -179,7 +179,9 @@ class Serializer
 
         inline bool PopBool()
         {
-            return ((PopUnsignedChar() == 1) ? true : false);
+            unsigned char value = PopUnsignedChar();
+            assert(value == 0 || value == 1);
+            return ( (value != 0) ? true : false);
         }
 
         inline std::string PopString()
