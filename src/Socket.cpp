@@ -220,24 +220,33 @@ void Socket::Shutdown(void)
  *
  *  @author FloSoft
  */
-bool Socket::Create(int family)
+bool Socket::Create(int family, bool asUDPBroadcast)
 {
     // socket ggf. schließen
     Close();
 
-    socket_ = socket(family, SOCK_STREAM, 0);
+    socket_ = asUDPBroadcast ? socket(family, SOCK_DGRAM, IPPROTO_UDP) : socket(family, SOCK_STREAM, 0);
 
     // Ist es gültig?
     status_ = (INVALID_SOCKET == socket_ ? INVALID : VALID);
 
-    // Nagle deaktivieren
-    int disable = 1;
-    SetSockOpt(TCP_NODELAY, &disable, sizeof(int), IPPROTO_TCP);
+    if (asUDPBroadcast)
+    {
+        int enable = 1;
+        SetSockOpt(SO_BROADCAST, &enable, sizeof(enable), SOL_SOCKET);
+    }
+    else
+    {
+        // Nagle deaktivieren
+        int disable = 1;
+        SetSockOpt(TCP_NODELAY, &disable, sizeof(int), IPPROTO_TCP);
 
-    int enable = 1;
-    SetSockOpt(SO_REUSEADDR, &enable, sizeof(int), SOL_SOCKET);
+        int enable = 1;
+        SetSockOpt(SO_REUSEADDR, &enable, sizeof(int), SOL_SOCKET);
+    }
 
     refCount_ = new int32_t(1);
+    isBroadcast = asUDPBroadcast;
 
     return (status_ != INVALID);
 }
@@ -690,13 +699,22 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
  *  @author OLiver
  *  @author FloSoft
  */
-int Socket::Recv(void* buffer, int length, bool block)
+int Socket::Recv(void* buffer, const int length, bool block)
 {
     if(status_ == INVALID)
         return -1;
 
     // und empfangen
     return recv(socket_, reinterpret_cast<char*>(buffer), length, (block ? 0 : MSG_PEEK) );
+}
+
+int Socket::Recv(void* const buffer, const int length, sockaddr_in& addr)
+{
+    if (!isValid())
+        return -1;
+
+    socklen_t addrLen = sizeof(addr);
+    return recvfrom(socket_, reinterpret_cast<char*>(buffer), length, 0, reinterpret_cast<sockaddr*>(&addr), &addrLen);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -711,13 +729,21 @@ int Socket::Recv(void* buffer, int length, bool block)
  *  @author OLiver
  *  @author FloSoft
  */
-int Socket::Send(const void* buffer, int length)
+int Socket::Send(const void* const buffer, const int length)
 {
     if(status_ == INVALID)
         return -1;
 
     // und verschicken
     return send(socket_, reinterpret_cast<const char*>(buffer), length, 0);
+}
+
+int Socket::Send(const void* const buffer, const int length, const sockaddr_in& addr)
+{
+    if (status_ == INVALID)
+        return -1;
+
+    return sendto(socket_, reinterpret_cast<const char*>(buffer), length, 0, reinterpret_cast<const sockaddr*>(&addr), sizeof(addr));
 }
 
 ///////////////////////////////////////////////////////////////////////////////

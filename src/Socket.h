@@ -63,7 +63,7 @@ class ResolvedAddr
 
     // Do not copy
     ResolvedAddr(const ResolvedAddr&);
-    ResolvedAddr operator=(const ResolvedAddr&);
+    ResolvedAddr& operator=(const ResolvedAddr&);
 public:
     ResolvedAddr(const HostAddr& hostAddr);
     ~ResolvedAddr();
@@ -98,7 +98,7 @@ class Socket
         static void Shutdown(void);
 
         /// erstellt und initialisiert das Socket.
-        bool Create(int family = AF_INET);
+        bool Create(int family = AF_INET, bool asUDPBroadcast = false);
 
         /// schliesst das Socket.
         void Close(void);
@@ -120,10 +120,14 @@ class Socket
         bool Connect(const std::string& hostname, const unsigned short port, bool use_ipv6, const PROXY_TYPE typ = PROXY_NONE, const std::string& proxy_hostname = "", const unsigned int proxy_port = 0);
 
         /// liest Daten vom Socket in einen Puffer.
-        int Recv(void* buffer, int length, bool block = true);
+        int Recv(void* const buffer, const int length, bool block = true);
+        /// Reads data from socket and returns peer address. Can be used for unbound sockets
+        int Recv(void* const buffer, const int length, sockaddr_in& addr);
 
         /// schreibt Daten von einem Puffer auf das Socket.
-        int Send(const void* buffer, const int length);
+        int Send(const void* const buffer, const int length);
+        /// Sends data to the specified address and binds the socket to that
+        int Send(const void* const buffer, const int length, const sockaddr_in& addr);
 
         /// setzt eine Socketoption.
         bool SetSockOpt(int nOptionName, const void* lpOptionValue, int nOptionLen, int nLevel = IPPROTO_TCP);
@@ -154,7 +158,9 @@ class Socket
         std::string IpToString(const sockaddr* addr);
 
         /// liefert den Status des Sockets.
-        bool isValid(void) { return (status_ != INVALID); }
+        bool isValid() const { return status_ != INVALID; }
+        /// Returns true, if this is a broadcast socket (only meaningfull if it is valid)
+        bool IsBroadcast() const { return isBroadcast; }
 
         friend void swap(Socket& s1, Socket&s2)
         {
@@ -171,6 +177,7 @@ class Socket
 
         Status status_;
         SOCKET socket_; ///< Unser Socket
+        bool isBroadcast;
         UPnP upnp_; ///< UPnP Handle
 
         /// Number of references to the socket, free only on <=0!
