@@ -59,14 +59,14 @@ void LANDiscoveryClient::Run()
     while (IsDataAvailable())
     {
         ServiceInfo curInfo;
-        sockaddr_in addr;
+        PeerAddr addr;
 
         if (socket.Recv(&curInfo.info, sizeof(curInfo.info), addr) < sizeof(curInfo.info))
             break;
         if (curInfo.info.GetMagic() != config.magicResponse || curInfo.info.GetVersion() != config.version)
             continue;
 
-        curInfo.ip = socket.IpToString(reinterpret_cast<sockaddr*>(&addr));
+        curInfo.ip = addr.GetIp();
         if (curInfo.info.GetIsActive())
             services[curInfo.ip] = curInfo;
         else

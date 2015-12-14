@@ -71,6 +71,21 @@ public:
     addrinfo& getAddr(){ return *addr; }
 };
 
+class PeerAddr
+{
+    sockaddr_storage addr;
+public:
+    /// Uninitilized value!
+    PeerAddr(){}
+    /// Initializes the address to a broadcast with the given protocol and port
+    PeerAddr(bool isIpv6, unsigned short port);
+
+    std::string GetIp() const;
+    sockaddr* GetAddr();
+    const sockaddr* GetAddr() const;
+    int GetSize() const { return sizeof(addr); }
+};
+
 ///Socket-Wrapper-Klasse für portable TCP/IP-Verbindungen
 class Socket
 {
@@ -125,12 +140,12 @@ class Socket
         /// liest Daten vom Socket in einen Puffer.
         int Recv(void* const buffer, const int length, bool block = true);
         /// Reads data from socket and returns peer address. Can be used for unbound sockets
-        int Recv(void* const buffer, const int length, sockaddr_in& addr);
+        int Recv(void* const buffer, const int length, PeerAddr& addr);
 
         /// schreibt Daten von einem Puffer auf das Socket.
         int Send(const void* const buffer, const int length);
-        /// Sends data to the specified address and binds the socket to that
-        int Send(const void* const buffer, const int length, const sockaddr_in& addr);
+        /// Sends data to the specified address (only for connectionless sockets!)
+        int Send(const void* const buffer, const int length, const PeerAddr& addr);
 
         /// setzt eine Socketoption.
         bool SetSockOpt(int nOptionName, const void* lpOptionValue, int nOptionLen, int nLevel = IPPROTO_TCP);
@@ -158,7 +173,7 @@ class Socket
         std::vector<HostAddr> HostToIp(const std::string& hostname, const unsigned int port, bool get_ipv6, bool useUDP = false);
 
         /// liefert einen string der übergebenen Ip.
-        std::string IpToString(const sockaddr* addr);
+        static std::string IpToString(const sockaddr* addr);
 
         /// liefert den Status des Sockets.
         bool isValid() const { return status_ != INVALID; }

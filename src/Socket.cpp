@@ -126,6 +126,36 @@ ResolvedAddr::~ResolvedAddr()
     }
 }
 
+PeerAddr::PeerAddr(bool isIpv6, unsigned short port)
+{
+    if(isIpv6)
+    {
+        throw std::logic_error("Broadcast over IPv6 not supported!");
+        addr.ss_family = AF_INET6;
+        reinterpret_cast<sockaddr_in6&>(addr).sin6_port = htons(port);
+    }else
+    {
+        addr.ss_family = AF_INET;
+        reinterpret_cast<sockaddr_in&>(addr).sin_addr.s_addr = INADDR_BROADCAST;
+        reinterpret_cast<sockaddr_in&>(addr).sin_port = htons(port);
+    }
+}
+
+std::string PeerAddr::GetIp() const
+{
+    return Socket::IpToString(GetAddr());
+}
+
+sockaddr* PeerAddr::GetAddr()
+{
+    return reinterpret_cast<sockaddr*>(&addr);
+}
+
+const sockaddr* PeerAddr::GetAddr() const
+{
+    return reinterpret_cast<const sockaddr*>(&addr);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 /**
  *  Standardkonstruktor von @p Socket.
@@ -693,13 +723,13 @@ int Socket::Recv(void* buffer, const int length, bool block)
     return recv(socket_, reinterpret_cast<char*>(buffer), length, (block ? 0 : MSG_PEEK) );
 }
 
-int Socket::Recv(void* const buffer, const int length, sockaddr_in& addr)
+int Socket::Recv(void* const buffer, const int length, PeerAddr& addr)
 {
     if (!isValid())
         return -1;
 
-    socklen_t addrLen = sizeof(addr);
-    return recvfrom(socket_, reinterpret_cast<char*>(buffer), length, 0, reinterpret_cast<sockaddr*>(&addr), &addrLen);
+    socklen_t addrLen = addr.GetSize();
+    return recvfrom(socket_, reinterpret_cast<char*>(buffer), length, 0, addr.GetAddr(), &addrLen);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -723,12 +753,12 @@ int Socket::Send(const void* const buffer, const int length)
     return send(socket_, reinterpret_cast<const char*>(buffer), length, 0);
 }
 
-int Socket::Send(const void* const buffer, const int length, const sockaddr_in& addr)
+int Socket::Send(const void* const buffer, const int length, const PeerAddr& addr)
 {
     if (status_ == INVALID)
         return -1;
 
-    return sendto(socket_, reinterpret_cast<const char*>(buffer), length, 0, reinterpret_cast<const sockaddr*>(&addr), sizeof(addr));
+    return sendto(socket_, reinterpret_cast<const char*>(buffer), length, 0, addr.GetAddr(), addr.GetSize());
 }
 
 ///////////////////////////////////////////////////////////////////////////////

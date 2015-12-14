@@ -82,7 +82,7 @@ void LANDiscoveryService::Run()
     while (IsDataAvailable())
     {
         Request curReq;
-        sockaddr_in addr;
+        PeerAddr addr;
 
         if (socket.Recv(&curReq, sizeof(curReq), addr) < sizeof(curReq))
             break;

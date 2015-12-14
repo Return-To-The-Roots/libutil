@@ -60,9 +60,6 @@ bool LANDiscoveryBase::IsDataAvailable() {
 
 void LANDiscoveryBase::Broadcast(const void* const buffer, const int len)
 {
-    sockaddr_in addr;
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = INADDR_BROADCAST;
-    addr.sin_port = htons(!isServer ? config.portQuery : config.portResponse);
+    PeerAddr addr(false, !isServer ? config.portQuery : config.portResponse);
     socket.Send(buffer, len, addr);
 }
