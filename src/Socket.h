@@ -48,11 +48,11 @@
 /// liefert Ip-Adresse(n) für einen Hostnamen.
 struct HostAddr
 {
-    HostAddr(): host(""), port("0"), ipv6(false) {}
+    HostAddr(): host(""), port("0"), ipv6(false), isUDP(false) {}
 
     std::string host;
     std::string port;
-    bool ipv6;
+    bool ipv6, isUDP;
 };
 
 /// Resolves a host address
@@ -65,7 +65,7 @@ class ResolvedAddr
     ResolvedAddr(const ResolvedAddr&);
     ResolvedAddr& operator=(const ResolvedAddr&);
 public:
-    ResolvedAddr(const HostAddr& hostAddr);
+    ResolvedAddr(const HostAddr& hostAddr, bool resolveAll = false);
     ~ResolvedAddr();
 
     addrinfo& getAddr(){ return *addr; }
@@ -102,6 +102,9 @@ class Socket
 
         /// schliesst das Socket.
         void Close(void);
+
+        /// Binds the socket to a specific port
+        bool Bind(unsigned short port, bool useIPv6);
 
         /// setzt das Socket auf Listen.
         bool Listen(unsigned short port, bool use_ipv6 = false, bool use_upnp = true);
@@ -152,7 +155,7 @@ class Socket
 
         void Sleep(unsigned int ms);
 
-        std::vector<HostAddr> HostToIp(const std::string& hostname, const unsigned int port, bool get_ipv6);
+        std::vector<HostAddr> HostToIp(const std::string& hostname, const unsigned int port, bool get_ipv6, bool useUDP = false);
 
         /// liefert einen string der übergebenen Ip.
         std::string IpToString(const sockaddr* addr);

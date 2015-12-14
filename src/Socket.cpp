@@ -22,6 +22,7 @@
 #include "Log.h"
 #include "SocketSet.h"
 #include <boost/lexical_cast.hpp>
+#include <stdexcept>
 
 #ifdef _WIN32
     #if defined(__CYGWIN__) || defined(__MINGW32__)
@@ -49,7 +50,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr)
+ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr, bool resolveAll)
 {
     // do not use addr resolution for localhost
     lookup = (hostAddr.host != "localhost");
@@ -58,8 +59,17 @@ ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr)
     {
         addrinfo hints;
         memset(&hints, 0, sizeof(addrinfo));
-        hints.ai_flags = AI_NUMERICHOST;
-        hints.ai_socktype = SOCK_STREAM;
+        if(resolveAll)
+        {
+            hints.ai_flags = AI_ADDRCONFIG;
+#ifndef __FreeBSD__
+            // Defined, but getaddrinfo complains about it on FreeBSD -> Check again with the combination with AI_V4MAPPED
+            hints.ai_flags |= AI_ALL | AI_V4MAPPED;
+#endif
+        }else
+            hints.ai_flags = AI_NUMERICHOST;
+
+        hints.ai_socktype = hostAddr.isUDP ? SOCK_DGRAM : SOCK_STREAM;
 
         if(hostAddr.ipv6)
             hints.ai_family = AF_INET6;
@@ -70,6 +80,7 @@ ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr)
         if(error != 0)
         {
             std::cerr << "getaddrinfo: " << gai_strerror(error) << "\n";
+            addr = NULL;
         }
     }
     else // fill with loopback
@@ -77,6 +88,7 @@ ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr)
         addr = new addrinfo;
         addr->ai_family = (hostAddr.ipv6 ? AF_INET6 : AF_INET);
         addr->ai_addrlen = (hostAddr.ipv6 ? sizeof(sockaddr_in6) : sizeof(sockaddr_in));
+        addr->ai_socktype = hostAddr.isUDP ? SOCK_DGRAM : SOCK_STREAM;
         addr->ai_addr = (sockaddr*)calloc(1, addr->ai_addrlen);
 
         if(hostAddr.ipv6)
@@ -281,6 +293,34 @@ void Socket::Close()
     refCount_ = NULL;
 }
 
+bool Socket::Bind(unsigned short port, bool useIPv6)
+{
+    union{
+        sockaddr_storage addrs;
+        sockaddr_in addrV4;
+        sockaddr_in6 addrV6;
+    };
+    memset(&addrs, 0, sizeof(sockaddr_storage));
+
+    int size;
+    if(useIPv6)
+    {
+        addrV6.sin6_family = AF_INET6;
+        addrV6.sin6_port   = htons(port);
+        addrV6.sin6_addr   = in6addr_any;
+        size = sizeof(addrV6);
+    }
+    else
+    {
+        addrV4.sin_family = AF_INET;
+        addrV4.sin_port   = htons(port);
+        addrV4.sin_addr.s_addr = INADDR_ANY;
+        size = sizeof(addrV4);
+    }
+
+    return bind(socket_, (sockaddr*)&addrs, size) != SOCKET_ERROR;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 /**
  *  setzt das Socket auf Listen.
@@ -297,42 +337,10 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
     bool error = false;
     int versuch = 0;
 
-    // Adresse initialisieren
-    size_t size = 0;
-
     do
     {
-        union{
-            sockaddr_storage addrs;
-            sockaddr_in addrV4;
-            sockaddr_in6 addrV6;
-        };
-        memset(&addrs, 0, sizeof(sockaddr_storage));
-
-        if(ipv6)
-        {
-            Create(AF_INET6);
-            size = sizeof(sockaddr_in6);
-        }
-        else
-        {
-            Create(AF_INET);
-            size = sizeof(sockaddr_in);
-        }
-
-        if(ipv6)
-        {
-            addrV6.sin6_family  = AF_INET6;
-            addrV6.sin6_port    = htons(port);
-        }
-        else
-        {
-            addrV4.sin_family   = AF_INET;
-            addrV4.sin_port     = htons(port);
-        }
-
         // Bei Fehler jeweils nochmal mit ipv4 probieren
-        if(status_ != VALID)
+        if(!Create(ipv6 ? AF_INET6 : AF_INET))
         {
             ipv6 = !ipv6;
             error = true;
@@ -344,7 +352,7 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
         }
 
         // Binden
-        if(bind(socket_, (sockaddr*)&addrs, size) == SOCKET_ERROR)
+        if(!Bind(port, ipv6))
         {
             ipv6 = !ipv6;
             error = true;
@@ -423,64 +431,38 @@ Socket Socket::Accept()
  *
  *  @author FloSoft
  */
-std::vector<HostAddr> Socket::HostToIp(const std::string& hostname, const unsigned int port, bool get_ipv6)
+std::vector<HostAddr> Socket::HostToIp(const std::string& hostname, const unsigned int port, bool get_ipv6, bool useUDP)
 {
     std::vector<HostAddr> ips;
     std::string sPort = boost::lexical_cast<std::string>(port);
 
+    HostAddr hostAddr;
+    hostAddr.host = hostname;
+    hostAddr.port = sPort;
+    hostAddr.ipv6 = get_ipv6;
+    hostAddr.isUDP = useUDP;
+
     // no dns resolution for localhost
     if(hostname == "localhost")
     {
-        HostAddr h;
-        h.host = "localhost";
-        h.port = sPort;
-        h.ipv6 = get_ipv6;
-        ips.push_back(h);
-
+        ips.push_back(hostAddr);
         return ips;
     }
 
-    addrinfo hints;
-    memset(&hints, 0, sizeof(addrinfo));
+    ResolvedAddr res(hostAddr, true);
 
-    hints.ai_flags = AI_ADDRCONFIG;
-#ifndef __FreeBSD__
-    // Defined, but getaddrinfo complains about it on FreeBSD
-    hints.ai_flags |= AI_ALL;
-#endif
-    hints.ai_socktype = SOCK_STREAM;
-
-    if(get_ipv6)
-        hints.ai_family = AF_INET6;
-    else
-        hints.ai_family = AF_INET;
-
-    addrinfo* res;
-    int error = getaddrinfo(hostname.c_str(), sPort.c_str(), &hints, &res);
-    if(error != 0)
-    {
-        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(error));
-        return ips; // "DNS Error"
-    }
-
-    addrinfo* addr = res;
+    addrinfo* addr = &res.getAddr();
     while(addr != NULL)
     {
         HostAddr h;
-
-        h.port = sPort;
-
-        if(addr->ai_family == AF_INET6)
-            h.ipv6 = true;
-
         h.host = IpToString(addr->ai_addr);
+        h.port = sPort;
+        h.ipv6 = (addr->ai_family == AF_INET6);
+        h.isUDP = addr->ai_protocol == SOCK_DGRAM;
+        ips.push_back(h);
 
         addr = addr->ai_next;
-
-        ips.push_back(h);
     }
-
-    freeaddrinfo(res);
 
     return ips;
 }
@@ -513,13 +495,13 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
     std::vector<HostAddr> proxy_ips;
     if(typ != PROXY_NONE)
     {
-        proxy_ips = HostToIp(std::string(proxy_hostname), proxy_port, use_ipv6);
+        proxy_ips = HostToIp(proxy_hostname, proxy_port, use_ipv6);
         if(proxy_ips.size() == 0)
             return false;
     }
 
     // TODO: socks v5 kann remote resolven
-    std::vector<HostAddr> ips = HostToIp(std::string(hostname), port, use_ipv6);
+    std::vector<HostAddr> ips = HostToIp(hostname, port, use_ipv6);
     if(ips.size() == 0)
         return false;
 
@@ -541,6 +523,9 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
 
     for(std::vector<HostAddr>::const_iterator it = start; it != end; ++it)
     {
+        if(it->isUDP)
+            throw std::invalid_argument("Cannot connect to UDP (yet)");
+
         if(!Create(it->ipv6 ? AF_INET6 : AF_INET))
             continue;
 

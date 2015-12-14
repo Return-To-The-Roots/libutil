@@ -44,12 +44,7 @@ bool LANDiscoveryBase::Start()
     if (!socket.Create(AF_INET, true))
         return false;
 
-    sockaddr_in addr;
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = INADDR_ANY;
-    addr.sin_port = htons(isServer ? config.portQuery : config.portResponse);
-
-    return bind(socket.GetSocket(), reinterpret_cast<sockaddr *>(&addr), sizeof(addr)) != SOCKET_ERROR;
+    return socket.Bind(isServer ? config.portQuery : config.portResponse, false);
 }
 
 void LANDiscoveryBase::Stop()
