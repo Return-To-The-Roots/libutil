@@ -48,11 +48,11 @@
 /// liefert Ip-Adresse(n) für einen Hostnamen.
 struct HostAddr
 {
-    HostAddr(): host(""), port("0"), ipv6(false) {}
+    HostAddr(): host(""), port("0"), ipv6(false), isUDP(false) {}
 
     std::string host;
     std::string port;
-    bool ipv6;
+    bool ipv6, isUDP;
 };
 
 /// Resolves a host address
@@ -63,12 +63,27 @@ class ResolvedAddr
 
     // Do not copy
     ResolvedAddr(const ResolvedAddr&);
-    ResolvedAddr operator=(const ResolvedAddr&);
+    ResolvedAddr& operator=(const ResolvedAddr&);
 public:
-    ResolvedAddr(const HostAddr& hostAddr);
+    ResolvedAddr(const HostAddr& hostAddr, bool resolveAll = false);
     ~ResolvedAddr();
 
     addrinfo& getAddr(){ return *addr; }
+};
+
+class PeerAddr
+{
+    sockaddr_storage addr;
+public:
+    /// Uninitilized value!
+    PeerAddr(){}
+    /// Initializes the address to a broadcast with the given protocol and port
+    PeerAddr(bool isIpv6, unsigned short port);
+
+    std::string GetIp() const;
+    sockaddr* GetAddr();
+    const sockaddr* GetAddr() const;
+    int GetSize() const { return sizeof(addr); }
 };
 
 ///Socket-Wrapper-Klasse für portable TCP/IP-Verbindungen
@@ -98,10 +113,13 @@ class Socket
         static void Shutdown(void);
 
         /// erstellt und initialisiert das Socket.
-        bool Create(int family = AF_INET);
+        bool Create(int family = AF_INET, bool asUDPBroadcast = false);
 
         /// schliesst das Socket.
         void Close(void);
+
+        /// Binds the socket to a specific port
+        bool Bind(unsigned short port, bool useIPv6);
 
         /// setzt das Socket auf Listen.
         bool Listen(unsigned short port, bool use_ipv6 = false, bool use_upnp = true);
@@ -120,10 +138,14 @@ class Socket
         bool Connect(const std::string& hostname, const unsigned short port, bool use_ipv6, const PROXY_TYPE typ = PROXY_NONE, const std::string& proxy_hostname = "", const unsigned int proxy_port = 0);
 
         /// liest Daten vom Socket in einen Puffer.
-        int Recv(void* buffer, int length, bool block = true);
+        int Recv(void* const buffer, const int length, bool block = true);
+        /// Reads data from socket and returns peer address. Can be used for unbound sockets
+        int Recv(void* const buffer, const int length, PeerAddr& addr);
 
         /// schreibt Daten von einem Puffer auf das Socket.
-        int Send(const void* buffer, const int length);
+        int Send(const void* const buffer, const int length);
+        /// Sends data to the specified address (only for connectionless sockets!)
+        int Send(const void* const buffer, const int length, const PeerAddr& addr);
 
         /// setzt eine Socketoption.
         bool SetSockOpt(int nOptionName, const void* lpOptionValue, int nOptionLen, int nLevel = IPPROTO_TCP);
@@ -148,13 +170,15 @@ class Socket
 
         void Sleep(unsigned int ms);
 
-        std::vector<HostAddr> HostToIp(const std::string& hostname, const unsigned int port, bool get_ipv6);
+        std::vector<HostAddr> HostToIp(const std::string& hostname, const unsigned int port, bool get_ipv6, bool useUDP = false);
 
         /// liefert einen string der übergebenen Ip.
-        std::string IpToString(const sockaddr* addr);
+        static std::string IpToString(const sockaddr* addr);
 
         /// liefert den Status des Sockets.
-        bool isValid(void) { return (status_ != INVALID); }
+        bool isValid() const { return status_ != INVALID; }
+        /// Returns true, if this is a broadcast socket (only meaningfull if it is valid)
+        bool IsBroadcast() const { return isBroadcast; }
 
         friend void swap(Socket& s1, Socket&s2)
         {
@@ -171,6 +195,7 @@ class Socket
 
         Status status_;
         SOCKET socket_; ///< Unser Socket
+        bool isBroadcast;
         UPnP upnp_; ///< UPnP Handle
 
         /// Number of references to the socket, free only on <=0!
