@@ -37,12 +37,12 @@ class Serializer
 {
     public:
         Serializer(void)
-            : data_(0), length_(0), pos(0)
+            : data_(0), length_(0), pos_(0)
         {
         }
 
         Serializer(const void* const data, const unsigned initial_size)
-            : data_(initial_size), length_(0), pos(0)
+            : data_(initial_size), length_(0), pos_(0)
         {
             PushRawData(data, initial_size);
         }
@@ -57,12 +57,12 @@ class Serializer
         {
             data_.clear();
             length_ = 0;
-            pos = 0;
+            pos_ = 0;
         }
 
         unsigned GetPos() const
         {
-            return pos;
+            return pos_;
         }
 
         /// Getter
@@ -144,8 +144,8 @@ class Serializer
             CheckSize(length);
 
             char* const bData = reinterpret_cast<char* const>(data);
-            std::copy(this->data_.begin() + pos, this->data_.begin() + pos + length, bData);
-            pos += length;
+            std::copy(this->data_.begin() + pos_, this->data_.begin() + pos_ + length, bData);
+            pos_ += length;
         }
 
         /// Sämtliche Integer
@@ -198,7 +198,7 @@ class Serializer
         }
 
     protected:
-        Serializer(const Serializer& other): data_(other.data_), length_(other.length_), pos(other.pos)
+        Serializer(const Serializer& other): data_(other.data_), length_(other.length_), pos_(other.pos_)
         {}
 
         Serializer& operator=(const Serializer& other)
@@ -208,7 +208,7 @@ class Serializer
 
             data_ = other.data_;
             length_ = other.length_;
-            pos = other.pos;
+            pos_ = other.pos_;
 
             return *this;
         }
@@ -248,8 +248,8 @@ class Serializer
         {
             CheckSize(sizeof(T));
 
-            T i = checkByteOrder( *reinterpret_cast<T*>(&data_[pos]) );
-            pos += sizeof(T);
+            T i = checkByteOrder( *reinterpret_cast<T*>(&data_[pos_]) );
+            pos_ += sizeof(T);
 
             return i;
         }
@@ -293,12 +293,12 @@ class Serializer
         /// Logische Länge
         unsigned length_;
         /// Schreib/Leseposition
-        unsigned pos;
+        unsigned pos_;
 
         /// Checks if data of size len can be popped
         void CheckSize(const unsigned len)
         {
-            if(pos + len > length_)
+            if(pos_ + len > length_)
                 throw std::range_error("Out of range during deserialization");
         }
 };
