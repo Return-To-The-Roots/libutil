@@ -25,20 +25,22 @@
 #include <stdexcept>
 
 #ifdef _WIN32
-    #if defined(__CYGWIN__) || defined(__MINGW32__)
-        #ifndef AI_ALL
-            #define AI_ALL            0x0010
-        #endif
-
-        #ifndef AI_ADDRCONFIG
-            #define AI_ADDRCONFIG     0x0020
-        #endif
-    #endif
+#   if defined(__CYGWIN__) || defined(__MINGW32__)
+#       ifndef AI_ALL
+#           define AI_ALL            0x0010
+#       endif
+#       ifndef AI_ADDRCONFIG
+#           define AI_ADDRCONFIG     0x0020
+#       endif
+#       ifndef AI_V4MAPPED
+#           define AI_V4MAPPED       0x0800
+#       endif
+#endif
 #else
-    #include <netinet/tcp.h>
-    #include <unistd.h>
-    #include <sys/ioctl.h>
-    #include <errno.h>
+#   include <netinet/tcp.h>
+#   include <unistd.h>
+#   include <sys/ioctl.h>
+#   include <errno.h>
 #endif
 #include <iostream>
 
