@@ -141,7 +141,7 @@ class Serializer
         /// Rohdaten kopieren
         inline void PopRawData(void* const data, const unsigned length)
         {
-            assert(pos + length <= this->length_);
+            CheckSize(length);
 
             char* const bData = reinterpret_cast<char* const>(data);
             std::copy(this->data_.begin() + pos, this->data_.begin() + pos + length, bData);
@@ -189,7 +189,7 @@ class Serializer
             std::string str;
             str.resize(PopUnsignedInt());
 
-            assert(pos + str.size() <= length_);
+            CheckSize(str.size());
 
             for(unsigned i = 0; i < str.length(); ++i)
                 str[i] = PopSignedChar();
@@ -246,7 +246,7 @@ class Serializer
         template<typename T>
         T Pop()
         {
-            assert(pos + sizeof(T) <= length_);
+            CheckSize(sizeof(T));
 
             T i = checkByteOrder( *reinterpret_cast<T*>(&data_[pos]) );
             pos += sizeof(T);
@@ -294,6 +294,13 @@ class Serializer
         unsigned length_;
         /// Schreib/Leseposition
         unsigned pos;
+
+        /// Checks if data of size len can be popped
+        void CheckSize(const unsigned len)
+        {
+            if(pos + len > length_)
+                throw std::range_error("Out of range during deserialization");
+        }
 };
 
 #endif // !SERIALIZER_H_INCLUDED
