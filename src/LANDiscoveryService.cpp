@@ -84,7 +84,7 @@ void LANDiscoveryService::Run()
         Request curReq;
         PeerAddr addr;
 
-        if (socket.Recv(&curReq, sizeof(curReq), addr) < sizeof(curReq))
+        if (socket.Recv(&curReq, sizeof(curReq), addr) < static_cast<int>(sizeof(curReq)))
             break;
         if (curReq.GetMagic() == request.GetMagic() && curReq.GetVersion() == request.GetVersion())
             socket.Send(&info, sizeof(info), addr);

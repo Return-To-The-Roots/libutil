@@ -61,7 +61,7 @@ void LANDiscoveryClient::Run()
         ServiceInfo curInfo;
         PeerAddr addr;
 
-        if (socket.Recv(&curInfo.info, sizeof(curInfo.info), addr) < sizeof(curInfo.info))
+        if (socket.Recv(&curInfo.info, sizeof(curInfo.info), addr) < static_cast<int>(sizeof(curInfo.info)))
             break;
         if (curInfo.info.GetMagic() != config.magicResponse || curInfo.info.GetVersion() != config.version)
             continue;
