@@ -35,11 +35,11 @@ enum OpenFileMode
 class BinaryFile
 {
     public:
-        BinaryFile() : file(0) {}
+        BinaryFile() : file(NULL) {}
         ~BinaryFile() { Close(); }
 
         /// Öffnet eine Datei: liefert true falls erfolgreich
-        bool Open(const char* const filename, const OpenFileMode of);
+        bool Open(const std::string& filePath, const OpenFileMode of);
         /// Schließt eine Datei: liefert true falls erfolgreich
         bool Close();
 

@@ -19,6 +19,7 @@
 // Header
 #include "libUtilDefines.h"
 #include "BinaryFile.h"
+#include <boost/array.hpp>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Makros / Defines
@@ -33,10 +34,11 @@ static char THIS_FILE[] = __FILE__;
  *
  *  @author OLiver
  */
-bool BinaryFile::Open(const char* const filename, const OpenFileMode of)
+bool BinaryFile::Open(const std::string& filePath, const OpenFileMode of)
 {
-    static const char* modes[] = {"w+b", "a+b", "rb"};
-    return ((file = fopen(filename, modes[of])) ? true : false);
+    static const boost::array<const char*, 3> modes = {"w+b", "a+b", "rb"};
+    file = fopen(filePath.c_str(), modes[of]);
+    return (file ? true : false);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -46,12 +48,11 @@ bool BinaryFile::Open(const char* const filename, const OpenFileMode of)
  */
 bool BinaryFile::Close()
 {
-    bool result = false;
+    if(!file)
+        return true;
 
-    if(file)
-        result = (fclose(file) == 0);
-
-    file = 0;
+    bool result = (fclose(file) == 0);
+    file = NULL;
 
     return result;
 }
