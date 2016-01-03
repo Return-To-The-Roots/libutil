@@ -223,7 +223,11 @@ bool UPnP::OpenPort(const unsigned short& port)
     UPNPDev* devicelist = NULL;
 #ifdef UPNPDISCOVER_SUCCESS
     int upnperror = 0;
+#if (MINIUPNPC_API_VERSION >= 14) /* miniUPnPc API version 14 adds TTL parameter */
+    devicelist = upnpDiscover(2000, NULL, NULL, 0, 0 /* ipv6 */, 2, &upnperror);
+#else
     devicelist = upnpDiscover(2000, NULL, NULL, 0, 0 /* ipv6 */, &upnperror);
+#endif
 #else
     devicelist = upnpDiscover(2000, NULL, NULL, 0);
 #endif
@@ -289,7 +293,11 @@ void UPnP::ClosePort()
     UPNPDev* devicelist = NULL;
 #ifdef UPNPDISCOVER_SUCCESS
     int upnperror = 0;
+#if (MINIUPNPC_API_VERSION >= 14) /* miniUPnPc API version 14 adds TTL parameter */
+    devicelist = upnpDiscover(2000, NULL, NULL, 0, 0 /* ipv6 */, 2, &upnperror);
+#else
     devicelist = upnpDiscover(2000, NULL, NULL, 0, 0 /* ipv6 */, &upnperror);
+#endif
 #else
     devicelist = upnpDiscover(2000, NULL, NULL, 0);
 #endif
