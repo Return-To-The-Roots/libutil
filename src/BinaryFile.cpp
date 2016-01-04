@@ -36,7 +36,7 @@ static char THIS_FILE[] = __FILE__;
  */
 bool BinaryFile::Open(const std::string& filePath, const OpenFileMode of)
 {
-    static const boost::array<const char*, 3> modes = {"w+b", "a+b", "rb"};
+    static const boost::array<const char*, 3> modes = {{"w+b", "a+b", "rb"}};
     file = fopen(filePath.c_str(), modes[of]);
     return (file ? true : false);
 }
