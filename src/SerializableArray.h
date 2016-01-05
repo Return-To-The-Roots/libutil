@@ -184,6 +184,11 @@ class SerializableArray
             return elements.size();
         }
 
+        unsigned size() const
+        {
+            return elements.size();
+        }
+
         ///////////////////////////////////////////////////////////////////////////////
         /**
          *  ändert die Größe des Arrays
