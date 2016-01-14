@@ -20,65 +20,6 @@
 #include "libUtilDefines.h"
 #include "Message.h"
 #include "Messages.h"
-#include "Socket.h"
-#include "SocketSet.h"
-#include "MyTime.h"
-#include <cstring>
-
-///////////////////////////////////////////////////////////////////////////////
-/**
- *
- *
- *  @author FloSoft
- */
-bool Message::send(Socket& sock)
-{
-    static char buffer[1024001];
-
-    // WTF? so große Nachricht darfs nicht geben
-    if(GetLength() > 1024000 - 6)
-    {
-        LOG.lprintf("BIG OOPS! Message with length %u exceeds maximum of %d!\n", GetLength(), 1024000 - 6);
-        return false;
-    }
-
-    unsigned short* id = (unsigned short*)&buffer[0];
-    unsigned int* length = (unsigned int*)&buffer[2];
-    unsigned char* data = (unsigned char*)&buffer[6];
-
-    *id = this->id_;
-    *length = GetLength();
-    memcpy(data, GetData(), GetLength());
-
-    if(6 + GetLength() != (unsigned int)sock.Send(buffer, 6 + GetLength()))
-        return false;
-
-    return true;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-/**
- *  liest vom Socket die Paketdatenmenge
- *
- *  @author FloSoft
- */
-int Message::recv(Socket& sock, unsigned int length)
-{
-    if(!length)
-        return 0;
-    
-    EnsureSize(length);
-
-    int read = sock.Recv(GetDataWritable(), length);
-    SetLength(length);
-    if(length != (unsigned int)read )
-    {
-        LOG.lprintf("recv: data: only got %d bytes instead of %d\n", read, length);
-
-        return -1;
-    }
-    return 0;
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
@@ -102,125 +43,6 @@ Message* Message::create_base(unsigned short id)
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
- *
- *
- *  @author FloSoft
- */
-Message* Message::recv(Socket& sock, int& error, bool wait, Message * (*createfunction)(unsigned short))
-{
-    error = -1;
-
-    unser_time_t time = TIME.CurrentTick();
-
-    unser_time_t timeout = time;
-    unsigned int received;
-    SocketSet set;
-
-    while(true)
-    {
-        // Warten wir schon 5s auf Antwort?
-        if(time - timeout > 15000)
-            wait = false;
-
-        time = TIME.CurrentTick();
-
-        // SocketSet "saubermachen"
-        set.Clear();
-
-        // Socket hinzufgen
-        set.Add(sock);
-
-        // liegen Daten an?
-        int retval = set.Select(0, 0);
-
-        if(retval <= 0)
-        {
-            if(wait)
-                continue;
-
-            if(retval != -1)
-                error = 0;
-
-            return NULL;
-        }
-
-        // liegen diese Daten an unserem Socket, bzw wieviele Bytes liegen an?
-        if(!set.InSet(sock) || sock.BytesWaiting(&received) != 0)
-        {
-            if(wait)
-                continue;
-
-            error = 1;
-            return NULL;
-        }
-
-        // socket ist geschlossen worden
-        if(received == 0)
-            return NULL;
-
-        // haben wir schon eine vollständige nachricht? (kleinste nachricht: 6 bytes)
-        if(received < 6)
-        {
-            if(wait)
-                continue;
-
-            error = 2;
-            return NULL;
-        }
-        break;
-    }
-
-    int read = -1;
-
-    char block[6];
-    unsigned short* id = (unsigned short*)&block[0];
-    unsigned int* length = (unsigned int*)&block[2];
-
-    // block empfangen
-    read = sock.Recv(block, 6, false);
-    if(read != 6)
-    {
-        LOG.write("recv: block: only got %d bytes instead of %d, waiting for next try\n", read, 6);
-        if(read != -1)
-            error = 3;
-
-        return NULL;
-    }
-
-    read = sock.BytesWaiting();
-
-    static unsigned int blocktimeout = 0;
-    if(read < (signed)((*length) + 6) )
-    {
-        ++blocktimeout;
-        LOG.write("recv: block-waiting: not enough input (%d/%d) for message (0x%04X), waiting for next try\n", read, (*length) + 6, *id);
-        if(blocktimeout < 120 && read != -1)
-            error = 4;
-
-        return NULL;
-    }
-    blocktimeout = 0;
-
-    // Block nochmals abrufen (um ihn aus dem Cache zu entfernen)
-    read = sock.Recv(block, 6);
-    if(read != 6)
-    {
-        LOG.lprintf("recv: id,length: only got %d bytes instead of %d\n", read, 2);
-        return NULL;
-    }
-
-    Message* msg = createfunction(*id);
-    if(!msg)
-        return NULL;
-
-    // Daten abrufen
-    msg->recv(sock, *length);
-
-    return msg;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-/**
  *  dupliziert eine Nachricht.
  *
  *  @author FloSoft
@@ -228,8 +50,9 @@ Message* Message::recv(Socket& sock, int& error, bool wait, Message * (*createfu
 Message* Message::duplicate(void) const
 {
     Message* msg = create(id_);
-
-    *msg = *this;
+    Serializer ser;
+    Serialize(ser);
+    msg->Deserialize(ser);
 
     return msg;
 }

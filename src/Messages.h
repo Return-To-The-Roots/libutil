@@ -22,7 +22,6 @@
 #include "Message.h"
 #include "MessageInterface.h"
 #include "Protocol.h"
-#include "Log.h"
 
 /*
  * das Klassenkommentar ist alles Client-Sicht, für Server-Sicht ist alles andersrum
@@ -39,14 +38,9 @@
 class Message_Null : public Message
 {
     public:
-        Message_Null(void) : Message(NMS_NULL_MSG) { }
-        Message_Null(bool reserved) : Message(NMS_NULL_MSG)
-        {
-            LOG.write(">>> NMS_NULL_MSG\n");
-        }
+        Message_Null() : Message(NMS_NULL_MSG) { }
         void run(MessageInterface* callback, unsigned int id)
         {
-            LOG.write("<<< NMS_NULL_MSG\n");
             callback->OnNMSNull(id);
         }
 };
@@ -57,14 +51,9 @@ class Message_Null : public Message
 class Message_Dead : public Message
 {
     public:
-        Message_Dead(void) : Message(NMS_DEAD_MSG) { }
-        Message_Dead(bool reserved) : Message(NMS_DEAD_MSG)
-        {
-            LOG.write(">>> NMS_DEAD_MSG\n");
-        }
+        Message_Dead() : Message(NMS_DEAD_MSG) { }
         void run(MessageInterface* callback, unsigned int id)
         {
-            LOG.write("<<< NMS_DEAD_MSG\n");
             callback->OnNMSDead(id);
         }
 };

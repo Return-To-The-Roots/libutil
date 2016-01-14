@@ -17,6 +17,7 @@
 #ifndef MESSAGEQUEUE_H_INCLUDED
 #define MESSAGEQUEUE_H_INCLUDED
 
+#include "MessageHandler.h"
 #include <queue>
 #include <stddef.h>
 
@@ -37,10 +38,10 @@ public:
 };
 
 //class Socket;
-class MessageQueue
+class MessageQueue: protected MessageHandler
 {
     public:
-        MessageQueue(Message * (*createfunction)(unsigned short)) : createfunction(createfunction) {}
+        MessageQueue(CreateMsgFunction createfunction) : MessageHandler(createfunction) {}
         MessageQueue(const MessageQueue& mq);
         ~MessageQueue(void);
 
@@ -50,7 +51,6 @@ class MessageQueue
         typedef iterable_queue<Message*> Queue;
         typedef iterable_queue<Message*>::iterator QueueIt;
         Queue messages;
-        Message* (*createfunction)(unsigned short);
 
     public:
         void clear(void);
@@ -59,11 +59,14 @@ class MessageQueue
         bool flush(Socket& sock) { return send(sock, messages.size(), 0xFFFFFFFF); }
 
         /// liefert die Größe der Queue
-        unsigned int count() { return messages.size(); }
+        unsigned int count() const{ return messages.size(); }
+        bool empty() const{ return messages.empty(); }
 
         /// verschickt Pakete der Queue, maximal @p max, mit einem maximal @p sizelimit groß (aber beliebig viele kleine)
         bool send(Socket& sock, int max, unsigned int sizelimit = 512);
         bool recv(Socket& sock, bool wait = false);
+        /// Sends a message directly
+        static bool sendMessage(Socket& sock, const Message& msg){ return MessageHandler::send(sock, msg) >= 0; }
 
     public:
         /// hängt ein Element hinten an.
