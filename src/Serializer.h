@@ -71,9 +71,29 @@ class Serializer
             return length_;
         }
 
+        /// Schreibzugriff auf die Länge
+        void SetLength(const unsigned int length)
+        {
+            EnsureSize(length);
+            this->length_ = length;
+        }
+
+        unsigned GetBytesLeft() const
+        {
+            assert(pos_ < length_);
+            return length_ - pos_;
+        }
+
         /// Zugriff auf die Rohdaten
         const unsigned char* GetData(void) const
         {
+            return data_.data();
+        }
+
+        /// Schreibzugriff auf die Rohdaten
+        unsigned char* GetDataWritable(unsigned length)
+        {
+            EnsureSize(length);
             return data_.data();
         }
 
@@ -262,18 +282,6 @@ class Serializer
             this->length_ += sizeof(T);
         }
 
-        /// Schreibzugriff auf die Rohdaten
-        unsigned char* GetDataWritable(void)
-        {
-            return data_.data();
-        }
-
-        /// Schreibzugriff auf die Länge
-        void SetLength(const unsigned int length)
-        {
-            this->length_ = length;
-        }
-
         /// Erweitert ggf. Speicher um add_length
         inline void ExtendMemory(const unsigned add_length)
         {
@@ -283,8 +291,11 @@ class Serializer
         /// Makes sure the internal buffer is at least length bytes long
         inline void EnsureSize(const unsigned length)
         {
-            data_.reserve(length);
-            data_.resize(data_.capacity());
+            if(data_.size() < length)
+            {
+                data_.reserve(length);
+                data_.resize(data_.capacity());
+            }
         }
 
     private:

@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "Message.h"
+#include "Serializer.h"
 #include <vector>
 #include <algorithm>
 
@@ -39,6 +39,8 @@ class SerializableArray
          */
         SerializableArray(void)
         {}
+
+        template <typename T> friend class SerializableArray;
 
         template<class T>
         SerializableArray(const SerializableArray<T> &other)
@@ -107,15 +109,12 @@ class SerializableArray
          *
          *  @author FloSoft
          */
-        inline void serialize(Message* msg) const
+        inline void serialize(Serializer& ser) const
         {
-            unsigned int count = elements.size();
-
-            if(msg)
-                msg->PushUnsignedInt(count);
+            ser.PushUnsignedInt(elements.size());
 
             for(typename std::vector<Type>::const_iterator it = elements.begin(); it!=elements.end(); ++it)
-                it->serialize(msg);
+                it->serialize(ser);
         }
 
         ///////////////////////////////////////////////////////////////////////////////
@@ -128,21 +127,14 @@ class SerializableArray
          *
          *  @author FloSoft
          */
-        inline void deserialize(Message* msg)
+        inline void deserialize(Serializer& ser)
         {
-            if(!msg)
-                return;
-
-            unsigned int count = msg->PopUnsignedInt();
-
             clear();
-
+            unsigned count = ser.PopUnsignedInt();
             elements.reserve(count);
 
             for(unsigned int i = 0; i < count; ++i)
-            {
-                elements.push_back(Type(i, msg));
-            }
+                elements.push_back(Type(i, ser));
         }
 
         ///////////////////////////////////////////////////////////////////////////////

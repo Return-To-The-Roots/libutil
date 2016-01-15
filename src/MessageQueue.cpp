@@ -49,7 +49,7 @@ MessageQueue::~MessageQueue(void)
  *
  *  @author OLiver
  */
-MessageQueue::MessageQueue(const MessageQueue& mq) : messages(mq.messages), createfunction(mq.createfunction)
+MessageQueue::MessageQueue(const MessageQueue& mq): MessageHandler(mq), messages(mq.messages)
 {
     // Deep copy
     for(QueueIt it = messages.begin(); it != messages.end(); ++it)
@@ -61,9 +61,11 @@ MessageQueue& MessageQueue::operator=(const MessageQueue& mq)
 {
     if(this == &mq)
         return *this;
+
+    MessageHandler::operator=(mq);
+
     clear();
     messages = mq.messages;
-    createfunction = mq.createfunction;
 
     // Deep copy
     for(QueueIt it = messages.begin(); it != messages.end(); ++it)
@@ -80,11 +82,8 @@ MessageQueue& MessageQueue::operator=(const MessageQueue& mq)
  */
 void MessageQueue::clear(void)
 {
-    while(!messages.empty())
-    {
-        delete messages.front();
-        messages.pop();
-    }
+    while(!empty())
+        pop();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -108,7 +107,7 @@ bool MessageQueue::recv(Socket& sock, bool wait)
 {
     // Nachricht abrufen
     int error = -1;
-    Message* msg = Message::recv(sock, error, wait, createfunction);
+    Message* msg = MessageHandler::recv(sock, error, wait);
 
     if(msg)
     {
@@ -116,7 +115,7 @@ bool MessageQueue::recv(Socket& sock, bool wait)
         return true;
     }
 
-    // noch nicht alles empfangen, true liefern für okay (error == -1 bedeutet fehler
+    // noch nicht alles empfangen, true liefern für okay (error == -1 bedeutet fehler)
     return (error >= 0);
 }
 
@@ -135,18 +134,19 @@ bool MessageQueue::send(Socket& sock, int max, unsigned int sizelimit)
     int count = 0;
     while(count <= max && !messages.empty())
     {
-        Message* msg = messages.front();
+        const Message& msg = *messages.front();        
 
-        // maximal 1 großes Paket verschicken
-        if(count > 0 && msg->GetLength() > sizelimit)
-            break;
-
-        if(msg->getId() > 0)
+        if(msg.getId() > 0)
         {
-            if(!msg->send(sock))
+            int sendBytes = MessageHandler::send(sock, msg);
+            if(sendBytes < 0)
             {
                 LOG.lprintf("Sending Message to server failed\n");
                 return false;
+            }else if(static_cast<unsigned>(sendBytes) > sizelimit)
+            {
+                pop();
+                break; // maximal 1 großes Paket verschicken
             }
         }
 
