@@ -23,6 +23,7 @@
 #include "Log.h"
 #include "MyTime.h"
 #include <boost/endian/conversion.hpp>
+#include <stdint.h>
 
 int MessageHandler::send(Socket& sock, const Message& msg)
 {
@@ -40,8 +41,8 @@ int MessageHandler::send(Socket& sock, const Message& msg)
 
     unsigned char* data = ser.GetDataWritable(ser.GetLength());
     // Use little endian here for backwards compatibility
-    *reinterpret_cast<int*>(data) = boost::endian::native_to_little(msg.getId());
-    *reinterpret_cast<int*>(data + sizeof(unsigned short)) = boost::endian::native_to_little(ser.GetLength() - headerSize);
+    *reinterpret_cast<uint16_t*>(data) = boost::endian::native_to_little(msg.getId());
+    *reinterpret_cast<int32_t*>(data + sizeof(uint16_t)) = boost::endian::native_to_little(ser.GetLength() - headerSize);
 
     if(ser.GetLength() != (unsigned int)sock.Send(data, ser.GetLength()))
         return -1;
@@ -121,8 +122,8 @@ Message* MessageHandler::recv(Socket& sock, int& error, bool wait)
     }
 
     // Those are little endian for backwards compatibility
-    unsigned short id = boost::endian::little_to_native(*reinterpret_cast<unsigned short*>(&header[0]));
-    int length = boost::endian::little_to_native(*reinterpret_cast<int*>(&header[sizeof(unsigned short)]));
+    unsigned short id = boost::endian::little_to_native(*reinterpret_cast<uint16_t*>(&header[0]));
+    int length = boost::endian::little_to_native(*reinterpret_cast<int32_t*>(&header[sizeof(uint16_t)]));
 
     if(length < 0)
         throw std::runtime_error("Integer overflow during recv of message");
