@@ -1,3 +1,4 @@
+
 FIND_PACKAGE(Boost 1.55 COMPONENTS system filesystem REQUIRED)
 IF (NOT MSVC)
 	FIND_PACKAGE(Miniupnpc REQUIRED)
