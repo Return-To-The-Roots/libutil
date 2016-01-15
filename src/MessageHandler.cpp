@@ -22,6 +22,7 @@
 #include "SocketSet.h"
 #include "Log.h"
 #include "MyTime.h"
+#include <boost/endian/conversion.hpp>
 
 int MessageHandler::send(Socket& sock, const Message& msg)
 {
@@ -38,8 +39,9 @@ int MessageHandler::send(Socket& sock, const Message& msg)
     }
 
     unsigned char* data = ser.GetDataWritable(ser.GetLength());
-    *reinterpret_cast<int*>(data) = msg.getId();
-    *reinterpret_cast<int*>(data + sizeof(unsigned short)) = ser.GetLength() - headerSize;
+    // Use little endian here for backwards compatibility
+    *reinterpret_cast<int*>(data) = boost::endian::native_to_little(msg.getId());
+    *reinterpret_cast<int*>(data + sizeof(unsigned short)) = boost::endian::native_to_little(ser.GetLength() - headerSize);
 
     if(ser.GetLength() != (unsigned int)sock.Send(data, ser.GetLength()))
         return -1;
@@ -105,8 +107,6 @@ Message* MessageHandler::recv(Socket& sock, int& error, bool wait)
     }
 
     char header[6];
-    unsigned short* id = (unsigned short*)&header[0];
-    int* length = (int*)&header[2];
 
     // block empfangen
     int headerSize = sizeof(header);
@@ -120,16 +120,20 @@ Message* MessageHandler::recv(Socket& sock, int& error, bool wait)
         return NULL;
     }
 
+    // Those are little endian for backwards compatibility
+    unsigned short id = boost::endian::little_to_native(*reinterpret_cast<unsigned short*>(&header[0]));
+    int length = boost::endian::little_to_native(*reinterpret_cast<int*>(&header[sizeof(unsigned short)]));
+
     if(length < 0)
         throw std::runtime_error("Integer overflow during recv of message");
 
     read = sock.BytesWaiting();
 
     static unsigned blocktimeout = 0;
-    if(read < *length + headerSize)
+    if(read < length + headerSize)
     {
         ++blocktimeout;
-        LOG.write("recv: block-waiting: not enough input (%d/%d) for message (0x%04X), waiting for next try\n", read, *length + headerSize, *id);
+        LOG.write("recv: block-waiting: not enough input (%d/%d) for message (0x%04X), waiting for next try\n", read, length + headerSize, id);
         if(blocktimeout < 120 && read != -1)
             error = 4;
 
@@ -146,18 +150,18 @@ Message* MessageHandler::recv(Socket& sock, int& error, bool wait)
     }
 
     Serializer ser;
-    if(*length)
+    if(length)
     {
-        read = sock.Recv(ser.GetDataWritable(*length), *length);
-        if(read < *length)
+        read = sock.Recv(ser.GetDataWritable(length), length);
+        if(read < length)
         {
-            LOG.lprintf("recv: data: only got %d bytes instead of %d\n", read, *length);
+            LOG.lprintf("recv: data: only got %d bytes instead of %d\n", read, length);
             return NULL;
         }
-        ser.SetLength(*length);
+        ser.SetLength(length);
     }
 
-    Message* msg = createMsg(*id);
+    Message* msg = createMsg(id);
     if(!msg)
         return NULL;
 
