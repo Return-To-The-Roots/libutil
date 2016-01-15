@@ -151,7 +151,7 @@ class Serializer
 
         inline void PushString(const std::string& str)
         {
-            PushUnsignedInt(str.length());
+            PushUnsignedInt(static_cast<unsigned>(str.length()));
             for(unsigned i = 0; i < str.length(); ++i)
                 PushSignedChar(str[i]);
         }
@@ -209,7 +209,7 @@ class Serializer
             std::string str;
             str.resize(PopUnsignedInt());
 
-            CheckSize(str.size());
+            CheckSize(static_cast<unsigned>(str.size()));
 
             for(unsigned i = 0; i < str.length(); ++i)
                 str[i] = PopSignedChar();

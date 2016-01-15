@@ -574,7 +574,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
         LOG.lprintf("Verbinde mit %s%s:%d\n", (typ != PROXY_NONE ? "Proxy " : ""), ip.c_str(), (typ != PROXY_NONE ? proxy_port : port));
 
         // Und schließlich Verbinden
-        if(connect(socket_, addr.getAddr().ai_addr, addr.getAddr().ai_addrlen) != SOCKET_ERROR)
+        if(connect(socket_, addr.getAddr().ai_addr, static_cast<int>(addr.getAddr().ai_addrlen)) != SOCKET_ERROR)
         {
             done = true;
             break;
@@ -929,7 +929,7 @@ std::string Socket::IpToString(const sockaddr* addr)
 
     DWORD le = GetLastError();
     DWORD templen = sizeof(temp);
-    WSAAddressToStringA(copy, size, NULL, temp, &templen);
+    WSAAddressToStringA(copy, static_cast<DWORD>(size), NULL, temp, &templen);
     SetLastError(le);
 
     free(copy);
@@ -950,8 +950,8 @@ std::string Socket::IpToString(const sockaddr* addr)
 
     std::string buffer = temp;
 
-    int pos = buffer.find("::ffff:");
-    if(pos != -1)
+    size_t pos = buffer.find("::ffff:");
+    if(pos != std::string::npos)
         buffer.replace(pos, 7, "");
 
     return buffer;

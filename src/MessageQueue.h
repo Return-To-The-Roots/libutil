@@ -56,10 +56,10 @@ class MessageQueue: protected MessageHandler
         void clear(void);
 
         /// flusht die Queue, verschickt alle Elemente.
-        bool flush(Socket& sock) { return send(sock, messages.size(), 0xFFFFFFFF); }
+        bool flush(Socket& sock);
 
         /// liefert die Größe der Queue
-        unsigned int count() const{ return messages.size(); }
+        size_t count() const{ return messages.size(); }
         bool empty() const{ return messages.empty(); }
 
         /// verschickt Pakete der Queue, maximal @p max, mit einem maximal @p sizelimit groß (aber beliebig viele kleine)

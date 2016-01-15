@@ -111,7 +111,7 @@ class SerializableArray
          */
         inline void serialize(Serializer& ser) const
         {
-            ser.PushUnsignedInt(elements.size());
+            ser.PushUnsignedInt(static_cast<unsigned>(elements.size()));
 
             for(typename std::vector<Type>::const_iterator it = elements.begin(); it!=elements.end(); ++it)
                 it->serialize(ser);
@@ -173,12 +173,12 @@ class SerializableArray
          */
         inline unsigned int getCount(void) const
         {
-            return elements.size();
+            return size();
         }
 
         unsigned size() const
         {
-            return elements.size();
+            return static_cast<unsigned>(elements.size());
         }
 
         ///////////////////////////////////////////////////////////////////////////////

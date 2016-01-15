@@ -22,6 +22,7 @@
 #include "Message.h"
 #include "Socket.h"
 #include "Log.h"
+#include <limits>
 
 ///////////////////////////////////////////////////////////////////////////////
 // Makros / Defines
@@ -117,6 +118,12 @@ bool MessageQueue::recv(Socket& sock, bool wait)
 
     // noch nicht alles empfangen, true liefern für okay (error == -1 bedeutet fehler)
     return (error >= 0);
+}
+
+bool MessageQueue::flush(Socket& sock)
+{
+    assert(messages.size() < std::numeric_limits<int>::max());
+    return send(sock, static_cast<int>(messages.size()), std::numeric_limits<unsigned>::max());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
