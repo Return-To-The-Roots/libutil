@@ -95,7 +95,7 @@ Message* MessageHandler::recv(Socket& sock, int& error, bool wait)
         if(received == 0)
             return NULL;
 
-        // haben wir schon eine vollst‰ndige nachricht? (kleinste nachricht: 6 bytes)
+        // haben wir schon eine vollst√§ndige nachricht? (kleinste nachricht: 6 bytes)
         if(received < 6)
         {
             if(wait)
@@ -110,7 +110,7 @@ Message* MessageHandler::recv(Socket& sock, int& error, bool wait)
     char header[6];
 
     // block empfangen
-    int headerSize = sizeof(header);
+    const int headerSize = sizeof(header);
     int read = sock.Recv(header, headerSize, false);
     if(read != headerSize)
     {
@@ -122,8 +122,8 @@ Message* MessageHandler::recv(Socket& sock, int& error, bool wait)
     }
 
     // Those are little endian for backwards compatibility
-    unsigned short id = boost::endian::little_to_native(*reinterpret_cast<uint16_t*>(&header[0]));
-    int length = boost::endian::little_to_native(*reinterpret_cast<int32_t*>(&header[sizeof(uint16_t)]));
+    uint16_t id = boost::endian::little_to_native(*reinterpret_cast<uint16_t*>(&header[0]));
+    int32_t length = boost::endian::little_to_native(*reinterpret_cast<int32_t*>(&header[sizeof(uint16_t)]));
 
     if(length < 0)
         throw std::runtime_error("Integer overflow during recv of message");
