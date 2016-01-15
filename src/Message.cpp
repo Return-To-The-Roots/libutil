@@ -20,6 +20,7 @@
 #include "libUtilDefines.h"
 #include "Message.h"
 #include "Messages.h"
+#include <cstdio>
 
 ///////////////////////////////////////////////////////////////////////////////
 /**
