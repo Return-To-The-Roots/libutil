@@ -122,7 +122,7 @@ bool MessageQueue::recv(Socket& sock, bool wait)
 
 bool MessageQueue::flush(Socket& sock)
 {
-    assert(messages.size() < std::numeric_limits<int>::max());
+    assert(messages.size() < static_cast<size_t>(std::numeric_limits<int>::max()));
     return send(sock, static_cast<int>(messages.size()), std::numeric_limits<unsigned>::max());
 }
 
