@@ -69,6 +69,7 @@ public:
     ~ResolvedAddr();
 
     addrinfo& getAddr(){ return *addr; }
+    bool isValid() const { return addr != NULL; }
 };
 
 class PeerAddr

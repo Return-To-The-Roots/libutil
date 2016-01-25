@@ -534,7 +534,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
 
     // TODO: socks v5 kann remote resolven
     std::vector<HostAddr> ips = HostToIp(hostname, port, use_ipv6);
-    if(ips.size() == 0)
+    if(ips.empty())
         return false;
 
     bool done = false;
@@ -570,8 +570,13 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
 #endif
 
         ResolvedAddr addr(*it);
+        if(!addr.isValid())
+        {
+            LOG.lprintf("Could not resolve %s. Skipping...\n", it->host.c_str());
+            continue;
+        }
         std::string ip = IpToString(addr.getAddr().ai_addr); //-V807
-        LOG.lprintf("Verbinde mit %s%s:%d\n", (typ != PROXY_NONE ? "Proxy " : ""), ip.c_str(), (typ != PROXY_NONE ? proxy_port : port));
+        LOG.lprintf("Connection to %s%s:%d\n", (typ != PROXY_NONE ? "Proxy " : ""), ip.c_str(), (typ != PROXY_NONE ? proxy_port : port));
 
         // Und schließlich Verbinden
         if(connect(socket_, addr.getAddr().ai_addr, static_cast<int>(addr.getAddr().ai_addrlen)) != SOCKET_ERROR)
@@ -679,15 +684,15 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
             if(done)
                 break;
         }
-        LOG.getlasterror("Verbindung fehlgeschlagen\nFehler");
+        LOG.getlasterror("Connection failed\nError");
     }
 
     if(!done)
     {
-        LOG.lprintf("Fehler beim Verbinden mit %s:%d\n", hostname.c_str(), port);
+        LOG.lprintf("Error connection to %s:%d\n", hostname.c_str(), port);
         return false;
     }
-    LOG.lprintf("Verbindung erfolgreich hergestellt mit %s:%d\n", hostname.c_str(), port);
+    LOG.lprintf("Sucessfully connected to %s:%d\n", hostname.c_str(), port);
 
     // deaktiviere non-blocking
     unsigned long argp = 0;
@@ -948,11 +953,5 @@ std::string Socket::IpToString(const sockaddr* addr)
     inet_ntop(addr->sa_family, ip, temp, sizeof(temp));
 #endif
 
-    std::string buffer = temp;
-
-    size_t pos = buffer.find("::ffff:");
-    if(pos != std::string::npos)
-        buffer.replace(pos, 7, "");
-
-    return buffer;
+    return temp;
 }
