@@ -22,8 +22,6 @@
 #include "Log.h"
 
 #ifdef _WIN32
-    #undef DATADIR
-
     #include <winsock2.h>
     #include <windows.h>
     #include <in6addr.h>

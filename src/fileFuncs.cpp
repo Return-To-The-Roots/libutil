@@ -34,7 +34,6 @@
 #endif
 
 #ifdef _WIN32
-#undef DATADIR
 #include <shlobj.h>
 #endif
 
