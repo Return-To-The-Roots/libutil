@@ -20,6 +20,9 @@
 #include "libUtilDefines.h"
 #include "MessageInterface.h"
 
+// Include last!
+#include "DebugNew.h"
+
 ///////////////////////////////////////////////////////////////////////////////
 /**
  *  Null-Nachricht.

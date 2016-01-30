@@ -15,11 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "libUtilDefines.h"
 #include "LANDiscoveryService.h"
 #include <algorithm>
 #include <exception>
+
+// Include last!
+#include "DebugNew.h"
 
 LANDiscoveryService::LANDiscoveryService(const Config& cfg): LANDiscoveryBase(cfg, true), isRunning(false), dataChanged(false)
 {

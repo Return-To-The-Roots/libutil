@@ -25,6 +25,9 @@
 #include <boost/endian/conversion.hpp>
 #include <stdint.h>
 
+// Include last!
+#include "DebugNew.h"
+
 int MessageHandler::send(Socket& sock, const Message& msg)
 {
     Serializer ser;

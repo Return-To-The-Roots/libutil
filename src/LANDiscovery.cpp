@@ -15,11 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "libUtilDefines.h"
 #include "LANDiscovery.h"
 #include "SocketSet.h"
 #include <algorithm>
+
+// Include last!
+#include "DebugNew.h"
 
 LANDiscoveryBase::Magic_t LANDiscoveryBase::Config::MakeMagic(const std::string& str)
 {

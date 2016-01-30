@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "libUtilDefines.h"
 #include "LANDiscoveryClient.h"
 #ifdef _WIN32
@@ -23,6 +22,9 @@
 #else
 #include <sys/select.h>
 #endif // _WIN32
+
+// Include last!
+#include "DebugNew.h"
 
 LANDiscoveryClient::LANDiscoveryClient(const Config& cfg) : LANDiscoveryBase(cfg, false), isRunning(false)
 {}
