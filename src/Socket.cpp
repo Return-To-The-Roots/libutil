@@ -523,7 +523,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
     if(typ != PROXY_NONE)
     {
         proxy_ips = HostToIp(proxy_hostname, proxy_port, use_ipv6);
-        if(proxy_ips.size() == 0)
+        if(proxy_ips.empty())
             return false;
     }
 
