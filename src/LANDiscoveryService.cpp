@@ -37,7 +37,7 @@ LANDiscoveryService::~LANDiscoveryService()
 
 void LANDiscoveryService::SetPayload(const void* const data, size_t len)
 {
-    if (len > info.GetPayload().size())
+    if (len > info.GetPayload().size()) //-V807
         throw std::invalid_argument("Payload size is to big");
     const char* const buffer = static_cast<const char* const>(data);
     std::copy(buffer, buffer + std::min(len, info.GetPayload().size()), info.GetPayload().begin());

@@ -159,7 +159,7 @@ const sockaddr* PeerAddr::GetAddr() const
  *
  *  @author FloSoft
  */
-Socket::Socket() : status_(INVALID), socket_(INVALID_SOCKET), isBroadcast(false), refCount_(NULL)
+Socket::Socket() : socket_(INVALID_SOCKET), refCount_(NULL), status_(INVALID), isBroadcast(false)
 {
 }
 
@@ -172,11 +172,11 @@ Socket::Socket() : status_(INVALID), socket_(INVALID_SOCKET), isBroadcast(false)
  *
  *  @author FloSoft
  */
-Socket::Socket(const SOCKET so, Status st): status_(st), socket_(so), isBroadcast(false), refCount_(new int32_t(1))
+Socket::Socket(const SOCKET so, Status st): socket_(so), refCount_(new int32_t(1)), status_(st), isBroadcast(false)
 {
 }
 
-Socket::Socket(const Socket& so): status_(so.status_), socket_(so.socket_), isBroadcast(so.isBroadcast), refCount_(so.refCount_)
+Socket::Socket(const Socket& so): socket_(so.socket_), refCount_(so.refCount_), status_(so.status_), isBroadcast(so.isBroadcast)
 {
     if(refCount_)
         ++*refCount_;
