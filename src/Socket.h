@@ -77,7 +77,7 @@ class PeerAddr
     sockaddr_storage addr;
 public:
     /// Uninitilized value!
-    PeerAddr(){}
+    PeerAddr(){} //-V730
     /// Initializes the address to a broadcast with the given protocol and port
     PeerAddr(bool isIpv6, unsigned short port);
 

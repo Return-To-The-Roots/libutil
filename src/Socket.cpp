@@ -284,7 +284,7 @@ bool Socket::Create(int family, bool asUDPBroadcast)
         SetSockOpt(SO_REUSEADDR, &enable, sizeof(int), SOL_SOCKET);
     }
 
-    refCount_ = new int32_t(1);
+    refCount_ = new int32_t(1); //-V508
     isBroadcast = asUDPBroadcast;
 
     return (status_ != INVALID);

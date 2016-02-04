@@ -27,7 +27,7 @@ LANDiscoveryService::LANDiscoveryService(const Config& cfg): LANDiscoveryBase(cf
 {
     info.GetMagic() = cfg.magicResponse;
     info.GetVersion() = cfg.version;
-    info.GetIsActive() = false;
+    info.GetIsActive() = 0;
 }
 
 LANDiscoveryService::~LANDiscoveryService()
@@ -41,7 +41,7 @@ void LANDiscoveryService::SetPayload(const void* const data, size_t len)
         throw std::invalid_argument("Payload size is to big");
     const char* const buffer = static_cast<const char* const>(data);
     std::copy(buffer, buffer + std::min(len, info.GetPayload().size()), info.GetPayload().begin());
-    info.GetIsActive() = true;
+    info.GetIsActive() = 1;
     dataChanged = true;
 }
 
@@ -63,7 +63,7 @@ void LANDiscoveryService::Stop()
     if (info.GetIsActive())
     {
         // Tell clients we are offline
-        info.GetIsActive() = false;
+        info.GetIsActive() = 0;
         Broadcast(&info, sizeof(info));
     }
     dataChanged = false;
