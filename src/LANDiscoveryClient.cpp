@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#include "libUtilDefines.h"
+#include "libUtilDefines.h" // IWYU pragma: keep
 #include "LANDiscoveryClient.h"
 #ifdef _WIN32
 #include <winsock2.h>
@@ -24,7 +24,7 @@
 #endif // _WIN32
 
 // Include last!
-#include "DebugNew.h"
+#include "DebugNew.h" // IWYU pragma: keep
 
 LANDiscoveryClient::LANDiscoveryClient(const Config& cfg) : LANDiscoveryBase(cfg, false), isRunning(false)
 {}

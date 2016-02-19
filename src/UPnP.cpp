@@ -17,7 +17,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header
-#include "libUtilDefines.h"
+#include "libUtilDefines.h" // IWYU pragma: keep
 #include "UPnP.h"
 #include "Log.h"
 
@@ -91,7 +91,7 @@
 #include <cstring>
 
 // Include last!
-#include "DebugNew.h"
+#include "DebugNew.h" // IWYU pragma: keep
 
 ///////////////////////////////////////////////////////////////////////////////
 /**

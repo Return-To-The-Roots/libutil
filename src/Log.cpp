@@ -17,7 +17,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header
-#include "libUtilDefines.h"
+#include "libUtilDefines.h" // IWYU pragma: keep
 #include "Log.h"
 #include "MyTime.h"
 #include "files.h"
@@ -33,7 +33,7 @@
 #include <cstdarg>
 
 // Include last!
-#include "DebugNew.h"
+#include "DebugNew.h" // IWYU pragma: keep
 
 #ifndef va_copy
     /* WARNING - DANGER - ASSUMES TYPICAL STACK MACHINE */

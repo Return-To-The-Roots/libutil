@@ -17,7 +17,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header
-#include "libUtilDefines.h"
+#include "libUtilDefines.h" // IWYU pragma: keep
 #include "MessageQueue.h"
 #include "Message.h"
 #include "Socket.h"
@@ -25,7 +25,7 @@
 #include <limits>
 
 // Include last!
-#include "DebugNew.h"
+#include "DebugNew.h" // IWYU pragma: keep
 
 ///////////////////////////////////////////////////////////////////////////////
 /**

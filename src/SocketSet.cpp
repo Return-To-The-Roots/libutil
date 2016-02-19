@@ -17,13 +17,13 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header
-#include "libUtilDefines.h"
+#include "libUtilDefines.h" // IWYU pragma: keep
 #include "SocketSet.h"
 
 #include "Socket.h"
 
 // Include last!
-#include "DebugNew.h"
+#include "DebugNew.h" // IWYU pragma: keep
 
 ///////////////////////////////////////////////////////////////////////////////
 /**

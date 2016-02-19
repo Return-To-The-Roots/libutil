@@ -17,12 +17,12 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Header
-#include "libUtilDefines.h"
+#include "libUtilDefines.h" // IWYU pragma: keep
 #include "Serializer.h"
 #include "BinaryFile.h"
 
 // Include last!
-#include "DebugNew.h"
+#include "DebugNew.h" // IWYU pragma: keep
 
 void Serializer::WriteToFile(BinaryFile& file)
 {

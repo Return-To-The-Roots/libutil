@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#include "libUtilDefines.h"
+#include "libUtilDefines.h" // IWYU pragma: keep
 #include "MessageHandler.h"
 #include "Message.h"
 #include "Socket.h"
@@ -26,7 +26,7 @@
 #include <stdint.h>
 
 // Include last!
-#include "DebugNew.h"
+#include "DebugNew.h" // IWYU pragma: keep
 
 int MessageHandler::send(Socket& sock, const Message& msg)
 {
