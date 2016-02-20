@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "SingletonPolicies.h"
+#include "SingletonPolicies.h" // IWYU pragma: export
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Singleton-Template-class
