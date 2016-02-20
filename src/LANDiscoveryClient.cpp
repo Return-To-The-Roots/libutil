@@ -17,11 +17,6 @@
 
 #include "libUtilDefines.h" // IWYU pragma: keep
 #include "LANDiscoveryClient.h"
-#ifdef _WIN32
-#include <winsock2.h>
-#else
-#include <sys/select.h>
-#endif // _WIN32
 
 // Include last!
 #include "DebugNew.h" // IWYU pragma: keep

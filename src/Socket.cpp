@@ -38,14 +38,21 @@
 #endif
 #else
 #   include <netinet/tcp.h>
+#   include <arpa/inet.h>
 #   include <unistd.h>
 #   include <sys/ioctl.h>
 #   include <errno.h>
 #endif
 #include <iostream>
+#include <sstream>
+#include <netdb.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 // Include last!
 #include "DebugNew.h" // IWYU pragma: keep
+
 
 ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr, bool resolveAll)
 {

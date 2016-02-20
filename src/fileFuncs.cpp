@@ -18,7 +18,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Header
 #include "libUtilDefines.h" // IWYU pragma: keep
-#include "build_paths.h"
 #include "fileFuncs.h"
 
 #include <sstream>
@@ -37,6 +36,11 @@
 #include <shlobj.h>
 #endif
 
+#include <cstddef>
+
+// Include last!
+#include "DebugNew.h" // IWYU pragma: keep
+
 #if defined(__CYGWIN__) || defined (__MINGW32__)
 
 typedef GUID KNOWNFOLDERID;
@@ -53,9 +57,6 @@ DEFINE_KNOWN_FOLDER(FOLDERID_SavedGames, 0x4c5c32ff, 0xbb9d, 0x43b0, 0xb5, 0xb4,
 DEFINE_KNOWN_FOLDER(FOLDERID_Documents,  0xFDD39AD0, 0x238F, 0x46AF, 0xAD, 0xB4, 0x6C, 0x85, 0x48, 0x03, 0x69, 0xC7);
 
 #endif // __MINGW__
-
-// Include last!
-#include "DebugNew.h" // IWYU pragma: keep
 
 #ifdef _WIN32
 

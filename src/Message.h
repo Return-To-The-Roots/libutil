@@ -19,10 +19,7 @@
 
 #pragma once
 
-#include "Serializer.h"
-
 class MessageInterface;
-class Socket;
 class Serializer;
 
 class Message

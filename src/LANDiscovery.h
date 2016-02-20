@@ -21,6 +21,7 @@
 #include "Socket.h"
 #include <string>
 #include <boost/array.hpp>
+#include <stdint.h>
 
 class LANDiscoveryBase
 {

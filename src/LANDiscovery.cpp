@@ -19,6 +19,7 @@
 #include "LANDiscovery.h"
 #include "SocketSet.h"
 #include <algorithm>
+#include <stdexcept>
 
 // Include last!
 #include "DebugNew.h" // IWYU pragma: keep

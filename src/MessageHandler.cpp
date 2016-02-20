@@ -22,8 +22,11 @@
 #include "SocketSet.h"
 #include "Log.h"
 #include "MyTime.h"
+#include "Serializer.h"
 #include <boost/endian/conversion.hpp>
 #include <stdint.h>
+#include <cstddef>
+#include <stdexcept>
 
 // Include last!
 #include "DebugNew.h" // IWYU pragma: keep

@@ -20,6 +20,8 @@
 #include "libUtilDefines.h" // IWYU pragma: keep
 #include "Message.h"
 #include "Messages.h"
+#include "Protocol.h"
+#include "Serializer.h"
 #include <cstdio>
 
 // Include last!

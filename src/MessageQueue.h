@@ -19,7 +19,8 @@
 
 #include "MessageHandler.h"
 #include <queue>
-#include <stddef.h>
+#include <cstddef>
+#include <deque>
 
 class Message;
 class Socket;

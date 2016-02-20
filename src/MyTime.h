@@ -21,6 +21,7 @@
 
 #include "Singleton.h"
 #include <string>
+#include <cstddef>
 
 #ifdef _WIN32
     #if defined __CYGWIN__ || defined __CYGWIN32__ || defined __MINGW__
@@ -28,7 +29,7 @@
     #endif
     typedef unsigned __int64 unser_time_t;
 #else
-    #include <stdint.h>
+#    include <stdint.h>
     typedef int64_t unser_time_t;
 #endif
 

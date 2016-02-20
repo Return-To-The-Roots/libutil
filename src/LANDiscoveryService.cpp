@@ -17,8 +17,8 @@
 
 #include "libUtilDefines.h" // IWYU pragma: keep
 #include "LANDiscoveryService.h"
+#include <stdexcept>
 #include <algorithm>
-#include <exception>
 
 // Include last!
 #include "DebugNew.h" // IWYU pragma: keep

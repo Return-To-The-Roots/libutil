@@ -26,10 +26,7 @@
 
     typedef int socklen_t;
 #else
-    #include <arpa/inet.h>
-    #include <sys/types.h>
     #include <sys/socket.h>
-    #include <netdb.h>
     #include <netinet/in.h>
 
     #define SOCKET int
@@ -38,12 +35,15 @@
     #define HINSTANCE void*
 
     #define closesocket close
+	struct addrinfo;
 #endif // !_WIN32
 
 #include "UPnP.h"
 #include <string>
 #include <vector>
 #include <stdint.h>
+#include <cstddef>
+#include <algorithm>
 
 /// liefert Ip-Adresse(n) für einen Hostnamen.
 struct HostAddr

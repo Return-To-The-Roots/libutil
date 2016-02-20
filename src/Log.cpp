@@ -31,10 +31,10 @@
     #include <errno.h>
 #endif
 #include <cstdarg>
+#include <string>
 
 // Include last!
 #include "DebugNew.h" // IWYU pragma: keep
-
 #ifndef va_copy
     /* WARNING - DANGER - ASSUMES TYPICAL STACK MACHINE */
 #   define va_copy(dst, src) ((void)((dst) = (src)))

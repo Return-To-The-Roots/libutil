@@ -22,12 +22,13 @@
 #ifdef _WIN32
     #include <winsock2.h>
 #else
-    #include <arpa/inet.h>
+    #include <netinet/in.h>
 #endif // _WIN32
 
 #include "uvector.h"
 #include <string>
 #include <algorithm>
+#include <stdexcept>
 
 class BinaryFile;
 
