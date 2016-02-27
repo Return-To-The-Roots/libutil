@@ -19,19 +19,6 @@
 
 #pragma once
 
-/// Texturfarben
-enum TextureColor
-{
-    TC_GREY = 0,
-    TC_RED1,
-    TC_GREEN1,
-    TC_GREEN2,
-    TC_RED2,
-    TC_BRICKS,
-    TC_INVISIBLE
-};
-
-
 /// Farbkonstanten
 const unsigned COLOR_BLUE = 0xFF0073FF;
 const unsigned COLOR_RED = 0xFFFF0000;
