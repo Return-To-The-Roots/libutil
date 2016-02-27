@@ -42,10 +42,10 @@
 #   include <unistd.h>
 #   include <sys/ioctl.h>
 #   include <errno.h>
+#   include <netdb.h>
 #endif
 #include <iostream>
 #include <sstream>
-#include <netdb.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

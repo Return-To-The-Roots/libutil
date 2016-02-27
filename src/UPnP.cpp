@@ -21,6 +21,7 @@
 #include "UPnP.h"
 
 #ifdef _WIN32
+#   include "Log.h"
     #include <winsock2.h>
     #include <windows.h>
     #include <in6addr.h>
