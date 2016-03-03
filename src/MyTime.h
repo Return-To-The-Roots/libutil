@@ -40,7 +40,7 @@ class Time : public Singleton<Time>
         /// Konstruktor von @p Time.
         Time(void);
         /// Desktruktor von @p Time.
-        ~Time(void);
+        ~Time(void) override;
 
         /// liefert die aktuelle Zeit.
         unser_time_t CurrentTime(void);

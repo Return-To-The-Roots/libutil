@@ -32,7 +32,7 @@ class Log : public Singleton<Log, SingletonPolicies::WithLongevity>
         /// Konstruktor von @p Log.
         Log(void);
         /// Desktruktor von @p Log.
-        ~Log(void);
+        ~Log(void) override;
 
         /// Öffnet das Log (falls noch nicht offen)
         void open(void);

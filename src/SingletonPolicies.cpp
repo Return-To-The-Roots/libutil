@@ -47,7 +47,7 @@ namespace SingletonPolicies{
         Container items_;
 
     public:
-        ~LifetimeTracker()
+        ~LifetimeTracker() override
         {
             // Destroy all items
             for(Container::iterator it = items_.begin(); it != items_.end(); ++it)
