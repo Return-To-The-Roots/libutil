@@ -32,7 +32,7 @@
  *
  *  @author OLiver
  */
-SocketSet::SocketSet(void)
+SocketSet::SocketSet()
 {
     Clear();
 }
@@ -43,7 +43,7 @@ SocketSet::SocketSet(void)
  *
  *  @author OLiver
  */
-void SocketSet::Clear(void)
+void SocketSet::Clear()
 {
     FD_ZERO(&set);
 

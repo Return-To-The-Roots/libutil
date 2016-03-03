@@ -44,7 +44,7 @@ class MessageQueue: protected MessageHandler
     public:
         MessageQueue(CreateMsgFunction createfunction) : MessageHandler(createfunction) {}
         MessageQueue(const MessageQueue& mq);
-        ~MessageQueue(void);
+        ~MessageQueue();
 
         MessageQueue& operator=(const MessageQueue& mq);
 
@@ -54,7 +54,7 @@ class MessageQueue: protected MessageHandler
         Queue messages;
 
     public:
-        void clear(void);
+        void clear();
 
         /// flusht die Queue, verschickt alle Elemente.
         bool flush(Socket& sock);
@@ -75,7 +75,7 @@ class MessageQueue: protected MessageHandler
         /// liefert das vorderste Element der Queue.
         Message* front() { return (!messages.empty() ? messages.front() : NULL); }
         /// entfernt das vorderste Element aus der Queue.
-        void pop(void);
+        void pop();
         /// Returns the first element and removes it from the queue. Returns NULL if there is none
         /// Caller is responsible for deleting it!
         Message* popFront(){

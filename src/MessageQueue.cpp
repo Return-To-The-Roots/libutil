@@ -33,7 +33,7 @@
  *
  *  @author FloSoft
  */
-MessageQueue::~MessageQueue(void)
+MessageQueue::~MessageQueue()
 {
     clear();
 }
@@ -76,7 +76,7 @@ MessageQueue& MessageQueue::operator=(const MessageQueue& mq)
  *
  *  @author FloSoft
  */
-void MessageQueue::clear(void)
+void MessageQueue::clear()
 {
     while(!empty())
         pop();
@@ -88,7 +88,7 @@ void MessageQueue::clear(void)
  *
  *  @author FloSoft
  */
-void MessageQueue::pop(void)
+void MessageQueue::pop()
 {
     if(messages.empty())
         return;

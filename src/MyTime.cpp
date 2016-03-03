@@ -39,7 +39,7 @@
  *
  *  @author FloSoft
  */
-Time::Time(void)
+Time::Time()
 {
 }
 
@@ -49,7 +49,7 @@ Time::Time(void)
  *
  *  @author FloSoft
  */
-Time::~Time(void)
+Time::~Time()
 {
 }
 
@@ -61,7 +61,7 @@ Time::~Time(void)
  *
  *  @author FloSoft
  */
-unser_time_t Time::CurrentTime(void)
+unser_time_t Time::CurrentTime()
 {
     return (unser_time_t)time(NULL);
 }
@@ -74,7 +74,7 @@ unser_time_t Time::CurrentTime(void)
  *
  *  @author FloSoft
  */
-unser_time_t Time::CurrentTick(void)
+unser_time_t Time::CurrentTick()
 {
     unser_time_t ticks;
 #ifdef _WIN32

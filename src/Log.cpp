@@ -46,7 +46,7 @@
  *
  *  @author FloSoft
  */
-Log::Log(void) : log(NULL)
+Log::Log() : log(NULL)
 {
 }
 
@@ -56,7 +56,7 @@ Log::Log(void) : log(NULL)
  *
  *  @author FloSoft
  */
-Log::~Log(void)
+Log::~Log()
 {
     if(log)
     {
@@ -71,7 +71,7 @@ Log::~Log(void)
  *
  *  @author FloSoft
  */
-void Log::open(void)
+void Log::open()
 {
     if(!log)
     {

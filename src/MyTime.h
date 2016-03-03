@@ -38,14 +38,14 @@ class Time : public Singleton<Time>
 {
     public:
         /// Konstruktor von @p Time.
-        Time(void);
+        Time();
         /// Desktruktor von @p Time.
-        ~Time(void) override;
+        ~Time() override;
 
         /// liefert die aktuelle Zeit.
-        unser_time_t CurrentTime(void);
+        unser_time_t CurrentTime();
         /// liefert die aktuellen Ticks.
-        unser_time_t CurrentTick(void);
+        unser_time_t CurrentTick();
         /// Formats a time as a string
         /// @param format Format to use  (%Y=4 year (4 digits), %m month, %D day, %H hour, %i minute, %s second (all 2 digits), %% -> %)
         /// @param time Pointer to time to format or NULL to use current time

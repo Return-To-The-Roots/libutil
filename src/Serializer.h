@@ -37,7 +37,7 @@ class BinaryFile;
 class Serializer
 {
     public:
-        Serializer(void)
+        Serializer()
             : data_(0), length_(0), pos_(0)
         {
         }
@@ -86,7 +86,7 @@ class Serializer
         }
 
         /// Zugriff auf die Rohdaten
-        const unsigned char* GetData(void) const
+        const unsigned char* GetData() const
         {
             return data_.data();
         }

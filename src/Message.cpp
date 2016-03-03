@@ -53,7 +53,7 @@ Message* Message::create_base(unsigned short id)
  *
  *  @author FloSoft
  */
-Message* Message::duplicate(void) const
+Message* Message::duplicate() const
 {
     Message* msg = create(id_);
     Serializer ser;

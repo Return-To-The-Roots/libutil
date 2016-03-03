@@ -37,7 +37,7 @@ class SerializableArray
          *
          *  @author FloSoft
          */
-        SerializableArray(void)
+        SerializableArray()
         {}
 
         template <typename T> friend class SerializableArray;
@@ -94,7 +94,7 @@ class SerializableArray
          *
          *  @author FloSoft
          */
-        inline void clear(void)
+        inline void clear()
         {
             elements.clear();
         }
@@ -171,7 +171,7 @@ class SerializableArray
          *
          *  @author FloSoft
          */
-        inline unsigned int getCount(void) const
+        inline unsigned int getCount() const
         {
             return size();
         }

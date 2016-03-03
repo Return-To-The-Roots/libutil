@@ -78,37 +78,37 @@ class BinaryFile
         void WriteLongString(const std::string& str); /// Länge max 2^32-2
 
         /// Lesemethoden
-        inline int ReadSignedInt(void)
+        inline int ReadSignedInt()
         {
             signed int i;
             libendian::le_read_i(&i, file);
             return i;
         }
-        inline unsigned int ReadUnsignedInt(void)
+        inline unsigned int ReadUnsignedInt()
         {
             unsigned int i;
             libendian::le_read_ui(&i, file);
             return i;
         }
-        inline short ReadSignedShort(void)
+        inline short ReadSignedShort()
         {
             signed short i;
             libendian::le_read_s(&i, file);
             return i;
         }
-        inline unsigned short ReadUnsignedShort(void)
+        inline unsigned short ReadUnsignedShort()
         {
             unsigned short i;
             libendian::le_read_us(&i, file);
             return i;
         }
-        inline char ReadSignedChar(void)
+        inline char ReadSignedChar()
         {
             char i;
             libendian::le_read_c(&i, 1, file);
             return i;
         }
-        inline unsigned char ReadUnsignedChar(void)
+        inline unsigned char ReadUnsignedChar()
         {
             unsigned char i;
             libendian::le_read_uc(&i, 1, file);

@@ -36,7 +36,7 @@ class SocketSet
         SocketSet();
 
         /// räumt das @p SocketSet auf.
-        void Clear(void);
+        void Clear();
 
         /// fügt ein @p Socket zum @p SocketSet hinzu.
         void Add(Socket& sock);

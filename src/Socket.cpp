@@ -231,7 +231,7 @@ void Socket::Set(const SOCKET socket, Status status)
  *
  *  @author FloSoft
  */
-bool Socket::Initialize(void)
+bool Socket::Initialize()
 {
 #ifdef _WIN32
     // obligatorische WSAStartup unter Windows
@@ -250,7 +250,7 @@ bool Socket::Initialize(void)
  *
  *  @author FloSoft
  */
-void Socket::Shutdown(void)
+void Socket::Shutdown()
 {
 #ifdef _WIN32
     // obligatorische WSACleanup unter Windows
@@ -815,7 +815,7 @@ bool Socket::operator>(const Socket& sock)
  *  @author OLiver
  *  @author FloSoft
  */
-int Socket::BytesWaiting(void)
+int Socket::BytesWaiting()
 {
     unsigned int received;
     if(BytesWaiting(&received) != 0)
@@ -856,7 +856,7 @@ int Socket::BytesWaiting(unsigned int* received)
  *  @author OLiver
  *  @author FloSoft
  */
-std::string Socket::GetPeerIP(void)
+std::string Socket::GetPeerIP()
 {
     sockaddr_storage peer;
     socklen_t length = sizeof(sockaddr_storage);
@@ -878,7 +878,7 @@ std::string Socket::GetPeerIP(void)
  *  @author OLiver
  *  @author FloSoft
  */
-std::string Socket::GetSockIP(void)
+std::string Socket::GetSockIP()
 {
     sockaddr_storage peer;
     socklen_t length = sizeof(sockaddr_storage);
@@ -900,7 +900,7 @@ std::string Socket::GetSockIP(void)
  *  @author OLiver
  *  @author FloSoft
  */
-SOCKET& Socket::GetSocket(void)
+SOCKET& Socket::GetSocket()
 {
     // Zeiger auf Socket liefern
     return socket_;

@@ -30,12 +30,12 @@ class Log : public Singleton<Log, SingletonPolicies::WithLongevity>
         static const unsigned Longevity = 100;
 
         /// Konstruktor von @p Log.
-        Log(void);
+        Log();
         /// Desktruktor von @p Log.
-        ~Log(void) override;
+        ~Log() override;
 
         /// Öffnet das Log (falls noch nicht offen)
-        void open(void);
+        void open();
 
         void getlasterror(const char* text);
 

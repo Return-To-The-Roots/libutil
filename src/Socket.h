@@ -108,16 +108,16 @@ class Socket
         Socket& operator=(const Socket& so);
 
         /// Initialisiert die Socket-Bibliothek.
-        static bool Initialize(void);
+        static bool Initialize();
 
         /// räumt die Socket-Bibliothek auf.
-        static void Shutdown(void);
+        static void Shutdown();
 
         /// erstellt und initialisiert das Socket.
         bool Create(int family = AF_INET, bool asUDPBroadcast = false);
 
         /// schliesst das Socket.
-        void Close(void);
+        void Close();
 
         /// Binds the socket to a specific port
         bool Bind(unsigned short port, bool useIPv6);
@@ -155,19 +155,19 @@ class Socket
         bool operator>(const Socket& sock);
 
         /// prüft auf wartende Bytes.
-        int BytesWaiting(void);
+        int BytesWaiting();
 
         /// prüft auf wartende Bytes.
         int BytesWaiting(unsigned int* dwReceived);
 
         /// liefert die IP des Remote-Hosts.
-        std::string GetPeerIP(void);
+        std::string GetPeerIP();
 
         /// liefert die IP des Lokalen-Hosts.
-        std::string GetSockIP(void);
+        std::string GetSockIP();
 
         /// Gets a reference to the Socket.
-        SOCKET& GetSocket(void);
+        SOCKET& GetSocket();
 
         void Sleep(unsigned int ms);
 
