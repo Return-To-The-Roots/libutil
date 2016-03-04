@@ -64,7 +64,7 @@ T& Singleton<T, L>::inst()
 {
     if(!me)
         MakeInstance();
-    return *me;
+    return *me; // NOLINT
 }
 
 #endif // SingletonImp_h__
