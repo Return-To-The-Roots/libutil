@@ -800,10 +800,7 @@ bool Socket::SetSockOpt(int nOptionName, const void* lpOptionValue, int nOptionL
  */
 bool Socket::operator>(const Socket& sock)
 {
-    if(this->socket_ > sock.socket_)
-        return true;
-
-    return false;
+    return this->socket_ > sock.socket_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
