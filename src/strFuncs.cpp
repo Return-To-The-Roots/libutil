@@ -22,21 +22,25 @@
 // Include last!
 #include "DebugNew.h" // IWYU pragma: keep
 
-void strcpyExt_check(char* pOut, const char* pSrc, const size_t maxChars)
-{
-    size_t len = strlen(pSrc) + 1;
-    if(len < maxChars)
+namespace detail{
+
+    void strcpyExt_check(char* pOut, const char* pSrc, const size_t maxChars)
+    {
+        size_t len = strlen(pSrc) + 1;
+        if(len < maxChars)
+            memcpy(pOut, pSrc, len);
+        else
+            throw std::range_error("Cannot copy string. Destination buffer to small.");
+    }
+
+    void strcpyExt_trunc(char* pOut, const char* pSrc, const size_t maxChars)
+    {
+        if(maxChars == 0)
+            throw std::invalid_argument("Destination buffer size must be > 0");
+
+        size_t len = std::min(strlen(pSrc), maxChars - 1);
         memcpy(pOut, pSrc, len);
-    else
-        throw std::range_error("Cannot copy string. Destination buffer to small.");
-}
+        pOut[len] = '0';
+    }
 
-void strcpyExt_trunc(char* pOut, const char* pSrc, const size_t maxChars)
-{
-    if(maxChars == 0)
-        throw std::invalid_argument("Destination buffer size must be > 0");
-
-    size_t len = std::min(strlen(pSrc), maxChars - 1);
-    memcpy(pOut, pSrc, len);
-    pOut[len] = '0';
-}
+} // namespace detail

@@ -17,6 +17,8 @@
 #ifndef STR_FUNCS_H_INCLUDED
 #define STR_FUNCS_H_INCLUDED
 
+#include <cstddef>
+
 // Provides safe C-String functions by preventing buffer overflows
 // Better use std::string and boost::format!
 
