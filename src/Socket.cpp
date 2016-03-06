@@ -21,6 +21,7 @@
 #include "Socket.h"
 #include "Log.h"
 #include "SocketSet.h"
+#include "strFuncs.h"
 #include <boost/lexical_cast.hpp>
 #include <stdexcept>
 
@@ -48,7 +49,6 @@
 #include <sstream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 // Include last!
 #include "DebugNew.h" // IWYU pragma: keep
@@ -484,9 +484,11 @@ std::vector<HostAddr> Socket::HostToIp(const std::string& hostname, const unsign
     }
 
     ResolvedAddr res(hostAddr, true);
+    if(!res.isValid())
+        return ips;
 
     addrinfo* addr = &res.getAddr();
-    while(addr != NULL)
+    do
     {
         HostAddr h;
         h.host = IpToString(addr->ai_addr);
@@ -496,7 +498,7 @@ std::vector<HostAddr> Socket::HostToIp(const std::string& hostname, const unsign
         ips.push_back(h);
 
         addr = addr->ai_next;
-    }
+    }while(addr != NULL);
 
     return ips;
 }
@@ -634,7 +636,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
                                 if(!it->ipv6)
                                     sscanf(it->host.c_str(), "%c.%c.%c.%c", &proxyinit[4], &proxyinit[5], &proxyinit[6], &proxyinit[7]);
                             }
-                            strcpy(&proxyinit[8], "siedler25"); // userid
+                            strcpy_check(proxyinit, 8, "siedler25"); // userid
 
                             Send(proxyinit, 18);
 
