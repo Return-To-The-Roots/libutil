@@ -121,10 +121,10 @@ const char* const FILE_PATHS[] =
     /* 47 */RTTR_SETTINGSDIR "/LOGS/",                // Log-Ordner
     /* 48 */RTTR_SETTINGSDIR "/MAPS/",                // die heruntergeladenen Karten
     /* 49 */RTTR_GAMEDIR "/DATA/SOUNDDAT/SOUND.LST",  // die originale sound.lst
-    /* 50 */RTTRDIR "/MUSIC/SNG/SNG_*.OGG",           // die musik
+    /* 50 */RTTRDIR "/MUSIC/SNG",                     // die musik
     /* 51 */RTTR_SETTINGSDIR "/REPLAYS/",             // Replayordner
     /* 52 */RTTRDIR "/MAPS/NEW/",                     // unsere eigenen neuen Karten
-    /* 53 */RTTR_GAMEDIR "/DATA/SOUNDDAT/SNG/SNG_*.DAT",   // die originale sound.lst
+    /* 53 */RTTR_GAMEDIR "/DATA/SOUNDDAT/SNG/SNG_*.DAT",
     /* 54 */RTTRDIR "",                               // unbenutzt
     /* 55 */RTTR_SETTINGSDIR "/LSTS/SOUND.LST",       // Die konvertierte sound.lst
     /* 56 */RTTRDIR "/sound.scs",                     // Das konvertier-script
