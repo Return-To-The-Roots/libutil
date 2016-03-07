@@ -30,8 +30,8 @@ class Message
         Message(unsigned short id) : id_(id) {}
         virtual ~Message(){}
 
-        virtual void Serialize(Serializer& ser) const{}
-        virtual void Deserialize(Serializer& ser){}
+        virtual void Serialize(Serializer&  /*ser*/) const{}
+        virtual void Deserialize(Serializer&  /*ser*/){}
 
         unsigned short getId() const { return id_; }
         static Message* create_base(unsigned short id);

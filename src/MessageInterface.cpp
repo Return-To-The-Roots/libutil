@@ -29,7 +29,7 @@
  *
  *  @author FloSoft
  */
-void MessageInterface::OnNMSNull(unsigned int id)
+void MessageInterface::OnNMSNull(unsigned int  /*id*/)
 {
 }
 
@@ -39,6 +39,6 @@ void MessageInterface::OnNMSNull(unsigned int id)
  *
  *  @author FloSoft
  */
-void MessageInterface::OnNMSDead(unsigned int id)
+void MessageInterface::OnNMSDead(unsigned int  /*id*/)
 {
 }
