@@ -28,7 +28,7 @@
     #include <windows.h>
 #else
     #include <cstring>
-    #include <errno.h>
+    #include <cerrno>
 #endif
 #include <cstdarg>
 #include <string>
