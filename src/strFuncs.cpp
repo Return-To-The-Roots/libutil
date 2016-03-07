@@ -18,6 +18,7 @@
 #include "strFuncs.h"
 #include <cstring>
 #include <stdexcept>
+#include <algorithm>
 
 // Include last!
 #include "DebugNew.h" // IWYU pragma: keep
