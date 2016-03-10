@@ -119,8 +119,8 @@ class BinaryFile
             libendian::le_read_c((char*)data, length, file);
         }
 
-        void ReadShortString(std::string& str); /// Länge max 254
-        void ReadLongString(std::string& str); /// Länge max 2^32-2
+        std::string ReadShortString(); /// Länge max 254
+        std::string ReadLongString(); /// Länge max 2^32-2
 
         /// Setzt den Dateizeiger
         void Seek(const long pos, const int origin)

@@ -82,14 +82,15 @@ void BinaryFile::WriteLongString(const std::string& str)
  *
  *  @author OLiver
  */
-void BinaryFile::ReadShortString(std::string& str)
+std::string BinaryFile::ReadShortString()
 {
     unsigned char length;
     length = ReadUnsignedChar();
     char* tmp = new char[length];
     ReadRawData((unsigned char*)tmp, length);
-    str = tmp;
+    std::string str = tmp;
     delete [] tmp;
+    return str;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -97,12 +98,13 @@ void BinaryFile::ReadShortString(std::string& str)
  *
  *  @author OLiver
  */
-void BinaryFile::ReadLongString(std::string& str)
+std::string BinaryFile::ReadLongString()
 {
     unsigned length;
     length = ReadUnsignedInt();
     char* tmp = new char[length];
     ReadRawData((unsigned char*)tmp, length);
-    str = tmp;
-    delete [] tmp;
+    std::string str = tmp;
+    delete[] tmp;
+    return str;
 }
