@@ -77,7 +77,7 @@ std::string cvWideStringToUTF8(const std::wstring& other)
         // If that fails, assume pure unicode
         result.clear();
         // Use unsigned elements to avoid wrong sign extension
-        typedef typename GetUnsignedIterator<std::wstring>::UnsignedIterator UIterator;
+        typedef GetUnsignedIterator<std::wstring>::UnsignedIterator UIterator;
         utf8::utf32to8(UIterator(other.begin()), UIterator(other.end()), std::back_inserter(result));
         return result;
     }
@@ -99,7 +99,7 @@ ucString cvWideStringToUnicode(const std::wstring& other)
         ucString result;
         result.reserve(other.size());
         // Use unsigned elements to avoid wrong sign extension
-        typedef typename GetUnsignedIterator<std::wstring>::UnsignedIterator UIterator;
+        typedef GetUnsignedIterator<std::wstring>::UnsignedIterator UIterator;
         result.assign(UIterator(other.begin()), UIterator(other.end()));
         return result;
     }
@@ -113,7 +113,7 @@ std::string cvStringToUTF8(const std::string& other)
     std::string result;
     result.reserve(other.length());
     // Use unsigned elements to avoid wrong sign extension
-    typedef typename GetUnsignedIterator<std::string>::UnsignedIterator UIterator;
+    typedef GetUnsignedIterator<std::string>::UnsignedIterator UIterator;
     UIterator tmp(other.begin());
     UIterator same = tmp++;
     UIterator o = ++tmp;
@@ -125,7 +125,7 @@ ucString cvStringToUnicode(const std::string& other)
 {
     ucString result;
     // Use unsigned elements to avoid wrong sign extension
-    typedef typename GetUnsignedIterator<std::string>::UnsignedIterator UIterator;
+    typedef GetUnsignedIterator<std::string>::UnsignedIterator UIterator;
     result.assign(UIterator(other.begin()), UIterator(other.end()));
     return result;
 }
