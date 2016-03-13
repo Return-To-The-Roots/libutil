@@ -152,9 +152,15 @@ class BinaryFile
             return file ? true : false;
         }
 
+        const std::string& getFilePath() const
+        {
+            return filePath;
+        }
+
     private:
         /// File-Pointer
         FILE* file;
+        std::string filePath;
 };
 
 

@@ -33,7 +33,12 @@ bool BinaryFile::Open(const std::string& filePath, const OpenFileMode of)
 {
     static const boost::array<const char*, 3> modes = {{"w+b", "a+b", "rb"}};
     file = fopen(filePath.c_str(), modes[of]);
-    return (file != NULL);
+    if(file)
+    {
+        this->filePath = filePath;
+        return true;
+    } else
+        return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -48,6 +53,7 @@ bool BinaryFile::Close()
 
     bool result = (fclose(file) == 0);
     file = NULL;
+    filePath.clear();
 
     return result;
 }
