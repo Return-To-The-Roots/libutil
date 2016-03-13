@@ -29,6 +29,7 @@
 #include <string>
 #include <algorithm>
 #include <stdexcept>
+#include <cassert>
 
 class BinaryFile;
 
