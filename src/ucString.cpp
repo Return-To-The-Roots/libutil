@@ -114,9 +114,6 @@ std::string cvStringToUTF8(const std::string& other)
     result.reserve(other.length());
     // Use unsigned elements to avoid wrong sign extension
     typedef GetUnsignedIterator<std::string>::UnsignedIterator UIterator;
-    UIterator tmp(other.begin());
-    UIterator same = tmp++;
-    UIterator o = ++tmp;
     utf8::utf32to8(UIterator(other.begin()), UIterator(other.end()), std::back_inserter(result));
     return result;
 }
