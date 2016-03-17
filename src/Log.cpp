@@ -36,8 +36,12 @@
 // Include last!
 #include "DebugNew.h" // IWYU pragma: keep
 #ifndef va_copy
-    /* WARNING - DANGER - ASSUMES TYPICAL STACK MACHINE */
-#   define va_copy(dst, src) ((void)((dst) = (src)))
+#   ifdef __va_copy
+#       define va_copy(DEST,SRC) __va_copy((DEST),(SRC))
+#   else
+        /* WARNING - DANGER - ASSUMES TYPICAL STACK MACHINE */
+#       define va_copy(dst, src) ((void)((dst) = (src)))
+#   endif
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
