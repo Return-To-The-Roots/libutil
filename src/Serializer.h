@@ -43,6 +43,9 @@ class Serializer
         {
         }
 
+        Serializer(const Serializer& other): data_(other.data_), length_(other.length_), pos_(other.pos_)
+        {}
+
         Serializer(const void* const data, const unsigned initial_size)
             : data_(initial_size), length_(0), pos_(0)
         {
@@ -52,6 +55,18 @@ class Serializer
         virtual ~Serializer()
         {
             Clear();
+        }
+
+        Serializer& operator=(const Serializer& other)
+        {
+            if(this == &other)
+                return *this;
+
+            data_ = other.data_;
+            length_ = other.length_;
+            pos_ = other.pos_;
+
+            return *this;
         }
 
         /// Aufräumen
@@ -220,21 +235,6 @@ class Serializer
         }
 
     protected:
-        Serializer(const Serializer& other): data_(other.data_), length_(other.length_), pos_(other.pos_)
-        {}
-
-        Serializer& operator=(const Serializer& other)
-        {
-            if(this == &other)
-                return *this;
-
-            data_ = other.data_;
-            length_ = other.length_;
-            pos_ = other.pos_;
-
-            return *this;
-        }
-
         unsigned int checkByteOrder(unsigned int i)
         {
             return htonl(i);
