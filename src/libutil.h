@@ -22,7 +22,6 @@
 #include "files.h"
 
 #include "error.h"
-#include "colors.h"
 #include "Serializer.h"
 #include "SerializableArray.h"
 #include "Singleton.h"

@@ -18,6 +18,7 @@
 #define COLORS_H_INCLUDED
 
 #pragma once
+#include <boost/array.hpp>
 
 /// Farbkonstanten
 const unsigned COLOR_BLUE = 0xFF0073FF;
@@ -37,10 +38,8 @@ const unsigned COLOR_GREY = 0xFFCCCCCC;
 const unsigned COLOR_WINDOWBROWN = 0xFF886034;
 
 /// Spielerfarben
-const unsigned int PLAYER_COLORS_COUNT = 11;
-
-const unsigned int COLORS[PLAYER_COLORS_COUNT] =
-{
+const boost::array<unsigned, 11> PLAYER_COLORS =
+{{
     0xFF0079DB, // COLOR_BLUE, // Blau
     0xFFD70000, // COLOR_RED, // Rot
     0xFFCBCB00, //COLOR_YELLOW, // Gelb
@@ -53,7 +52,7 @@ const unsigned int COLORS[PLAYER_COLORS_COUNT] =
     COLOR_BROWN, // Braun
     COLOR_PURPLE, // Lila
 /// COLOR_GHOST // Durchsichtig
-};
+}};
 
 /// Liefert die transparente Farbkomponente zurück.
 inline unsigned GetAlpha(const unsigned int color) { return (( color & 0xFF000000) >> 24); }
