@@ -52,7 +52,7 @@ class Log : public Singleton<Log, SingletonPolicies::WithLongevity>
         void vwrite(const char* format, va_list list);
 
     private:
-        FILE* log; ///< das Logfile
+        FILE* log; /// das Logfile
 };
 
 #define LOG Log::inst()

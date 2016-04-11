@@ -209,7 +209,7 @@ class SerializableArray
             return elements.end();
         }
     private:
-        std::vector<Type> elements;     ///< Die Elemente
+        std::vector<Type> elements;     /// Die Elemente
 };
 
 #endif // SERIALIZABLEARRAY_H_INCLUDED

@@ -48,8 +48,8 @@ class SocketSet
         bool InSet(Socket& sock);
 
     private:
-        fd_set set;     ///< Das fd_set
-        SOCKET highest; ///< Höchste Socket des Sets
+        fd_set set;     /// Das fd_set
+        SOCKET highest; /// Höchste Socket des Sets
 };
 
 #endif // SOCKETSET_H_INCLUDED

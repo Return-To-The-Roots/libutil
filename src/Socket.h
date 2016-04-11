@@ -194,10 +194,10 @@ class Socket
         /// Setzt ein Socket auf übergebene Werte.
         void Set(const SOCKET so, Status st);
 
-        SOCKET socket_; ///< Unser Socket
+        SOCKET socket_; /// Unser Socket
         /// Number of references to the socket, free only on <=0!
         int32_t* refCount_;
-        UPnP upnp_; ///< UPnP Handle
+        UPnP upnp_; /// UPnP Handle
         Status status_;
         bool isBroadcast;
 
