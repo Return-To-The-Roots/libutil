@@ -26,12 +26,6 @@
 #include "DebugNew.h" // IWYU pragma: keep
 #include <cstddef>
 
-///////////////////////////////////////////////////////////////////////////////
-/**
- *  Standardkonstruktor von @p SocketSet.
- *
- *  @author OLiver
- */
 SocketSet::SocketSet()
 {
     Clear();

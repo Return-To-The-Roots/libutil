@@ -26,7 +26,6 @@ class Message
 {
     unsigned short id_;
     public:
-        /// Konstruktor von @p Message.
         Message(unsigned short id) : id_(id) {}
         virtual ~Message(){}
 

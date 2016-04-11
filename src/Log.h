@@ -29,7 +29,6 @@ class Log : public Singleton<Log, SingletonPolicies::WithLongevity>
     public:
         static const unsigned Longevity = 100;
 
-        /// Konstruktor von @p Log.
         Log();
         /// Desktruktor von @p Log.
         ~Log() override;

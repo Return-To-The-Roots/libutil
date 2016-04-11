@@ -92,22 +92,10 @@
 // Include last!
 #include "DebugNew.h" // IWYU pragma: keep
 
-///////////////////////////////////////////////////////////////////////////////
-/**
- *  Standardkonstruktor von @p UPnP.
- *
- *  @author FloSoft
- */
 UPnP::UPnP() : remote_port_(0)
 {
 }
 
-///////////////////////////////////////////////////////////////////////////////
-/**
- *  Destruktor von @p UPnP.
- *
- *  @author FloSoft
- */
 UPnP::~UPnP()
 {
     ClosePort();

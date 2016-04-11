@@ -32,7 +32,6 @@ class Socket;
 class SocketSet
 {
     public:
-        /// Standardkonstruktor von @p SocketSet.
         SocketSet();
 
         /// räumt das @p SocketSet auf.

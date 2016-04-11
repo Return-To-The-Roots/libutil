@@ -27,24 +27,11 @@
 // Include last!
 #include "DebugNew.h" // IWYU pragma: keep
 
-///////////////////////////////////////////////////////////////////////////////
-/**
- *  Destruktor von @p MessageQueue
- *
- *  @author FloSoft
- */
 MessageQueue::~MessageQueue()
 {
     clear();
 }
 
-///////////////////////////////////////////////////////////////////////////////
-/**
- *  Copy-Konstruktor von @p MessageQueue, um Messages neu zu erstellen, ansonsten werden
- *  nur die Pointer kopiert!
- *
- *  @author OLiver
- */
 MessageQueue::MessageQueue(const MessageQueue& mq): MessageHandler(mq), messages(mq.messages)
 {
     // Deep copy
@@ -52,7 +39,6 @@ MessageQueue::MessageQueue(const MessageQueue& mq): MessageHandler(mq), messages
         *it = (*it)->duplicate();
 }
 
-/// Zuweisungsoperator, da Messages kopiert werden müssen
 MessageQueue& MessageQueue::operator=(const MessageQueue& mq)
 {
     if(this == &mq)

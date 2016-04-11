@@ -31,12 +31,6 @@ class SerializableArray
         typedef typename Storage::iterator iterator;
         typedef typename Storage::const_iterator const_iterator;
 
-        ///////////////////////////////////////////////////////////////////////////////
-        /**
-         *  Konstruktor von @p SerializableArray.
-         *
-         *  @author FloSoft
-         */
         SerializableArray()
         {}
 
@@ -49,12 +43,6 @@ class SerializableArray
             std::copy(other.elements.begin(), other.elements.end(), std::back_inserter(elements));
         }
 
-        ///////////////////////////////////////////////////////////////////////////////
-        /**
-         *  Zuweisungsoperator.
-         *
-         *  @author FloSoft
-         */
         template<class T>
         SerializableArray& operator= (const SerializableArray<T> &other)
         {
@@ -79,12 +67,6 @@ class SerializableArray
             elements.push_back(item);
         }
 
-        ///////////////////////////////////////////////////////////////////////////////
-        /**
-         *  Array-Operatoren
-         *
-         *  @author FloSoft
-         */
         inline Type&       operator[](unsigned int i)       { return elements.at(i); }
         inline const Type& operator[](unsigned int i) const { return elements.at(i); }
 

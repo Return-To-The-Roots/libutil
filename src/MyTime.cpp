@@ -33,22 +33,10 @@
 // Include last!
 #include "DebugNew.h" // IWYU pragma: keep
 
-///////////////////////////////////////////////////////////////////////////////
-/**
- *  Konstruktor von @p Time.
- *
- *  @author FloSoft
- */
 Time::Time()
 {
 }
 
-///////////////////////////////////////////////////////////////////////////////
-/**
- *  Destruktor von @p Time.
- *
- *  @author FloSoft
- */
 Time::~Time()
 {
 }

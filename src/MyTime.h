@@ -37,7 +37,6 @@
 class Time : public Singleton<Time>
 {
     public:
-        /// Konstruktor von @p Time.
         Time();
         /// Desktruktor von @p Time.
         ~Time() override;

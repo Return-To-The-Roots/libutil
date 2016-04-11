@@ -160,12 +160,6 @@ const sockaddr* PeerAddr::GetAddr() const
     return reinterpret_cast<const sockaddr*>(&addr);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-/**
- *  Standardkonstruktor von @p Socket.
- *
- *  @author FloSoft
- */
 Socket::Socket() : socket_(INVALID_SOCKET), refCount_(NULL), status_(INVALID), isBroadcast(false)
 {
 }
