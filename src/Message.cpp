@@ -27,12 +27,6 @@
 // Include last!
 #include "DebugNew.h" // IWYU pragma: keep
 
-///////////////////////////////////////////////////////////////////////////////
-/**
- *
- *
- *  @author FloSoft
- */
 Message* Message::create_base(unsigned short id)
 {
     Message* msg = NULL;

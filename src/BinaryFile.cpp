@@ -24,11 +24,6 @@
 // Include last!
 #include "DebugNew.h" // IWYU pragma: keep
 
-///////////////////////////////////////////////////////////////////////////////
-/**
- *
- *  @author OLiver
- */
 bool BinaryFile::Open(const std::string& filePath, const OpenFileMode of)
 {
     static const boost::array<const char*, 3> modes = {{"w+b", "a+b", "rb"}};
@@ -41,11 +36,6 @@ bool BinaryFile::Open(const std::string& filePath, const OpenFileMode of)
         return false;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-/**
- *
- *  @author OLiver
- */
 bool BinaryFile::Close()
 {
     if(!file)
@@ -58,11 +48,6 @@ bool BinaryFile::Close()
     return result;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-/**
- *
- *  @author OLiver
- */
 void BinaryFile::WriteShortString(const std::string& str)
 {
     assert(str.length() < 255);
@@ -71,11 +56,6 @@ void BinaryFile::WriteShortString(const std::string& str)
     WriteRawData((unsigned char*)str.c_str(), length);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-/**
- *
- *  @author OLiver
- */
 void BinaryFile::WriteLongString(const std::string& str)
 {
     unsigned length = unsigned(str.length()) + 1;
@@ -83,11 +63,6 @@ void BinaryFile::WriteLongString(const std::string& str)
     WriteRawData((unsigned char*)str.c_str(), length);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-/**
- *
- *  @author OLiver
- */
 std::string BinaryFile::ReadShortString()
 {
     unsigned char length;
@@ -99,11 +74,6 @@ std::string BinaryFile::ReadShortString()
     return str;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-/**
- *
- *  @author OLiver
- */
 std::string BinaryFile::ReadLongString()
 {
     unsigned length;
