@@ -101,8 +101,6 @@ UPnP::~UPnP()
 
 /**
  *  Erstellt per UPnP ein Portforwarding.
- *
- *  @author FloSoft
  */
 bool UPnP::OpenPort(const unsigned short& port)
 {
@@ -302,8 +300,6 @@ void UPnP::ClosePort()
 
 /**
  *  Liest alle Adapteradressen aus.
- *
- *  @author FloSoft
  */
 std::vector<std::string> UPnP::GetAllv4Addresses()
 {

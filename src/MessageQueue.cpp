@@ -56,8 +56,6 @@ MessageQueue& MessageQueue::operator=(const MessageQueue& mq)
 
 /**
  *  entfernt alle Elemente aus der Queue.
- *
- *  @author FloSoft
  */
 void MessageQueue::clear()
 {
@@ -67,8 +65,6 @@ void MessageQueue::clear()
 
 /**
  *  entfernt das vorderste Element aus der Queue.
- *
- *  @author FloSoft
  */
 void MessageQueue::pop()
 {
@@ -105,9 +101,6 @@ bool MessageQueue::flush(Socket& sock)
 
 ///////////////////////////////////////////////////////////////////////////////
 /*
- *
- *
- *  @author FloSoft
  */
 bool MessageQueue::send(Socket& sock, int max, unsigned int sizelimit)
 {

@@ -41,8 +41,6 @@ Message* Message::create_base(unsigned short id)
 
 /**
  *  dupliziert eine Nachricht.
- *
- *  @author FloSoft
  */
 Message* Message::duplicate() const
 {

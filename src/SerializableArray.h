@@ -60,8 +60,7 @@ class SerializableArray
         /**
          *  Einfügefunktion
          *
-         *  @author FloSoft
-         */
+                 */
         inline void push_back(const Type& item)
         {
             elements.push_back(item);
@@ -74,8 +73,7 @@ class SerializableArray
         /**
          *  räumt die Liste auf.
          *
-         *  @author FloSoft
-         */
+                 */
         inline void clear()
         {
             elements.clear();
@@ -89,8 +87,7 @@ class SerializableArray
          *
          *  @return liefert die Größe der Daten zurück.
          *
-         *  @author FloSoft
-         */
+                 */
         inline void serialize(Serializer& ser) const
         {
             ser.PushUnsignedInt(static_cast<unsigned>(elements.size()));
@@ -107,8 +104,7 @@ class SerializableArray
          *
          *  @return liefert die Größe der gelesenen Daten zurück.
          *
-         *  @author FloSoft
-         */
+                 */
         inline void deserialize(Serializer& ser)
         {
             clear();
@@ -123,8 +119,7 @@ class SerializableArray
         /**
          *  liefert ein Element der Liste.
          *
-         *  @author FloSoft
-         */
+                 */
         inline const Type* getElement(unsigned int i) const
         {
             if(i < elements.size())
@@ -137,8 +132,7 @@ class SerializableArray
         /**
          *  liefert ein Element der Liste.
          *
-         *  @author FloSoft
-         */
+                 */
         inline Type* getElement(unsigned int i)
         {
             if(i < elements.size())
@@ -151,8 +145,7 @@ class SerializableArray
         /**
          *  liefert die Anzahl der Elemente.
          *
-         *  @author FloSoft
-         */
+                 */
         inline unsigned int getCount() const
         {
             return size();
@@ -167,8 +160,7 @@ class SerializableArray
         /**
          *  ändert die Größe des Arrays
          *
-         *  @author OLiver
-         */
+                 */
         void resize(const unsigned count)
         {
             return elements.resize(count);

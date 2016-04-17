@@ -167,8 +167,6 @@ Socket::Socket() : socket_(INVALID_SOCKET), refCount_(NULL), status_(INVALID), i
  *
  *  @param[in] so Socket welches benutzt werden soll
  *  @param[in] st Status der gesetzt werden soll
- *
- *  @author FloSoft
  */
 Socket::Socket(const SOCKET so, Status st): socket_(so), refCount_(new int32_t(1)), status_(st), isBroadcast(false)
 {
@@ -204,8 +202,6 @@ Socket& Socket::operator=(const Socket& rhs)
  *
  *  @param[in] so Socket welches benutzt werden soll
  *  @param[in] st Status der gesetzt werden soll
- *
- *  @author FloSoft
  */
 void Socket::Set(const SOCKET socket, Status status)
 {
@@ -217,8 +213,6 @@ void Socket::Set(const SOCKET socket, Status status)
  *  Initialisiert die Socket-Bibliothek.
  *
  *  @return @p true bei Erfolg, @p false bei Fehler
- *
- *  @author FloSoft
  */
 bool Socket::Initialize()
 {
@@ -235,8 +229,6 @@ bool Socket::Initialize()
 
 /**
  *  räumt die Socket-Bibliothek auf.
- *
- *  @author FloSoft
  */
 void Socket::Shutdown()
 {
@@ -250,8 +242,6 @@ void Socket::Shutdown()
  *  erstellt und initialisiert das Socket.
  *
  *  @return @p true bei Erfolg, @p false bei Fehler
- *
- *  @author FloSoft
  */
 bool Socket::Create(int family, bool asUDPBroadcast)
 {
@@ -286,8 +276,6 @@ bool Socket::Create(int family, bool asUDPBroadcast)
 
 /**
  *  schliesst das Socket.
- *
- *  @author FloSoft
  */
 void Socket::Close()
 {
@@ -347,8 +335,6 @@ bool Socket::Bind(unsigned short port, bool useIPv6)
  *  @param[in] port Port auf dem "gelauscht" werden soll.
  *
  *  @return @p true bei Erfolg, @p false bei Fehler
- *
- *  @author FloSoft
  */
 bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
 {
@@ -416,8 +402,6 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
  *  @param[in,out] client Referenz auf Clientsocket der neuen Verbindung
  *
  *  @return @p true bei Erfolg, @p false bei Fehler
- *
- *  @author FloSoft
  */
 Socket Socket::Accept()
 {
@@ -445,8 +429,6 @@ Socket Socket::Accept()
  *  liefert Ip-Adresse(n) für einen Hostnamen.
  *
  *  @param[in] hostname Ziel-Hostname/-ip
- *
- *  @author FloSoft
  */
 std::vector<HostAddr> Socket::HostToIp(const std::string& hostname, const unsigned int port, bool get_ipv6, bool useUDP)
 {
@@ -502,8 +484,6 @@ void Socket::Sleep(unsigned int ms)
  *  @param[in] port     Port zu dem Verbunden werden soll
  *
  *  @p true bei Erfolg, @p false bei Fehler
- *
- *  @author FloSoft
  */
 bool Socket::Connect(const std::string& hostname, const unsigned short port, bool use_ipv6, const Socket::PROXY_TYPE typ, const std::string& proxy_hostname, const unsigned int proxy_port)
 {
@@ -702,9 +682,6 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
  *  @param[in] block  Soll der Vorgang blockierend sein?
  *
  *  @return -1 bei Fehler, Anzahl der empfangenen Bytes (max. @p length )
- *
- *  @author OLiver
- *  @author FloSoft
  */
 int Socket::Recv(void* buffer, const int length, bool block)
 {
@@ -731,9 +708,6 @@ int Socket::Recv(void* const buffer, const int length, PeerAddr& addr)
  *  @param[in] length Anzahl an Bytes die geschrieben werden soll
  *
  *  @return -1 bei Fehler, Anzahl der gesendeten Bytes (max. @p length )
- *
- *  @author OLiver
- *  @author FloSoft
  */
 int Socket::Send(const void* const buffer, const int length)
 {
@@ -759,9 +733,6 @@ int Socket::Send(const void* const buffer, const int length, const PeerAddr& add
  *  @param[in] length Anzahl an Bytes die geschrieben werden soll
  *
  *  @return @p true bei Erfolg, @p false bei Fehler
- *
- *  @author OLiver
- *  @author FloSoft
  */
 bool Socket::SetSockOpt(int nOptionName, const void* lpOptionValue, int nOptionLen, int nLevel)
 {
@@ -774,9 +745,6 @@ bool Socket::SetSockOpt(int nOptionName, const void* lpOptionValue, int nOptionL
  *  @param[in] sock Socket mit dem auf größer verglichen werden soll
  *
  *  @return liefert true falls @p this größer ist als @p sock
- *
- *  @author OLiver
- *  @author FloSoft
  */
 bool Socket::operator>(const Socket& sock)
 {
@@ -787,9 +755,6 @@ bool Socket::operator>(const Socket& sock)
  *  prüft auf wartende Bytes.
  *
  *  @return liefert die Menge der wartenden Bytes
- *
- *  @author OLiver
- *  @author FloSoft
  */
 int Socket::BytesWaiting()
 {
@@ -806,9 +771,6 @@ int Socket::BytesWaiting()
  *  @param[in,out] dwReceived Menge der wartenden Bytes
  *
  *  @return liefert Null bei Erfolg, SOCKET_ERROR bei Fehler
- *
- *  @author OLiver
- *  @author FloSoft
  */
 int Socket::BytesWaiting(unsigned int* received)
 {
@@ -826,9 +788,6 @@ int Socket::BytesWaiting(unsigned int* received)
  *  liefert die IP des Remote-Hosts.
  *
  *  @return liefert @p buffer zurück oder @p "" bei Fehler
- *
- *  @author OLiver
- *  @author FloSoft
  */
 std::string Socket::GetPeerIP()
 {
@@ -847,9 +806,6 @@ std::string Socket::GetPeerIP()
  *  liefert die IP des Lokalen-Hosts.
  *
  *  @return liefert @p buffer zurück oder @p "" bei Fehler
- *
- *  @author OLiver
- *  @author FloSoft
  */
 std::string Socket::GetSockIP()
 {
@@ -868,9 +824,6 @@ std::string Socket::GetSockIP()
  *  Gets a reference to the Socket
  *
  *  @return reference to @p socket_
- *
- *  @author OLiver
- *  @author FloSoft
  */
 SOCKET& Socket::GetSocket()
 {
@@ -880,9 +833,6 @@ SOCKET& Socket::GetSocket()
 
 /**
  *  liefert einen string der übergebenen Ip.
- *
- *  @author OLiver
- *  @author FloSoft
  */
 std::string Socket::IpToString(const sockaddr* addr)
 {

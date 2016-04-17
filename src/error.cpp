@@ -31,8 +31,6 @@
  *  @param[in] format printf-Format-String der Fehlermeldung
  *  @param[in] ...    beliebige Parameter der Funktion
  *
- *  @author FloSoft
- *
  */
 int fatal_error(const char* format, ...)
 {
@@ -54,8 +52,6 @@ int fatal_error(const char* format, ...)
  *  @param[in] format printf-Format-String der Fehlermeldung
  *  @param[in] ...    beliebige Parameter der Funktion
  *
- *  @author FloSoft
- *
  */
 int error(const char* format, ...)
 {
@@ -76,8 +72,6 @@ int error(const char* format, ...)
  *
  *  @param[in] format printf-Format-String der Fehlermeldung
  *  @param[in] ...    beliebige Parameter der Funktion
- *
- *  @author FloSoft
  *
  */
 int warning(const char* format, ...)

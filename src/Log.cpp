@@ -57,8 +57,6 @@ Log::~Log()
 
 /**
  *  öffnet das Log (falls noch nicht offen)
- *
- *  @author FloSoft
  */
 void Log::open()
 {
@@ -72,8 +70,6 @@ void Log::open()
 
 /**
  *  Schreibt gefärbte Daten ins Log und auf stdout.
- *
- *  @author FloSoft
  */
 void Log::lcprintf(const unsigned int color, const char* format, ...)
 {
@@ -157,8 +153,6 @@ void Log::lcprintf(const unsigned int color, const char* format, ...)
 
 /**
  *  Schreibt Daten ins Log und auf stdout.
- *
- *  @author FloSoft
  */
 void Log::lprintf(const char* format, ...)
 {
@@ -171,8 +165,6 @@ void Log::lprintf(const char* format, ...)
 
 /**
  *  Schreibt Daten ins Log und auf stdout.
- *
- *  @author FloSoft
  */
 void Log::lvprintf(const char* format, va_list list)
 {
@@ -187,8 +179,6 @@ void Log::lvprintf(const char* format, va_list list)
 
 /**
  *  Schreibt Daten nur ins Log und auf stdout.
- *
- *  @author FloSoft
  */
 void Log::write(const char* format, ...)
 {
@@ -201,8 +191,6 @@ void Log::write(const char* format, ...)
 
 /**
  *  Schreibt Daten nur ins Log und auf stdout.
- *
- *  @author FloSoft
  */
 void Log::vwrite(const char* format, va_list list)
 {
@@ -224,8 +212,6 @@ void Log::vwrite(const char* format, va_list list)
 /**
  *  Schreibt den zuletzt aufgetretetenen Systemfehler in lesbarer Form in
  *  stdout und Log, fügt "$text:" davor ein.
- *
- *  @author FloSoft
  */
 void Log::getlasterror(const char* text)
 {

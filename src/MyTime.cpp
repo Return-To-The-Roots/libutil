@@ -43,8 +43,6 @@ Time::~Time()
  *  liefert die aktuelle Zeit.
  *
  *  @return Zeit als Timestamp
- *
- *  @author FloSoft
  */
 unser_time_t Time::CurrentTime()
 {
@@ -55,8 +53,6 @@ unser_time_t Time::CurrentTime()
  *  liefert die aktuellen Ticks.
  *
  *  @return Zeit als Ticks
- *
- *  @author FloSoft
  */
 unser_time_t Time::CurrentTick()
 {
@@ -77,8 +73,6 @@ unser_time_t Time::CurrentTick()
  *  @param[in] time   zu benutzender Timestamp.
  *
  *  @return Formatted string
- *
- *  @author FloSoft
  */
 std::string Time::FormatTime(const std::string& format, unser_time_t* time)
 {

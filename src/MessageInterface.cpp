@@ -23,8 +23,6 @@
 
 /**
  *  Null-Nachricht.
- *
- *  @author FloSoft
  */
 void MessageInterface::OnNMSNull(unsigned int  /*id*/)
 {
@@ -32,8 +30,6 @@ void MessageInterface::OnNMSNull(unsigned int  /*id*/)
 
 /**
  *  Dead-Nachricht.
- *
- *  @author FloSoft
  */
 void MessageInterface::OnNMSDead(unsigned int  /*id*/)
 {

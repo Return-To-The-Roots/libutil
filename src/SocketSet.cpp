@@ -31,8 +31,6 @@ SocketSet::SocketSet()
 
 /**
  *  räumt das @p SocketSet auf.
- *
- *  @author OLiver
  */
 void SocketSet::Clear()
 {
@@ -45,9 +43,6 @@ void SocketSet::Clear()
  *  fügt ein @p Socket zum @p SocketSet hinzu.
  *
  *  @param[in] sock Socket welches hinzugefügt werden soll
- *
- *  @author OLiver
- *  @author FloSoft
  */
 void SocketSet::Add(Socket& sock)
 {
@@ -71,8 +66,6 @@ void SocketSet::Add(Socket& sock)
  *  @param[in] which Welcher der "Kanäle" soll abgefragt werden? (0 = read, 1 = write, 2 = error)
  *
  *  @return liefert SOCKET_ERROR bei Fehler, Null bei Timeout, größer Null für die Anzahl der bereiten Sockets im Set
- *
- *  @author FloSoft
  */
 int SocketSet::Select(int timeout, int which)
 {
@@ -105,9 +98,6 @@ int SocketSet::Select(int timeout, int which)
  *  @param[in] sock Socket welches im Set gesucht werden soll
  *
  *  @return liefert true falls das @p Socket im Set enthalten ist, false andernfalls
- *
- *  @author OLiver
- *  @author FloSoft
  */
 bool SocketSet::InSet(Socket& sock)
 {

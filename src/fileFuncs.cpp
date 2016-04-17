@@ -102,8 +102,6 @@ static LPSTR UnicodeToAnsi(LPCWSTR s)
  *  @param[in] path
  *
  *  @return liefert den Status zurück (S_OK bei OK)
- *
- *  @author FloSoft
  */
 static HRESULT mySHGetKnownFolderPath(REFKNOWNFOLDERID rfid, std::string& path)
 {
@@ -144,8 +142,6 @@ static HRESULT mySHGetKnownFolderPath(REFKNOWNFOLDERID rfid, std::string& path)
  *  @param[in] file
  *
  *  @return liefert den umgeformten Pfad zurück
- *
- *  @author FloSoft
  */
 std::string GetFilePath(const std::string& file)
 {
@@ -195,8 +191,6 @@ std::string GetFilePath(const std::string& file)
  *  @param[in] file
  *
  *  @return liefert ja oder nein zurück
- *
- *  @author FloSoft
  */
 bool FileExists(const std::string& file)
 {
@@ -215,8 +209,6 @@ bool FileExists(const std::string& file)
  *  @param[in] dir
  *
  *  @return liefert ja oder nein zurück
- *
- *  @author FloSoft
  */
 bool IsDir(std::string dir)
 {
