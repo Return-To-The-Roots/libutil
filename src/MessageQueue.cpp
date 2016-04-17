@@ -54,7 +54,6 @@ MessageQueue& MessageQueue::operator=(const MessageQueue& mq)
     return *this;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  entfernt alle Elemente aus der Queue.
  *
@@ -66,7 +65,6 @@ void MessageQueue::clear()
         pop();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  entfernt das vorderste Element aus der Queue.
  *

@@ -94,7 +94,6 @@ static LPSTR UnicodeToAnsi(LPCWSTR s)
     return psz;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  Wrapper um SHGetKnownFolderPath, unter Vista und Größer benutzt es das
  *  originale SHGetKnownFolderPath, ansonsten SHGetFolderPath.
@@ -139,7 +138,6 @@ static HRESULT mySHGetKnownFolderPath(REFKNOWNFOLDERID rfid, std::string& path)
 #endif
 
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  formt Pfade korrekt um.
  *
@@ -191,7 +189,6 @@ std::string GetFilePath(const std::string& file)
     return to;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  prüft ob eine Datei existiert (bzw ob sie lesbar ist)
  *
@@ -212,7 +209,6 @@ bool FileExists(const std::string& file)
     return false;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  prüft ob eine Verzeichnis existiert (bzw ob es ein Verzeichnis ist)
  *

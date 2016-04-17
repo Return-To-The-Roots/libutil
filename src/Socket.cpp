@@ -162,7 +162,6 @@ Socket::Socket() : socket_(INVALID_SOCKET), refCount_(NULL), status_(INVALID), i
 {
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  Konstruktor von @p Socket.
  *
@@ -200,7 +199,6 @@ Socket& Socket::operator=(const Socket& rhs)
     return *this;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  Setzt ein Socket auf übergebene Werte.
  *
@@ -215,7 +213,6 @@ void Socket::Set(const SOCKET socket, Status status)
     status_ = status;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  Initialisiert die Socket-Bibliothek.
  *
@@ -236,7 +233,6 @@ bool Socket::Initialize()
     return true;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  räumt die Socket-Bibliothek auf.
  *
@@ -250,7 +246,6 @@ void Socket::Shutdown()
 #endif // _WIN32
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  erstellt und initialisiert das Socket.
  *
@@ -289,7 +284,6 @@ bool Socket::Create(int family, bool asUDPBroadcast)
     return (status_ != INVALID);
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  schliesst das Socket.
  *
@@ -347,7 +341,6 @@ bool Socket::Bind(unsigned short port, bool useIPv6)
     return bind(socket_, (sockaddr*)&addrs, size) != SOCKET_ERROR;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  setzt das Socket auf Listen.
  *
@@ -417,7 +410,6 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
     return true;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  akzeptiert eingehende Verbindungsversuche.
  *
@@ -449,7 +441,6 @@ Socket Socket::Accept()
 }
 
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  liefert Ip-Adresse(n) für einen Hostnamen.
  *
@@ -504,7 +495,6 @@ void Socket::Sleep(unsigned int ms)
 #endif
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  versucht eine Verbindung mit einem externen Host aufzubauen.
  *
@@ -704,7 +694,6 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
     return true;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  liest Daten vom Socket in einen Puffer.
  *
@@ -735,7 +724,6 @@ int Socket::Recv(void* const buffer, const int length, PeerAddr& addr)
     return recvfrom(socket_, reinterpret_cast<char*>(buffer), length, 0, addr.GetAddr(), &addrLen);
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  schreibt Daten von einem Puffer auf das Socket.
  *
@@ -764,7 +752,6 @@ int Socket::Send(const void* const buffer, const int length, const PeerAddr& add
     return sendto(socket_, reinterpret_cast<const char*>(buffer), length, 0, addr.GetAddr(), addr.GetSize());
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  setzt eine Socketoption.
  *
@@ -781,7 +768,6 @@ bool Socket::SetSockOpt(int nOptionName, const void* lpOptionValue, int nOptionL
     return (SOCKET_ERROR != setsockopt(socket_, nLevel, nOptionName, (char*)lpOptionValue, nOptionLen));
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  Größer-Vergleichsoperator.
  *
@@ -797,7 +783,6 @@ bool Socket::operator>(const Socket& sock)
     return this->socket_ > sock.socket_;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  prüft auf wartende Bytes.
  *
@@ -815,7 +800,6 @@ int Socket::BytesWaiting()
     return (int)received;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  prüft auf wartende Bytes.
  *
@@ -838,7 +822,6 @@ int Socket::BytesWaiting(unsigned int* received)
 #endif
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  liefert die IP des Remote-Hosts.
  *
@@ -860,7 +843,6 @@ std::string Socket::GetPeerIP()
     return IpToString((sockaddr*)&peer);
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  liefert die IP des Lokalen-Hosts.
  *
@@ -882,7 +864,6 @@ std::string Socket::GetSockIP()
     return IpToString((sockaddr*)&peer);
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  Gets a reference to the Socket
  *
@@ -897,7 +878,6 @@ SOCKET& Socket::GetSocket()
     return socket_;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  liefert einen string der übergebenen Ip.
  *

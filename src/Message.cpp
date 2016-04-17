@@ -39,7 +39,6 @@ Message* Message::create_base(unsigned short id)
     return msg;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  dupliziert eine Nachricht.
  *

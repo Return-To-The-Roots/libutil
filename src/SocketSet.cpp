@@ -29,7 +29,6 @@ SocketSet::SocketSet()
     Clear();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  räumt das @p SocketSet auf.
  *
@@ -42,7 +41,6 @@ void SocketSet::Clear()
     highest = INVALID_SOCKET;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  fügt ein @p Socket zum @p SocketSet hinzu.
  *
@@ -66,7 +64,6 @@ void SocketSet::Add(Socket& sock)
         highest = s;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  führt einen Select auf dem @p SocketSet aus.
  *
@@ -102,7 +99,6 @@ int SocketSet::Select(int timeout, int which)
     return select( (int)highest + 1, read, write, except, &tv);
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  ist ein @p Socket im @p SocketSet ?
  *

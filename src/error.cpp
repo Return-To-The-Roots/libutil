@@ -24,7 +24,6 @@
 // Include last!
 #include "DebugNew.h" // IWYU pragma: keep
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  Fatal-Error-Handler.
  *  Gibt "FATAL ERROR: "+Text auf @p stderr aus
@@ -48,7 +47,6 @@ int fatal_error(const char* format, ...)
     return EXIT_FAILURE;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  Error-Handler.
  *  Gibt "ERROR: "+Text auf @p stderr aus
@@ -72,7 +70,6 @@ int error(const char* format, ...)
     return EXIT_FAILURE;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  Warning-Handler.
  *  Gibt "WARNING: "+Text auf @p stderr aus

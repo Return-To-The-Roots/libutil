@@ -55,7 +55,6 @@ Log::~Log()
     }
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  öffnet das Log (falls noch nicht offen)
  *
@@ -71,7 +70,6 @@ void Log::open()
     }
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  Schreibt gefärbte Daten ins Log und auf stdout.
  *
@@ -157,7 +155,6 @@ void Log::lcprintf(const unsigned int color, const char* format, ...)
 #endif
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  Schreibt Daten ins Log und auf stdout.
  *
@@ -172,7 +169,6 @@ void Log::lprintf(const char* format, ...)
     va_end(list);
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  Schreibt Daten ins Log und auf stdout.
  *
@@ -189,7 +185,6 @@ void Log::lvprintf(const char* format, va_list list)
     va_end(list2);
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  Schreibt Daten nur ins Log und auf stdout.
  *
@@ -204,7 +199,6 @@ void Log::write(const char* format, ...)
     va_end(list);
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  Schreibt Daten nur ins Log und auf stdout.
  *
@@ -227,7 +221,6 @@ void Log::vwrite(const char* format, va_list list)
     }
 }
 
-///////////////////////////////////////////////////////////////////////////////
 /**
  *  Schreibt den zuletzt aufgetretetenen Systemfehler in lesbarer Form in
  *  stdout und Log, fügt "$text:" davor ein.
