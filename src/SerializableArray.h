@@ -56,11 +56,10 @@ class SerializableArray
             return *this;
         }
 
-        ///////////////////////////////////////////////////////////////////////////////
         /**
          *  Einfügefunktion
          *
-                 */
+         */
         inline void push_back(const Type& item)
         {
             elements.push_back(item);
@@ -69,25 +68,23 @@ class SerializableArray
         inline Type&       operator[](unsigned int i)       { return elements.at(i); }
         inline const Type& operator[](unsigned int i) const { return elements.at(i); }
 
-        ///////////////////////////////////////////////////////////////////////////////
         /**
          *  räumt die Liste auf.
          *
-                 */
+         */
         inline void clear()
         {
             elements.clear();
         }
 
-        ///////////////////////////////////////////////////////////////////////////////
-        /*
+        /**
          *  serialisiert die Daten.
          *
          *  @param[in,out] data Datensatz, muss groß genug sein
          *
          *  @return liefert die Größe der Daten zurück.
          *
-                 */
+        */
         inline void serialize(Serializer& ser) const
         {
             ser.PushUnsignedInt(static_cast<unsigned>(elements.size()));
@@ -96,15 +93,14 @@ class SerializableArray
                 it->serialize(ser);
         }
 
-        ///////////////////////////////////////////////////////////////////////////////
-        /*
+        /**
          *  deserialisiert die Daten.
          *
          *  @param[in] data Datensatz, muss groß genug sein
          *
          *  @return liefert die Größe der gelesenen Daten zurück.
          *
-                 */
+         */
         inline void deserialize(Serializer& ser)
         {
             clear();
@@ -115,11 +111,10 @@ class SerializableArray
                 elements.push_back(Type(i, ser));
         }
 
-        ///////////////////////////////////////////////////////////////////////////////
         /**
          *  liefert ein Element der Liste.
          *
-                 */
+         */
         inline const Type* getElement(unsigned int i) const
         {
             if(i < elements.size())
@@ -128,11 +123,10 @@ class SerializableArray
             return NULL;
         }
 
-        ///////////////////////////////////////////////////////////////////////////////
         /**
          *  liefert ein Element der Liste.
          *
-                 */
+         */
         inline Type* getElement(unsigned int i)
         {
             if(i < elements.size())
@@ -141,11 +135,10 @@ class SerializableArray
             return NULL;
         }
 
-        ///////////////////////////////////////////////////////////////////////////////
         /**
          *  liefert die Anzahl der Elemente.
          *
-                 */
+         */
         inline unsigned int getCount() const
         {
             return size();
@@ -156,11 +149,10 @@ class SerializableArray
             return static_cast<unsigned>(elements.size());
         }
 
-        ///////////////////////////////////////////////////////////////////////////////
         /**
          *  ändert die Größe des Arrays
          *
-                 */
+         */
         void resize(const unsigned count)
         {
             return elements.resize(count);
