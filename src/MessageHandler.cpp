@@ -28,9 +28,6 @@
 #include <cstddef>
 #include <stdexcept>
 
-// Include last!
-#include "DebugNew.h" // IWYU pragma: keep
-
 int MessageHandler::send(Socket& sock, const Message& msg)
 {
     Serializer ser;

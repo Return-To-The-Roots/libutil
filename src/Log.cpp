@@ -30,9 +30,6 @@
 #endif
 #include <cstdarg>
 #include <string>
-
-// Include last!
-#include "DebugNew.h" // IWYU pragma: keep
 #ifndef va_copy
 #   ifdef __va_copy
 #       define va_copy(DEST,SRC) __va_copy((DEST),(SRC))

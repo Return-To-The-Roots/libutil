@@ -22,9 +22,6 @@
 #include "Log.h"
 #include <limits>
 
-// Include last!
-#include "DebugNew.h" // IWYU pragma: keep
-
 MessageQueue::~MessageQueue()
 {
     clear();

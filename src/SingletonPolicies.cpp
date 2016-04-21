@@ -20,9 +20,6 @@
 #include "Singleton.h"
 #include <set>
 
-// Include last!
-#include "DebugNew.h" // IWYU pragma: keep
-
 namespace SingletonPolicies{
 
     /// Manages the lifetime of all Singletons with a longevity. Class (only) used by SetLongevity

@@ -18,9 +18,6 @@
 #include "libUtilDefines.h" // IWYU pragma: keep
 #include "LANDiscoveryClient.h"
 
-// Include last!
-#include "DebugNew.h" // IWYU pragma: keep
-
 LANDiscoveryClient::LANDiscoveryClient(const Config& cfg) : LANDiscoveryBase(cfg, false), isRunning(false)
 {}
 

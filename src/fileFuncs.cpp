@@ -36,9 +36,6 @@
 
 #include <cstddef>
 
-// Include last!
-#include "DebugNew.h" // IWYU pragma: keep
-
 #if defined(__CYGWIN__) || defined (__MINGW32__)
 
 typedef GUID KNOWNFOLDERID;

@@ -21,9 +21,6 @@
 #include <boost/type_traits.hpp>
 #include <algorithm>
 
-// Include last!
-#include "DebugNew.h" // IWYU pragma: keep
-
 /// Decorator for an iterator that converts the elements to their unsigned equivalents
 /// Required because sign of char/wchar_t is undefined and we need it to be unsigned for some conversions
 template<class T_Container>

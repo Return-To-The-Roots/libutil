@@ -19,9 +19,6 @@
 #include "Serializer.h"
 #include "BinaryFile.h"
 
-// Include last!
-#include "DebugNew.h" // IWYU pragma: keep
-
 void Serializer::WriteToFile(BinaryFile& file)
 {
     file.WriteUnsignedInt(GetLength());

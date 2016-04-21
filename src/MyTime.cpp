@@ -28,9 +28,6 @@
     #include <sys/times.h>
 #endif // _WIN32
 
-// Include last!
-#include "DebugNew.h" // IWYU pragma: keep
-
 Time::Time()
 {
 }

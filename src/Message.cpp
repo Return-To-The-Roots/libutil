@@ -22,9 +22,6 @@
 #include "Serializer.h"
 #include <cstdio>
 
-// Include last!
-#include "DebugNew.h" // IWYU pragma: keep
-
 Message* Message::create_base(unsigned short id)
 {
     Message* msg = NULL;

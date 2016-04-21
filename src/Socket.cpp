@@ -48,9 +48,6 @@
 #include <cstdio>
 #include <cstdlib>
 
-// Include last!
-#include "DebugNew.h" // IWYU pragma: keep
-
 
 ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr, bool resolveAll)
 {

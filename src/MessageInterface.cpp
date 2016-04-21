@@ -18,9 +18,6 @@
 #include "libUtilDefines.h" // IWYU pragma: keep
 #include "MessageInterface.h"
 
-// Include last!
-#include "DebugNew.h" // IWYU pragma: keep
-
 /**
  *  Null-Nachricht.
  */

@@ -28,9 +28,6 @@
 #   include <unistd.h>
 #endif
 
-// Include last!
-#include "DebugNew.h" // IWYU pragma: keep
-
 namespace bfs = boost::filesystem;
 
 std::string createTempFile(std::ofstream& file, const std::string& ext/* = ".tmp"*/)

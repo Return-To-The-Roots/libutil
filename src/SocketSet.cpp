@@ -19,9 +19,6 @@
 #include "SocketSet.h"
 
 #include "Socket.h"
-
-// Include last!
-#include "DebugNew.h" // IWYU pragma: keep
 #include <cstddef>
 
 SocketSet::SocketSet()

@@ -20,9 +20,6 @@
 #include <stdexcept>
 #include <algorithm>
 
-// Include last!
-#include "DebugNew.h" // IWYU pragma: keep
-
 LANDiscoveryService::LANDiscoveryService(const Config& cfg): LANDiscoveryBase(cfg, true), isRunning(false), dataChanged(false)
 {
     info.GetMagic() = cfg.magicResponse;

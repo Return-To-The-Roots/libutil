@@ -20,9 +20,6 @@
 #include <stdexcept>
 #include <algorithm>
 
-// Include last!
-#include "DebugNew.h" // IWYU pragma: keep
-
 namespace detail{
 
     void strcpyExt_check(char* pOut, const char* pSrc, const size_t maxChars)

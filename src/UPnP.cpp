@@ -87,9 +87,6 @@
 #include <sstream>
 #include <cstring>
 
-// Include last!
-#include "DebugNew.h" // IWYU pragma: keep
-
 UPnP::UPnP() : remote_port_(0)
 {
 }

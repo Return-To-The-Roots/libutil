@@ -21,9 +21,6 @@
 #include <cstdarg>
 #include <cstdlib>
 
-// Include last!
-#include "DebugNew.h" // IWYU pragma: keep
-
 /**
  *  Fatal-Error-Handler.
  *  Gibt "FATAL ERROR: "+Text auf @p stderr aus
