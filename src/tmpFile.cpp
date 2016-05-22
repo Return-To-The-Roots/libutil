@@ -80,3 +80,15 @@ void unlinkFile(const std::string& filePath)
 #endif // WIN32
 
 }
+
+TmpFile::TmpFile(const std::string& ext /*= ".tmp"*/):
+    filePath(createTempFile(stream, ext))
+{}
+
+TmpFile::~TmpFile()
+{
+    if(!IsValid())
+        return;
+    stream.close();
+    unlinkFile(filePath);
+}
