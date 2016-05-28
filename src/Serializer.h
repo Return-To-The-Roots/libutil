@@ -97,7 +97,7 @@ class Serializer
 
         unsigned GetBytesLeft() const
         {
-            assert(pos_ < length_);
+            assert(pos_ <= length_);
             return length_ - pos_;
         }
 
