@@ -17,10 +17,12 @@
 
 #include "libUtilDefines.h" // IWYU pragma: keep
 #include "Log.h"
+#include "FileWriter.h"
 #include "MyTime.h"
 #include "files.h"
 #include "fileFuncs.h"
 #include "colors.h"
+#include <stdexcept>
 
 #ifdef _WIN32
     #include <windows.h>
@@ -39,26 +41,36 @@
 #   endif
 #endif
 
-Log::Log() : logFile(NULL)
+Log::Log(): logFileWriter(NULL)
 {
 }
 
 Log::~Log()
 {
-    if(logFile)
+    if(logFileWriter)
     {
-        fclose(logFile);
-        logFile = NULL;
+        delete logFileWriter;
+        logFileWriter = NULL;
     }
 }
 
 void Log::open()
 {
-    if(!logFile)
+    if(!logFileWriter)
     {
         std::string filePath = GetFilePath(FILE_PATHS[47]) + TIME.FormatTime("%Y-%m-%d_%H-%i-%s") + ".log";
-        logFile = fopen(filePath.c_str(), "w");
+        logFileWriter = new FileWriter(filePath);
     }
+}
+
+void Log::open(TextWriterInterface* fileWriter)
+{
+    if(logFileWriter)
+    {
+        delete fileWriter;
+        throw std::runtime_error("Cannot reset already opened log file");
+    }
+    logFileWriter = fileWriter;
 }
 
 void Log::writeColored(const unsigned int color, const char* format, ...)
@@ -171,17 +183,8 @@ void Log::writeToFileVArgs(const char* format, va_list list)
 {
     open();
 
-    if(logFile)
-    {
-        // TODO workaround, buggy gettext?
-#ifdef _WIN32
-#   undef vfprintf
-#endif
-
-        vfprintf(logFile, format, list);
-
-        fflush(logFile);
-    }
+    if(logFileWriter)
+        logFileWriter->writeFormattedText(format, list);
 }
 
 /**

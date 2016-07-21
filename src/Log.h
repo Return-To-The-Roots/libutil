@@ -22,7 +22,8 @@
 
 #include "Singleton.h"
 #include <cstdarg>
-#include <cstdio>
+
+class TextWriterInterface;
 
 class Log : public Singleton<Log, SingletonPolicies::WithLongevity>
 {
@@ -34,6 +35,8 @@ class Log : public Singleton<Log, SingletonPolicies::WithLongevity>
 
         /// Opens the log file if it is not yet open
         void open();
+        /// Uses the given writer as the file writer
+        void open(TextWriterInterface* fileWriter);
         /// Writes the last occured error description with "[text]: " at the front to stdOut and file
         void writeLastError(const char* text);
 
@@ -49,9 +52,9 @@ class Log : public Singleton<Log, SingletonPolicies::WithLongevity>
         /// Writes formated text to file only using a va_list
         void writeToFileVArgs(const char* format, va_list list);
 
+        TextWriterInterface* getFileWriter() { return logFileWriter; }
     private:
-
-        FILE* logFile;
+        TextWriterInterface* logFileWriter;
 };
 
 #define LOG Log::inst()
