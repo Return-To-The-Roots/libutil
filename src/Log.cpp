@@ -39,66 +39,59 @@
 #   endif
 #endif
 
-Log::Log() : log(NULL)
+Log::Log() : logFile(NULL)
 {
 }
 
 Log::~Log()
 {
-    if(log)
+    if(logFile)
     {
-        fclose(log);
-        log = NULL;
+        fclose(logFile);
+        logFile = NULL;
     }
 }
 
-/**
- *  öffnet das Log (falls noch nicht offen)
- */
 void Log::open()
 {
-    if(!log)
+    if(!logFile)
     {
         std::string filePath = GetFilePath(FILE_PATHS[47]) + TIME.FormatTime("%Y-%m-%d_%H-%i-%s") + ".log";
-
-        log = fopen(filePath.c_str(), "w");
+        logFile = fopen(filePath.c_str(), "w");
     }
 }
 
-/**
- *  Schreibt gefärbte Daten ins Log und auf stdout.
- */
-void Log::lcprintf(const unsigned int color, const char* format, ...)
+void Log::writeColored(const unsigned int color, const char* format, ...)
 {
     // On Linux, we insert escape-codes into the string. On Windows call system functions.
 #ifndef _WIN32
-    std::string tmp;
+    const char* colorModifier;
 
     // A switch statement doesn't work here because we compare against the array COLORS[] (although it's constant, it can't be dereferenced at compile time)
     if (color == COLOR_BLUE)
-        tmp = "\033[40m\033[1;34m";
+        colorModifier = "\033[40m\033[1;34m";
     else if (color == COLOR_RED)
-        tmp = "\033[40m\033[1;31m";
+        colorModifier = "\033[40m\033[1;31m";
     else if (color == COLOR_YELLOW)
-        tmp = "\033[40m\033[1;33m";
+        colorModifier = "\033[40m\033[1;33m";
     else if (color == COLOR_GREEN)
-        tmp = "\033[40m\033[1;32m";
+        colorModifier = "\033[40m\033[1;32m";
     else if (color == COLOR_MAGENTA)
-        tmp = "\033[40m\033[1;35m";
+        colorModifier = "\033[40m\033[1;35m";
     else if (color == COLOR_CYAN)
-        tmp = "\033[40m\033[1;36m";
+        colorModifier = "\033[40m\033[1;36m";
     else if (color == COLOR_BLACK)
-        tmp = "\033[47m\033[1;30m";
+        colorModifier = "\033[47m\033[1;30m";
     else if (color == COLOR_WHITE)
-        tmp = "\033[40m\033[1;37m";
+        colorModifier = "\033[40m\033[1;37m";
     else if (color == COLOR_ORANGE)
-        tmp = "\033[43m\033[1;30m";
+        colorModifier = "\033[43m\033[1;30m";
     else if (color == COLOR_BROWN)
-        tmp = "\033[40m\033[33m";
+        colorModifier = "\033[40m\033[33m";
     else
-        tmp = "\033[0m";
+        colorModifier = "\033[0m";
 
-    lprintf("%s", tmp.c_str());
+    write(colorModifier);
 #else
     // obtain handle
     HANDLE hStdout;
@@ -132,15 +125,14 @@ void Log::lcprintf(const unsigned int color, const char* format, ...)
 #endif
 
     va_list list;
-
     va_start(list, format);
-    lvprintf(format, list);
+    writeVArgs(format, list);
     va_end(list);
 
     // restore white-on-black
 #ifndef _WIN32
-    tmp = "\033[0m";
-    lprintf("%s", tmp.c_str());
+    colorModifier = "\033[0m";
+    write(colorModifier);
 #else
     // Obtain handle
     if (GetConsoleScreenBufferInfo(hStdout, &csbiInfo))
@@ -148,61 +140,47 @@ void Log::lcprintf(const unsigned int color, const char* format, ...)
 #endif
 }
 
-/**
- *  Schreibt Daten ins Log und auf stdout.
- */
-void Log::lprintf(const char* format, ...)
+void Log::write(const char* format, ...)
 {
     va_list list;
-
     va_start(list, format);
-    lvprintf(format, list);
+    writeVArgs(format, list);
     va_end(list);
 }
 
-/**
- *  Schreibt Daten ins Log und auf stdout.
- */
-void Log::lvprintf(const char* format, va_list list)
+void Log::writeVArgs(const char* format, va_list list)
 {
     va_list list2;
     va_copy(list2, list);
 
-    ::vprintf(format, list);
-    vwrite(format, list2);
+    vprintf(format, list);
+    writeToFileVArgs(format, list2);
 
     va_end(list2);
 }
 
-/**
- *  Schreibt Daten nur ins Log und auf stdout.
- */
-void Log::write(const char* format, ...)
+void Log::writeToFile(const char* format, ...)
 {
     va_list list;
-
     va_start(list, format);
-    vwrite(format, list);
+    writeToFileVArgs(format, list);
     va_end(list);
 }
 
-/**
- *  Schreibt Daten nur ins Log und auf stdout.
- */
-void Log::vwrite(const char* format, va_list list)
+void Log::writeToFileVArgs(const char* format, va_list list)
 {
     open();
 
-    if(log)
+    if(logFile)
     {
         // TODO workaround, buggy gettext?
 #ifdef _WIN32
 #   undef vfprintf
 #endif
 
-        vfprintf(log, format, list);
+        vfprintf(logFile, format, list);
 
-        fflush(log);
+        fflush(logFile);
     }
 }
 
@@ -210,9 +188,8 @@ void Log::vwrite(const char* format, va_list list)
  *  Schreibt den zuletzt aufgetretetenen Systemfehler in lesbarer Form in
  *  stdout und Log, fügt "$text:" davor ein.
  */
-void Log::getlasterror(const char* text)
+void Log::writeLastError(const char* text)
 {
-    lprintf("%s: ", text);
 #ifdef _WIN32
     LPVOID lpMsgBuf;
     FormatMessageA(
@@ -227,11 +204,11 @@ void Log::getlasterror(const char* text)
         NULL
     );
 
-    lprintf("%s\n", lpMsgBuf);
+    write("%s: %s\n", text, lpMsgBuf);
 
     // Free the buffer.
     LocalFree( lpMsgBuf );
 #else
-    lprintf("%s\n", strerror(errno));
+    write("%s: %s\n", text, strerror(errno));
 #endif
 }

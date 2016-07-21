@@ -384,7 +384,7 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
     // try to open portforwarding if we're using ipv4
     if (use_upnp)
         if(!ipv6 && !upnp_.OpenPort(port))
-            LOG.getlasterror("Automatisches Erstellen des Portforwardings mit UPnP fehlgeschlagen\nFehler");
+            LOG.writeLastError("Automatisches Erstellen des Portforwardings mit UPnP fehlgeschlagen\nFehler");
 
     // Status setzen
     status_ = LISTEN;
@@ -535,11 +535,11 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
         ResolvedAddr addr(*it);
         if(!addr.isValid())
         {
-            LOG.lprintf("Could not resolve %s. Skipping...\n", it->host.c_str());
+            LOG.write("Could not resolve %s. Skipping...\n", it->host.c_str());
             continue;
         }
         std::string ip = IpToString(addr.getAddr().ai_addr); //-V807
-        LOG.lprintf("Connection to %s%s:%d\n", (typ != PROXY_NONE ? "Proxy " : ""), ip.c_str(), (typ != PROXY_NONE ? proxy_port : port));
+        LOG.write("Connection to %s%s:%d\n", (typ != PROXY_NONE ? "Proxy " : ""), ip.c_str(), (typ != PROXY_NONE ? proxy_port : port));
 
         // Und schließlich Verbinden
         if(connect(socket_, addr.getAddr().ai_addr, static_cast<int>(addr.getAddr().ai_addrlen)) != SOCKET_ERROR)
@@ -608,7 +608,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
 
                             if(proxy_timeout >= 8)
                             {
-                                LOG.lprintf("Proxy error: connection timed out\n");
+                                LOG.write("Proxy error: connection timed out\n");
                                 return false;
                             }
 
@@ -616,7 +616,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
 
                             if(proxyinit[0] != 0 || proxyinit[1] != 90)
                             {
-                                LOG.lprintf("Proxy error: got %d: connection rejected or failed or other error\n", proxyinit[1]);
+                                LOG.write("Proxy error: got %d: connection rejected or failed or other error\n", proxyinit[1]);
                                 return false;
                             }
                         } break;
@@ -647,15 +647,15 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
             if(done)
                 break;
         }
-        LOG.getlasterror("Connection failed\nError");
+        LOG.writeLastError("Connection failed\nError");
     }
 
     if(!done)
     {
-        LOG.lprintf("Error connection to %s:%d\n", hostname.c_str(), port);
+        LOG.write("Error connection to %s:%d\n", hostname.c_str(), port);
         return false;
     }
-    LOG.lprintf("Sucessfully connected to %s:%d\n", hostname.c_str(), port);
+    LOG.write("Sucessfully connected to %s:%d\n", hostname.c_str(), port);
 
     // deaktiviere non-blocking
     unsigned long argp = 0;

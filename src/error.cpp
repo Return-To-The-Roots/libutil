@@ -33,9 +33,9 @@ int fatal_error(const char* format, ...)
 {
     va_list list;
     va_start(list, format);
-    LOG.lprintf("\n\nFATAL ERROR: ");
-    LOG.lvprintf(format, list);
-    LOG.lprintf("\n");
+    LOG.write("\n\nFATAL ERROR: ");
+    LOG.writeVArgs(format, list);
+    LOG.write("\n");
 
     va_end(list);
 
@@ -54,9 +54,9 @@ int error(const char* format, ...)
 {
     va_list list;
     va_start(list, format);
-    LOG.lprintf("\n\nERROR: ");
-    LOG.lvprintf(format, list);
-    LOG.lprintf("\n");
+    LOG.write("\n\nERROR: ");
+    LOG.writeVArgs(format, list);
+    LOG.write("\n");
 
     va_end(list);
 
@@ -75,9 +75,9 @@ int warning(const char* format, ...)
 {
     va_list list;
     va_start(list, format);
-    LOG.lprintf("\n\nWARNING: ");
-    LOG.lvprintf(format, list);
-    LOG.lprintf("\n");
+    LOG.write("\n\nWARNING: ");
+    LOG.writeVArgs(format, list);
+    LOG.write("\n");
 
     va_end(list);
 

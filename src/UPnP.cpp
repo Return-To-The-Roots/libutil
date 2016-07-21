@@ -254,7 +254,7 @@ void UPnP::ClosePort()
     hr = upnpspmc->Remove(remote_port_, bstrProtocol);
 
     if(FAILED(hr))
-        LOG.getlasterror("Automatisches Entfernen des Portforwardings mit UPnP fehlgeschlagen\nFehler");
+        LOG.writeLastError("Automatisches Entfernen des Portforwardings mit UPnP fehlgeschlagen\nFehler");
 
     SysFreeString(bstrProtocol);
 

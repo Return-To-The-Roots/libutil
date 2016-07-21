@@ -14,44 +14,44 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
-#ifndef LOG_H_INCLUDED
-#define LOG_H_INCLUDED
 
 #pragma once
+
+#ifndef LOG_H_INCLUDED
+#define LOG_H_INCLUDED
 
 #include "Singleton.h"
 #include <cstdarg>
 #include <cstdio>
 
-/// Log Klasse.
 class Log : public Singleton<Log, SingletonPolicies::WithLongevity>
 {
     public:
         static const unsigned Longevity = 100;
 
         Log();
-        /// Desktruktor von @p Log.
         ~Log() override;
 
-        /// Öffnet das Log (falls noch nicht offen)
+        /// Opens the log file if it is not yet open
         void open();
+        /// Writes the last occured error description with "[text]: " at the front to stdOut and file
+        void writeLastError(const char* text);
 
-        void getlasterror(const char* text);
-
-        /// Schreibt gefärbte Daten ins Log und auf stdout.
-        void lcprintf(const unsigned int color, const char* format, ...);
-        /// Schreibt Daten ins Log und auf stdout.
-        void lprintf(const char* format, ...);
-        /// Schreibt Daten ins Log und auf stdout.
-        void lvprintf(const char* format, va_list list);
-
-        /// Schreibt Daten nur ins Log und auf stdout.
+        /// Writes colored text to stdOut and file
+        void writeColored(const unsigned int color, const char* format, ...);
+        /// Writes formated text to stdOut and file
         void write(const char* format, ...);
-        /// Schreibt Daten nur ins Log und auf stdout.
-        void vwrite(const char* format, va_list list);
+        /// Writes formated text to stdOut and file using a va_list
+        void writeVArgs(const char* format, va_list list);
+
+        /// Writes formated text to file only
+        void writeToFile(const char* format, ...);
+        /// Writes formated text to file only using a va_list
+        void writeToFileVArgs(const char* format, va_list list);
 
     private:
-        FILE* log; /// das Logfile
+
+        FILE* logFile;
 };
 
 #define LOG Log::inst()
