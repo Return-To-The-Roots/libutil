@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef FStringStreamWriter_h__
-#define FStringStreamWriter_h__
+#ifndef StringStreamWriter_h__
+#define StringStreamWriter_h__
 
 #include "TextWriterInterface.h"
 #include <sstream>
@@ -24,11 +24,12 @@
 
 class StringStreamWriter: public TextWriterInterface
 {
-    std::ostringstream stream;
+    std::stringstream stream;
 public:
     void writeFormattedText(const char* format, va_list list) override;
 
     std::string getText() const;
+    std::stringstream& getStream() { return stream; }
 };
 
-#endif // FStringStreamWriter_h__
+#endif // StringStreamWriter_h__

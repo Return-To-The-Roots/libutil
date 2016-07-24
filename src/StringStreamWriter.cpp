@@ -18,6 +18,7 @@
 #include "libUtilDefines.h" // IWYU pragma: keep
 #include "StringStreamWriter.h"
 #include <stdexcept>
+#include <cstdio>
 
 void StringStreamWriter::writeFormattedText(const char* format, va_list list)
 {
@@ -28,7 +29,14 @@ void StringStreamWriter::writeFormattedText(const char* format, va_list list)
     if(written < 0 || written >= sizeof(buffer))
         throw std::runtime_error("Buffer overflow!");
 #else
-    vsprintf(buffer, format, list);
+    // Some kind of protection by limitting format size
+    if(strlen(format) > sizeof(buffer) / 2)
+        throw std::runtime_error("Possble buffer overflow!");
+    int written = vsprintf(buffer, format, list);
+    if(written < 0)
+        throw std::runtime_error("Error on logging!");
+    else if(written >= sizeof(buffer))
+        throw std::runtime_error("Buffer overflow!");
 #endif
     stream << buffer;
 }
