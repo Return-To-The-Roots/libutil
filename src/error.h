@@ -1,4 +1,4 @@
-// Copyright (c) 2005 - 2015 Settlers Freaks (sf-team at siedler25.org)
+// Copyright (c) 2005 - 2016 Settlers Freaks (sf-team at siedler25.org)
 //
 // This file is part of Return To The Roots.
 //
@@ -14,18 +14,25 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
-#ifndef ERROR_H_INCLUDED
-#define ERROR_H_INCLUDED
 
 #pragma once
 
-/// Fatal-Error-Handler.
-int fatal_error(const char* format, ...);
+#ifndef ERROR_H_INCLUDED
+#define ERROR_H_INCLUDED
 
-/// Error-Handler.
-int error(const char* format, ...);
+#include <string>
 
-/// Warning-Handler.
-int warning(const char* format, ...);
+namespace s25Util{
+
+    /// Write the message with fatal-error tag and return EXIT_FAILURE
+    int fatal_error(const std::string& msg);
+
+    /// Write the message with error tag and return EXIT_FAILURE
+    int error(const std::string& msg);
+
+    /// Write the message with warning tag and return EXIT_SUCCESS
+    int warning(const std::string& msg);
+
+}
 
 #endif // !ERROR_H_INCLUDED

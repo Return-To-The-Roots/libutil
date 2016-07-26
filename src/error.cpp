@@ -1,4 +1,4 @@
-// Copyright (c) 2005 - 2015 Settlers Freaks (sf-team at siedler25.org)
+// Copyright (c) 2005 - 2016 Settlers Freaks (sf-team at siedler25.org)
 //
 // This file is part of Return To The Roots.
 //
@@ -18,68 +18,26 @@
 #include "libUtilDefines.h" // IWYU pragma: keep
 #include "error.h"
 #include "Log.h"
-#include <cstdarg>
-#include <cstdlib>
 
-/**
- *  Fatal-Error-Handler.
- *  Gibt "FATAL ERROR: "+Text auf @p stderr aus
- *
- *  @param[in] format printf-Format-String der Fehlermeldung
- *  @param[in] ...    beliebige Parameter der Funktion
- *
- */
-int fatal_error(const char* format, ...)
-{
-    va_list list;
-    va_start(list, format);
-    LOG.write("\n\nFATAL ERROR: ");
-    LOG.writeVArgs(format, list);
-    LOG.write("\n");
+namespace s25Util{
 
-    va_end(list);
+    int fatal_error(const std::string& msg)
+    {
+        LOG.write("\n\nFATAL ERROR: %1%\n") % msg;
+        return EXIT_FAILURE;
+    }
 
-    return EXIT_FAILURE;
-}
+    int error(const std::string& msg)
+    {
+        LOG.write("\n\nERROR: %1%\n") % msg;
+        return EXIT_FAILURE;
+    }
 
-/**
- *  Error-Handler.
- *  Gibt "ERROR: "+Text auf @p stderr aus
- *
- *  @param[in] format printf-Format-String der Fehlermeldung
- *  @param[in] ...    beliebige Parameter der Funktion
- *
- */
-int error(const char* format, ...)
-{
-    va_list list;
-    va_start(list, format);
-    LOG.write("\n\nERROR: ");
-    LOG.writeVArgs(format, list);
-    LOG.write("\n");
+    int warning(const std::string& msg)
+    {
+        LOG.write("\n\nWARNING: %1%\n") % msg;
 
-    va_end(list);
+        return EXIT_SUCCESS;
+    }
 
-    return EXIT_FAILURE;
-}
-
-/**
- *  Warning-Handler.
- *  Gibt "WARNING: "+Text auf @p stderr aus
- *
- *  @param[in] format printf-Format-String der Fehlermeldung
- *  @param[in] ...    beliebige Parameter der Funktion
- *
- */
-int warning(const char* format, ...)
-{
-    va_list list;
-    va_start(list, format);
-    LOG.write("\n\nWARNING: ");
-    LOG.writeVArgs(format, list);
-    LOG.write("\n");
-
-    va_end(list);
-
-    return EXIT_SUCCESS;
-}
+} // namespace s25Util

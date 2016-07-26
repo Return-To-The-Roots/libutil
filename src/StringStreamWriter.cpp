@@ -38,10 +38,15 @@ void StringStreamWriter::writeFormattedText(const char* format, va_list list)
     else if(written >= sizeof(buffer))
         throw std::runtime_error("Buffer overflow!");
 #endif
-    stream << buffer;
+    writeText(buffer);
 }
 
 std::string StringStreamWriter::getText() const
 {
     return stream.str();
+}
+
+void StringStreamWriter::writeText(const char* txt)
+{
+    stream << txt;
 }

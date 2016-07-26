@@ -38,7 +38,7 @@ int MessageHandler::send(Socket& sock, const Message& msg)
 
     if(ser.GetLength() > 64 * 1024) /// 64KB, ACHTUNG: IPV4 garantiert nur maximal 576!!
     {
-        LOG.write("BIG OOPS! Message with length %u exceeds maximum of %d!\n", ser.GetLength(), 64 * 1024);
+        LOG.writeCFormat("BIG OOPS! Message with length %u exceeds maximum of %d!\n", ser.GetLength(), 64 * 1024);
         return -1;
     }
 
@@ -117,7 +117,7 @@ Message* MessageHandler::recv(Socket& sock, int& error, bool wait)
     int read = sock.Recv(header, headerSize, false);
     if(read != headerSize)
     {
-        LOG.writeToFile("recv: block: only got %d bytes instead of %d, waiting for next try\n", read, headerSize);
+        LOG.writeCFormatToFile("recv: block: only got %d bytes instead of %d, waiting for next try\n", read, headerSize);
         if(read != -1)
             error = 3;
 
@@ -137,7 +137,7 @@ Message* MessageHandler::recv(Socket& sock, int& error, bool wait)
     if(read < length + headerSize)
     {
         ++blocktimeout;
-        LOG.writeToFile("recv: block-waiting: not enough input (%d/%d) for message (0x%04X), waiting for next try\n", read, length + headerSize, id);
+        LOG.writeCFormatToFile("recv: block-waiting: not enough input (%d/%d) for message (0x%04X), waiting for next try\n", read, length + headerSize, id);
         if(blocktimeout < 120 && read != -1)
             error = 4;
 
@@ -149,7 +149,7 @@ Message* MessageHandler::recv(Socket& sock, int& error, bool wait)
     read = sock.Recv(header, headerSize);
     if(read != headerSize)
     {
-        LOG.write("recv: id,length: only got %d bytes instead of %d\n", read, 2);
+        LOG.writeCFormat("recv: id,length: only got %d bytes instead of %d\n", read, 2);
         return NULL;
     }
 
@@ -159,7 +159,7 @@ Message* MessageHandler::recv(Socket& sock, int& error, bool wait)
         read = sock.Recv(ser.GetDataWritable(length), length);
         if(read < length)
         {
-            LOG.write("recv: data: only got %d bytes instead of %d\n", read, length);
+            LOG.writeCFormat("recv: data: only got %d bytes instead of %d\n", read, length);
             return NULL;
         }
         ser.SetLength(length);

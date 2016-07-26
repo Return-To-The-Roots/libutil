@@ -15,18 +15,35 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TextWriterInterface_h__
-#define TextWriterInterface_h__
+#ifndef FormatedLogEntry_h__
+#define FormatedLogEntry_h__
 
-#include <cstdarg>
+#include <boost/format.hpp>
+#include <string>
 
-/// Interface for writing text to a target
-class TextWriterInterface
-{
+class Log;
+
+/// Holds one log entry. Will be flushed on destruction
+class FormatedLogEntry {
 public:
-    virtual ~TextWriterInterface(){}
-    virtual void writeFormattedText(const char* format, va_list list) = 0;
-    virtual void writeText(const char* txt) = 0;
+    enum LogTarget{
+        TO_FILE,
+        TO_FILE_AND_STDOUT
+    };
+    FormatedLogEntry(Log& log, LogTarget target, const char* msg): log_(log), target_(target), fmt(msg) {}
+    FormatedLogEntry(Log& log, LogTarget target, const std::string& msg): log_(log), target_(target), fmt(msg) {}
+    ~FormatedLogEntry();
+
+    template<typename T>
+    FormatedLogEntry& operator%(T value) {
+        fmt % value;
+        return *this;
+    }
+
+private:
+    Log& log_;
+    LogTarget target_;
+    boost::format fmt;
 };
 
-#endif // TextWriterInterface_h__
+#endif // FormatedLogEntry_h__

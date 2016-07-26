@@ -21,6 +21,7 @@
 #define LOG_H_INCLUDED
 
 #include "Singleton.h"
+#include "FormatedLogEntry.h"
 #include <cstdarg>
 
 class TextWriterInterface;
@@ -33,28 +34,47 @@ class Log : public Singleton<Log, SingletonPolicies::WithLongevity>
         Log();
         ~Log() override;
 
-        /// Opens the log file if it is not yet open
+        /// Open the log file if it is not yet open
         void open();
-        /// Uses the given writer as the file writer
+        /// Use the given writer as the file writer
         void open(TextWriterInterface* fileWriter);
-        /// Writes the last occured error description with "[text]: " at the front to stdOut and file
+        /// Write the last occured error description with "[text]: " at the front to stdOut and file
         void writeLastError(const char* text);
 
-        /// Writes colored text to stdOut and file
-        void writeColored(const unsigned int color, const char* format, ...);
-        /// Writes formated text to stdOut and file
-        void write(const char* format, ...);
-        /// Writes formated text to stdOut and file using a va_list
-        void writeVArgs(const char* format, va_list list);
+        /// Write formated text to stdOut and file
+        FormatedLogEntry write(const std::string& format);
+        /// Write formated text to file only
+        FormatedLogEntry writeToFile(const std::string& format);
 
-        /// Writes formated text to file only
-        void writeToFile(const char* format, ...);
-        /// Writes formated text to file only using a va_list
-        void writeToFileVArgs(const char* format, va_list list);
+        /// Write colored text to stdOut and file
+        /// Deprecated! Uses the unsafe C format
+        void writeColoredCFormat(const unsigned int color, const char* format, ...);
+        /// Write formated text to stdOut and file
+        /// Deprecated! Uses the unsafe C format
+        void writeCFormat(const char* format, ...);
+
+        /// Write formated text to file only
+        /// Deprecated! Uses the unsafe C format
+        void writeCFormatToFile(const char* format, ...);
+
+        /// Set the console text color to one of the predefined colors
+        static void SetColor(unsigned color);
+        /// Set the console text color back to original value
+        static void ResetColor();
 
         TextWriterInterface* getFileWriter() { return logFileWriter; }
     private:
         TextWriterInterface* logFileWriter;
+
+        /// Write formated text to stdOut and file using a va_list
+        void writeVArgs(const char* format, va_list list);
+        /// Write formated text to file only using a va_list
+        void writeToFileVArgs(const char* format, va_list list);
+
+        void flushToStdOut(const char* txt);
+        void flushToFile(const char* txt);
+        // This 2 methods are used by the log entry holder
+        friend class FormatedLogEntry;
 };
 
 #define LOG Log::inst()

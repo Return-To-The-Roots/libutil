@@ -15,18 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TextWriterInterface_h__
-#define TextWriterInterface_h__
+#include "libUtilDefines.h" // IWYU pragma: keep
+#include "FormatedLogEntry.h"
+#include "Log.h"
 
-#include <cstdarg>
-
-/// Interface for writing text to a target
-class TextWriterInterface
+FormatedLogEntry::~FormatedLogEntry()
 {
-public:
-    virtual ~TextWriterInterface(){}
-    virtual void writeFormattedText(const char* format, va_list list) = 0;
-    virtual void writeText(const char* txt) = 0;
-};
-
-#endif // TextWriterInterface_h__
+    if(target_ == TO_FILE_AND_STDOUT)
+        log_.flushToFile(fmt.str().c_str());
+    log_.flushToStdOut(fmt.str().c_str());
+}

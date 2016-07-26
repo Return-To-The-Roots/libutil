@@ -38,3 +38,8 @@ void FileWriter::writeFormattedText(const char* format, va_list list)
 #endif
     vfprintf(file, format, list);
 }
+
+void FileWriter::writeText(const char* txt)
+{
+    fputs(txt, file);
+}

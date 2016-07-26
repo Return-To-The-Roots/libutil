@@ -14,10 +14,12 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
+
+#pragma once
+
 #ifndef COLORS_H_INCLUDED
 #define COLORS_H_INCLUDED
 
-#pragma once
 #include <boost/array.hpp>
 
 /// Farbkonstanten
@@ -44,18 +46,17 @@ const unsigned COLOR_WINDOWBROWN = 0xFF886034;
 /// Spielerfarben
 const boost::array<unsigned, 11> SUPPRESS_UNUSED PLAYER_COLORS =
 {{
-    0xFF0079DB, // COLOR_BLUE, // Blau
-    0xFFD70000, // COLOR_RED, // Rot
-    0xFFCBCB00, //COLOR_YELLOW, // Gelb
-    0xFF41C371, // COLOR_GREEN, // Gruen
-    0xFF9A75BE, // COLOR_MAGENTA, // Magenta
-    COLOR_CYAN, // Cyan,
-    0xFF4D4D4D, // COLOR_BLACK, // Schwarz
-    COLOR_WHITE, // Weiss
-    COLOR_ORANGE, // Orange
-    COLOR_BROWN, // Braun
-    COLOR_PURPLE, // Lila
-/// COLOR_GHOST // Durchsichtig
+    0xFF0079DB, // blue
+    0xFFD70000, // red
+    0xFFCBCB00, // yellow
+    0xFF41C371, // green
+    0xFF9A75BE, // magenta
+    COLOR_CYAN, // xyan,
+    0xFF4D4D4D, // black
+    COLOR_WHITE, // white
+    COLOR_ORANGE, // orange
+    COLOR_BROWN, // brown
+    COLOR_PURPLE, // purple
 }};
 
 /// Liefert die transparente Farbkomponente zurück.
