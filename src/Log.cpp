@@ -203,6 +203,8 @@ void Log::flushToStdOut(const char* txt)
 
 void Log::flushToFile(const char* txt)
 {
+    open();
+
     if(logFileWriter)
         logFileWriter->writeText(txt);
 }
@@ -227,12 +229,12 @@ void Log::writeLastError(const char* text)
         NULL
     );
 
-    writeCFormat("%s: %s\n", text, lpMsgBuf);
+    write("%s: %s\n") % text % lpMsgBuf;
 
     // Free the buffer.
     LocalFree( lpMsgBuf );
 #else
-    writeCFormat("%s: %s\n", text, strerror(errno));
+    write("%s: %s\n") % text % strerror(errno);
 #endif
 }
 
@@ -243,5 +245,5 @@ FormatedLogEntry Log::write(const std::string& format)
 
 FormatedLogEntry Log::writeToFile(const std::string& format)
 {
-    return FormatedLogEntry(*this, FormatedLogEntry::TO_FILE_AND_STDOUT, format);
+    return FormatedLogEntry(*this, FormatedLogEntry::TO_FILE, format);
 }

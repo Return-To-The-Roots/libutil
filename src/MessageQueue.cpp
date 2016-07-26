@@ -112,7 +112,7 @@ bool MessageQueue::send(Socket& sock, int max, unsigned int sizelimit)
             int sendBytes = MessageHandler::send(sock, msg);
             if(sendBytes < 0)
             {
-                LOG.writeCFormat("Sending Message to server failed\n");
+                LOG.write("Sending Message to server failed\n");
                 return false;
             }else if(static_cast<unsigned>(sendBytes) > sizelimit)
             {

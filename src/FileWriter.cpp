@@ -37,9 +37,11 @@ void FileWriter::writeFormattedText(const char* format, va_list list)
 #   undef vfprintf
 #endif
     vfprintf(file, format, list);
+    fflush(file);
 }
 
 void FileWriter::writeText(const char* txt)
 {
     fputs(txt, file);
+    fflush(file);
 }
