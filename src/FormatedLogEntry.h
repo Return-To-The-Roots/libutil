@@ -31,8 +31,9 @@ public:
         TO_FILE,
         TO_FILE_AND_STDOUT
     };
-    FormatedLogEntry(Log& log, LogTarget target, const char* msg): log_(log), target_(target), fmt(msg) {}
-    FormatedLogEntry(Log& log, LogTarget target, const std::string& msg): log_(log), target_(target), fmt(msg) {}
+    FormatedLogEntry(Log& log, LogTarget target, const char* msg): log_(log), target_(target), fmt(msg), useColor_(false), color_(0) {}
+    FormatedLogEntry(Log& log, LogTarget target, const std::string& msg): log_(log), target_(target), fmt(msg), useColor_(false), color_(0) {}
+    FormatedLogEntry(Log& log, LogTarget target, const std::string& msg, unsigned color): log_(log), target_(target), fmt(msg), useColor_(true), color_(color) {}
     ~FormatedLogEntry();
 
     template<typename T>
@@ -49,6 +50,8 @@ private:
     Log& log_;
     LogTarget target_;
     boost::format fmt;
+    bool useColor_;
+    unsigned color_;
 };
 
 #endif // FormatedLogEntry_h__

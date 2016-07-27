@@ -21,7 +21,14 @@
 
 FormatedLogEntry::~FormatedLogEntry()
 {
-    if(target_ == TO_FILE_AND_STDOUT)
+    if(target_ == TO_FILE_AND_STDOUT || target_ == TO_FILE)
         log_.flushToFile(fmt.str().c_str());
-    log_.flushToStdOut(fmt.str().c_str());
+    if(target_ == TO_FILE_AND_STDOUT)
+    {
+        if(useColor_)
+            log_.SetColor(color_);
+        log_.flushToStdOut(fmt.str().c_str());
+        if(useColor_)
+            log_.ResetColor();
+    }
 }

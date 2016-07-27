@@ -242,6 +242,11 @@ FormatedLogEntry Log::write(const std::string& format)
     return FormatedLogEntry(*this, FormatedLogEntry::TO_FILE_AND_STDOUT, format);
 }
 
+FormatedLogEntry Log::writeColored(const std::string& format, unsigned color)
+{
+    return FormatedLogEntry(*this, FormatedLogEntry::TO_FILE_AND_STDOUT, format, color);
+}
+
 FormatedLogEntry Log::writeToFile(const std::string& format)
 {
     return FormatedLogEntry(*this, FormatedLogEntry::TO_FILE, format);

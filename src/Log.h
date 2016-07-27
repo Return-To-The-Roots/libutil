@@ -43,6 +43,8 @@ class Log : public Singleton<Log, SingletonPolicies::WithLongevity>
 
         /// Write formated text to stdOut and file
         FormatedLogEntry write(const std::string& format);
+        /// Write formated text to stdOut and file
+        FormatedLogEntry writeColored(const std::string& format, unsigned color);
         /// Write formated text to file only
         FormatedLogEntry writeToFile(const std::string& format);
 
