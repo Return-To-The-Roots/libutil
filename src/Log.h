@@ -38,15 +38,18 @@ class Log : public Singleton<Log, SingletonPolicies::WithLongevity>
         void open();
         /// Use the given writer as the file writer
         void open(TextWriterInterface* fileWriter);
-        /// Write the last occured error description with "[text]: " at the front to stdOut and file
+        /// Write the last occurred error description with "[text]: " at the front to stdOut and file
         void writeLastError(const char* text);
 
         /// Write formated text to stdOut and file
         FormatedLogEntry write(const std::string& format);
+        FormatedLogEntry write(const char* format);
         /// Write formated text to stdOut and file
         FormatedLogEntry writeColored(const std::string& format, unsigned color);
+        FormatedLogEntry writeColored(const char* format, unsigned color);
         /// Write formated text to file only
         FormatedLogEntry writeToFile(const std::string& format);
+        FormatedLogEntry writeToFile(const char* format);
 
         /// Write colored text to stdOut and file
         /// Deprecated! Uses the unsafe C format

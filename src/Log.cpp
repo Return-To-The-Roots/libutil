@@ -237,17 +237,32 @@ void Log::writeLastError(const char* text)
 #endif
 }
 
-FormatedLogEntry Log::write(const std::string& format)
+FormatedLogEntry Log::write(const char* format)
 {
     return FormatedLogEntry(*this, FormatedLogEntry::TO_FILE_AND_STDOUT, format);
 }
 
-FormatedLogEntry Log::writeColored(const std::string& format, unsigned color)
+FormatedLogEntry Log::writeColored(const char* format, unsigned color)
 {
     return FormatedLogEntry(*this, FormatedLogEntry::TO_FILE_AND_STDOUT, format, color);
 }
 
-FormatedLogEntry Log::writeToFile(const std::string& format)
+FormatedLogEntry Log::writeToFile(const char* format)
 {
     return FormatedLogEntry(*this, FormatedLogEntry::TO_FILE, format);
+}
+
+FormatedLogEntry Log::write(const std::string& format)
+{
+    return write(format.c_str());
+}
+
+FormatedLogEntry Log::writeColored(const std::string& format, unsigned color)
+{
+    return writeColored(format.c_str(), color);
+}
+
+FormatedLogEntry Log::writeToFile(const std::string& format)
+{
+    return writeToFile(format.c_str());
 }
