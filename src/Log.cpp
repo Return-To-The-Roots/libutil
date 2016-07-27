@@ -178,8 +178,7 @@ void Log::SetColor(unsigned color)
 void Log::ResetColor()
 {
 #ifndef _WIN32
-    colorModifier = "\033[0m";
-    flushToStdOut(colorModifier);
+    flushToStdOut("\033[0m");
 #else
     HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_SCREEN_BUFFER_INFO csbiInfo;

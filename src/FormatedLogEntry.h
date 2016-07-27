@@ -19,6 +19,7 @@
 #define FormatedLogEntry_h__
 
 #include <boost/format.hpp>
+#include <boost/static_assert.hpp>
 #include <string>
 
 class Log;
@@ -39,6 +40,10 @@ public:
         fmt % value;
         return *this;
     }
+
+    // comma operator designed to fail to avoid accidental use
+    template<typename T>
+    void operator,(T){ BOOST_STATIC_ASSERT_MSG(!sizeof(T), "Invalid use of , for messages. Forgot to replace by %?"); }
 
 private:
     Log& log_;

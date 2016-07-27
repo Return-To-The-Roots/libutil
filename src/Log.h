@@ -58,9 +58,9 @@ class Log : public Singleton<Log, SingletonPolicies::WithLongevity>
         void writeCFormatToFile(const char* format, ...);
 
         /// Set the console text color to one of the predefined colors
-        static void SetColor(unsigned color);
+        void SetColor(unsigned color);
         /// Set the console text color back to original value
-        static void ResetColor();
+        void ResetColor();
 
         TextWriterInterface* getFileWriter() { return logFileWriter; }
     private:
