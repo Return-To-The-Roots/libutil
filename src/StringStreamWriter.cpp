@@ -17,30 +17,6 @@
 
 #include "libUtilDefines.h" // IWYU pragma: keep
 #include "StringStreamWriter.h"
-#include <stdexcept>
-#include <cstdio>
-#include <cstring>
-
-void StringStreamWriter::writeFormattedText(const char* format, va_list list)
-{
-    char buffer[4096];
-#if defined(_MSC_VER) || __cplusplus >= 201103L
-    // Use safer C++11 function
-    int written = vsnprintf(buffer, sizeof(buffer), format, list);
-    if(written < 0 || static_cast<unsigned>(written) >= sizeof(buffer))
-        throw std::runtime_error("Buffer overflow!");
-#else
-    // Some kind of protection by limiting format size
-    if(strlen(format) > sizeof(buffer) / 2)
-        throw std::runtime_error("Possible buffer overflow!");
-    int written = vsprintf(buffer, format, list);
-    if(written < 0)
-        throw std::runtime_error("Error on logging!");
-    else if(static_cast<unsigned>(written) >= sizeof(buffer))
-        throw std::runtime_error("Buffer overflow!");
-#endif
-    writeText(buffer);
-}
 
 std::string StringStreamWriter::getText() const
 {

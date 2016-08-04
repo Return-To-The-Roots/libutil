@@ -31,15 +31,6 @@ FileWriter::~FileWriter()
     fclose(file);
 }
 
-void FileWriter::writeFormattedText(const char* format, va_list list)
-{
-#ifdef _WIN32
-#   undef vfprintf
-#endif
-    vfprintf(file, format, list);
-    fflush(file);
-}
-
 void FileWriter::writeText(const char* txt)
 {
     fputs(txt, file);

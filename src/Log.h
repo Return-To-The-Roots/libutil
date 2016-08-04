@@ -22,7 +22,7 @@
 
 #include "Singleton.h"
 #include "FormatedLogEntry.h"
-#include <cstdarg>
+#include <string>
 
 class TextWriterInterface;
 
@@ -41,44 +41,27 @@ class Log : public Singleton<Log, SingletonPolicies::WithLongevity>
         /// Write the last occurred error description with "[text]: " at the front to stdOut and file
         void writeLastError(const char* text);
 
-        /// Write formated text to stdOut and file
-        FormatedLogEntry write(const std::string& format);
-        FormatedLogEntry write(const char* format);
-        /// Write formated text to stdOut and file
-        FormatedLogEntry writeColored(const std::string& format, unsigned color);
-        FormatedLogEntry writeColored(const char* format, unsigned color);
+        /// Write formated text to target (default: File and Stdout)
+        FormatedLogEntry write(const std::string& format, LogTarget target = LogTarget::FileAndStdout);
+        FormatedLogEntry write(const char* format, LogTarget target = LogTarget::FileAndStdout);
+        /// Write formated text to target (default: File and Stdout)
+        FormatedLogEntry writeColored(const std::string& format, unsigned color, LogTarget target = LogTarget::FileAndStdout);
+        FormatedLogEntry writeColored(const char* format, unsigned color, LogTarget target = LogTarget::FileAndStdout);
         /// Write formated text to file only
         FormatedLogEntry writeToFile(const std::string& format);
         FormatedLogEntry writeToFile(const char* format);
 
-        /// Write colored text to stdOut and file
-        /// Deprecated! Uses the unsafe C format
-        void writeColoredCFormat(const unsigned int color, const char* format, ...);
-        /// Write formated text to stdOut and file
-        /// Deprecated! Uses the unsafe C format
-        void writeCFormat(const char* format, ...);
-
-        /// Write formated text to file only
-        /// Deprecated! Uses the unsafe C format
-        void writeCFormatToFile(const char* format, ...);
-
         /// Set the console text color to one of the predefined colors
-        void SetColor(unsigned color);
+        void SetColor(unsigned color, bool stdoutOrStderr);
         /// Set the console text color back to original value
-        void ResetColor();
+        void ResetColor(bool stdoutOrStderr);
 
         TextWriterInterface* getFileWriter() { return logFileWriter; }
     private:
         TextWriterInterface* logFileWriter;
 
-        /// Write formated text to stdOut and file using a va_list
-        void writeVArgs(const char* format, va_list list);
-        /// Write formated text to file only using a va_list
-        void writeToFileVArgs(const char* format, va_list list);
-
-        void flushToStdOut(const char* txt);
-        void flushToFile(const char* txt);
-        // This 2 methods are used by the log entry holder
+        void flush(const char* txt, LogTarget target);
+        // This method is used by the log entry holder
         friend class FormatedLogEntry;
 };
 

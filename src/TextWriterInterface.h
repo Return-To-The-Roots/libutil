@@ -18,14 +18,11 @@
 #ifndef TextWriterInterface_h__
 #define TextWriterInterface_h__
 
-#include <cstdarg>
-
 /// Interface for writing text to a target
 class TextWriterInterface
 {
 public:
     virtual ~TextWriterInterface(){}
-    virtual void writeFormattedText(const char* format, va_list list) = 0;
     virtual void writeText(const char* txt) = 0;
 };
 

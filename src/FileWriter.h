@@ -28,7 +28,6 @@ class FileWriter: public TextWriterInterface
 public:
     FileWriter(const std::string& filePath);
     ~FileWriter();
-    void writeFormattedText(const char* format, va_list list) override;
     void writeText(const char* txt) override;
 
 };

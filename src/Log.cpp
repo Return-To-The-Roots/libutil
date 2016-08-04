@@ -23,8 +23,6 @@
 #include "fileFuncs.h"
 #include "colors.h"
 #include <stdexcept>
-#include <cstdarg>
-#include <string>
 #include <iostream>
 
 #ifdef _WIN32
@@ -32,14 +30,6 @@
 #else
     #include <cstring>
     #include <cerrno>
-#endif
-#ifndef va_copy
-#   ifdef __va_copy
-#       define va_copy(DEST,SRC) __va_copy((DEST),(SRC))
-#   else
-        /* WARNING - DANGER - ASSUMES TYPICAL STACK MACHINE */
-#       define va_copy(dst, src) ((void)((dst) = (src)))
-#   endif
 #endif
 
 Log::Log(): logFileWriter(NULL)
@@ -74,46 +64,7 @@ void Log::open(TextWriterInterface* fileWriter)
     logFileWriter = fileWriter;
 }
 
-void Log::writeColoredCFormat(const unsigned int color, const char* format, ...)
-{
-    SetColor(color);
-
-    va_list list;
-    va_start(list, format);
-    writeVArgs(format, list);
-    va_end(list);
-
-    ResetColor();
-}
-
-void Log::writeCFormat(const char* format, ...)
-{
-    va_list list;
-    va_start(list, format);
-    writeVArgs(format, list);
-    va_end(list);
-}
-
-void Log::writeVArgs(const char* format, va_list list)
-{
-    va_list list2;
-    va_copy(list2, list);
-
-    vprintf(format, list);
-    writeToFileVArgs(format, list2);
-
-    va_end(list2);
-}
-
-void Log::writeCFormatToFile(const char* format, ...)
-{
-    va_list list;
-    va_start(list, format);
-    writeToFileVArgs(format, list);
-    va_end(list);
-}
-
-void Log::SetColor(unsigned color)
+void Log::SetColor(unsigned color, bool stdoutOrStderr)
 {
     // On Linux, we insert escape-codes into the string. On Windows call system functions.
 #ifndef _WIN32
@@ -143,10 +94,10 @@ void Log::SetColor(unsigned color)
     else
         colorModifier = "\033[0m";
 
-    flushToStdOut(colorModifier);
+    flush(colorModifier, stdoutOrStderr ? LogTarget::Stdout : LogTarget::Stderr);
 #else
     // obtain handle
-    HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+    HANDLE hStdout = GetStdHandle(stdoutOrStderr ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE);
     CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
     if(GetConsoleScreenBufferInfo(hStdout, &csbiInfo))
     {
@@ -175,37 +126,33 @@ void Log::SetColor(unsigned color)
 #endif
 }
 
-void Log::ResetColor()
+void Log::ResetColor(bool stdoutOrStderr)
 {
 #ifndef _WIN32
-    flushToStdOut("\033[0m");
+    flush("\033[0m", stdoutOrStderr ? LogTarget::Stdout : LogTarget::Stderr);
 #else
-    HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+    HANDLE hStdout = GetStdHandle(stdoutOrStderr ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE);
     CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
     if(GetConsoleScreenBufferInfo(hStdout, &csbiInfo))
         SetConsoleTextAttribute(hStdout, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
 #endif
 }
 
-void Log::writeToFileVArgs(const char* format, va_list list)
+void Log::flush(const char* txt, LogTarget target)
 {
-    open();
+    // Write to stdout or stderr
+    if(target == LogTarget::Stdout || target == LogTarget::FileAndStdout)
+        std::cout << txt;
+    else if(target == LogTarget::Stderr || target == LogTarget::FileAndStderr)
+        std::cerr << txt;
+    // And possibly also to file
+    if(target == LogTarget::FileAndStdout || target == LogTarget::FileAndStderr || target == LogTarget::File)
+    {
+        open();
 
-    if(logFileWriter)
-        logFileWriter->writeFormattedText(format, list);
-}
-
-void Log::flushToStdOut(const char* txt)
-{
-    std::cout << txt;
-}
-
-void Log::flushToFile(const char* txt)
-{
-    open();
-
-    if(logFileWriter)
-        logFileWriter->writeText(txt);
+        if(logFileWriter)
+            logFileWriter->writeText(txt);
+    }
 }
 
 /**
@@ -237,29 +184,29 @@ void Log::writeLastError(const char* text)
 #endif
 }
 
-FormatedLogEntry Log::write(const char* format)
+FormatedLogEntry Log::write(const char* format, LogTarget target/* = LogTarget::FileAndStdout*/)
 {
-    return FormatedLogEntry(*this, FormatedLogEntry::TO_FILE_AND_STDOUT, format);
+    return FormatedLogEntry(*this, target, format);
 }
 
-FormatedLogEntry Log::writeColored(const char* format, unsigned color)
+FormatedLogEntry Log::writeColored(const char* format, unsigned color, LogTarget target/* = LogTarget::FileAndStdout*/)
 {
-    return FormatedLogEntry(*this, FormatedLogEntry::TO_FILE_AND_STDOUT, format, color);
+    return FormatedLogEntry(*this, target, format, color);
 }
 
 FormatedLogEntry Log::writeToFile(const char* format)
 {
-    return FormatedLogEntry(*this, FormatedLogEntry::TO_FILE, format);
+    return FormatedLogEntry(*this, LogTarget::File, format);
 }
 
-FormatedLogEntry Log::write(const std::string& format)
+FormatedLogEntry Log::write(const std::string& format, LogTarget target/* = LogTarget::FileAndStdout*/)
 {
-    return write(format.c_str());
+    return write(format.c_str(), target);
 }
 
-FormatedLogEntry Log::writeColored(const std::string& format, unsigned color)
+FormatedLogEntry Log::writeColored(const std::string& format, unsigned color, LogTarget target/* = LogTarget::FileAndStdout*/)
 {
-    return writeColored(format.c_str(), color);
+    return writeColored(format.c_str(), color, target);
 }
 
 FormatedLogEntry Log::writeToFile(const std::string& format)

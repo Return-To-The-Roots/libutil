@@ -21,14 +21,9 @@
 
 FormatedLogEntry::~FormatedLogEntry()
 {
-    if(target_ == TO_FILE_AND_STDOUT || target_ == TO_FILE)
-        log_.flushToFile(fmt.str().c_str());
-    if(target_ == TO_FILE_AND_STDOUT)
-    {
-        if(useColor_)
-            log_.SetColor(color_);
-        log_.flushToStdOut(fmt.str().c_str());
-        if(useColor_)
-            log_.ResetColor();
-    }
+    if(useColor_)
+        log_.SetColor(color_, target_ == LogTarget::Stdout || target_ == LogTarget::FileAndStdout);
+    log_.flush(fmt.str().c_str(), target_);
+    if(useColor_)
+        log_.ResetColor(target_ == LogTarget::Stdout || target_ == LogTarget::FileAndStdout);
 }

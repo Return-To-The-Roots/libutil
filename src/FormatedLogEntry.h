@@ -20,17 +20,25 @@
 
 #include <boost/format.hpp>
 #include <boost/static_assert.hpp>
+#include <boost/core/scoped_enum.hpp>
 #include <string>
 
 class Log;
 
+BOOST_SCOPED_ENUM_DECLARE_BEGIN(LogTarget)
+{
+    Stdout,
+    Stderr,
+    File,
+    FileAndStdout,
+    FileAndStderr
+}
+BOOST_SCOPED_ENUM_DECLARE_END(LogTarget)
+
+
 /// Holds one log entry. Will be flushed on destruction
 class FormatedLogEntry {
 public:
-    enum LogTarget{
-        TO_FILE,
-        TO_FILE_AND_STDOUT
-    };
     FormatedLogEntry(Log& log, LogTarget target, const char* msg): log_(log), target_(target), fmt(msg), useColor_(false), color_(0) {}
     FormatedLogEntry(Log& log, LogTarget target, const std::string& msg): log_(log), target_(target), fmt(msg), useColor_(false), color_(0) {}
     FormatedLogEntry(Log& log, LogTarget target, const std::string& msg, unsigned color): log_(log), target_(target), fmt(msg), useColor_(true), color_(color) {}

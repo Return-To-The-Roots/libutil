@@ -26,7 +26,6 @@ class StringStreamWriter: public TextWriterInterface
 {
     std::stringstream stream;
 public:
-    void writeFormattedText(const char* format, va_list list) override;
     void writeText(const char* txt) override;
 
     std::string getText() const;
