@@ -175,7 +175,7 @@ void Log::writeLastError(const char* text)
         NULL
     );
 
-    write("%s: %s\n") % text % lpMsgBuf;
+    write("%s: %s\n") % text % static_cast<const char*>(lpMsgBuf);
 
     // Free the buffer.
     LocalFree( lpMsgBuf );
