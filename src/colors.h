@@ -47,14 +47,14 @@ const unsigned COLOR_WINDOWBROWN = 0xFF886034;
 const boost::array<unsigned, 11> SUPPRESS_UNUSED PLAYER_COLORS =
 {{
     0xFF0079DB, // blue
-    0xFFD70000, // red
     0xFFCBCB00, // yellow
-    0xFF41C371, // green
+    0xFFD70000, // red
     0xFF9A75BE, // magenta
-    COLOR_CYAN, // xyan,
     0xFF4D4D4D, // black
-    COLOR_WHITE, // white
+    0xFF41C371, // green
     COLOR_ORANGE, // orange
+    COLOR_CYAN, // xyan,
+    COLOR_WHITE, // white
     COLOR_BROWN, // brown
     COLOR_PURPLE, // purple
 }};
