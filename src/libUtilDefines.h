@@ -57,4 +57,12 @@
 #   include <cassert>
 #endif //_WIN32
 
+// Macro that can be used to suppress unused warnings. Required e.g. for const boost::arrays defined in headers
+// Don't use this if not absolutely necessary!
+#ifdef __GNUC__
+#   define SUPPRESS_UNUSED __attribute__((unused))
+#else
+#   define SUPPRESS_UNUSED
+#endif
+
 #endif

@@ -39,10 +39,6 @@ const unsigned COLOR_SHADOW = 0x40000000;
 const unsigned COLOR_GREY = 0xFFCCCCCC;
 const unsigned COLOR_WINDOWBROWN = 0xFF886034;
 
-#ifndef SUPPRESS_UNUSED
-#   define SUPPRESS_UNUSED
-#endif
-
 /// Spielerfarben
 const boost::array<unsigned, 11> SUPPRESS_UNUSED PLAYER_COLORS =
 {{
