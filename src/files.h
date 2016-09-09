@@ -20,6 +20,9 @@
 #pragma once
 
 #include <string>
+#ifndef NO_BUILD_PATHS
+#   include <build_paths.h>
+#endif
 
 #ifndef RTTR_PREFIX
 #   define RTTR_PREFIX "."
@@ -48,6 +51,10 @@
 #       define RTTR_GAMEDIR RTTR_DATADIR"/S2"
 #   endif
 #endif // !GAMEDIR
+
+#ifndef RTTR_LIBDIR
+#   define RTTR_LIBDIR RTTR_DATADIR
+#endif // !RTTR_LIBDIR
 
 #ifndef RTTR_DRIVERDIR
 #   define RTTR_DRIVERDIR RTTR_DATADIR"/driver"
@@ -128,7 +135,7 @@ const char* const FILE_PATHS[] =
     /* 54 */RTTRDIR "",                               // unbenutzt
     /* 55 */RTTR_SETTINGSDIR "/LSTS/SOUND.LST",       // Die konvertierte sound.lst
     /* 56 */RTTRDIR "/sound.scs",                     // Das konvertier-script
-    /* 57 */RTTRDIR "",                               // Basispfad für den Soundconverter
+    /* 57 */RTTR_LIBDIR "/RTTR/",                     // Basispfad für den Soundconverter
     /* 58 */RTTR_GAMEDIR "/DATA/MIS0BOBS.LST",
     /* 59 */RTTR_GAMEDIR "/DATA/MIS1BOBS.LST",
     /* 60 */RTTR_GAMEDIR "/DATA/MIS2BOBS.LST",
