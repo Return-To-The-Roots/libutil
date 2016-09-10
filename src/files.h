@@ -44,13 +44,13 @@
 #   endif
 #endif // !RTTR_DATADIR
 
-#ifndef GAMEDIR
+#ifndef RTTR_GAMEDIR
 #   ifdef _WIN32
 #       define RTTR_GAMEDIR RTTR_PREFIX
 #   else
 #       define RTTR_GAMEDIR RTTR_DATADIR"/S2"
 #   endif
-#endif // !GAMEDIR
+#endif // !RTTR_GAMEDIR
 
 #ifndef RTTR_LIBDIR
 #   define RTTR_LIBDIR RTTR_DATADIR
