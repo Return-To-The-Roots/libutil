@@ -19,8 +19,6 @@
 #include "Log.h"
 #include "FileWriter.h"
 #include "MyTime.h"
-#include "files.h"
-#include "fileFuncs.h"
 #include "colors.h"
 #include <stdexcept>
 #include <iostream>
@@ -32,7 +30,7 @@
     #include <cerrno>
 #endif
 
-Log::Log(): logFileWriter(NULL)
+Log::Log(): logFileWriter(NULL), logFilepath("logs")
 {
 }
 
@@ -45,11 +43,18 @@ Log::~Log()
     }
 }
 
+void Log::setLogFilepath(const std::string& filepath)
+{
+    if(logFileWriter)
+        throw std::runtime_error("Cannot set log filepath after having already opened the log file");
+    logFilepath = filepath;
+}
+
 void Log::open()
 {
     if(!logFileWriter)
     {
-        std::string filePath = GetFilePath(FILE_PATHS[47]) + TIME.FormatTime("%Y-%m-%d_%H-%i-%s") + ".log";
+        std::string filePath = logFilepath + "/" + TIME.FormatTime("%Y-%m-%d_%H-%i-%s") + ".log";
         logFileWriter = new FileWriter(filePath);
     }
 }

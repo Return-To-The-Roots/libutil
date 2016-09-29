@@ -34,6 +34,10 @@ class Log : public Singleton<Log, SingletonPolicies::WithLongevity>
         Log();
         ~Log() override;
 
+        /// Sets the path where the log will be written to
+        /// Must be done before the first write
+        void setLogFilepath(const std::string& filepath);
+
         /// Open the log file if it is not yet open
         void open();
         /// Use the given writer as the file writer
@@ -59,6 +63,8 @@ class Log : public Singleton<Log, SingletonPolicies::WithLongevity>
         TextWriterInterface* getFileWriter() { return logFileWriter; }
     private:
         TextWriterInterface* logFileWriter;
+        /// Path where the log files are written to
+        std::string logFilepath;
 
         void flush(const char* txt, LogTarget target);
         // This method is used by the log entry holder
