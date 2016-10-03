@@ -60,34 +60,28 @@ typedef HRESULT (WINAPI* LPSHGetKnownFolderPath)(REFKNOWNFOLDERID rfid, DWORD dw
 static LPSHGetKnownFolderPath gSHGetKnownFolderPath = NULL;
 static HINSTANCE gShell32DLLInst = NULL;
 
-static LPSTR UnicodeToAnsi(LPCWSTR s)
+std::string UnicodeToAnsi(const std::wstring& s)
 {
-    if (s == NULL)
+    if(s.empty())
+        return "";
+
+    const int strLen = static_cast<int>(s.size());
+
+    int resultSize = WideCharToMultiByte(CP_ACP, 0, s.c_str(), strLen, NULL, 0, NULL, NULL);
+
+    if (resultSize == 0)
         return NULL;
 
-    int cw = lstrlenW(s);
-    if (cw == 0)
-    {
-        CHAR* psz = new CHAR[1];
-        *psz = '\0';
-        return psz;
-    }
+    CHAR* psz = new CHAR[resultSize + 1];
 
-    int cc = WideCharToMultiByte(CP_ACP, 0, s, cw, NULL, 0, NULL, NULL);
-
-    if (cc == 0)
-        return NULL;
-
-    CHAR* psz = new CHAR[cc + 1];
-
-    cc = WideCharToMultiByte(CP_ACP, 0, s, cw, psz, cc, NULL, NULL);
-    if (cc == 0)
+    resultSize = WideCharToMultiByte(CP_ACP, 0, s.c_str(), strLen, psz, resultSize, NULL, NULL);
+    if (resultSize == 0)
     {
         delete[] psz;
         return NULL;
     }
 
-    psz[cc] = '\0';
+    psz[resultSize] = '\0';
     return psz;
 }
 
@@ -122,10 +116,8 @@ static HRESULT mySHGetKnownFolderPath(REFKNOWNFOLDERID rfid, std::string& path)
 
     if(ppszPath)
     {
-        LPSTR ppszPathA = UnicodeToAnsi(ppszPath);
-        path = ppszPathA;
+        path = UnicodeToAnsi(ppszPath);
         CoTaskMemFree(ppszPath);
-        delete[] ppszPathA;
     }
 
     return retval;

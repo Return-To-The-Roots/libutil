@@ -20,6 +20,10 @@
 
 #include <string>
 
+#ifdef _WIN32
+    std::string UnicodeToAnsi(const std::wstring& s);
+#endif // _WIN32
+
 std::string GetFilePath(const std::string& file);
 bool FileExists(const std::string& file);
 bool IsDir(std::string dir);
