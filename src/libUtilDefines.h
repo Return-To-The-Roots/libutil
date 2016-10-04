@@ -65,4 +65,7 @@
 #   define SUPPRESS_UNUSED
 #endif
 
+namespace boost{ namespace filesystem{} }
+namespace bfs = boost::filesystem;
+
 #endif

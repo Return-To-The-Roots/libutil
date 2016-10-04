@@ -18,23 +18,14 @@
 #include "libUtilDefines.h" // IWYU pragma: keep
 #include "fileFuncs.h"
 
-#include <sstream>
+#include "ucString.h"
+#include <boost/filesystem.hpp>
 #include <cstdlib>
-#include <cstdio>
-#include <algorithm>
 #ifdef _WIN32
-    #define WIN32_LEAN_AND_MEAN
-    #include <windows.h>
-#else
-    #include <dirent.h>
-    #include <sys/stat.h>
+#   define WIN32_LEAN_AND_MEAN
+#   include <windows.h>
+#   include <shlobj.h>
 #endif
-
-#ifdef _WIN32
-#include <shlobj.h>
-#endif
-
-#include <cstddef>
 
 #if defined(__CYGWIN__) || defined (__MINGW32__)
 
@@ -59,31 +50,6 @@ typedef HRESULT (WINAPI* LPSHGetKnownFolderPath)(REFKNOWNFOLDERID rfid, DWORD dw
 
 static LPSHGetKnownFolderPath gSHGetKnownFolderPath = NULL;
 static HINSTANCE gShell32DLLInst = NULL;
-
-std::string UnicodeToAnsi(const std::wstring& s)
-{
-    if(s.empty())
-        return "";
-
-    const int strLen = static_cast<int>(s.size());
-
-    int resultSize = WideCharToMultiByte(CP_ACP, 0, s.c_str(), strLen, NULL, 0, NULL, NULL);
-
-    if (resultSize == 0)
-        return NULL;
-
-    CHAR* psz = new CHAR[resultSize + 1];
-
-    resultSize = WideCharToMultiByte(CP_ACP, 0, s.c_str(), strLen, psz, resultSize, NULL, NULL);
-    if (resultSize == 0)
-    {
-        delete[] psz;
-        return NULL;
-    }
-
-    psz[resultSize] = '\0';
-    return psz;
-}
 
 /**
  *  Wrapper um SHGetKnownFolderPath, unter Vista und Größer benutzt es das
@@ -116,7 +82,7 @@ static HRESULT mySHGetKnownFolderPath(REFKNOWNFOLDERID rfid, std::string& path)
 
     if(ppszPath)
     {
-        path = UnicodeToAnsi(ppszPath);
+        path = cvWideStringToUTF8(ppszPath);
         CoTaskMemFree(ppszPath);
     }
 
@@ -134,131 +100,44 @@ static HRESULT mySHGetKnownFolderPath(REFKNOWNFOLDERID rfid, std::string& path)
  */
 std::string GetFilePath(const std::string& file)
 {
-    std::string to = file;
+    if(file.empty())
+        return "";
+
+    bfs::path to;
 
     // ist der Pfad ein Home-Dir?
-    if(file.at(0) == '~')
+    if(file[0] == '~')
     {
-        std::stringstream s;
-#ifdef _WIN32
-        std::string path = "";
+        std::string homePath;
 
+#ifdef _WIN32
         // "$User\Saved Games"
-        if(mySHGetKnownFolderPath(FOLDERID_SavedGames, path) != S_OK)
+        if(mySHGetKnownFolderPath(FOLDERID_SavedGames, homePath) != S_OK)
         {
             // "$Documents\My Games"
-            if(mySHGetKnownFolderPath(FOLDERID_Documents, path) == S_OK)
-            {
-                path += "\\My Games";
-            }
+            if(mySHGetKnownFolderPath(FOLDERID_Documents, homePath) == S_OK)
+                homePath += "\\My Games";
         }
 
-        s << path;
-
         // Kein Pfad gefunden, $AppData verwenden
-        if(s.str().empty())
-            s << getenv("APPDATA");
+        if(homePath.empty())
+            homePath = getenv("APPDATA");
 
 // linux, apple
 #else
         // $Home verwenden
-        s << getenv("HOME");
+        homePath = getenv("HOME");
 #endif
+        // Emergency fallback. Should never happen but prevents "~/foo"->"/foo"
+        if(homePath.empty())
+        {
+            assert(false);
+            homePath = ".";
+        }
 
-        s << file.substr(1);
+        to = homePath + file.substr(1);
+    } else
+        to = file;
 
-        to = s.str();
-    }
-
-    std::replace(to.begin(), to.end(), '\\', '/');
-    return to;
-}
-
-/**
- *  prüft ob eine Datei existiert (bzw ob sie lesbar ist)
- *
- *  @param[in] file
- *
- *  @return liefert ja oder nein zurück
- */
-bool FileExists(const std::string& file)
-{
-    FILE* test = fopen(GetFilePath(file).c_str(), "rb");
-    if(test)
-    {
-        fclose(test);
-        return true;
-    }
-    return false;
-}
-
-/**
- *  prüft ob eine Verzeichnis existiert (bzw ob es ein Verzeichnis ist)
- *
- *  @param[in] dir
- *
- *  @return liefert ja oder nein zurück
- */
-bool IsDir(std::string dir)
-{
-    if(dir.at(dir.size() - 1) == '/')
-        dir.erase(dir.size() - 1, 1);
-
-#ifdef _WIN32
-    std::string path = GetFilePath(dir);
-    std::replace(path.begin(), path.end(), '/', '\\');
-
-    HANDLE test;
-    WIN32_FIND_DATAA wfd;
-
-    test = FindFirstFileA(path.c_str(), &wfd);
-    if(test != INVALID_HANDLE_VALUE)
-    {
-        FindClose(test);
-        if( (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY)
-            return true;
-    }
-#else
-    DIR* test = opendir(GetFilePath(dir).c_str());
-    if(test)
-    {
-        closedir(test);
-        return true;
-    }
-#endif // !_WIN32
-
-    return false;
-}
-
-int mkdir_p(const std::string& dir)
-{
-	if(IsDir(dir))
-		return 0;
-
-	if (
-#ifdef _WIN32
-		!CreateDirectoryA(dir.c_str(), NULL)
-#else
-		mkdir(dir.c_str(), 0750) < 0
-#endif
-		)
-	{
-		size_t slash = dir.rfind('/');
-		if (slash != std::string::npos)
-		{
-			std::string prefix = dir.substr(0, slash);
-			if(mkdir_p(prefix) == 0)
-			{
-				return (
-#ifdef _WIN32
-					CreateDirectoryA(dir.c_str(), NULL) ? 0 : -1
-#else
-					mkdir(dir.c_str(), 0750)
-#endif
-					);
-			}
-		}
-		return -1;
-	}
-	return 0;
+    return to.make_preferred().string();
 }
