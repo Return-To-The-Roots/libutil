@@ -102,6 +102,22 @@ ucString cvWideStringToUnicode(const std::wstring& other)
     }
 }
 
+std::wstring cvUTF8ToWideString(const std::string& other)
+{
+    std::string text;
+    if(!utf8::is_valid(other.begin(), other.end()))
+    {
+        text.reserve(other.length());
+        utf8::replace_invalid(other.begin(), other.end(), std::back_inserter(text));
+    } else
+        text = other;
+
+    std::wstring tmp;
+    tmp.reserve(text.length());
+    utf8::utf8to16(text.begin(), text.end(), std::back_inserter(tmp));
+    return tmp;
+}
+
 std::string cvStringToUTF8(const std::string& other)
 {
     if(utf8::is_valid(other.begin(), other.end()))

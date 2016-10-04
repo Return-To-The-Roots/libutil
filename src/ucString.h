@@ -40,6 +40,8 @@ std::string cvUnicodeToUTF8(const ucString& other);
 std::string cvWideStringToUTF8(const std::wstring& other);
 /// Convert a widestring (assumed to be UTF-16 or UCS-2) to unicode string
 ucString cvWideStringToUnicode(const std::wstring& other);
+/// Convert an UTF-8 string to a widestring (UTF-16 or UCS-2)
+std::wstring cvUTF8ToWideString(const std::string& other);
 
 //////////////////////////////////////////////////////////////////////////
 // Functions that interpret the std::string as unicode
