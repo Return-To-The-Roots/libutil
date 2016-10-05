@@ -50,7 +50,7 @@ std::string createTempFile(std::ofstream& file, const std::string& ext/* = ".tmp
         if(bfs::exists(filePath))
             continue;
         // Try to open and place cursor at end if it exists (shouldn't be the case but might be...)
-        file.open(filePath.string().c_str(), std::ios_base::binary | std::ios_base::ate);
+        file.open(filePath.c_str(), std::ios_base::binary | std::ios_base::ate);
         if(!file)
             continue;
         if(file.tellp() > 0)
@@ -67,16 +67,17 @@ std::string createTempFile(std::ofstream& file, const std::string& ext/* = ".tmp
 
 void unlinkFile(const std::string& filePath)
 {
-    if(!bfs::exists(filePath))
+    bfs::path filepathFull = filePath;
+    if(!bfs::exists(filepathFull))
         return;
 #ifdef WIN32
     // Try to remove it (works for non-open files and files in non-exclusive mode)
-    if(DeleteFile(filePath.c_str()))
+    if(DeleteFileW(filepathFull.c_str()))
         return;
     // Fallback: Delete on reboot
-    MoveFileEx(filePath.c_str(), NULL, MOVEFILE_DELAY_UNTIL_REBOOT);
+    MoveFileExW(filepathFull.c_str(), NULL, MOVEFILE_DELAY_UNTIL_REBOOT);
 #else
-    unlink(filePath.c_str());
+    unlink(filepathFull.c_str());
 #endif // WIN32
 
 }
