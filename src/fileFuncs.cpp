@@ -121,12 +121,18 @@ std::string GetFilePath(const std::string& file)
 
         // Kein Pfad gefunden, $AppData verwenden
         if(homePath.empty())
-            homePath = getenv("APPDATA");
+        {
+            const char* appData = getenv("APPDATA");
+            if(appData)
+                homePath = appData;
+        }
 
 // linux, apple
 #else
         // $Home verwenden
-        homePath = getenv("HOME");
+        const char* home = getenv("HOME");
+        if(home)
+            homePath = home;
 #endif
         // Emergency fallback. Should never happen but prevents "~/foo"->"/foo"
         if(homePath.empty())
