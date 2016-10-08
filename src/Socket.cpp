@@ -78,7 +78,11 @@ ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr, bool resolveAll)
         int error = getaddrinfo(hostAddr.host.c_str(), hostAddr.port.c_str(), &hints, &addr);
         if(error != 0)
         {
+#ifdef _WIN32
+            std::cerr << "getaddrinfo: " << gai_strerrorA(error) << "\n";
+#else
             std::cerr << "getaddrinfo: " << gai_strerror(error) << "\n";
+#endif // _WIN32
             addr = NULL;
         }
     }
