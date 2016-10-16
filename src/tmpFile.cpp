@@ -49,8 +49,10 @@ std::string createTempFile(std::ofstream& file, const std::string& ext/* = ".tmp
         // If it exists, try again
         if(bfs::exists(filePath))
             continue;
+        // TODO: Probably use a boost stream
+        const std::string sFilePath = filePath.string();
         // Try to open and place cursor at end if it exists (shouldn't be the case but might be...)
-        file.open(filePath.c_str(), std::ios_base::binary | std::ios_base::ate);
+        file.open(sFilePath.c_str(), std::ios_base::binary | std::ios_base::ate);
         if(!file)
             continue;
         if(file.tellp() > 0)
@@ -59,7 +61,7 @@ std::string createTempFile(std::ofstream& file, const std::string& ext/* = ".tmp
             file.close();
             continue;
         }
-        return filePath.string();
+        return sFilePath;
     } while(++tries < MAX_TRIES);
     // Could not find a file :(
     return "";
