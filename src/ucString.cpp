@@ -60,6 +60,11 @@ std::string cvUnicodeToUTF8(const ucString& other)
     return result;
 }
 
+bool isValidUTF8(const std::string& text)
+{
+    return utf8::is_valid(text.begin(), text.end());
+}
+
 std::string cvWideStringToUTF8(const std::wstring& other)
 {
     std::string result;
@@ -105,7 +110,7 @@ ucString cvWideStringToUnicode(const std::wstring& other)
 std::wstring cvUTF8ToWideString(const std::string& other)
 {
     std::string text;
-    if(!utf8::is_valid(other.begin(), other.end()))
+    if(!isValidUTF8(other))
     {
         text.reserve(other.length());
         utf8::replace_invalid(other.begin(), other.end(), std::back_inserter(text));

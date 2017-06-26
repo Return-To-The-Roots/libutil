@@ -33,6 +33,9 @@ ucString cvUTF8ToUnicode(const std::string& other);
 /// Convert an unicode string to UTF-8 string
 std::string cvUnicodeToUTF8(const ucString& other);
 
+/// Return true if text is valid UTF-8
+bool isValidUTF8(const std::string& text);
+
 //////////////////////////////////////////////////////////////////////////
 // Legacy functions for wide strings (non-portable unicode versions)
 
