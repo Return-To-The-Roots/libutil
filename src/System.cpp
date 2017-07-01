@@ -96,7 +96,8 @@ std::string System::getEnvVar(const std::string& name){
 #ifdef _WIN32
     return cvWideStringToUTF8(getEnvVar(cvUTF8ToWideString(name)));
 #else
-    return getenv(name.c_str());
+    const char* value = getenv(name.c_str());
+    return value ? value : "";
 #endif // _WIN32
 }
 
