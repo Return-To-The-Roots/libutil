@@ -18,6 +18,7 @@
 #include "libUtilDefines.h" // IWYU pragma: keep
 #include "System.h"
 #include "ucString.h"
+#include "getExecutablePath.h"
 #include <cstdlib>
 #ifdef _WIN32
 #   define WIN32_LEAN_AND_MEAN
@@ -178,4 +179,14 @@ std::string System::getUserName()
 #else
     return getEnvVar("USER");
 #endif // _WIN32
+}
+
+bfs::path System::getExecutablePath(const char* argv0)
+{
+    return getExecutablePath(std::string(argv0 ? argv0 : ""));
+}
+
+bfs::path System::getExecutablePath(const std::string& argv0)
+{
+    return ::getExecutablePath(argv0);
 }

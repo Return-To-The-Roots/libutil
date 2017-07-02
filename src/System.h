@@ -40,6 +40,11 @@ public:
     /// Gets the users home directory
     static bfs::path getHomePath();
     static std::string getUserName();
+
+    /// Return the full path to the current executable
+    static bfs::path getExecutablePath(const char* argv0);
+    /// Return the full path to the current executable
+    static bfs::path getExecutablePath(const std::string& argv0);
 };
 
 
