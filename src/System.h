@@ -28,6 +28,10 @@
 class System
 {
 public:
+    /// Return true iff the environment variable exists
+    static bool envVarExists(const std::string& name);
+    /// Return true iff the environment variable exists
+    static bool envVarExists(const std::wstring& name);
     /// Return the environment variable with the given name
     static std::string getEnvVar(const std::string& name);
     /// Return the environment variable with the given name
@@ -35,8 +39,16 @@ public:
     /// Return the environment variable as a path
     /// (might be faster than constructing one from a string)
     static bfs::path getPathFromEnvVar(const std::string& name);
-    /// Return true iff the environment variable exists
-    static bool envVarExists(const std::string& name);
+
+    /// Set the environment variable. Return true on success
+    static bool setEnvVar(const std::string& name, const std::string& value);
+    /// Set the environment variable. Return true on success
+    static bool setEnvVar(const std::wstring& name, const std::wstring& value);
+    /// Remove the environment variable. Return true on success
+    static bool removeEnvVar(const std::string& name);
+    /// Remove the environment variable. Return true on success
+    static bool removeEnvVar(const std::wstring& name);
+
     /// Gets the users home directory
     static bfs::path getHomePath();
     static std::string getUserName();

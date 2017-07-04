@@ -93,6 +93,22 @@ static HRESULT mySHGetKnownFolderPath(REFKNOWNFOLDERID rfid, std::string& path)
 
 //////////////////////////////////////////////////////////////////////////
 
+bool System::envVarExists(const std::string& name){
+#ifdef _WIN32
+    return envVarExists(cvUTF8ToWideString(name));
+#else
+    return getenv(name.c_str()) != NULL;
+#endif // _WIN32
+}
+
+bool System::envVarExists(const std::wstring& name){
+#ifdef _WIN32
+    return GetEnvironmentVariableW(name.c_str(), NULL, 0) > 0;
+#else
+    return envVarExists(cvWideStringToUTF8(name));
+#endif // _WIN32
+}
+
 std::string System::getEnvVar(const std::string& name){
 #ifdef _WIN32
     return cvWideStringToUTF8(getEnvVar(cvUTF8ToWideString(name)));
@@ -104,14 +120,17 @@ std::string System::getEnvVar(const std::string& name){
 
 std::wstring System::getEnvVar(const std::wstring& name){
 #ifdef _WIN32
-    DWORD numBytes = GetEnvironmentVariableW(name.c_str(), NULL, 0);
-    if(!numBytes)
+    // Get number of chars including terminating NULL
+    DWORD numChars = GetEnvironmentVariableW(name.c_str(), NULL, 0);
+    if(!numChars)
         return L"";
-    std::vector<wchar_t> tmpString(numBytes);
-    numBytes = GetEnvironmentVariableW(name.c_str(), &tmpString[0], static_cast<DWORD>(tmpString.size()));
-    if(numBytes + 1 != static_cast<DWORD>(tmpString.size()))
+    std::vector<wchar_t> tmpString(numChars);
+    numChars = GetEnvironmentVariableW(name.c_str(), &tmpString[0], static_cast<DWORD>(tmpString.size()));
+    // This does NOT include the terminating NULL
+    if(numChars + 1 != static_cast<DWORD>(tmpString.size()))
         throw std::runtime_error("Invalid size returned");
-    return std::wstring(tmpString.begin(), tmpString.end());
+    // Convert to wstring but do not include terminating 0
+    return std::wstring(tmpString.begin(), tmpString.begin() + numChars);
 #else
     return cvUTF8ToWideString(getEnvVar(cvWideStringToUTF8(name)));
 #endif // _WIN32
@@ -125,12 +144,40 @@ bfs::path System::getPathFromEnvVar(const std::string& name){
 #endif // _WIN32
 }
 
-bool System::envVarExists(const std::string& name){
+bool System::setEnvVar(const std::string& name, const std::string& value)
+{
 #ifdef _WIN32
-    std::wstring wName = cvUTF8ToWideString(name);
-    return GetEnvironmentVariableW(wName.c_str(), NULL, 0) > 0;
+    return setEnvVar(cvUTF8ToWideString(name), cvUTF8ToWideString(value));
 #else
-    return getenv(name.c_str()) != NULL;
+    return setenv(name.c_str(), value.c_str(), 1) == 0;
+#endif // _WIN32
+}
+
+bool System::setEnvVar(const std::wstring& name, const std::wstring& value)
+{
+#ifdef _WIN32
+    return SetEnvironmentVariableW(name.c_str(), value.c_str()) == TRUE;
+#else
+    return setEnvVar(cvWideStringToUTF8(name), cvWideStringToUTF8(value));
+#endif // _WIN32
+}
+
+bool System::removeEnvVar(const std::string& name)
+{
+#ifdef _WIN32
+    return removeEnvVar(cvUTF8ToWideString(name));
+#else
+    unsetenv(name.c_str());
+    return true;
+#endif // _WIN32
+}
+
+bool System::removeEnvVar(const std::wstring& name)
+{
+#ifdef _WIN32
+    return SetEnvironmentVariableW(name.c_str(), NULL) == TRUE;
+#else
+    return removeEnvVar(cvWideStringToUTF8(name));
 #endif // _WIN32
 }
 
