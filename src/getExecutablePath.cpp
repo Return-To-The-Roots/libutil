@@ -29,7 +29,7 @@ std::string getExecutablePathFallback(const std::string& argv0);
 
 #if (BOOST_OS_CYGWIN || BOOST_OS_WINDOWS) // {
 
-#include <Windows.h>
+#include <windows.h>
 #include <vector>
 #include "ucString.h"
 
