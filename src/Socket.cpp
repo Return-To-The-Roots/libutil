@@ -431,7 +431,7 @@ Socket Socket::Accept()
  *
  *  @param[in] hostname Ziel-Hostname/-ip
  */
-std::vector<HostAddr> Socket::HostToIp(const std::string& hostname, const unsigned int port, bool get_ipv6, bool useUDP)
+std::vector<HostAddr> Socket::HostToIp(const std::string& hostname, const unsigned port, bool get_ipv6, bool useUDP)
 {
     std::vector<HostAddr> ips;
     std::string sPort = boost::lexical_cast<std::string>(port);
@@ -469,7 +469,7 @@ std::vector<HostAddr> Socket::HostToIp(const std::string& hostname, const unsign
     return ips;
 }
 
-void Socket::Sleep(unsigned int ms)
+void Socket::Sleep(unsigned ms)
 {
 #ifdef _WIN32
     ::Sleep(250);
@@ -486,7 +486,7 @@ void Socket::Sleep(unsigned int ms)
  *
  *  @p true bei Erfolg, @p false bei Fehler
  */
-bool Socket::Connect(const std::string& hostname, const unsigned short port, bool use_ipv6, const Socket::PROXY_TYPE typ, const std::string& proxy_hostname, const unsigned int proxy_port)
+bool Socket::Connect(const std::string& hostname, const unsigned short port, bool use_ipv6, const Socket::PROXY_TYPE typ, const std::string& proxy_hostname, const unsigned proxy_port)
 {
     if(typ == PROXY_SOCKS4)
         use_ipv6 = false;
@@ -566,8 +566,8 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
 
                 if(sw.Select(0, 1) == 1 || se.Select(0, 2) != 0)
                 {
-                    unsigned int err;
-                    socklen_t len = sizeof(unsigned int);
+                    unsigned err;
+                    socklen_t len = sizeof(unsigned);
                     getsockopt(socket_, SOL_SOCKET, SO_ERROR, (char*)&err, &len);
 
                     if(err != 0)
@@ -759,7 +759,7 @@ bool Socket::operator>(const Socket& sock)
  */
 int Socket::BytesWaiting()
 {
-    unsigned int received;
+    unsigned received;
     if(BytesWaiting(&received) != 0)
         return -1;
 
@@ -773,7 +773,7 @@ int Socket::BytesWaiting()
  *
  *  @return liefert Null bei Erfolg, SOCKET_ERROR bei Fehler
  */
-int Socket::BytesWaiting(unsigned int* received)
+int Socket::BytesWaiting(unsigned* received)
 {
 #ifdef _WIN32
     DWORD dwReceived;

@@ -136,7 +136,7 @@ class Socket
         };
 
         /// versucht eine Verbindung mit einem externen Host aufzubauen.
-        bool Connect(const std::string& hostname, const unsigned short port, bool use_ipv6, const PROXY_TYPE typ = PROXY_NONE, const std::string& proxy_hostname = "", const unsigned int proxy_port = 0);
+        bool Connect(const std::string& hostname, const unsigned short port, bool use_ipv6, const PROXY_TYPE typ = PROXY_NONE, const std::string& proxy_hostname = "", const unsigned proxy_port = 0);
 
         /// liest Daten vom Socket in einen Puffer.
         int Recv(void* const buffer, const int length, bool block = true);
@@ -158,7 +158,7 @@ class Socket
         int BytesWaiting();
 
         /// prüft auf wartende Bytes.
-        int BytesWaiting(unsigned int* dwReceived);
+        int BytesWaiting(unsigned* dwReceived);
 
         /// liefert die IP des Remote-Hosts.
         std::string GetPeerIP();
@@ -169,9 +169,9 @@ class Socket
         /// Gets a reference to the Socket.
         SOCKET& GetSocket();
 
-        void Sleep(unsigned int ms);
+        void Sleep(unsigned ms);
 
-        std::vector<HostAddr> HostToIp(const std::string& hostname, const unsigned int port, bool get_ipv6, bool useUDP = false);
+        std::vector<HostAddr> HostToIp(const std::string& hostname, const unsigned port, bool get_ipv6, bool useUDP = false);
 
         /// liefert einen string der übergebenen Ip.
         static std::string IpToString(const sockaddr* addr);

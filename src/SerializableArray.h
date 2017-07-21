@@ -65,8 +65,8 @@ class SerializableArray
             elements.push_back(item);
         }
 
-        inline Type&       operator[](unsigned int i)       { return elements.at(i); }
-        inline const Type& operator[](unsigned int i) const { return elements.at(i); }
+        inline Type&       operator[](unsigned i)       { return elements.at(i); }
+        inline const Type& operator[](unsigned i) const { return elements.at(i); }
 
         /**
          *  räumt die Liste auf.
@@ -107,7 +107,7 @@ class SerializableArray
             unsigned count = ser.PopUnsignedInt();
             elements.reserve(count);
 
-            for(unsigned int i = 0; i < count; ++i)
+            for(unsigned i = 0; i < count; ++i)
                 elements.push_back(Type(i, ser));
         }
 
@@ -115,7 +115,7 @@ class SerializableArray
          *  liefert ein Element der Liste.
          *
          */
-        inline const Type* getElement(unsigned int i) const
+        inline const Type* getElement(unsigned i) const
         {
             if(i < elements.size())
                 return &elements.at(i);
@@ -127,7 +127,7 @@ class SerializableArray
          *  liefert ein Element der Liste.
          *
          */
-        inline Type* getElement(unsigned int i)
+        inline Type* getElement(unsigned i)
         {
             if(i < elements.size())
                 return &elements.at(i);
@@ -139,7 +139,7 @@ class SerializableArray
          *  liefert die Anzahl der Elemente.
          *
          */
-        inline unsigned int getCount() const
+        inline unsigned getCount() const
         {
             return size();
         }

@@ -47,7 +47,7 @@ int MessageHandler::send(Socket& sock, const Message& msg)
     *reinterpret_cast<uint16_t*>(data) = boost::endian::native_to_little(msg.getId());
     *reinterpret_cast<int32_t*>(data + sizeof(uint16_t)) = boost::endian::native_to_little(ser.GetLength() - headerSize);
 
-    if(ser.GetLength() != (unsigned int)sock.Send(data, ser.GetLength()))
+    if(ser.GetLength() != (unsigned)sock.Send(data, ser.GetLength()))
         return -1;
     else
         return ser.GetLength();
@@ -84,7 +84,7 @@ Message* MessageHandler::recv(Socket& sock, int& error, bool wait)
         }
 
         // liegen diese Daten an unserem Socket, bzw wieviele Bytes liegen an?
-        unsigned int received;
+        unsigned received;
         if(!set.InSet(sock) || sock.BytesWaiting(&received) != 0)
         {
             if(wait)

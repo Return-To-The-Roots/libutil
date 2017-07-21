@@ -38,7 +38,7 @@ class Message
         virtual Message* create(unsigned short id) const { return create_base(id); }
         virtual Message* duplicate() const;
 
-        virtual void run(MessageInterface* callback, unsigned int id) = 0;
+        virtual void run(MessageInterface* callback, unsigned id) = 0;
 
     protected:
         Message(const Message& other): id_(other.id_)

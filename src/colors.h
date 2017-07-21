@@ -62,25 +62,25 @@ const boost::array<unsigned, 11> SUPPRESS_UNUSED PLAYER_COLORS =
 }};
 
 /// Liefert die transparente Farbkomponente zurück.
-inline unsigned GetAlpha(const unsigned int color) { return (( color & 0xFF000000) >> 24); }
+inline unsigned GetAlpha(const unsigned color) { return (( color & 0xFF000000) >> 24); }
 /// Liefert die rote Farbkomponente zurück.
-inline unsigned GetRed(  const unsigned int color) { return (( color & 0x00FF0000) >> 16); }
+inline unsigned GetRed(  const unsigned color) { return (( color & 0x00FF0000) >> 16); }
 /// Liefert die grüne Farbkomponente zurück.
-inline unsigned GetGreen(const unsigned int color) { return (( color & 0x0000FF00) >> 8 ); }
+inline unsigned GetGreen(const unsigned color) { return (( color & 0x0000FF00) >> 8 ); }
 /// Liefert die blaue Farbkomponente zurück.
-inline unsigned GetBlue( const unsigned int color) { return (( color & 0x000000FF)      ); }
+inline unsigned GetBlue( const unsigned color) { return (( color & 0x000000FF)      ); }
 
 /// Setzt die transparente Farbkomponente.
-inline unsigned SetAlpha(const unsigned int color, const unsigned int alpha) { return (( color & 0x00FFFFFF) | ( alpha << 24) ); }
+inline unsigned SetAlpha(const unsigned color, const unsigned alpha) { return (( color & 0x00FFFFFF) | ( alpha << 24) ); }
 /// Setzt die rote Farbkomponente.
-inline unsigned SetRed(  const unsigned int color, const unsigned int red  ) { return (( color & 0xFF00FFFF) | ( red   << 16) ); }
+inline unsigned SetRed(  const unsigned color, const unsigned red  ) { return (( color & 0xFF00FFFF) | ( red   << 16) ); }
 /// Setzt die grüne Farbkomponente.
-inline unsigned SetGreen(const unsigned int color, const unsigned int green) { return (( color & 0xFFFF00FF) | ( green << 8 ) ); }
+inline unsigned SetGreen(const unsigned color, const unsigned green) { return (( color & 0xFFFF00FF) | ( green << 8 ) ); }
 /// Setzt die blaue Farbkomponente.
-inline unsigned SetBlue( const unsigned int color, const unsigned int blue ) { return (( color & 0xFFFFFF00) | ( blue       ) ); }
+inline unsigned SetBlue( const unsigned color, const unsigned blue ) { return (( color & 0xFFFFFF00) | ( blue       ) ); }
 
 /// Erzeugt eine fertige Farbe aus einzelnen Farbkomponenten
-inline unsigned MakeColor(const unsigned int alpha, const unsigned int red, const unsigned int green, const unsigned int blue)
+inline unsigned MakeColor(const unsigned alpha, const unsigned red, const unsigned green, const unsigned blue)
 {
     return ((alpha << 24) | (red << 16) | (green << 8) |  blue);
 }

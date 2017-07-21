@@ -64,7 +64,7 @@ class MessageQueue: protected MessageHandler
         bool empty() const{ return messages.empty(); }
 
         /// verschickt Pakete der Queue, maximal @p max, mit einem maximal @p sizelimit groß (aber beliebig viele kleine)
-        bool send(Socket& sock, int max, unsigned int sizelimit = 512);
+        bool send(Socket& sock, int max, unsigned sizelimit = 512);
         bool recv(Socket& sock, bool wait = false);
         /// Sends a message directly
         static bool sendMessage(Socket& sock, const Message& msg){ return MessageHandler::send(sock, msg) >= 0; }

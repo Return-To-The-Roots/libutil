@@ -48,7 +48,7 @@ class BinaryFile
         {
             libendian::le_write_i(i, file);
         }
-        inline void WriteUnsignedInt(unsigned int i) const
+        inline void WriteUnsignedInt(unsigned i) const
         {
             libendian::le_write_ui(i, file);
         }
@@ -69,7 +69,7 @@ class BinaryFile
         {
             libendian::le_write_uc(&i, 1, file);
         }
-        inline void WriteRawData(const void* const data, const unsigned int length) const
+        inline void WriteRawData(const void* const data, const unsigned length) const
         {
             libendian::le_write_c((char*)data, length, file);
         }
@@ -84,9 +84,9 @@ class BinaryFile
             libendian::le_read_i(&i, file);
             return i;
         }
-        inline unsigned int ReadUnsignedInt()
+        inline unsigned ReadUnsignedInt()
         {
-            unsigned int i;
+            unsigned i;
             libendian::le_read_ui(&i, file);
             return i;
         }
@@ -114,7 +114,7 @@ class BinaryFile
             libendian::le_read_uc(&i, 1, file);
             return i;
         }
-        inline void ReadRawData(void* const data, const unsigned int length)
+        inline void ReadRawData(void* const data, const unsigned length)
         {
             libendian::le_read_c((char*)data, length, file);
         }

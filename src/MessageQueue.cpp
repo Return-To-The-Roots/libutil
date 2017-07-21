@@ -96,7 +96,7 @@ bool MessageQueue::flush(Socket& sock)
     return send(sock, static_cast<int>(messages.size()), std::numeric_limits<unsigned>::max());
 }
 
-bool MessageQueue::send(Socket& sock, int max, unsigned int sizelimit)
+bool MessageQueue::send(Socket& sock, int max, unsigned sizelimit)
 {
     if(!sock.isValid())
         return false;

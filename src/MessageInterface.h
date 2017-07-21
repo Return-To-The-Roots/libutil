@@ -26,10 +26,10 @@ class MessageInterface
 
     public:
         /// Null-Nachricht.
-        virtual void OnNMSNull(unsigned int id);
+        virtual void OnNMSNull(unsigned id);
 
         /// Dead-Nachricht.
-        virtual void OnNMSDead(unsigned int id);
+        virtual void OnNMSDead(unsigned id);
 };
 
 #endif //!MESSAGEINTERFACE_H_INCLUDED

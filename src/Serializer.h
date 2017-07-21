@@ -89,7 +89,7 @@ class Serializer
         }
 
         /// Schreibzugriff auf die Länge
-        void SetLength(const unsigned int length)
+        void SetLength(const unsigned length)
         {
             EnsureSize(length);
             this->length_ = length;
@@ -138,7 +138,7 @@ class Serializer
         {
             Push(i);
         }
-        inline void PushUnsignedInt(unsigned int i)
+        inline void PushUnsignedInt(unsigned i)
         {
             Push(i);
         }
@@ -190,9 +190,9 @@ class Serializer
         {
             return Pop<signed int>();
         }
-        inline unsigned int PopUnsignedInt()
+        inline unsigned PopUnsignedInt()
         {
-            return Pop<unsigned int>();
+            return Pop<unsigned>();
         }
 
         inline signed short PopSignedShort()
@@ -235,7 +235,7 @@ class Serializer
         }
 
     protected:
-        unsigned int checkByteOrder(unsigned int i)
+        unsigned checkByteOrder(unsigned i)
         {
             return htonl(i);
         }
