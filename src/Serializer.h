@@ -70,7 +70,7 @@ class Serializer
         }
 
         /// Aufräumen
-        inline void Clear()
+        void Clear()
         {
             data_.clear();
             length_ = 0;
