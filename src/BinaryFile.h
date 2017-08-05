@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "../../libendian/src/libendian.h"
+#include "libendian/src/libendian.h"
 #include <cstdio>
 #include <string>
 
