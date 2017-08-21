@@ -222,6 +222,9 @@ std::string System::getUserName()
     std::vector<wchar_t> userName(nameLen);
     if(GetUserNameW(&userName[0], &nameLen) == 0)
         throw std::runtime_error("Could not get username");
+
+    userName.resize(nameLen - 1); // nameLen already contains terminating 0
+
     return cvWideStringToUTF8(std::wstring(userName.begin(), userName.end()));
 #else
     return getEnvVar("USER");
