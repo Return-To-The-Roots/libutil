@@ -53,13 +53,13 @@ static LPSHGetKnownFolderPath gSHGetKnownFolderPath = NULL;
 static HINSTANCE gShell32DLLInst = NULL;
 
 /**
-*  Wrapper um SHGetKnownFolderPath, unter Vista und Größer benutzt es das
-*  originale SHGetKnownFolderPath, ansonsten SHGetFolderPath.
+*  Wrapper around SHGetKnownFolderPath, on Vista and up it uses SHGetKnownFolderPath, 
+*  else SHGetFolderPath.
 *
 *  @param[in] rfid
 *  @param[in] path
 *
-*  @return liefert den Status zurück (S_OK bei OK)
+*  @return Status of operation (S_OK for OK)
 */
 static HRESULT mySHGetKnownFolderPath(REFKNOWNFOLDERID rfid, std::string& path)
 {
