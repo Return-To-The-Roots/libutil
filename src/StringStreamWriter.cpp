@@ -23,7 +23,7 @@ std::string StringStreamWriter::getText() const
     return stream.str();
 }
 
-void StringStreamWriter::writeText(const char* txt)
+void StringStreamWriter::writeText(const std::string& txt)
 {
     stream << txt;
 }

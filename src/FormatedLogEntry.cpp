@@ -23,7 +23,7 @@ FormatedLogEntry::~FormatedLogEntry()
 {
     if(useColor_)
         log_.SetColor(color_, target_ == LogTarget::Stdout || target_ == LogTarget::FileAndStdout);
-    log_.flush(fmt.str().c_str(), target_);
+    log_.flush(fmt.str(), target_);
     if(useColor_)
         log_.ResetColor(target_ == LogTarget::Stdout || target_ == LogTarget::FileAndStdout);
 }

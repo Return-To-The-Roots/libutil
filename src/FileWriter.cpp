@@ -21,18 +21,13 @@
 
 FileWriter::FileWriter(const std::string& filePath)
 {
-    file = fopen(filePath.c_str(), "w");
+    file.open(filePath);
     if(!file)
         throw std::runtime_error(std::string("Could not open ") + filePath + " for writing");
 }
 
-FileWriter::~FileWriter()
+void FileWriter::writeText(const std::string& txt)
 {
-    fclose(file);
-}
-
-void FileWriter::writeText(const char* txt)
-{
-    fputs(txt, file);
-    fflush(file);
+    file << txt;
+    file.flush();
 }

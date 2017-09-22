@@ -39,7 +39,6 @@ BOOST_SCOPED_ENUM_DECLARE_END(LogTarget)
 /// Holds one log entry. Will be flushed on destruction
 class FormatedLogEntry {
 public:
-    FormatedLogEntry(Log& log, LogTarget target, const char* msg): log_(log), target_(target), fmt(msg), useColor_(false), color_(0) {}
     FormatedLogEntry(Log& log, LogTarget target, const std::string& msg): log_(log), target_(target), fmt(msg), useColor_(false), color_(0) {}
     FormatedLogEntry(Log& log, LogTarget target, const std::string& msg, unsigned color): log_(log), target_(target), fmt(msg), useColor_(true), color_(color) {}
     ~FormatedLogEntry();

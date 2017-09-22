@@ -19,17 +19,14 @@
 #define FileWriter_h__
 
 #include "TextWriterInterface.h"
-#include <cstdio>
-#include <string>
+#include <boost/filesystem/fstream.hpp>
 
 class FileWriter: public TextWriterInterface
 {
-    FILE* file;
+    bfs::ofstream file;
 public:
     FileWriter(const std::string& filePath);
-    ~FileWriter();
-    void writeText(const char* txt) override;
-
+    void writeText(const std::string& txt) override;
 };
 
 #endif // FileWriter_h__

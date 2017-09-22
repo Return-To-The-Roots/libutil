@@ -20,17 +20,15 @@
 
 #include "TextWriterInterface.h"
 #include <sstream>
-#include <string>
 
 class StringStreamWriter: public TextWriterInterface
 {
     std::stringstream stream;
 public:
-    void writeText(const char* txt) override;
+    void writeText(const std::string& txt) override;
 
     std::string getText() const;
     std::stringstream& getStream() { return stream; }
-
 };
 
 #endif // StringStreamWriter_h__

@@ -20,6 +20,7 @@
 #include "FileWriter.h"
 #include "MyTime.h"
 #include "colors.h"
+#include <boost/filesystem/path.hpp>
 #include <stdexcept>
 #include <iostream>
 
@@ -55,8 +56,8 @@ void Log::open()
 {
     if(!logFileWriter)
     {
-        std::string filePath = logFilepath + "/" + TIME.FormatTime("%Y-%m-%d_%H-%i-%s") + ".log";
-        logFileWriter = new FileWriter(filePath);
+        bfs::path filePath = bfs::path(logFilepath) / (TIME.FormatTime("%Y-%m-%d_%H-%i-%s") + ".log");
+        logFileWriter = new FileWriter(filePath.string());
     }
 }
 
@@ -144,7 +145,7 @@ void Log::ResetColor(bool stdoutOrStderr)
 #endif
 }
 
-void Log::flush(const char* txt, LogTarget target)
+void Log::flush(const std::string& txt, LogTarget target)
 {
 #ifdef _WIN32
     if(target != LogTarget::File)
@@ -165,7 +166,6 @@ void Log::flush(const char* txt, LogTarget target)
     if(target == LogTarget::FileAndStdout || target == LogTarget::FileAndStderr || target == LogTarget::File)
     {
         open();
-
         if(logFileWriter)
             logFileWriter->writeText(txt);
     }
@@ -175,7 +175,12 @@ void Log::flush(const char* txt, LogTarget target)
  *  Schreibt den zuletzt aufgetretetenen Systemfehler in lesbarer Form in
  *  stdout und Log, fügt "$text:" davor ein.
  */
-void Log::writeLastError(const char* text)
+void Log::writeLastError(const std::string& text)
+{
+    write("%s: %s\n") % text % getLastError();
+}
+
+std::string Log::getLastError() const
 {
 #ifdef _WIN32
     LPVOID lpMsgBuf;
@@ -186,46 +191,30 @@ void Log::writeLastError(const char* text)
         NULL,
         GetLastError(),
         0, // Default language
-        (LPSTR) &lpMsgBuf,
+        (LPSTR)&lpMsgBuf,
         0,
         NULL
     );
-
-    write("%s: %s\n") % text % static_cast<const char*>(lpMsgBuf);
-
+    std::string error = static_cast<const char*>(lpMsgBuf);
     // Free the buffer.
-    LocalFree( lpMsgBuf );
+    LocalFree(lpMsgBuf);
+    return error;
 #else
-    write("%s: %s\n") % text % strerror(errno);
+   return strerror(errno);
 #endif
-}
-
-FormatedLogEntry Log::write(const char* format, LogTarget target/* = LogTarget::FileAndStdout*/)
-{
-    return FormatedLogEntry(*this, target, format);
-}
-
-FormatedLogEntry Log::writeColored(const char* format, unsigned color, LogTarget target/* = LogTarget::FileAndStdout*/)
-{
-    return FormatedLogEntry(*this, target, format, color);
-}
-
-FormatedLogEntry Log::writeToFile(const char* format)
-{
-    return FormatedLogEntry(*this, LogTarget::File, format);
 }
 
 FormatedLogEntry Log::write(const std::string& format, LogTarget target/* = LogTarget::FileAndStdout*/)
 {
-    return write(format.c_str(), target);
+    return FormatedLogEntry(*this, target, format);
 }
 
 FormatedLogEntry Log::writeColored(const std::string& format, unsigned color, LogTarget target/* = LogTarget::FileAndStdout*/)
 {
-    return writeColored(format.c_str(), color, target);
+    return FormatedLogEntry(*this, target, format, color);
 }
 
 FormatedLogEntry Log::writeToFile(const std::string& format)
 {
-    return writeToFile(format.c_str());
+    return FormatedLogEntry(*this, LogTarget::File, format);
 }

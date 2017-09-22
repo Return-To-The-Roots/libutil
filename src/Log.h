@@ -43,17 +43,15 @@ class Log : public Singleton<Log, SingletonPolicies::WithLongevity>
         /// Use the given writer as the file writer
         void open(TextWriterInterface* fileWriter);
         /// Write the last occurred error description with "[text]: " at the front to stdOut and file
-        void writeLastError(const char* text);
+        void writeLastError(const std::string& text);
+        std::string getLastError() const;
 
         /// Write formated text to target (default: File and Stdout)
         FormatedLogEntry write(const std::string& format, LogTarget target = LogTarget::FileAndStdout);
-        FormatedLogEntry write(const char* format, LogTarget target = LogTarget::FileAndStdout);
         /// Write formated text to target (default: File and Stdout)
         FormatedLogEntry writeColored(const std::string& format, unsigned color, LogTarget target = LogTarget::FileAndStdout);
-        FormatedLogEntry writeColored(const char* format, unsigned color, LogTarget target = LogTarget::FileAndStdout);
         /// Write formated text to file only
         FormatedLogEntry writeToFile(const std::string& format);
-        FormatedLogEntry writeToFile(const char* format);
 
         /// Set the console text color to one of the predefined colors
         void SetColor(unsigned color, bool stdoutOrStderr);
@@ -66,7 +64,7 @@ class Log : public Singleton<Log, SingletonPolicies::WithLongevity>
         /// Path where the log files are written to
         std::string logFilepath;
 
-        void flush(const char* txt, LogTarget target);
+        void flush(const std::string& txt, LogTarget target);
         // This method is used by the log entry holder
         friend class FormatedLogEntry;
 };

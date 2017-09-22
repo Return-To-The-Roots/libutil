@@ -18,12 +18,14 @@
 #ifndef TextWriterInterface_h__
 #define TextWriterInterface_h__
 
+#include <string>
+
 /// Interface for writing text to a target
 class TextWriterInterface
 {
 public:
     virtual ~TextWriterInterface(){}
-    virtual void writeText(const char* txt) = 0;
+    virtual void writeText(const std::string& txt) = 0;
 };
 
 #endif // TextWriterInterface_h__
