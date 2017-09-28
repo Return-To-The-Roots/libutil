@@ -20,35 +20,35 @@
 #pragma once
 
 #include "Singleton.h"
-#include <string>
 #include <cstddef>
+#include <string>
 
 #ifdef _WIN32
-    #if defined __CYGWIN__ || defined __CYGWIN32__ || defined __MINGW__
-        #include <sys/types.h>
-    #endif
-    typedef unsigned __int64 unser_time_t;
+#if defined __CYGWIN__ || defined __CYGWIN32__ || defined __MINGW__
+#include <sys/types.h>
+#endif
+typedef unsigned __int64 unser_time_t;
 #else
-#    include <stdint.h>
-    typedef int64_t unser_time_t;
+#include <stdint.h>
+typedef int64_t unser_time_t;
 #endif
 
 /// Time Klasse.
 class Time : public Singleton<Time>
 {
-    public:
-        Time();
-        /// Desktruktor von @p Time.
-        ~Time() override;
+public:
+    Time();
+    /// Desktruktor von @p Time.
+    ~Time() override;
 
-        /// liefert die aktuelle Zeit.
-        unser_time_t CurrentTime();
-        /// liefert die aktuellen Ticks.
-        unser_time_t CurrentTick();
-        /// Formats a time as a string
-        /// @param format Format to use  (%Y=4 year (4 digits), %m month, %D day, %H hour, %i minute, %s second (all 2 digits), %% -> %)
-        /// @param time Pointer to time to format or NULL to use current time
-        std::string FormatTime(const std::string& format, unser_time_t* time = NULL);
+    /// liefert die aktuelle Zeit.
+    unser_time_t CurrentTime();
+    /// liefert die aktuellen Ticks.
+    unser_time_t CurrentTick();
+    /// Formats a time as a string
+    /// @param format Format to use  (%Y=4 year (4 digits), %m month, %D day, %H hour, %i minute, %s second (all 2 digits), %% -> %)
+    /// @param time Pointer to time to format or NULL to use current time
+    std::string FormatTime(const std::string& format, unser_time_t* time = NULL);
 };
 
 #define TIME Time::inst()

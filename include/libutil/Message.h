@@ -25,34 +25,34 @@ class Serializer;
 class Message
 {
     unsigned short id_;
-    public:
-        Message(unsigned short id) : id_(id) {}
-        virtual ~Message(){}
 
-        virtual void Serialize(Serializer&  /*ser*/) const{}
-        virtual void Deserialize(Serializer&  /*ser*/){}
+public:
+    Message(unsigned short id) : id_(id) {}
+    virtual ~Message() {}
 
-        unsigned short getId() const { return id_; }
-        static Message* create_base(unsigned short id);
+    virtual void Serialize(Serializer& /*ser*/) const {}
+    virtual void Deserialize(Serializer& /*ser*/) {}
 
-        virtual Message* create(unsigned short id) const { return create_base(id); }
-        virtual Message* duplicate() const;
+    unsigned short getId() const { return id_; }
+    static Message* create_base(unsigned short id);
 
-        virtual void run(MessageInterface* callback, unsigned id) = 0;
+    virtual Message* create(unsigned short id) const { return create_base(id); }
+    virtual Message* duplicate() const;
 
-    protected:
-        Message(const Message& other): id_(other.id_)
-        {}
+    virtual void run(MessageInterface* callback, unsigned id) = 0;
 
-        Message& operator=(const Message& other)
-        {
-            if(this == &other)
-                return *this;
+protected:
+    Message(const Message& other) : id_(other.id_) {}
 
-            id_ = other.id_;
-
+    Message& operator=(const Message& other)
+    {
+        if(this == &other)
             return *this;
-        }
+
+        id_ = other.id_;
+
+        return *this;
+    }
 };
 
-#endif //!MESSAGE_H_INCLUDED
+#endif //! MESSAGE_H_INCLUDED

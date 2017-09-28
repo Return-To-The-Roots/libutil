@@ -20,53 +20,54 @@
 #ifndef LOG_H_INCLUDED
 #define LOG_H_INCLUDED
 
-#include "Singleton.h"
 #include "FormatedLogEntry.h"
+#include "Singleton.h"
 #include <string>
 
 class TextWriterInterface;
 
 class Log : public Singleton<Log, SingletonPolicies::WithLongevity>
 {
-    public:
-        static const unsigned Longevity = 100;
+public:
+    static const unsigned Longevity = 100;
 
-        Log();
-        ~Log() override;
+    Log();
+    ~Log() override;
 
-        /// Sets the path where the log will be written to
-        /// Must be done before the first write
-        void setLogFilepath(const std::string& filepath);
+    /// Sets the path where the log will be written to
+    /// Must be done before the first write
+    void setLogFilepath(const std::string& filepath);
 
-        /// Open the log file if it is not yet open
-        void open();
-        /// Use the given writer as the file writer
-        void open(TextWriterInterface* fileWriter);
-        /// Write the last occurred error description with "[text]: " at the front to stdOut and file
-        void writeLastError(const std::string& text);
-        std::string getLastError() const;
+    /// Open the log file if it is not yet open
+    void open();
+    /// Use the given writer as the file writer
+    void open(TextWriterInterface* fileWriter);
+    /// Write the last occurred error description with "[text]: " at the front to stdOut and file
+    void writeLastError(const std::string& text);
+    std::string getLastError() const;
 
-        /// Write formated text to target (default: File and Stdout)
-        FormatedLogEntry write(const std::string& format, LogTarget target = LogTarget::FileAndStdout);
-        /// Write formated text to target (default: File and Stdout)
-        FormatedLogEntry writeColored(const std::string& format, unsigned color, LogTarget target = LogTarget::FileAndStdout);
-        /// Write formated text to file only
-        FormatedLogEntry writeToFile(const std::string& format);
+    /// Write formated text to target (default: File and Stdout)
+    FormatedLogEntry write(const std::string& format, LogTarget target = LogTarget::FileAndStdout);
+    /// Write formated text to target (default: File and Stdout)
+    FormatedLogEntry writeColored(const std::string& format, unsigned color, LogTarget target = LogTarget::FileAndStdout);
+    /// Write formated text to file only
+    FormatedLogEntry writeToFile(const std::string& format);
 
-        /// Set the console text color to one of the predefined colors
-        void SetColor(unsigned color, bool stdoutOrStderr);
-        /// Set the console text color back to original value
-        void ResetColor(bool stdoutOrStderr);
+    /// Set the console text color to one of the predefined colors
+    void SetColor(unsigned color, bool stdoutOrStderr);
+    /// Set the console text color back to original value
+    void ResetColor(bool stdoutOrStderr);
 
-        TextWriterInterface* getFileWriter() { return logFileWriter; }
-    private:
-        TextWriterInterface* logFileWriter;
-        /// Path where the log files are written to
-        std::string logFilepath;
+    TextWriterInterface* getFileWriter() { return logFileWriter; }
 
-        void flush(const std::string& txt, LogTarget target);
-        // This method is used by the log entry holder
-        friend class FormatedLogEntry;
+private:
+    TextWriterInterface* logFileWriter;
+    /// Path where the log files are written to
+    std::string logFilepath;
+
+    void flush(const std::string& txt, LogTarget target);
+    // This method is used by the log entry holder
+    friend class FormatedLogEntry;
 };
 
 #define LOG Log::inst()

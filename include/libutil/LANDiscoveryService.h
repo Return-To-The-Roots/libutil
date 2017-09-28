@@ -20,10 +20,11 @@
 
 #include "LANDiscovery.h"
 
-class LANDiscoveryService: protected LANDiscoveryBase
+class LANDiscoveryService : protected LANDiscoveryBase
 {
     Info info;
     bool isRunning, dataChanged;
+
 public:
     LANDiscoveryService(const Config& cfg);
     ~LANDiscoveryService();
@@ -33,7 +34,7 @@ public:
     bool Start();
     /// Closes the service sending a final close packet if it was running
     void Stop();
-    /// Must be called in the main loop when the service is started. No-Op if it isn't 
+    /// Must be called in the main loop when the service is started. No-Op if it isn't
     void Run();
 };
 

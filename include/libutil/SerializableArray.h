@@ -20,162 +20,137 @@
 #pragma once
 
 #include "Serializer.h"
-#include <vector>
 #include <algorithm>
+#include <vector>
 
-template <typename Type>
+template<typename Type>
 class SerializableArray
 {
     typedef std::vector<Type> Storage;
-    public:
-        typedef typename Storage::iterator iterator;
-        typedef typename Storage::const_iterator const_iterator;
 
-        SerializableArray()
-        {}
+public:
+    typedef typename Storage::iterator iterator;
+    typedef typename Storage::const_iterator const_iterator;
 
-        template <typename T> friend class SerializableArray;
+    SerializableArray() {}
 
-        template<class T>
-        SerializableArray(const SerializableArray<T> &other)
-        {
-            elements.reserve(other.getCount());
-            std::copy(other.elements.begin(), other.elements.end(), std::back_inserter(elements));
-        }
+    template<typename T>
+    friend class SerializableArray;
 
-        template<class T>
-        SerializableArray& operator= (const SerializableArray<T> &other)
-        {
-            if(this == &other)
-                return *this;
+    template<class T>
+    SerializableArray(const SerializableArray<T>& other)
+    {
+        elements.reserve(other.getCount());
+        std::copy(other.elements.begin(), other.elements.end(), std::back_inserter(elements));
+    }
 
-            elements.clear();
-            elements.reserve(other.getCount());
-            std::copy(other.elements.begin(), other.elements.end(), std::back_inserter(elements));
-
+    template<class T>
+    SerializableArray& operator=(const SerializableArray<T>& other)
+    {
+        if(this == &other)
             return *this;
-        }
 
-        /**
-         *  Einfügefunktion
-         *
-         */
-        inline void push_back(const Type& item)
-        {
-            elements.push_back(item);
-        }
+        elements.clear();
+        elements.reserve(other.getCount());
+        std::copy(other.elements.begin(), other.elements.end(), std::back_inserter(elements));
 
-        inline Type&       operator[](unsigned i)       { return elements.at(i); }
-        inline const Type& operator[](unsigned i) const { return elements.at(i); }
+        return *this;
+    }
 
-        /**
-         *  räumt die Liste auf.
-         *
-         */
-        inline void clear()
-        {
-            elements.clear();
-        }
+    /**
+     *  Einfügefunktion
+     *
+     */
+    inline void push_back(const Type& item) { elements.push_back(item); }
 
-        /**
-         *  serialisiert die Daten.
-         *
-         *  @param[in,out] data Datensatz, muss groß genug sein
-         *
-         *  @return liefert die Größe der Daten zurück.
-         *
-        */
-        inline void serialize(Serializer& ser) const
-        {
-            ser.PushUnsignedInt(static_cast<unsigned>(elements.size()));
+    inline Type& operator[](unsigned i) { return elements.at(i); }
+    inline const Type& operator[](unsigned i) const { return elements.at(i); }
 
-            for(typename std::vector<Type>::const_iterator it = elements.begin(); it!=elements.end(); ++it)
-                it->serialize(ser);
-        }
+    /**
+     *  räumt die Liste auf.
+     *
+     */
+    inline void clear() { elements.clear(); }
 
-        /**
-         *  deserialisiert die Daten.
-         *
-         *  @param[in] data Datensatz, muss groß genug sein
-         *
-         *  @return liefert die Größe der gelesenen Daten zurück.
-         *
-         */
-        inline void deserialize(Serializer& ser)
-        {
-            clear();
-            unsigned count = ser.PopUnsignedInt();
-            elements.reserve(count);
+    /**
+     *  serialisiert die Daten.
+     *
+     *  @param[in,out] data Datensatz, muss groß genug sein
+     *
+     *  @return liefert die Größe der Daten zurück.
+     *
+     */
+    inline void serialize(Serializer& ser) const
+    {
+        ser.PushUnsignedInt(static_cast<unsigned>(elements.size()));
 
-            for(unsigned i = 0; i < count; ++i)
-                elements.push_back(Type(i, ser));
-        }
+        for(typename std::vector<Type>::const_iterator it = elements.begin(); it != elements.end(); ++it)
+            it->serialize(ser);
+    }
 
-        /**
-         *  liefert ein Element der Liste.
-         *
-         */
-        inline const Type* getElement(unsigned i) const
-        {
-            if(i < elements.size())
-                return &elements.at(i);
+    /**
+     *  deserialisiert die Daten.
+     *
+     *  @param[in] data Datensatz, muss groß genug sein
+     *
+     *  @return liefert die Größe der gelesenen Daten zurück.
+     *
+     */
+    inline void deserialize(Serializer& ser)
+    {
+        clear();
+        unsigned count = ser.PopUnsignedInt();
+        elements.reserve(count);
 
-            return NULL;
-        }
+        for(unsigned i = 0; i < count; ++i)
+            elements.push_back(Type(i, ser));
+    }
 
-        /**
-         *  liefert ein Element der Liste.
-         *
-         */
-        inline Type* getElement(unsigned i)
-        {
-            if(i < elements.size())
-                return &elements.at(i);
+    /**
+     *  liefert ein Element der Liste.
+     *
+     */
+    inline const Type* getElement(unsigned i) const
+    {
+        if(i < elements.size())
+            return &elements.at(i);
 
-            return NULL;
-        }
+        return NULL;
+    }
 
-        /**
-         *  liefert die Anzahl der Elemente.
-         *
-         */
-        inline unsigned getCount() const
-        {
-            return size();
-        }
+    /**
+     *  liefert ein Element der Liste.
+     *
+     */
+    inline Type* getElement(unsigned i)
+    {
+        if(i < elements.size())
+            return &elements.at(i);
 
-        unsigned size() const
-        {
-            return static_cast<unsigned>(elements.size());
-        }
+        return NULL;
+    }
 
-        /**
-         *  ändert die Größe des Arrays
-         *
-         */
-        void resize(const unsigned count)
-        {
-            return elements.resize(count);
-        }
+    /**
+     *  liefert die Anzahl der Elemente.
+     *
+     */
+    inline unsigned getCount() const { return size(); }
 
-        iterator begin()
-        {
-            return elements.begin();
-        }
-        const_iterator begin() const
-        {
-            return elements.begin();
-        }
-        iterator end()
-        {
-            return elements.end();
-        }
-        const_iterator end() const
-        {
-            return elements.end();
-        }
-    private:
-        std::vector<Type> elements;     /// Die Elemente
+    unsigned size() const { return static_cast<unsigned>(elements.size()); }
+
+    /**
+     *  ändert die Größe des Arrays
+     *
+     */
+    void resize(const unsigned count) { return elements.resize(count); }
+
+    iterator begin() { return elements.begin(); }
+    const_iterator begin() const { return elements.begin(); }
+    iterator end() { return elements.end(); }
+    const_iterator end() const { return elements.end(); }
+
+private:
+    std::vector<Type> elements; /// Die Elemente
 };
 
 #endif // SERIALIZABLEARRAY_H_INCLUDED

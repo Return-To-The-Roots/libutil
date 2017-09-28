@@ -40,7 +40,7 @@ std::string GetFilePath(const std::string& file)
         to = System::getHomePath();
         if(file.length() > 1)
             to /= file.substr(1);
-    }else
+    } else
         to = file;
 
     return to.make_preferred().string();

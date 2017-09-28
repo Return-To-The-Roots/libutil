@@ -23,7 +23,7 @@
 
 LANDiscoveryBase::Magic_t LANDiscoveryBase::Config::MakeMagic(const std::string& str)
 {
-    if (str.empty())
+    if(str.empty())
         throw std::invalid_argument("String is empty");
     if(str.length() > sizeof(Magic_t))
         throw std::invalid_argument("String is to long");
@@ -33,7 +33,7 @@ LANDiscoveryBase::Magic_t LANDiscoveryBase::Config::MakeMagic(const std::string&
     return result;
 }
 
-LANDiscoveryBase::LANDiscoveryBase(const Config& cfg, bool isServer): config(cfg), isServer(isServer)
+LANDiscoveryBase::LANDiscoveryBase(const Config& cfg, bool isServer) : config(cfg), isServer(isServer)
 {
     request.GetMagic() = cfg.magicQuery;
     request.GetVersion() = cfg.version;
@@ -41,7 +41,7 @@ LANDiscoveryBase::LANDiscoveryBase(const Config& cfg, bool isServer): config(cfg
 
 bool LANDiscoveryBase::Start()
 {
-    if (!socket.Create(AF_INET, true))
+    if(!socket.Create(AF_INET, true))
         return false;
 
     return socket.Bind(isServer ? config.portQuery : config.portResponse, false);
@@ -52,7 +52,8 @@ void LANDiscoveryBase::Stop()
     socket.Close();
 }
 
-bool LANDiscoveryBase::IsDataAvailable() {
+bool LANDiscoveryBase::IsDataAvailable()
+{
     SocketSet set;
     set.Add(socket);
     return set.Select(0, 0) == 1;

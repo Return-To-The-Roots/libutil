@@ -24,20 +24,31 @@
 /// Decorator for an iterator that converts the elements to their unsigned equivalents
 /// Required because sign of char/wchar_t is undefined and we need it to be unsigned for some conversions
 template<class T_Container>
-struct GetUnsignedIterator{
+struct GetUnsignedIterator
+{
     typedef typename T_Container::const_iterator OldIterator;
     typedef std::iterator_traits<OldIterator> oldTraits;
     typedef typename oldTraits::value_type OldValueType;
     typedef typename boost::make_unsigned<OldValueType>::type NewValueType;
 
-    class UnsignedIterator: public std::iterator<typename std::forward_iterator_tag, NewValueType>
+    class UnsignedIterator : public std::iterator<typename std::forward_iterator_tag, NewValueType>
     {
         OldIterator oldIt;
+
     public:
-        UnsignedIterator(OldIterator it): oldIt(it) {}
-        UnsignedIterator(const UnsignedIterator& it): oldIt(it.oldIt) {}
-        UnsignedIterator& operator++() { ++oldIt; return *this; }
-        UnsignedIterator operator++(int) { UnsignedIterator old(*this); ++oldIt; return old; }
+        UnsignedIterator(OldIterator it) : oldIt(it) {}
+        UnsignedIterator(const UnsignedIterator& it) : oldIt(it.oldIt) {}
+        UnsignedIterator& operator++()
+        {
+            ++oldIt;
+            return *this;
+        }
+        UnsignedIterator operator++(int)
+        {
+            UnsignedIterator old(*this);
+            ++oldIt;
+            return old;
+        }
         bool operator==(const UnsignedIterator& rhs) { return oldIt == rhs.oldIt; }
         bool operator!=(const UnsignedIterator& rhs) { return oldIt != rhs.oldIt; }
         NewValueType operator*() { return *oldIt; }
@@ -94,8 +105,7 @@ ucString cvWideStringToUnicode(const std::wstring& other)
         tmp.reserve(other.length());
         utf8::utf16to8(other.begin(), other.end(), std::back_inserter(tmp));
         return cvUTF8ToUnicode(tmp);
-    }
-    catch(...)
+    } catch(...)
     {
         // If that fails, assume pure unicode
         ucString result;

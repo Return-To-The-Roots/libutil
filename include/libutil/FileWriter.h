@@ -21,9 +21,10 @@
 #include "TextWriterInterface.h"
 #include <boost/filesystem/fstream.hpp>
 
-class FileWriter: public TextWriterInterface
+class FileWriter : public TextWriterInterface
 {
     bfs::ofstream file;
+
 public:
     FileWriter(const std::string& filePath);
     void writeText(const std::string& txt) override;

@@ -65,7 +65,7 @@ std::string BinaryFile::ReadShortString()
     char* tmp = new char[length];
     ReadRawData((unsigned char*)tmp, length);
     std::string str = tmp;
-    delete [] tmp;
+    delete[] tmp;
     return str;
 }
 

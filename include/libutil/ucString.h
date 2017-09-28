@@ -18,8 +18,8 @@
 #ifndef ucString_h__
 #define ucString_h__
 
-#include <string>
 #include <stdint.h>
+#include <string>
 
 /// Typedef for storing and managing an Unicode (UTF-32) string
 typedef std::basic_string<uint32_t> ucString;
@@ -56,6 +56,5 @@ std::wstring cvUTF8ToWideString(const std::string& other);
 std::string cvStringToUTF8(const std::string& other);
 /// Convert a string (assumed to be codepage local) to unicode string
 ucString cvStringToUnicode(const std::string& other);
-
 
 #endif // ucString_h__

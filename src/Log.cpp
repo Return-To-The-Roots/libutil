@@ -21,18 +21,18 @@
 #include "MyTime.h"
 #include "colors.h"
 #include <boost/filesystem/path.hpp>
-#include <stdexcept>
 #include <iostream>
+#include <stdexcept>
 
 #ifdef _WIN32
-    #include <windows.h>
+#include <windows.h>
 #else
-    #include <cstring>
-    #include <cerrno>
+#include <cerrno>
+#include <cstring>
 #endif
 #include "ucString.h"
 
-Log::Log(): logFileWriter(NULL), logFilepath("logs")
+Log::Log() : logFileWriter(NULL), logFilepath("logs")
 {
 }
 
@@ -73,11 +73,12 @@ void Log::open(TextWriterInterface* fileWriter)
 
 void Log::SetColor(unsigned color, bool stdoutOrStderr)
 {
-    // On Linux, we insert escape-codes into the string. On Windows call system functions.
+// On Linux, we insert escape-codes into the string. On Windows call system functions.
 #ifndef _WIN32
     const char* colorModifier;
 
-    // A switch statement doesn't work here because we compare against the array COLORS[] (although it's constant, it can't be dereferenced at compile time)
+    // A switch statement doesn't work here because we compare against the array COLORS[] (although it's constant, it can't be dereferenced
+    // at compile time)
     if(color == COLOR_BLUE)
         colorModifier = "\033[40m\033[1;34m";
     else if(color == COLOR_RED)
@@ -150,7 +151,8 @@ void Log::flush(const std::string& txt, LogTarget target)
 #ifdef _WIN32
     if(target != LogTarget::File)
     {
-        HANDLE hStdout = GetStdHandle((target == LogTarget::Stdout || target == LogTarget::FileAndStdout) ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE);
+        HANDLE hStdout =
+          GetStdHandle((target == LogTarget::Stdout || target == LogTarget::FileAndStdout) ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE);
         std::wstring wTxt = cvUTF8ToWideString(txt);
         DWORD size;
         WriteConsoleW(hStdout, wTxt.c_str(), DWORD(wTxt.size()), &size, 0);
@@ -184,32 +186,24 @@ std::string Log::getLastError() const
 {
 #ifdef _WIN32
     LPVOID lpMsgBuf;
-    FormatMessageA(
-        FORMAT_MESSAGE_ALLOCATE_BUFFER |
-        FORMAT_MESSAGE_FROM_SYSTEM |
-        FORMAT_MESSAGE_IGNORE_INSERTS,
-        NULL,
-        GetLastError(),
-        0, // Default language
-        (LPSTR)&lpMsgBuf,
-        0,
-        NULL
-    );
+    FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, GetLastError(),
+                   0, // Default language
+                   (LPSTR)&lpMsgBuf, 0, NULL);
     std::string error = static_cast<const char*>(lpMsgBuf);
     // Free the buffer.
     LocalFree(lpMsgBuf);
     return error;
 #else
-   return strerror(errno);
+    return strerror(errno);
 #endif
 }
 
-FormatedLogEntry Log::write(const std::string& format, LogTarget target/* = LogTarget::FileAndStdout*/)
+FormatedLogEntry Log::write(const std::string& format, LogTarget target /* = LogTarget::FileAndStdout*/)
 {
     return FormatedLogEntry(*this, target, format);
 }
 
-FormatedLogEntry Log::writeColored(const std::string& format, unsigned color, LogTarget target/* = LogTarget::FileAndStdout*/)
+FormatedLogEntry Log::writeColored(const std::string& format, unsigned color, LogTarget target /* = LogTarget::FileAndStdout*/)
 {
     return FormatedLogEntry(*this, target, format, color);
 }

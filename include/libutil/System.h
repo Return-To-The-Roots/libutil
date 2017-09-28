@@ -20,8 +20,8 @@
 #ifndef System_h__
 #define System_h__
 
-#include <string>
 #include <boost/filesystem/path.hpp>
+#include <string>
 
 /// Class to abstract system specific functions
 /// e.g. every #ifdef _WIN32 or similar should be replaced by a function in here
@@ -58,6 +58,5 @@ public:
     /// Return the full path to the current executable
     static bfs::path getExecutablePath(const std::string& argv0);
 };
-
 
 #endif // System_h__

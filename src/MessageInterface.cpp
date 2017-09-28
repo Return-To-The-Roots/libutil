@@ -21,13 +21,13 @@
 /**
  *  Null-Nachricht.
  */
-void MessageInterface::OnNMSNull(unsigned  /*id*/)
+void MessageInterface::OnNMSNull(unsigned /*id*/)
 {
 }
 
 /**
  *  Dead-Nachricht.
  */
-void MessageInterface::OnNMSDead(unsigned  /*id*/)
+void MessageInterface::OnNMSDead(unsigned /*id*/)
 {
 }

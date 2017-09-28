@@ -24,30 +24,29 @@
 #include <stdexcept>
 
 #ifdef _WIN32
-#   if defined(__CYGWIN__) || defined(__MINGW32__)
-#       ifndef AI_ALL
-#           define AI_ALL            0x0010
-#       endif
-#       ifndef AI_ADDRCONFIG
-#           define AI_ADDRCONFIG     0x0020
-#       endif
-#       ifndef AI_V4MAPPED
-#           define AI_V4MAPPED       0x0800
-#       endif
+#if defined(__CYGWIN__) || defined(__MINGW32__)
+#ifndef AI_ALL
+#define AI_ALL 0x0010
+#endif
+#ifndef AI_ADDRCONFIG
+#define AI_ADDRCONFIG 0x0020
+#endif
+#ifndef AI_V4MAPPED
+#define AI_V4MAPPED 0x0800
+#endif
 #endif
 #else
-#   include <netinet/tcp.h>
-#   include <arpa/inet.h>
-#   include <unistd.h>
-#   include <sys/ioctl.h>
-#   include <cerrno>
-#   include <netdb.h>
+#include <arpa/inet.h>
+#include <cerrno>
+#include <netdb.h>
+#include <netinet/tcp.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
 #endif
-#include <iostream>
-#include <sstream>
 #include <cstdio>
 #include <cstdlib>
-
+#include <iostream>
+#include <sstream>
 
 ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr, bool resolveAll)
 {
@@ -65,7 +64,7 @@ ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr, bool resolveAll)
             // Defined, but getaddrinfo complains about it on FreeBSD -> Check again with the combination with AI_V4MAPPED
             hints.ai_flags |= AI_ALL | AI_V4MAPPED;
 #endif
-        }else
+        } else
             hints.ai_flags = AI_NUMERICHOST;
 
         hints.ai_socktype = hostAddr.isUDP ? SOCK_DGRAM : SOCK_STREAM;
@@ -85,8 +84,7 @@ ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr, bool resolveAll)
 #endif // _WIN32
             addr = NULL;
         }
-    }
-    else // fill with loopback
+    } else // fill with loopback
     {
         addr = new addrinfo;
         addr->ai_family = (hostAddr.ipv6 ? AF_INET6 : AF_INET);
@@ -100,8 +98,7 @@ ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr, bool resolveAll)
             addr6->sin6_family = AF_INET6;
             addr6->sin6_port = htons(atoi(hostAddr.port.c_str()));
             addr6->sin6_addr = in6addr_loopback;
-        }
-        else
+        } else
         {
             sockaddr_in* addr4 = (sockaddr_in*)addr->ai_addr;
             addr4->sin_family = AF_INET;
@@ -120,8 +117,7 @@ ResolvedAddr::~ResolvedAddr()
             freeaddrinfo(addr);
             addr = NULL;
         }
-    }
-    else
+    } else
     {
         free(addr->ai_addr);
         delete addr;
@@ -136,7 +132,7 @@ PeerAddr::PeerAddr(bool isIpv6, unsigned short port)
         throw std::logic_error("Broadcast over IPv6 not supported!");
         addr.ss_family = AF_INET6;
         reinterpret_cast<sockaddr_in6&>(addr).sin6_port = htons(port);
-    }else
+    } else
     {
         addr.ss_family = AF_INET;
         reinterpret_cast<sockaddr_in&>(addr).sin_addr.s_addr = INADDR_BROADCAST;
@@ -169,11 +165,11 @@ Socket::Socket() : socket_(INVALID_SOCKET), refCount_(NULL), status_(INVALID), i
  *  @param[in] so Socket welches benutzt werden soll
  *  @param[in] st Status der gesetzt werden soll
  */
-Socket::Socket(const SOCKET so, Status st): socket_(so), refCount_(new int32_t(1)), status_(st), isBroadcast(false)
+Socket::Socket(const SOCKET so, Status st) : socket_(so), refCount_(new int32_t(1)), status_(st), isBroadcast(false)
 {
 }
 
-Socket::Socket(const Socket& so): socket_(so.socket_), refCount_(so.refCount_), status_(so.status_), isBroadcast(so.isBroadcast)
+Socket::Socket(const Socket& so) : socket_(so.socket_), refCount_(so.refCount_), status_(so.status_), isBroadcast(so.isBroadcast)
 {
     if(refCount_)
         ++*refCount_;
@@ -254,12 +250,11 @@ bool Socket::Create(int family, bool asUDPBroadcast)
     // Ist es gültig?
     status_ = (INVALID_SOCKET == socket_ ? INVALID : VALID);
 
-    if (asUDPBroadcast)
+    if(asUDPBroadcast)
     {
         int enable = 1;
         SetSockOpt(SO_BROADCAST, &enable, sizeof(enable), SOL_SOCKET);
-    }
-    else
+    } else
     {
         // Nagle deaktivieren
         int disable = 1;
@@ -304,7 +299,8 @@ void Socket::Close()
 
 bool Socket::Bind(unsigned short port, bool useIPv6)
 {
-    union{
+    union
+    {
         sockaddr_storage addrs;
         sockaddr_in addrV4;
         sockaddr_in6 addrV6;
@@ -315,14 +311,13 @@ bool Socket::Bind(unsigned short port, bool useIPv6)
     if(useIPv6)
     {
         addrV6.sin6_family = AF_INET6;
-        addrV6.sin6_port   = htons(port);
-        addrV6.sin6_addr   = in6addr_any;
+        addrV6.sin6_port = htons(port);
+        addrV6.sin6_addr = in6addr_any;
         size = sizeof(addrV6);
-    }
-    else
+    } else
     {
         addrV4.sin_family = AF_INET;
-        addrV4.sin_port   = htons(port);
+        addrV4.sin_port = htons(port);
         addrV4.sin_addr.s_addr = INADDR_ANY;
         size = sizeof(addrV4);
     }
@@ -382,11 +377,10 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
         }
 
         error = false;
-    }
-    while(error);
+    } while(error);
 
     // try to open portforwarding if we're using ipv4
-    if (use_upnp)
+    if(use_upnp)
         if(!ipv6 && !upnp_.OpenPort(port))
             LOG.writeLastError("Automatisches Erstellen des Portforwardings mit UPnP fehlgeschlagen\nFehler");
 
@@ -424,7 +418,6 @@ Socket Socket::Accept()
     // Alles gut :-)
     return client;
 }
-
 
 /**
  *  liefert Ip-Adresse(n) für einen Hostnamen.
@@ -464,7 +457,7 @@ std::vector<HostAddr> Socket::HostToIp(const std::string& hostname, const unsign
         ips.push_back(h);
 
         addr = addr->ai_next;
-    }while(addr != NULL);
+    } while(addr != NULL);
 
     return ips;
 }
@@ -486,7 +479,8 @@ void Socket::Sleep(unsigned ms)
  *
  *  @p true bei Erfolg, @p false bei Fehler
  */
-bool Socket::Connect(const std::string& hostname, const unsigned short port, bool use_ipv6, const Socket::PROXY_TYPE typ, const std::string& proxy_hostname, const unsigned proxy_port)
+bool Socket::Connect(const std::string& hostname, const unsigned short port, bool use_ipv6, const Socket::PROXY_TYPE typ,
+                     const std::string& proxy_hostname, const unsigned proxy_port)
 {
     if(typ == PROXY_SOCKS4)
         use_ipv6 = false;
@@ -513,8 +507,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
     {
         start = proxy_ips.begin();
         end = proxy_ips.end();
-    }
-    else
+    } else
     {
         start = ips.begin();
         end = ips.end();
@@ -582,11 +575,11 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
 
                     switch(typ)
                     {
-                        default:
-                            break;
+                        default: break;
                         case PROXY_SOCKS4:
                         {
-                            union{
+                            union
+                            {
                                 char proxyinit[18];
                                 unsigned short proxyInitShort[9];
                             };
@@ -623,12 +616,14 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
                                 LOG.write("Proxy error: got %d: connection rejected or failed or other error\n") % proxyinit[1];
                                 return false;
                             }
-                        } break;
+                        }
+                        break;
                         case PROXY_SOCKS5:
                         {
                             // not implemented
                             return false;
-                        } break;
+                        }
+                        break;
                     }
 
                     // Verbindung hergestellt
@@ -690,12 +685,12 @@ int Socket::Recv(void* buffer, const int length, bool block)
         return -1;
 
     // und empfangen
-    return recv(socket_, reinterpret_cast<char*>(buffer), length, (block ? 0 : MSG_PEEK) );
+    return recv(socket_, reinterpret_cast<char*>(buffer), length, (block ? 0 : MSG_PEEK));
 }
 
 int Socket::Recv(void* const buffer, const int length, PeerAddr& addr)
 {
-    if (!isValid())
+    if(!isValid())
         return -1;
 
     socklen_t addrLen = addr.GetSize();
@@ -721,7 +716,7 @@ int Socket::Send(const void* const buffer, const int length)
 
 int Socket::Send(const void* const buffer, const int length, const PeerAddr& addr)
 {
-    if (status_ == INVALID)
+    if(status_ == INVALID)
         return -1;
 
     return sendto(socket_, reinterpret_cast<const char*>(buffer), length, 0, addr.GetAddr(), addr.GetSize());
@@ -841,7 +836,7 @@ std::string Socket::IpToString(const sockaddr* addr)
 
 #ifdef _WIN32
     size_t size = 0;
-    if (addr->sa_family == AF_INET)
+    if(addr->sa_family == AF_INET)
         size = sizeof(sockaddr_in);
     else
         size = sizeof(sockaddr_in6);
@@ -851,7 +846,7 @@ std::string Socket::IpToString(const sockaddr* addr)
     sockaddr* copy = (sockaddr*)calloc(1, size);
     memcpy(copy, addr, size);
 
-    if (addr->sa_family == AF_INET)
+    if(addr->sa_family == AF_INET)
         ((sockaddr_in*)copy)->sin_port = 0;
     else
         ((sockaddr_in6*)copy)->sin6_port = 0;
@@ -865,11 +860,10 @@ std::string Socket::IpToString(const sockaddr* addr)
 #else
     void* ip;
 
-    if (addr->sa_family == AF_INET)
+    if(addr->sa_family == AF_INET)
     {
         ip = &(((sockaddr_in*)addr)->sin_addr);
-    }
-    else
+    } else
     {
         ip = &(((sockaddr_in6*)addr)->sin6_addr);
     }

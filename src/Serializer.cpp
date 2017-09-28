@@ -34,4 +34,3 @@ void Serializer::ReadFromFile(BinaryFile& file)
     file.ReadRawData(GetDataWritable(buffer_size), buffer_size);
     SetLength(buffer_size);
 }
-

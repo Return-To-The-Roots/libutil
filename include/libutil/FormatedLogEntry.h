@@ -18,40 +18,41 @@
 #ifndef FormatedLogEntry_h__
 #define FormatedLogEntry_h__
 
+#include <boost/core/scoped_enum.hpp>
 #include <boost/format.hpp>
 #include <boost/static_assert.hpp>
-#include <boost/core/scoped_enum.hpp>
 #include <string>
 
 class Log;
 
-BOOST_SCOPED_ENUM_DECLARE_BEGIN(LogTarget)
+BOOST_SCOPED_ENUM_DECLARE_BEGIN(LogTarget){Stdout, Stderr, File, FileAndStdout, FileAndStderr} BOOST_SCOPED_ENUM_DECLARE_END(LogTarget)
+
+  /// Holds one log entry. Will be flushed on destruction
+  class FormatedLogEntry
 {
-    Stdout,
-    Stderr,
-    File,
-    FileAndStdout,
-    FileAndStderr
-}
-BOOST_SCOPED_ENUM_DECLARE_END(LogTarget)
-
-
-/// Holds one log entry. Will be flushed on destruction
-class FormatedLogEntry {
 public:
-    FormatedLogEntry(Log& log, LogTarget target, const std::string& msg): log_(log), target_(target), fmt(msg), useColor_(false), color_(0) {}
-    FormatedLogEntry(Log& log, LogTarget target, const std::string& msg, unsigned color): log_(log), target_(target), fmt(msg), useColor_(true), color_(color) {}
+    FormatedLogEntry(Log& log, LogTarget target, const std::string& msg) : log_(log), target_(target), fmt(msg), useColor_(false), color_(0)
+    {
+    }
+    FormatedLogEntry(Log& log, LogTarget target, const std::string& msg, unsigned color)
+        : log_(log), target_(target), fmt(msg), useColor_(true), color_(color)
+    {
+    }
     ~FormatedLogEntry();
 
     template<typename T>
-    FormatedLogEntry& operator%(T value) {
+    FormatedLogEntry& operator%(T value)
+    {
         fmt % value;
         return *this;
     }
 
     // comma operator designed to fail to avoid accidental use
     template<typename T>
-    void operator,(T){ BOOST_STATIC_ASSERT_MSG(!sizeof(T), "Invalid use of , for messages. Forgot to replace by %?"); }
+    void operator,(T)
+    {
+        BOOST_STATIC_ASSERT_MSG(!sizeof(T), "Invalid use of , for messages. Forgot to replace by %?");
+    }
 
 private:
     Log& log_;

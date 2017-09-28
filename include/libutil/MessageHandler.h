@@ -28,15 +28,14 @@ class MessageHandler
     CreateMsgFunction createMsg;
 
 public:
-    MessageHandler(CreateMsgFunction createMsg): createMsg(createMsg) {}
+    MessageHandler(CreateMsgFunction createMsg) : createMsg(createMsg) {}
 
     /// Sends that message. Returns number of bytes submitted (-1 for failure)
     static int send(Socket& sock, const Message& msg);
     /// Receives a message. Returns NULL on error, or if nothing is available
-    /// Sets error if NULL returned: -1 = Fatal Error, 0 = socket busy, 1 = No msg available, 2 = incomplete, 3 = Header-Error, 4 = data incomplete
-    /// If wait is true, this blocks until a message is received or timeout is reached
+    /// Sets error if NULL returned: -1 = Fatal Error, 0 = socket busy, 1 = No msg available, 2 = incomplete, 3 = Header-Error, 4 = data
+    /// incomplete If wait is true, this blocks until a message is received or timeout is reached
     Message* recv(Socket& sock, int& error, bool wait);
 };
-
 
 #endif // MessageHandler_h__

@@ -21,9 +21,10 @@
 #include "TextWriterInterface.h"
 #include <sstream>
 
-class StringStreamWriter: public TextWriterInterface
+class StringStreamWriter : public TextWriterInterface
 {
     std::stringstream stream;
+
 public:
     void writeText(const std::string& txt) override;
 

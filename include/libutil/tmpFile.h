@@ -32,12 +32,13 @@ void unlinkFile(const std::string& filePath);
 class TmpFile
 {
     std::ofstream stream;
+
 public:
     explicit TmpFile(const std::string& ext = ".tmp");
     ~TmpFile();
 
     bool IsValid() const { return !filePath.empty(); }
-    std::ofstream& GetStream(){ return stream; }
+    std::ofstream& GetStream() { return stream; }
     const std::ofstream& GetStream() const { return stream; }
 
     const std::string filePath;

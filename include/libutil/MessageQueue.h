@@ -18,15 +18,15 @@
 #define MESSAGEQUEUE_H_INCLUDED
 
 #include "MessageHandler.h"
-#include <queue>
 #include <cstddef>
 #include <deque>
+#include <queue>
 
 class Message;
 class Socket;
 
-template<typename T, typename Container=std::deque<T> >
-class iterable_queue : public std::queue<T,Container>
+template<typename T, typename Container = std::deque<T> >
+class iterable_queue : public std::queue<T, Container>
 {
 public:
     typedef typename Container::iterator iterator;
@@ -38,54 +38,54 @@ public:
     const_iterator end() const { return this->c.end(); }
 };
 
-//class Socket;
-class MessageQueue: protected MessageHandler
+// class Socket;
+class MessageQueue : protected MessageHandler
 {
-    public:
-        MessageQueue(CreateMsgFunction createfunction) : MessageHandler(createfunction) {}
-        MessageQueue(const MessageQueue& mq);
-        ~MessageQueue();
+public:
+    MessageQueue(CreateMsgFunction createfunction) : MessageHandler(createfunction) {}
+    MessageQueue(const MessageQueue& mq);
+    ~MessageQueue();
 
-        MessageQueue& operator=(const MessageQueue& mq);
+    MessageQueue& operator=(const MessageQueue& mq);
 
-    private:
-        typedef iterable_queue<Message*> Queue;
-        typedef iterable_queue<Message*>::iterator QueueIt;
-        Queue messages;
+private:
+    typedef iterable_queue<Message*> Queue;
+    typedef iterable_queue<Message*>::iterator QueueIt;
+    Queue messages;
 
-    public:
-        void clear();
+public:
+    void clear();
 
-        /// flusht die Queue, verschickt alle Elemente.
-        bool flush(Socket& sock);
+    /// flusht die Queue, verschickt alle Elemente.
+    bool flush(Socket& sock);
 
-        /// liefert die Größe der Queue
-        size_t count() const{ return messages.size(); }
-        bool empty() const{ return messages.empty(); }
+    /// liefert die Größe der Queue
+    size_t count() const { return messages.size(); }
+    bool empty() const { return messages.empty(); }
 
-        /// verschickt Pakete der Queue, maximal @p max, mit einem maximal @p sizelimit groß (aber beliebig viele kleine)
-        bool send(Socket& sock, int max, unsigned sizelimit = 512);
-        bool recv(Socket& sock, bool wait = false);
-        /// Sends a message directly
-        static bool sendMessage(Socket& sock, const Message& msg){ return MessageHandler::send(sock, msg) >= 0; }
+    /// verschickt Pakete der Queue, maximal @p max, mit einem maximal @p sizelimit groß (aber beliebig viele kleine)
+    bool send(Socket& sock, int max, unsigned sizelimit = 512);
+    bool recv(Socket& sock, bool wait = false);
+    /// Sends a message directly
+    static bool sendMessage(Socket& sock, const Message& msg) { return MessageHandler::send(sock, msg) >= 0; }
 
-    public:
-        /// hängt ein Element hinten an.
-        void push(Message* message) { messages.push(message); }
-        /// liefert das vorderste Element der Queue.
-        Message* front() { return (!messages.empty() ? messages.front() : NULL); }
-        /// entfernt das vorderste Element aus der Queue.
-        void pop();
-        /// Returns the first element and removes it from the queue. Returns NULL if there is none
-        /// Caller is responsible for deleting it!
-        Message* popFront(){
-            if(messages.empty())
-                return NULL;
-            Message* msg = messages.front();
-            messages.pop();
-            return msg;
-        }
-
+public:
+    /// hängt ein Element hinten an.
+    void push(Message* message) { messages.push(message); }
+    /// liefert das vorderste Element der Queue.
+    Message* front() { return (!messages.empty() ? messages.front() : NULL); }
+    /// entfernt das vorderste Element aus der Queue.
+    void pop();
+    /// Returns the first element and removes it from the queue. Returns NULL if there is none
+    /// Caller is responsible for deleting it!
+    Message* popFront()
+    {
+        if(messages.empty())
+            return NULL;
+        Message* msg = messages.front();
+        messages.pop();
+        return msg;
+    }
 };
 
 #endif // LOBBYMESSAGEQUEUE_H_INCLUDED

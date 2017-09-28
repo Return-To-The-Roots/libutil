@@ -17,20 +17,19 @@
 
 #include "libUtilDefines.h" // IWYU pragma: keep
 #include "tmpFile.h"
-
 #include <boost/filesystem.hpp>
 #include <fstream>
-#include <stdexcept>
 #include <iostream>
+#include <stdexcept>
 #ifdef WIN32
-#   include <windows.h>
+#include <windows.h>
 #else
-#   include <unistd.h>
+#include <unistd.h>
 #endif
 
 namespace bfs = boost::filesystem;
 
-std::string createTempFile(std::ofstream& file, const std::string& ext/* = ".tmp"*/)
+std::string createTempFile(std::ofstream& file, const std::string& ext /* = ".tmp"*/)
 {
     static const unsigned MAX_TRIES = 50;
 
@@ -40,7 +39,7 @@ std::string createTempFile(std::ofstream& file, const std::string& ext/* = ".tmp
     // Temp directory (e.g. /tmp)
     bfs::path tmpPath = bfs::temp_directory_path();
     unsigned tries = 0;
-    do 
+    do
     {
         // Create a (hopefully) unique filePath
         bfs::path filePath = tmpPath;
@@ -81,12 +80,11 @@ void unlinkFile(const std::string& filePath)
 #else
     unlink(filepathFull.c_str());
 #endif // WIN32
-
 }
 
-TmpFile::TmpFile(const std::string& ext /*= ".tmp"*/):
-    filePath(createTempFile(stream, ext))
-{}
+TmpFile::TmpFile(const std::string& ext /*= ".tmp"*/) : filePath(createTempFile(stream, ext))
+{
+}
 
 TmpFile::~TmpFile()
 {

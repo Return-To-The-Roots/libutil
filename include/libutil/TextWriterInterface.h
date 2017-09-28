@@ -24,7 +24,7 @@
 class TextWriterInterface
 {
 public:
-    virtual ~TextWriterInterface(){}
+    virtual ~TextWriterInterface() {}
     virtual void writeText(const std::string& txt) = 0;
 };
 

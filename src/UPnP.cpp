@@ -19,73 +19,71 @@
 #include "UPnP.h"
 
 #ifdef _WIN32
-#   include "Log.h"
-    #include <winsock2.h>
-    #include <windows.h>
-    #include <in6addr.h>
-    #include <iphlpapi.h>
+#include "Log.h"
+#include <windows.h>
+#include <in6addr.h>
+#include <iphlpapi.h>
+#include <winsock2.h>
 
-    #ifdef _MSC_VER
-        #pragma comment(lib, "iphlpapi.lib")
+#ifdef _MSC_VER
+#pragma comment(lib, "iphlpapi.lib")
 
-        #include <ole2.h>
-        #include <natupnp.h>
-        //#include <atlconv.h>
+#include <natupnp.h>
+#include <ole2.h>
+//#include <atlconv.h>
 
-        inline BSTR A2WBSTR(LPCSTR lp, int nLen = -1)
+inline BSTR A2WBSTR(LPCSTR lp, int nLen = -1)
+{
+    if(lp == NULL || nLen == 0)
+        return NULL;
+    BSTR str = NULL;
+
+    int nConvertedLen = MultiByteToWideChar(CP_THREAD_ACP, 0, lp, nLen, NULL, 0);
+
+    int nAllocLen = nConvertedLen;
+    if(nLen == -1)
+        nAllocLen -= 1; // Don't allocate terminating '\0'
+    str = ::SysAllocStringLen(NULL, nAllocLen);
+
+    if(str != NULL)
+    {
+        int nResult;
+        nResult = MultiByteToWideChar(CP_THREAD_ACP, 0, lp, nLen, str, nConvertedLen);
+        if(nResult != nConvertedLen)
         {
-            if (lp == NULL || nLen == 0)
-                return NULL;
-            BSTR str = NULL;
-
-            int nConvertedLen = MultiByteToWideChar(CP_THREAD_ACP, 0, lp, nLen, NULL, 0);
-
-            int nAllocLen = nConvertedLen;
-            if (nLen == -1)
-                nAllocLen -= 1;  // Don't allocate terminating '\0'
-            str = ::SysAllocStringLen(NULL, nAllocLen);
-
-            if (str != NULL)
-            {
-                int nResult;
-                nResult = MultiByteToWideChar(CP_THREAD_ACP, 0, lp, nLen, str, nConvertedLen);
-                if(nResult != nConvertedLen)
-                {
-                    SysFreeString(str);
-                    return NULL;
-                }
-
-            }
-            return str;
+            SysFreeString(str);
+            return NULL;
         }
+    }
+    return str;
+}
 
-        inline BSTR A2BSTR(LPCSTR lp)
-        {
-            return A2WBSTR(lp);
-        }
-    #endif // _MSC_VER
+inline BSTR A2BSTR(LPCSTR lp)
+{
+    return A2WBSTR(lp);
+}
+#endif // _MSC_VER
 
-    #ifndef _WIN32_WINNT
-        #define _WIN32_WINNT 0x501
-    #endif
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x501
+#endif
 #else // _WIN32
-    #include <sys/socket.h>
-
-    #include <ifaddrs.h>
-    #include <unistd.h>
-    #include <netdb.h>
-    #include <netinet/in.h>
-    #include <arpa/inet.h>
+#include <arpa/inet.h>
+#include <ifaddrs.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <unistd.h>
 #endif // _WIN32
 
 #ifndef _MSC_VER
-    #include <miniupnpc/miniupnpc.h>
-    #include <miniupnpc/upnpcommands.h>
+#include <miniupnpc/miniupnpc.h>
+#include <miniupnpc/upnpcommands.h>
 #endif // _WIN32
 
 #include <algorithm>
-#include <sstream>
 #include <cstring>
+#include <sstream>
 
 UPnP::UPnP() : remote_port_(0)
 {
@@ -112,7 +110,7 @@ bool UPnP::OpenPort(const unsigned short& port)
     CoInitialize(NULL);
 
     IUPnPNAT* upnpnat;
-    hr = CoCreateInstance (CLSID_UPnPNAT, NULL, CLSCTX_INPROC_SERVER, IID_IUPnPNAT, (void**)&upnpnat);
+    hr = CoCreateInstance(CLSID_UPnPNAT, NULL, CLSCTX_INPROC_SERVER, IID_IUPnPNAT, (void**)&upnpnat);
     if(FAILED(hr) || !upnpnat)
     {
         if(!upnpnat)
@@ -153,10 +151,10 @@ bool UPnP::OpenPort(const unsigned short& port)
 
             int ab = (a << 24) | (b << 16);
 
-            if( (ab & 0xff000000) == 0x0a000000 || // 10.0.0.0/8
-                    (ab & 0xff000000) == 0x7f000000 || // 127.0.0.0/8
-                    (ab & 0xfff00000) == 0xac100000 || // 172.16.0.0/12
-                    (ab & 0xffff0000) == 0xc0a80000 )  // 192.168.0.0/16
+            if((ab & 0xff000000) == 0x0a000000 || // 10.0.0.0/8
+               (ab & 0xff000000) == 0x7f000000 || // 127.0.0.0/8
+               (ab & 0xfff00000) == 0xac100000 || // 172.16.0.0/12
+               (ab & 0xffff0000) == 0xc0a80000)   // 192.168.0.0/16
                 local_address = *addr;
         }
     }
@@ -195,7 +193,7 @@ bool UPnP::OpenPort(const unsigned short& port)
     UPNPDev* devicelist = NULL;
 #ifdef UPNPDISCOVER_SUCCESS
     int upnperror = 0;
-#if (MINIUPNPC_API_VERSION >= 14) /* miniUPnPc API version 14 adds TTL parameter */
+#if(MINIUPNPC_API_VERSION >= 14) /* miniUPnPc API version 14 adds TTL parameter */
     devicelist = upnpDiscover(2000, NULL, NULL, 0, 0 /* ipv6 */, 2, &upnperror);
 #else
     devicelist = upnpDiscover(2000, NULL, NULL, 0, 0 /* ipv6 */, &upnperror);
@@ -217,9 +215,11 @@ bool UPnP::OpenPort(const unsigned short& port)
         p << port;
 
 #ifdef UPNPDISCOVER_SUCCESS
-        hr = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype, p.str().c_str(), p.str().c_str(), lanAddr, "Return To The Roots", "TCP", NULL, NULL);
+        hr = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype, p.str().c_str(), p.str().c_str(), lanAddr, "Return To The Roots",
+                                 "TCP", NULL, NULL);
 #else
-        hr = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype, p.str().c_str(), p.str().c_str(), lanAddr, "Return To The Roots", "TCP", NULL);
+        hr = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype, p.str().c_str(), p.str().c_str(), lanAddr, "Return To The Roots",
+                                 "TCP", NULL);
 #endif
     }
 
@@ -240,7 +240,7 @@ void UPnP::ClosePort()
     HRESULT hr;
 
     IUPnPNAT* upnpnat;
-    hr = CoCreateInstance (CLSID_UPnPNAT, NULL, CLSCTX_INPROC_SERVER, IID_IUPnPNAT, (void**)&upnpnat);
+    hr = CoCreateInstance(CLSID_UPnPNAT, NULL, CLSCTX_INPROC_SERVER, IID_IUPnPNAT, (void**)&upnpnat);
     if(FAILED(hr) || !upnpnat)
         return;
 
@@ -265,7 +265,7 @@ void UPnP::ClosePort()
     UPNPDev* devicelist = NULL;
 #ifdef UPNPDISCOVER_SUCCESS
     int upnperror = 0;
-#if (MINIUPNPC_API_VERSION >= 14) /* miniUPnPc API version 14 adds TTL parameter */
+#if(MINIUPNPC_API_VERSION >= 14) /* miniUPnPc API version 14 adds TTL parameter */
     devicelist = upnpDiscover(2000, NULL, NULL, 0, 0 /* ipv6 */, 2, &upnperror);
 #else
     devicelist = upnpDiscover(2000, NULL, NULL, 0, 0 /* ipv6 */, &upnperror);
@@ -312,7 +312,7 @@ std::vector<std::string> UPnP::GetAllv4Addresses()
     if(GetAdaptersInfo(pAdapterInfo, &OutBufLen) == NO_ERROR)
     {
         PIP_ADAPTER_INFO pAdapter = pAdapterInfo;
-        while (pAdapter)
+        while(pAdapter)
         {
             std::string address = pAdapter->IpAddressList.IpAddress.String;
             if(address != "0.0.0.0")
@@ -324,21 +324,21 @@ std::vector<std::string> UPnP::GetAllv4Addresses()
 
     HeapFree(GetProcessHeap(), 0, pAdapterInfo);
 #else
-    struct ifaddrs* ifaddr, *ifa;
+    struct ifaddrs *ifaddr, *ifa;
     int family;
     char address[NI_MAXHOST];
 
-    if (getifaddrs(&ifaddr) > 0)
+    if(getifaddrs(&ifaddr) > 0)
     {
-        for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
+        for(ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
         {
             family = ifa->ifa_addr->sa_family;
 
-            if (family == AF_INET || family == AF_INET6)
+            if(family == AF_INET || family == AF_INET6)
             {
-                if( getnameinfo(ifa->ifa_addr,
-                                (family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6),
-                                address, NI_MAXHOST, NULL, 0, NI_NUMERICHOST) == 0)
+                if(getnameinfo(ifa->ifa_addr, (family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6), address,
+                               NI_MAXHOST, NULL, 0, NI_NUMERICHOST)
+                   == 0)
                     addresses.push_back(address);
             }
         }
@@ -353,7 +353,7 @@ std::vector<std::string> UPnP::GetAllv4Addresses()
     struct hostent* hosts = gethostbyname(host);
     if(hosts)
     {
-        for (int i = 0; hosts->h_addr_list[i] != 0; ++i)
+        for(int i = 0; hosts->h_addr_list[i] != 0; ++i)
         {
             struct in_addr addr;
             memcpy(&addr, hosts->h_addr_list[i], sizeof(struct in_addr));
@@ -365,7 +365,7 @@ std::vector<std::string> UPnP::GetAllv4Addresses()
 
     // remove duplicates
     std::sort(addresses.begin(), addresses.end());
-    std::vector<std::string>::iterator begin = std::unique( addresses.begin(), addresses.end() );
+    std::vector<std::string>::iterator begin = std::unique(addresses.begin(), addresses.end());
     addresses.erase(begin, addresses.end());
 
     return addresses;

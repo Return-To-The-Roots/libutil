@@ -20,8 +20,10 @@
 
 // IWYU pragma: private, include "Singleton.h"
 
-template<typename T, template<class> class L> T* Singleton<T, L>::me;
-template<typename T, template<class> class L> bool Singleton<T, L>::isDestroyed_;
+template<typename T, template<class> class L>
+T* Singleton<T, L>::me;
+template<typename T, template<class> class L>
+bool Singleton<T, L>::isDestroyed_;
 
 template<typename T, template<class> class L>
 Singleton<T, L>::Singleton()

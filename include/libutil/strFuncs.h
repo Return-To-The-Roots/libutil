@@ -22,17 +22,17 @@
 // Provides safe C-String functions by preventing buffer overflows
 // Better use std::string and boost::format!
 
-namespace detail{
+namespace detail {
 
-    /// Copies a C-String into a buffer (with terminating zero)
-    /// Throws an exception on buffer overflow (strlen(pSrc) > maxChars)
-    void strcpyExt_check(char* pOut, const char* pSrc, const size_t maxChars);
+/// Copies a C-String into a buffer (with terminating zero)
+/// Throws an exception on buffer overflow (strlen(pSrc) > maxChars)
+void strcpyExt_check(char* pOut, const char* pSrc, const size_t maxChars);
 
-    /// Copies a C-String into a buffer (with terminating zero)
-    /// Truncates the string if required (strlen(pSrc) > T_size)
-    /// Note: UTF-8 might by corrupted on truncation
-    void strcpyExt_trunc(char* pOut, const char* pSrc, const size_t maxChars);
-}
+/// Copies a C-String into a buffer (with terminating zero)
+/// Truncates the string if required (strlen(pSrc) > T_size)
+/// Note: UTF-8 might by corrupted on truncation
+void strcpyExt_trunc(char* pOut, const char* pSrc, const size_t maxChars);
+} // namespace detail
 
 /// Copies a C-String into a buffer (with terminating zero)
 /// Throws an exception on buffer overflow (strlen(pSrc) > T_size)

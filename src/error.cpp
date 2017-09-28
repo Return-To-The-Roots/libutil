@@ -19,25 +19,25 @@
 #include "error.h"
 #include "Log.h"
 
-namespace s25Util{
+namespace s25Util {
 
-    int fatal_error(const std::string& msg)
-    {
-        LOG.write("\n\nFATAL ERROR: %1%\n") % msg;
-        return EXIT_FAILURE;
-    }
+int fatal_error(const std::string& msg)
+{
+    LOG.write("\n\nFATAL ERROR: %1%\n") % msg;
+    return EXIT_FAILURE;
+}
 
-    int error(const std::string& msg)
-    {
-        LOG.write("\n\nERROR: %1%\n") % msg;
-        return EXIT_FAILURE;
-    }
+int error(const std::string& msg)
+{
+    LOG.write("\n\nERROR: %1%\n") % msg;
+    return EXIT_FAILURE;
+}
 
-    int warning(const std::string& msg)
-    {
-        LOG.write("\n\nWARNING: %1%\n") % msg;
+int warning(const std::string& msg)
+{
+    LOG.write("\n\nWARNING: %1%\n") % msg;
 
-        return EXIT_SUCCESS;
-    }
+    return EXIT_SUCCESS;
+}
 
 } // namespace s25Util

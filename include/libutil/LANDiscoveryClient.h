@@ -19,10 +19,10 @@
 #define LANDISCOVERY_CLIENT_H_INCLUDED
 
 #include "LANDiscovery.h"
-#include <string>
 #include <map>
+#include <string>
 
-class LANDiscoveryClient: protected LANDiscoveryBase
+class LANDiscoveryClient : protected LANDiscoveryBase
 {
 public:
     struct ServiceInfo
@@ -38,7 +38,7 @@ public:
     bool Start();
     /// Stops listing for services
     void Stop();
-    /// Must be called in the main loop when this is listening. No-Op if it isn't 
+    /// Must be called in the main loop when this is listening. No-Op if it isn't
     void Run();
     /// Refreshes the service list, clearing the old one
     void Refresh();

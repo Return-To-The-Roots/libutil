@@ -19,17 +19,19 @@
 #include "LANDiscoveryClient.h"
 
 LANDiscoveryClient::LANDiscoveryClient(const Config& cfg) : LANDiscoveryBase(cfg, false), isRunning(false)
-{}
+{
+}
 
 LANDiscoveryClient::~LANDiscoveryClient()
-{}
+{
+}
 
 bool LANDiscoveryClient::Start()
 {
-    if (isRunning)
+    if(isRunning)
         return true;
 
-    if (!LANDiscoveryBase::Start())
+    if(!LANDiscoveryBase::Start())
         return false;
     isRunning = true;
 
@@ -39,7 +41,7 @@ bool LANDiscoveryClient::Start()
 
 void LANDiscoveryClient::Stop()
 {
-    if (!isRunning)
+    if(!isRunning)
         return;
 
     LANDiscoveryBase::Stop();
@@ -48,20 +50,20 @@ void LANDiscoveryClient::Stop()
 
 void LANDiscoveryClient::Run()
 {
-    if (!isRunning)
+    if(!isRunning)
         return;
-    while (IsDataAvailable())
+    while(IsDataAvailable())
     {
         ServiceInfo curInfo;
         PeerAddr addr;
 
-        if (socket.Recv(&curInfo.info, sizeof(curInfo.info), addr) < static_cast<int>(sizeof(curInfo.info)))
+        if(socket.Recv(&curInfo.info, sizeof(curInfo.info), addr) < static_cast<int>(sizeof(curInfo.info)))
             break;
-        if (curInfo.info.GetMagic() != config.magicResponse || curInfo.info.GetVersion() != config.version)
+        if(curInfo.info.GetMagic() != config.magicResponse || curInfo.info.GetVersion() != config.version)
             continue;
 
         curInfo.ip = addr.GetIp();
-        if (curInfo.info.GetIsActive())
+        if(curInfo.info.GetIsActive())
             services[curInfo.ip] = curInfo;
         else
             services.erase(curInfo.ip);

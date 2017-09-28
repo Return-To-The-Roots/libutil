@@ -37,25 +37,18 @@
 /// eingehende Null-Nachricht
 class Message_Null : public Message
 {
-    public:
-        Message_Null() : Message(NMS_NULL_MSG) { }
-        void run(MessageInterface* callback, unsigned id) override
-        {
-            callback->OnNMSNull(id);
-        }
+public:
+    Message_Null() : Message(NMS_NULL_MSG) {}
+    void run(MessageInterface* callback, unsigned id) override { callback->OnNMSNull(id); }
 };
-
 
 ///////////////////////////////////////////////////////////////////////////////
 /// eingehende Dead-Nachricht
 class Message_Dead : public Message
 {
-    public:
-        Message_Dead() : Message(NMS_DEAD_MSG) { }
-        void run(MessageInterface* callback, unsigned id) override
-        {
-            callback->OnNMSDead(id);
-        }
+public:
+    Message_Dead() : Message(NMS_DEAD_MSG) {}
+    void run(MessageInterface* callback, unsigned id) override { callback->OnNMSDead(id); }
 };
 
 #endif // !MESSAGES_H_INCLUDED

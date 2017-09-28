@@ -17,24 +17,24 @@
 
 #include "libUtilDefines.h" // IWYU pragma: keep
 #include "System.h"
-#include "ucString.h"
 #include "getExecutablePath.h"
+#include "ucString.h"
 #include <cstdlib>
 #ifdef _WIN32
-#   define WIN32_LEAN_AND_MEAN
-#   include <windows.h>
-#   include <shlobj.h>
-#   include <shellapi.h>
-#   include <stdexcept>
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <shellapi.h>
+#include <shlobj.h>
+#include <stdexcept>
 #endif // _WIN32
 
-#if defined(__CYGWIN__) || defined (__MINGW32__)
+#if defined(__CYGWIN__) || defined(__MINGW32__)
 
 typedef GUID KNOWNFOLDERID;
-#define REFKNOWNFOLDERID const KNOWNFOLDERID &
+#define REFKNOWNFOLDERID const KNOWNFOLDERID&
 
 #define DEFINE_KNOWN_FOLDER(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
-        EXTERN_C const GUID DECLSPEC_SELECTANY name = { l, w1, w2, { b1, b2,  b3,  b4,  b5,  b6,  b7,  b8 } }
+    EXTERN_C const GUID DECLSPEC_SELECTANY name = {l, w1, w2, {b1, b2, b3, b4, b5, b6, b7, b8}}
 
 #define KF_FLAG_CREATE 0x00008000
 
@@ -53,14 +53,14 @@ static LPSHGetKnownFolderPath gSHGetKnownFolderPath = NULL;
 static HINSTANCE gShell32DLLInst = NULL;
 
 /**
-*  Wrapper around SHGetKnownFolderPath, on Vista and up it uses SHGetKnownFolderPath, 
-*  else SHGetFolderPath.
-*
-*  @param[in] rfid
-*  @param[in] path
-*
-*  @return Status of operation (S_OK for OK)
-*/
+ *  Wrapper around SHGetKnownFolderPath, on Vista and up it uses SHGetKnownFolderPath,
+ *  else SHGetFolderPath.
+ *
+ *  @param[in] rfid
+ *  @param[in] path
+ *
+ *  @return Status of operation (S_OK for OK)
+ */
 static HRESULT mySHGetKnownFolderPath(REFKNOWNFOLDERID rfid, std::string& path)
 {
     HRESULT retval = S_FALSE;
@@ -93,7 +93,8 @@ static HRESULT mySHGetKnownFolderPath(REFKNOWNFOLDERID rfid, std::string& path)
 
 //////////////////////////////////////////////////////////////////////////
 
-bool System::envVarExists(const std::string& name){
+bool System::envVarExists(const std::string& name)
+{
 #ifdef _WIN32
     return envVarExists(cvUTF8ToWideString(name));
 #else
@@ -101,7 +102,8 @@ bool System::envVarExists(const std::string& name){
 #endif // _WIN32
 }
 
-bool System::envVarExists(const std::wstring& name){
+bool System::envVarExists(const std::wstring& name)
+{
 #ifdef _WIN32
     return GetEnvironmentVariableW(name.c_str(), NULL, 0) > 0;
 #else
@@ -109,7 +111,8 @@ bool System::envVarExists(const std::wstring& name){
 #endif // _WIN32
 }
 
-std::string System::getEnvVar(const std::string& name){
+std::string System::getEnvVar(const std::string& name)
+{
 #ifdef _WIN32
     return cvWideStringToUTF8(getEnvVar(cvUTF8ToWideString(name)));
 #else
@@ -118,7 +121,8 @@ std::string System::getEnvVar(const std::string& name){
 #endif // _WIN32
 }
 
-std::wstring System::getEnvVar(const std::wstring& name){
+std::wstring System::getEnvVar(const std::wstring& name)
+{
 #ifdef _WIN32
     // Get number of chars including terminating NULL
     DWORD numChars = GetEnvironmentVariableW(name.c_str(), NULL, 0);
@@ -136,7 +140,8 @@ std::wstring System::getEnvVar(const std::wstring& name){
 #endif // _WIN32
 }
 
-bfs::path System::getPathFromEnvVar(const std::string& name){
+bfs::path System::getPathFromEnvVar(const std::string& name)
+{
 #ifdef _WIN32
     return getEnvVar(cvUTF8ToWideString(name));
 #else
@@ -181,7 +186,8 @@ bool System::removeEnvVar(const std::wstring& name)
 #endif // _WIN32
 }
 
-bfs::path System::getHomePath(){
+bfs::path System::getHomePath()
+{
     bfs::path homePath;
 
 #ifdef _WIN32
@@ -189,7 +195,8 @@ bfs::path System::getHomePath(){
     std::string tmpPath;
     if(mySHGetKnownFolderPath(FOLDERID_SavedGames, tmpPath) == S_OK)
         homePath = tmpPath;
-    else{
+    else
+    {
         // "$Documents\My Games"
         if(mySHGetKnownFolderPath(FOLDERID_Documents, tmpPath) == S_OK)
             homePath = bfs::path(tmpPath) / "My Games";

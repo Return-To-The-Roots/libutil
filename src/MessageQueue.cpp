@@ -17,9 +17,9 @@
 
 #include "libUtilDefines.h" // IWYU pragma: keep
 #include "MessageQueue.h"
+#include "Log.h"
 #include "Message.h"
 #include "Socket.h"
-#include "Log.h"
 #include <limits>
 
 MessageQueue::~MessageQueue()
@@ -27,7 +27,7 @@ MessageQueue::~MessageQueue()
     clear();
 }
 
-MessageQueue::MessageQueue(const MessageQueue& mq): MessageHandler(mq), messages(mq.messages)
+MessageQueue::MessageQueue(const MessageQueue& mq) : MessageHandler(mq), messages(mq.messages)
 {
     // Deep copy
     for(QueueIt it = messages.begin(); it != messages.end(); ++it)
@@ -105,7 +105,7 @@ bool MessageQueue::send(Socket& sock, int max, unsigned sizelimit)
     int count = 0;
     while(count <= max && !messages.empty())
     {
-        const Message& msg = *messages.front();        
+        const Message& msg = *messages.front();
 
         if(msg.getId() > 0)
         {
@@ -114,7 +114,7 @@ bool MessageQueue::send(Socket& sock, int max, unsigned sizelimit)
             {
                 LOG.write("Sending Message to server failed\n");
                 return false;
-            }else if(static_cast<unsigned>(sendBytes) > sizelimit)
+            } else if(static_cast<unsigned>(sendBytes) > sizelimit)
             {
                 pop();
                 break; // maximal 1 großes Paket verschicken

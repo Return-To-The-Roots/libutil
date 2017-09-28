@@ -15,9 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#include <stdexcept>
-#include <iterator>
 #include <algorithm>
+#include <iterator>
+#include <stdexcept>
 
 /// A (almost) vector compatible container that uses uninitialized memory
 template<typename Tp>
@@ -50,12 +50,10 @@ class uvector
         if(index >= size())
             throw std::out_of_range("Access to element past end");
     }
+
 public:
-    uvector(): data_(NULL), size_(0), capacity_(0){}
-    uvector(size_t size): data_(NULL), size_(0), capacity_(0)
-    {
-        resize(size);
-    }
+    uvector() : data_(NULL), size_(0), capacity_(0) {}
+    uvector(size_t size) : data_(NULL), size_(0), capacity_(0) { resize(size); }
 
     ~uvector()
     {
@@ -63,7 +61,7 @@ public:
         data_ = NULL;
     }
 
-    uvector(const uvector& obj): data_(0), size_(0), capacity_(0)
+    uvector(const uvector& obj) : data_(0), size_(0), capacity_(0)
     {
         resize(obj.size());
         std::copy(obj.data_, obj.data_ + obj.size_, data_);
@@ -94,7 +92,8 @@ public:
         if(size <= capacity_)
             return;
         size_t newSize = 8;
-        while(newSize < size) newSize*=2;
+        while(newSize < size)
+            newSize *= 2;
         Ptr newData = new Tp[newSize];
         if(size_)
             std::copy(data_, data_ + size_, newData);
@@ -114,8 +113,16 @@ public:
         }
     }
 
-    Ref operator[](size_t idx){ assert(idx < size_); return data_[idx]; }
-    ConstRef operator[](size_t idx) const { assert(idx < size_); return data_[idx]; }
+    Ref operator[](size_t idx)
+    {
+        assert(idx < size_);
+        return data_[idx];
+    }
+    ConstRef operator[](size_t idx) const
+    {
+        assert(idx < size_);
+        return data_[idx];
+    }
 
     Ref at(size_t idx)
     {
@@ -128,11 +135,11 @@ public:
         return data_[idx];
     }
 
-    Ptr data(){ return data_; }
-    ConstPtr data() const {return data_; }
+    Ptr data() { return data_; }
+    ConstPtr data() const { return data_; }
 
-    iterator begin(){ return iterator(data_); }
-    iterator end(){ return iterator(data_ + size()); }
+    iterator begin() { return iterator(data_); }
+    iterator end() { return iterator(data_ + size()); }
     const_iterator begin() const { return const_iterator(data_); }
     const_iterator end() const { return const_iterator(data_ + size()); }
 };

@@ -20,54 +20,51 @@
 #include "Singleton.h"
 #include <set>
 
-namespace SingletonPolicies{
+namespace SingletonPolicies {
 
-    /// Manages the lifetime of all Singletons with a longevity. Class (only) used by SetLongevity
-    class LifetimeTracker: public Singleton<LifetimeTracker, SingletonPolicies::DefaultLifetime>
+/// Manages the lifetime of all Singletons with a longevity. Class (only) used by SetLongevity
+class LifetimeTracker : public Singleton<LifetimeTracker, SingletonPolicies::DefaultLifetime>
+{
+    /// Container for storing the data required for destroying an item (in this case calling the destroyer function)
+    struct LifetimeTrackerItem
     {
-        /// Container for storing the data required for destroying an item (in this case calling the destroyer function)
-        struct LifetimeTrackerItem{
-            const unsigned longevity_;
-            DestructionFunPtr destFunc_;
+        const unsigned longevity_;
+        DestructionFunPtr destFunc_;
 
-            LifetimeTrackerItem(unsigned longevity, DestructionFunPtr destFunc): longevity_(longevity), destFunc_(destFunc)
-            {}
+        LifetimeTrackerItem(unsigned longevity, DestructionFunPtr destFunc) : longevity_(longevity), destFunc_(destFunc) {}
 
-            friend bool operator<(const LifetimeTrackerItem& lhs, const LifetimeTrackerItem& rhs)
-            {
-                return lhs.longevity_ < rhs.longevity_;
-            }
-        };
-
-        // Queue that sorts items in ascending order (front() points to smallest element)
-        typedef std::multiset<LifetimeTrackerItem> Container;
-        Container items_;
-
-    public:
-        ~LifetimeTracker() override
-        {
-            // Destroy all items
-            for(Container::iterator it = items_.begin(); it != items_.end(); ++it)
-                it->destFunc_();
-        }
-
-        void add(unsigned longevity, DestructionFunPtr destFunc)
-        {
-            // Remove same entries first. Calling a dtor twice is not supported!
-            for(Container::iterator it = items_.begin(); it != items_.end(); ++it)
-            {
-                if(it->destFunc_ == destFunc)
-                {
-                    items_.erase(it);
-                    break;
-                }
-            }
-            items_.insert(LifetimeTrackerItem(longevity, destFunc));
-        }
+        friend bool operator<(const LifetimeTrackerItem& lhs, const LifetimeTrackerItem& rhs) { return lhs.longevity_ < rhs.longevity_; }
     };
 
-    void SetLongevity(unsigned longevity, DestructionFunPtr pFun)
+    // Queue that sorts items in ascending order (front() points to smallest element)
+    typedef std::multiset<LifetimeTrackerItem> Container;
+    Container items_;
+
+public:
+    ~LifetimeTracker() override
     {
-        LifetimeTracker::inst().add(longevity, pFun);
+        // Destroy all items
+        for(Container::iterator it = items_.begin(); it != items_.end(); ++it)
+            it->destFunc_();
     }
+
+    void add(unsigned longevity, DestructionFunPtr destFunc)
+    {
+        // Remove same entries first. Calling a dtor twice is not supported!
+        for(Container::iterator it = items_.begin(); it != items_.end(); ++it)
+        {
+            if(it->destFunc_ == destFunc)
+            {
+                items_.erase(it);
+                break;
+            }
+        }
+        items_.insert(LifetimeTrackerItem(longevity, destFunc));
+    }
+};
+
+void SetLongevity(unsigned longevity, DestructionFunPtr pFun)
+{
+    LifetimeTracker::inst().add(longevity, pFun);
 }
+} // namespace SingletonPolicies

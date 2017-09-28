@@ -17,22 +17,22 @@
 
 #include "libUtilDefines.h" // IWYU pragma: keep
 #include "MessageHandler.h"
-#include "Message.h"
-#include "Socket.h"
-#include "SocketSet.h"
 #include "Log.h"
+#include "Message.h"
 #include "MyTime.h"
 #include "Serializer.h"
+#include "Socket.h"
+#include "SocketSet.h"
 #include <boost/endian/conversion.hpp>
-#include <stdint.h>
 #include <cstddef>
 #include <stdexcept>
+#include <stdint.h>
 
 int MessageHandler::send(Socket& sock, const Message& msg)
 {
     Serializer ser;
     ser.PushUnsignedShort(0); // Id
-    ser.PushSignedInt(0); // Placeholder for length
+    ser.PushSignedInt(0);     // Placeholder for length
     const unsigned headerSize = ser.GetLength();
     msg.Serialize(ser);
 
@@ -137,7 +137,8 @@ Message* MessageHandler::recv(Socket& sock, int& error, bool wait)
     if(read < length + headerSize)
     {
         ++blocktimeout;
-        LOG.write("recv: block-waiting: not enough input (%d/%d) for message (0x%04X), waiting for next try\n") % read % (length + headerSize) % id;
+        LOG.write("recv: block-waiting: not enough input (%d/%d) for message (0x%04X), waiting for next try\n") % read
+          % (length + headerSize) % id;
         if(blocktimeout < 120 && read != -1)
             error = 4;
 

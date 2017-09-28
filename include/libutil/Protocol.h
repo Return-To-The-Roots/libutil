@@ -26,4 +26,4 @@ enum
     NMS_DEAD_MSG = 0xFFFF
 };
 
-#endif //!PROTOCOL_H_INCLUDED
+#endif //! PROTOCOL_H_INCLUDED

@@ -17,7 +17,6 @@
 
 #include "libUtilDefines.h" // IWYU pragma: keep
 #include "SocketSet.h"
-
 #include "Socket.h"
 #include <cstddef>
 
@@ -73,20 +72,26 @@ int SocketSet::Select(int timeout, int which)
     tv.tv_sec = 0;
     tv.tv_usec = timeout;
 
-    fd_set* read, *write, *except;
+    fd_set *read, *write, *except;
     read = write = except = NULL;
 
     // unser Set zuweisen
     switch(which)
     {
-        case 0: { read   = &set; } break;
-        case 1: { write  = &set; } break;
+        case 0: { read = &set;
+        }
+        break;
+        case 1: { write = &set;
+        }
+        break;
         default:
-        case 2: { except = &set; } break;
+        case 2: { except = &set;
+        }
+        break;
     }
 
     // Select ausführen
-    return select( (int)highest + 1, read, write, except, &tv);
+    return select((int)highest + 1, read, write, except, &tv);
 }
 
 /**

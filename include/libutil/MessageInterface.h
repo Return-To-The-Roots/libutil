@@ -21,15 +21,15 @@
 
 class MessageInterface
 {
-    protected:
-        virtual ~MessageInterface() {}
+protected:
+    virtual ~MessageInterface() {}
 
-    public:
-        /// Null-Nachricht.
-        virtual void OnNMSNull(unsigned id);
+public:
+    /// Null-Nachricht.
+    virtual void OnNMSNull(unsigned id);
 
-        /// Dead-Nachricht.
-        virtual void OnNMSDead(unsigned id);
+    /// Dead-Nachricht.
+    virtual void OnNMSDead(unsigned id);
 };
 
-#endif //!MESSAGEINTERFACE_H_INCLUDED
+#endif //! MESSAGEINTERFACE_H_INCLUDED

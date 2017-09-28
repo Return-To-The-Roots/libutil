@@ -20,10 +20,10 @@
 #pragma once
 
 #ifdef _WIN32
-    #include <winsock2.h>
+#include <winsock2.h>
 #else
-    #include <sys/select.h>
-    #define SOCKET int
+#include <sys/select.h>
+#define SOCKET int
 #endif // _WIN32
 
 class Socket;
@@ -31,24 +31,24 @@ class Socket;
 /// FD_Set-Wrapper-Klasse für portable TCP/IP-Verbindungen
 class SocketSet
 {
-    public:
-        SocketSet();
+public:
+    SocketSet();
 
-        /// räumt das @p SocketSet auf.
-        void Clear();
+    /// räumt das @p SocketSet auf.
+    void Clear();
 
-        /// fügt ein @p Socket zum @p SocketSet hinzu.
-        void Add(Socket& sock);
+    /// fügt ein @p Socket zum @p SocketSet hinzu.
+    void Add(Socket& sock);
 
-        /// führt einen Select auf dem @p SocketSet aus.
-        int Select(int timeout, int which = 2);
+    /// führt einen Select auf dem @p SocketSet aus.
+    int Select(int timeout, int which = 2);
 
-        /// ist ein @p Socket im @p SocketSet?
-        bool InSet(Socket& sock);
+    /// ist ein @p Socket im @p SocketSet?
+    bool InSet(Socket& sock);
 
-    private:
-        fd_set set;     /// Das fd_set
-        SOCKET highest; /// Höchste Socket des Sets
+private:
+    fd_set set;     /// Das fd_set
+    SOCKET highest; /// Höchste Socket des Sets
 };
 
 #endif // SOCKETSET_H_INCLUDED

@@ -19,9 +19,9 @@
 #define LANDISCOVERY_H_INCLUDED
 
 #include "Socket.h"
-#include <string>
 #include <boost/array.hpp>
 #include <stdint.h>
+#include <string>
 
 class LANDiscoveryBase
 {
@@ -47,15 +47,16 @@ public:
     {
         // Struct must be send over network with a fixed size
         typedef boost::array<char, 192> Payload;
-        boost::array<char, sizeof(Magic_t) + sizeof(uint8_t)*2 + sizeof(Payload)> data;
+        boost::array<char, sizeof(Magic_t) + sizeof(uint8_t) * 2 + sizeof(Payload)> data;
         Magic_t& GetMagic() { return reinterpret_cast<Magic_t&>(data[0]); }
         uint8_t& GetVersion() { return reinterpret_cast<uint8_t&>(data[sizeof(Magic_t)]); }
-        uint8_t& GetIsActive() { return reinterpret_cast<uint8_t&>(data[sizeof(Magic_t) + sizeof(uint8_t)]); } //-V119
-        Payload& GetPayload() { return reinterpret_cast<Payload&>(data[sizeof(Magic_t) + sizeof(uint8_t) * 2]); } //-V119
+        uint8_t& GetIsActive() { return reinterpret_cast<uint8_t&>(data[sizeof(Magic_t) + sizeof(uint8_t)]); }                      //-V119
+        Payload& GetPayload() { return reinterpret_cast<Payload&>(data[sizeof(Magic_t) + sizeof(uint8_t) * 2]); }                   //-V119
         const Payload& GetPayload() const { return reinterpret_cast<const Payload&>(data[sizeof(Magic_t) + sizeof(uint8_t) * 2]); } //-V119
     };
 
     LANDiscoveryBase(const Config& cfg, bool isServer);
+
 protected:
     /// Inits the socket and starts listening for broadcasts
     bool Start();
@@ -70,6 +71,7 @@ protected:
     Socket socket;
     /// Request packet to send
     Request request;
+
 private:
     bool isServer;
 };

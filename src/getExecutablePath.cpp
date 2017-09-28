@@ -27,11 +27,11 @@
 
 std::string getExecutablePathFallback(const std::string& argv0);
 
-#if (BOOST_OS_CYGWIN || BOOST_OS_WINDOWS) // {
+#if(BOOST_OS_CYGWIN || BOOST_OS_WINDOWS) // {
 
+#include "ucString.h"
 #include <windows.h>
 #include <vector>
-#include "ucString.h"
 
 std::string getExecutablePath(const std::string& argv0)
 {
@@ -43,14 +43,15 @@ std::string getExecutablePath(const std::string& argv0)
             return getExecutablePathFallback(argv0);
         else if(ret == static_cast<DWORD>(buf.size()))
             buf.resize(buf.size() * 2);
-        else break;
+        else
+            break;
     }
     return cvWideStringToUTF8(&buf[0]);
 }
 
-#elif (BOOST_OS_MACOS) // } {
+#elif(BOOST_OS_MACOS) // } {
 
-#  include <mach-o/dyld.h>
+#include <mach-o/dyld.h>
 
 std::string getExecutablePath(const std::string& argv0)
 {
@@ -66,9 +67,9 @@ std::string getExecutablePath(const std::string& argv0)
     return p.make_preferred().string();
 }
 
-#elif (BOOST_OS_SOLARIS) // } {
+#elif(BOOST_OS_SOLARIS) // } {
 
-#  include <stdlib.h>
+#include <stdlib.h>
 
 std::string getExecutablePath(const std::string& argv0)
 {
@@ -87,13 +88,13 @@ std::string getExecutablePath(const std::string& argv0)
     return ret;
 }
 
-#elif (BOOST_OS_BSD) // } {
+#elif(BOOST_OS_BSD) // } {
 
-#  include <sys/sysctl.h>
+#include <sys/sysctl.h>
 
 std::string getExecutablePath(const std::string& argv0)
 {
-    int mib[4] = { 0 };
+    int mib[4] = {0};
     mib[0] = CTL_KERN;
     mib[1] = KERN_PROC;
     mib[2] = KERN_PROC_PATHNAME;
@@ -111,13 +112,13 @@ std::string getExecutablePath(const std::string& argv0)
     return p.make_preferred().string();
 }
 
-#elif (BOOST_OS_LINUX) // } {
+#elif(BOOST_OS_LINUX) // } {
 
-#  include <unistd.h>
+#include <unistd.h>
 
 std::string getExecutablePath(const std::string& argv0)
 {
-    std::vector<char> buf(1024,0);
+    std::vector<char> buf(1024, 0);
     size_t size = readlink("/proc/self/exe", &buf[0], buf.size());
     if(size == 0 || size == buf.size())
     {

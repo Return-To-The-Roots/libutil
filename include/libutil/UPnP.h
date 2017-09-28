@@ -18,22 +18,22 @@
 #define UPNP_H_INCLUDED
 
 #pragma once
-#include <vector>
 #include <string>
+#include <vector>
 
 class UPnP
 {
-    public:
-        UPnP();
-        ~UPnP();
+public:
+    UPnP();
+    ~UPnP();
 
-        bool OpenPort(const unsigned short& port);
-        void ClosePort();
+    bool OpenPort(const unsigned short& port);
+    void ClosePort();
 
-        std::vector<std::string> GetAllv4Addresses();
+    std::vector<std::string> GetAllv4Addresses();
 
-    private:
-        unsigned short remote_port_;
+private:
+    unsigned short remote_port_;
 };
 
 #endif // !UPNP_H_INCLUDED

@@ -18,14 +18,14 @@
 #include "libUtilDefines.h" // IWYU pragma: keep
 #include "MyTime.h"
 #include <ctime>
-#include <string>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <string>
 #ifdef _WIN32
-    #include <windows.h>
+#include <windows.h>
 #else
-    #include <sys/times.h>
+#include <sys/times.h>
 #endif // _WIN32
 
 Time::Time()
@@ -95,33 +95,19 @@ std::string Time::FormatTime(const std::string& format, unser_time_t* time)
             isInFormat = false;
             switch(*c)
             {
-                case 'Y':
-                    res << setw(4) << (1900 + time_data->tm_year);
-                    break;
-                case 'm':
-                    res << setw(2) << (time_data->tm_mon+1);
-                    break;
-                case 'd':
-                    res << setw(2) << time_data->tm_mday;
-                    break;
-                case 'H':
-                    res << setw(2) << time_data->tm_hour;
-                    break;
-                case 'i':
-                    res << setw(2) << time_data->tm_min;
-                    break;
-                case 's':
-                    res << setw(2) << time_data->tm_sec;
-                    break;
-                case '%':
-                    res << '%';
-                    break;
+                case 'Y': res << setw(4) << (1900 + time_data->tm_year); break;
+                case 'm': res << setw(2) << (time_data->tm_mon + 1); break;
+                case 'd': res << setw(2) << time_data->tm_mday; break;
+                case 'H': res << setw(2) << time_data->tm_hour; break;
+                case 'i': res << setw(2) << time_data->tm_min; break;
+                case 's': res << setw(2) << time_data->tm_sec; break;
+                case '%': res << '%'; break;
                 default:
                     std::cerr << "Invalid format string: " << format << std::endl;
                     res << *c;
                     break;
             }
-        }else if(*c == '%')
+        } else if(*c == '%')
             isInFormat = true;
         else
             res << *c;

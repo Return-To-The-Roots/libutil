@@ -25,27 +25,28 @@
 /// Singleton-Template-class
 /// \tparam T Type of the singleton
 /// \tparam T_LifetimePolicy Policy that handles the lifetime of the singleton
-template <typename T, template<class> class LifetimePolicy = SingletonPolicies::DefaultLifetime>
+template<typename T, template<class> class LifetimePolicy = SingletonPolicies::DefaultLifetime>
 class Singleton
 {
-    protected:
-        // protected ctor
-        Singleton();
-    private:
-        Singleton(const Singleton&);
-        Singleton& operator = (const Singleton&);
-        static void MakeInstance();
-        static void DestroySingleton();
+protected:
+    // protected ctor
+    Singleton();
 
-    public:
-        virtual ~Singleton();
+private:
+    Singleton(const Singleton&);
+    Singleton& operator=(const Singleton&);
+    static void MakeInstance();
+    static void DestroySingleton();
 
-        // Access to single instance
-        inline static T& inst();
+public:
+    virtual ~Singleton();
 
-    private:
-        static T* me;
-        static bool isDestroyed_;
+    // Access to single instance
+    inline static T& inst();
+
+private:
+    static T* me;
+    static bool isDestroyed_;
 };
 
 #include "SingletonImp.hpp"
