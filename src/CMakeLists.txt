@@ -3,29 +3,22 @@ IF (NOT MSVC)
 	FIND_PACKAGE(Miniupnpc REQUIRED)
 ENDIF()
 
-
-INCLUDE_DIRECTORIES(${CMAKE_PROJECT_DIR} ${Boost_INCLUDE_DIR} ${MINIUPNPC_INCLUDE_DIR})
-
-INCLUDE(CheckCXXCompilerFlag)
-IF (NOT "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows" )
-	# Required for linking into shared libs (CMake 2.8.9 up could use the property below)
-	CHECK_CXX_COMPILER_FLAG(-fPIC FLAG_FPIC_SUPPORTED)
-	IF(FLAG_FPIC_SUPPORTED)
-		ADD_DEFINITIONS(-fPIC)
-	ENDIF()
-ENDIF()
+get_filename_component(parentPath ${CMAKE_CURRENT_SOURCE_DIR} DIRECTORY)
+set(includePath ${parentPath}/include)
+INCLUDE_DIRECTORIES(${includePath}/libutil)
+INCLUDE_DIRECTORIES(SYSTEM ${Boost_INCLUDE_DIRS} ${MINIUPNPC_INCLUDE_DIR})
 
 #################################################################################
 
-FILE(GLOB SRC_FILES *.cpp *.h *.hpp *.tpp)
-ADD_LIBRARY(s25util STATIC ${SRC_FILES})
+FILE(GLOB SRC_FILES *.cpp)
+FILE(GLOB HEADER_FILES ${includePath}/libutil/*.*)
+ADD_LIBRARY(s25util STATIC ${SRC_FILES} ${HEADER_FILES})
 
-IF (NOT "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows" )
-	# Required for linking into shared libs
-	set_property(TARGET s25util PROPERTY POSITION_INDEPENDENT_CODE ON)
-ENDIF()
+# Required for linking into shared libs
+set_property(TARGET s25util PROPERTY POSITION_INDEPENDENT_CODE ON)
 
-TARGET_LINK_LIBRARIES(s25util ${Boost_LIBRARIES})
+target_include_directories(s25util PUBLIC ${includePath})
+TARGET_LINK_LIBRARIES(s25util endian utf8 ${Boost_LIBRARIES})
 
 IF (NOT MSVC)
 	TARGET_LINK_LIBRARIES(s25util ${MINIUPNPC_LIBRARY})
@@ -35,4 +28,6 @@ IF ( "${CMAKE_SYSTEM_NAME}" STREQUAL "Windows" )
 	TARGET_LINK_LIBRARIES(s25util iphlpapi ws2_32)
 ENDIF ()
 
-#################################################################################
+if(ClangFormat_FOUND)
+    add_clangFormat_files(${SRC_FILES} ${HEADER_FILES})
+endif()

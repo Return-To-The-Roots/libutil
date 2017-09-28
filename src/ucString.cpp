@@ -17,7 +17,7 @@
 
 #include "libUtilDefines.h" // IWYU pragma: keep
 #include "ucString.h"
-#include "../utf8/utf8.h"
+#include "libutf8/utf8.h"
 #include <boost/type_traits.hpp>
 #include <algorithm>
 
