@@ -18,6 +18,7 @@
 #ifndef FormatedLogEntry_h__
 #define FormatedLogEntry_h__
 
+#include "enumUtils.h"
 #include <boost/core/scoped_enum.hpp>
 #include <boost/format.hpp>
 #include <boost/static_assert.hpp>
@@ -25,7 +26,9 @@
 
 class Log;
 
-BOOST_SCOPED_ENUM_DECLARE_BEGIN(LogTarget){Stdout, Stderr, File, FileAndStdout, FileAndStderr} BOOST_SCOPED_ENUM_DECLARE_END(LogTarget)
+BOOST_SCOPED_ENUM_DECLARE_BEGIN(LogTarget){Stdout = 1, Stderr = 2, File = 4, FileAndStdout = File | Stdout,
+                                           FileAndStderr = File | Stderr} BOOST_SCOPED_ENUM_DECLARE_END(LogTarget)
+  MAKE_BITSET_STRONG(LogTarget)
 
   /// Holds one log entry. Will be flushed on destruction
   class FormatedLogEntry

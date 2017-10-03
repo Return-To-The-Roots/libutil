@@ -20,52 +20,60 @@
 #define LIB_UTIL_DEFINES_H__
 
 #ifndef NOMINMAX
-#   define NOMINMAX
+#define NOMINMAX
 #endif
 
 #ifdef _WIN32
-#   ifndef _CRTDBG_MAP_ALLOC
-#       define _CRTDBG_MAP_ALLOC
-#   endif
-#   define WIN32_LEAN_AND_MEAN
+#ifndef _CRTDBG_MAP_ALLOC
+#define _CRTDBG_MAP_ALLOC
+#endif
+#define WIN32_LEAN_AND_MEAN
 
-    // We need at least the win vista version for all required defines
-#   if defined _WIN32_WINNT && _WIN32_WINNT < 0x600
-        //#undef _WIN32_WINNT
-#   endif
-#   ifndef _WIN32_WINNT
-        //#define _WIN32_WINNT 0x600
-#   endif
+// We need at least the win vista version for all required defines
+#if defined _WIN32_WINNT && _WIN32_WINNT < 0x600
+//#undef _WIN32_WINNT
+#endif
+#ifndef _WIN32_WINNT
+//#define _WIN32_WINNT 0x600
+#endif
 
-#   ifdef _MSC_VER
-#       include <crtdbg.h>
-#       define getch _getch
-#       if !defined(snprintf) && _MSC_VER < 1800
-#           define snprintf _snprintf
-#       endif
-#       ifndef assert
-#           define assert _ASSERT
-#       endif
-#   else
-#       include <assert.h>
-#   endif
+#ifdef _MSC_VER
+#include <crtdbg.h>
+#define getch _getch
+#if !defined(snprintf) && _MSC_VER < 1800
+#define snprintf _snprintf
+#endif
+#ifndef assert
+#define assert _ASSERT
+#endif
+#else
+#include <assert.h>
+#endif
 
-#   ifdef _DEBUG
-#       include <crtdbg.h>
-#   endif // _DEBUG
-#else //_WIN32
-#   include <cassert>
+#ifdef _DEBUG
+#include <crtdbg.h>
+#endif // _DEBUG
+#else  //_WIN32
+#include <cassert>
 #endif //_WIN32
 
 // Macro that can be used to suppress unused warnings. Required e.g. for const boost::arrays defined in headers
 // Don't use this if not absolutely necessary!
 #ifdef __GNUC__
-#   define SUPPRESS_UNUSED __attribute__((unused))
+#define SUPPRESS_UNUSED __attribute__((unused))
 #else
-#   define SUPPRESS_UNUSED
+#define SUPPRESS_UNUSED
 #endif
 
-namespace boost{ namespace filesystem{} }
+namespace boost {
+namespace filesystem {
+}
+} // namespace boost
+namespace boost {
+namespace nowide {
+}
+} // namespace boost
 namespace bfs = boost::filesystem;
+namespace bnw = boost::nowide;
 
 #endif

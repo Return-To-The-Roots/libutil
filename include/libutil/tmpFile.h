@@ -15,13 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#include <fstream>
+#include <boost/nowide/fstream.hpp>
 #include <string>
-
-/// Creates and opens a temporary binary file with the given extension
-/// file must be a closed file stream and open() will be called on it
-/// Returns the filename used or an empty string on error
-std::string createTempFile(std::ofstream& file, const std::string& ext = ".tmp");
 
 /// Removes a file
 /// If the file is currently in use, it is registered for deletion
@@ -31,15 +26,16 @@ void unlinkFile(const std::string& filePath);
 /// RAII wrapper for a temporary file, that creates and opens it and deletes it on destruction
 class TmpFile
 {
-    std::ofstream stream;
+    boost::nowide::ofstream stream;
 
 public:
     explicit TmpFile(const std::string& ext = ".tmp");
     ~TmpFile();
 
-    bool IsValid() const { return !filePath.empty(); }
-    std::ofstream& GetStream() { return stream; }
-    const std::ofstream& GetStream() const { return stream; }
+    bool isValid() const { return !filePath.empty(); }
+    std::ostream& getStream() { return stream; }
+    const std::ostream& getStream() const { return stream; }
+    void close() { stream.close(); }
 
     const std::string filePath;
 };

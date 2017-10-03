@@ -114,7 +114,7 @@ namespace nowide {
             en = &dummy;
             wchar_t *wstrings = GetEnvironmentStringsW();
             if(!wstrings)
-                return;
+                throw std::runtime_error("Could not get environment strings!");
             try {
                 wchar_t *wstrings_end = 0;
                 int count = 0;

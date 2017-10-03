@@ -21,7 +21,7 @@
 #include "MyTime.h"
 #include "colors.h"
 #include <boost/filesystem/path.hpp>
-#include <iostream>
+#include <boost/nowide/iostream.hpp>
 #include <stdexcept>
 
 #ifdef _WIN32
@@ -30,7 +30,6 @@
 #include <cerrno>
 #include <cstring>
 #endif
-#include "ucString.h"
 
 Log::Log() : logFileWriter(NULL), logFilepath("logs")
 {
@@ -148,28 +147,16 @@ void Log::ResetColor(bool stdoutOrStderr)
 
 void Log::flush(const std::string& txt, LogTarget target)
 {
-#ifdef _WIN32
-    if(target != LogTarget::File)
-    {
-        HANDLE hStdout =
-          GetStdHandle((target == LogTarget::Stdout || target == LogTarget::FileAndStdout) ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE);
-        std::wstring wTxt = cvUTF8ToWideString(txt);
-        DWORD size;
-        WriteConsoleW(hStdout, wTxt.c_str(), DWORD(wTxt.size()), &size, 0);
-    }
-#else
     // Write to stdout or stderr
-    if(target == LogTarget::Stdout || target == LogTarget::FileAndStdout)
-        std::cout << txt;
-    else if(target == LogTarget::Stderr || target == LogTarget::FileAndStderr)
-        std::cerr << txt;
-#endif
+    if((target & LogTarget::Stdout) == LogTarget::Stdout)
+        bnw::cout << txt;
+    else if((target & LogTarget::Stderr) == LogTarget::Stderr)
+        bnw::cerr << txt;
     // And possibly also to file
-    if(target == LogTarget::FileAndStdout || target == LogTarget::FileAndStderr || target == LogTarget::File)
+    if((target & LogTarget::File) == LogTarget::File)
     {
         open();
-        if(logFileWriter)
-            logFileWriter->writeText(txt);
+        logFileWriter->writeText(txt);
     }
 }
 

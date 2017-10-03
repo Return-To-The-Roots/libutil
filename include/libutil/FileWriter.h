@@ -19,11 +19,11 @@
 #define FileWriter_h__
 
 #include "TextWriterInterface.h"
-#include <boost/filesystem/fstream.hpp>
+#include <boost/nowide/fstream.hpp>
 
 class FileWriter : public TextWriterInterface
 {
-    bfs::ofstream file;
+    boost::nowide::ofstream file;
 
 public:
     FileWriter(const std::string& filePath);

@@ -18,8 +18,6 @@
 #include "libUtilDefines.h" // IWYU pragma: keep
 #include "tmpFile.h"
 #include <boost/filesystem.hpp>
-#include <fstream>
-#include <iostream>
 #include <stdexcept>
 #ifdef WIN32
 #include <windows.h>
@@ -27,14 +25,15 @@
 #include <unistd.h>
 #endif
 
-namespace bfs = boost::filesystem;
-
-std::string createTempFile(std::ofstream& file, const std::string& ext /* = ".tmp"*/)
+/// Creates and opens a temporary binary file with the given extension
+/// file must be a closed file stream and open() will be called on it
+/// Returns the filename used or an empty string on error
+std::string createTempFile(bnw::ofstream& file, const std::string& ext /* = ".tmp"*/)
 {
     static const unsigned MAX_TRIES = 50;
 
     if(file.is_open())
-        throw std::runtime_error("Passed in an open file handle tp createTempFile");
+        throw std::runtime_error("Passed in an open file handle to createTempFile");
 
     // Temp directory (e.g. /tmp)
     bfs::path tmpPath = bfs::temp_directory_path();
@@ -42,16 +41,13 @@ std::string createTempFile(std::ofstream& file, const std::string& ext /* = ".tm
     do
     {
         // Create a (hopefully) unique filePath
-        bfs::path filePath = tmpPath;
-        filePath /= bfs::unique_path();
+        bfs::path filePath = tmpPath / bfs::unique_path();
         filePath += ext;
         // If it exists, try again
         if(bfs::exists(filePath))
             continue;
-        // TODO: Probably use a boost stream
-        const std::string sFilePath = filePath.string();
         // Try to open and place cursor at end if it exists (shouldn't be the case but might be...)
-        file.open(sFilePath.c_str(), std::ios_base::binary | std::ios_base::ate);
+        file.open(filePath, std::ios_base::binary | std::ios_base::ate);
         if(!file)
             continue;
         if(file.tellp() > 0)
@@ -60,7 +56,7 @@ std::string createTempFile(std::ofstream& file, const std::string& ext /* = ".tm
             file.close();
             continue;
         }
-        return sFilePath;
+        return filePath.string();
     } while(++tries < MAX_TRIES);
     // Could not find a file :(
     return "";
@@ -88,7 +84,7 @@ TmpFile::TmpFile(const std::string& ext /*= ".tmp"*/) : filePath(createTempFile(
 
 TmpFile::~TmpFile()
 {
-    if(!IsValid())
+    if(!isValid())
         return;
     stream.close();
     unlinkFile(filePath);
