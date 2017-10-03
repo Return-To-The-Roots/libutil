@@ -1,0 +1,10 @@
+/nowide/standalone
+/nowide/build
+/nowide/doc/Doxyfile
+/nowide/doc/gendoc.sh
+/nowide/doc/main.txt
+/nowide/MinGW.cmake
+/nowide/index.html
+/nowide/test
+/nowide/template.hpp
+/nowide/CMakeLists.txt
