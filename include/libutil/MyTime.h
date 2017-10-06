@@ -21,17 +21,9 @@
 
 #include "Singleton.h"
 #include <cstddef>
-#include <string>
-
-#ifdef _WIN32
-#if defined __CYGWIN__ || defined __CYGWIN32__ || defined __MINGW__
-#include <sys/types.h>
-#endif
-typedef unsigned __int64 unser_time_t;
-#else
 #include <stdint.h>
+#include <string>
 typedef int64_t unser_time_t;
-#endif
 
 /// Time Klasse.
 class Time : public Singleton<Time>

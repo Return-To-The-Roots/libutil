@@ -21,7 +21,6 @@
 #ifdef _WIN32
 #include "Log.h"
 #include <windows.h>
-#include <in6addr.h>
 #include <iphlpapi.h>
 #include <winsock2.h>
 
@@ -64,9 +63,6 @@ inline BSTR A2BSTR(LPCSTR lp)
 }
 #endif // _MSC_VER
 
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x501
-#endif
 #else // _WIN32
 #include <arpa/inet.h>
 #include <ifaddrs.h>

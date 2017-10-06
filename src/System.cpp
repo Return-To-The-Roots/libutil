@@ -21,7 +21,6 @@
 #include "ucString.h"
 #include <cstdlib>
 #ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <shellapi.h>
 #include <shlobj.h>
@@ -43,7 +42,9 @@ DEFINE_KNOWN_FOLDER(FOLDERID_SavedGames, 0x4c5c32ff, 0xbb9d, 0x43b0, 0xb5, 0xb4,
 // {FDD39AD0-238F-46AF-ADB4-6C85480369C7}
 DEFINE_KNOWN_FOLDER(FOLDERID_Documents, 0xFDD39AD0, 0x238F, 0x46AF, 0xAD, 0xB4, 0x6C, 0x85, 0x48, 0x03, 0x69, 0xC7);
 
-#endif // __MINGW__
+#elif defined _WIN32 && (NTDDI_VERSION < NTDDI_VISTA)
+#define KF_FLAG_CREATE 0x00008000
+#endif // __CYGWIN__ || __MINGW32__
 
 #ifdef _WIN32
 

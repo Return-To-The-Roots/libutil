@@ -27,7 +27,7 @@
 inline Type                                                                           \
     operator&(Type lhs, BOOST_SCOPED_ENUM_NATIVE(Type) rhs)                           \
     {                                                                                 \
-        return Type(boost::underlying_cast<int>(lhs) & lhs);                          \
+        return Type(boost::underlying_cast<int>(lhs) & rhs);                          \
     }                                                                                 \
     \
 inline Type                                                                           \
@@ -45,7 +45,7 @@ inline Type                                                                     
 inline Type                                                                           \
     operator|(Type lhs, BOOST_SCOPED_ENUM_NATIVE(Type) rhs)                           \
     {                                                                                 \
-        return Type(boost::underlying_cast<int>(lhs) | lhs);                          \
+        return Type(boost::underlying_cast<int>(lhs) | rhs);                          \
     }                                                                                 \
     \
 inline Type                                                                           \
@@ -69,13 +69,13 @@ inline Type                                                                     
 inline Type                                                                               \
     operator&(Type lhs, Type rhs)                                                         \
     {                                                                                     \
-        return Type(boost::underlying_cast<int>(lhs) & boost::underlying_cast<int>(lhs)); \
+        return Type(boost::underlying_cast<int>(lhs) & boost::underlying_cast<int>(rhs)); \
     }                                                                                     \
     \
 inline Type                                                                               \
     operator|(Type lhs, Type rhs)                                                         \
     {                                                                                     \
-        return Type(boost::underlying_cast<int>(lhs) | boost::underlying_cast<int>(lhs)); \
+        return Type(boost::underlying_cast<int>(lhs) | boost::underlying_cast<int>(rhs)); \
     }                                                                                     \
     \
 MAKE_BITSET_STRONG_UL(Type)

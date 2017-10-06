@@ -19,26 +19,12 @@
 #ifndef LIB_UTIL_DEFINES_H__
 #define LIB_UTIL_DEFINES_H__
 
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-
 #ifdef _WIN32
 #ifndef _CRTDBG_MAP_ALLOC
 #define _CRTDBG_MAP_ALLOC
 #endif
-#define WIN32_LEAN_AND_MEAN
-
-// We need at least the win vista version for all required defines
-#if defined _WIN32_WINNT && _WIN32_WINNT < 0x600
-//#undef _WIN32_WINNT
-#endif
-#ifndef _WIN32_WINNT
-//#define _WIN32_WINNT 0x600
-#endif
 
 #ifdef _MSC_VER
-#include <crtdbg.h>
 #define getch _getch
 #if !defined(snprintf) && _MSC_VER < 1800
 #define snprintf _snprintf

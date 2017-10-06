@@ -22,10 +22,10 @@
 #include <stdexcept>
 
 #define CHECKED_READ(...)  \
-    if((__VA_ARGS__) != 0) \
+    if(!(__VA_ARGS__)) \
     throw std::runtime_error("Unknown error during reading " + filePath)
 #define CHECKED_WRITE(...) \
-    if((__VA_ARGS__) != 0) \
+    if(!(__VA_ARGS__)) \
     throw std::runtime_error("Unknown error during writing " + filePath)
 
 bool BinaryFile::Open(const std::string& filePath, const OpenFileMode of)

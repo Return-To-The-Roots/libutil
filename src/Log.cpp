@@ -149,9 +149,9 @@ void Log::flush(const std::string& txt, LogTarget target)
 {
     // Write to stdout or stderr
     if((target & LogTarget::Stdout) == LogTarget::Stdout)
-        bnw::cout << txt;
+        bnw::cout << txt << std::flush;
     else if((target & LogTarget::Stderr) == LogTarget::Stderr)
-        bnw::cerr << txt;
+        bnw::cerr << txt << std::flush;
     // And possibly also to file
     if((target & LogTarget::File) == LogTarget::File)
     {

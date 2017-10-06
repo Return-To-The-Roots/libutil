@@ -1,12 +1,20 @@
 FIND_PACKAGE(Boost 1.55 COMPONENTS system filesystem REQUIRED)
 IF (NOT MSVC)
 	FIND_PACKAGE(Miniupnpc REQUIRED)
+    include(GatherDll)
+    gather_dll(MINIUPNPC)
 ENDIF()
 
 get_filename_component(parentPath ${CMAKE_CURRENT_SOURCE_DIR} DIRECTORY)
 set(includePath ${parentPath}/include)
 INCLUDE_DIRECTORIES(${includePath}/libutil ${UTF8_INCLUDE_DIR})
 INCLUDE_DIRECTORIES(SYSTEM ${Boost_INCLUDE_DIRS} ${MINIUPNPC_INCLUDE_DIR})
+
+if(WIN32)
+    add_definitions(-DWIN32_LEAN_AND_MEAN -D_WIN32_WINNT=_WIN32_WINNT_WINXP)
+    # Exclude some windows defines
+    add_definitions(-DNOMINMAX -DNODRAWTEXT -DNOSOUND -DNOTEXTMETRIC -DNOCOMM -DNOMCX)
+endif()
 
 #################################################################################
 
