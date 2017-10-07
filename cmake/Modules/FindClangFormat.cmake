@@ -86,7 +86,7 @@ if(ClangFormat_FOUND)
  
         if (_sources)
             add_custom_target(clangFormat
-                    SOURCES ${_sources}
+                    DEPENDS ${_sources}
                     COMMENT "Clang-Format for target ${_target}")
         endif ()
     endfunction()

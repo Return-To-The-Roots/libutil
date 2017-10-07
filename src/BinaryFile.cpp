@@ -19,13 +19,14 @@
 #include "BinaryFile.h"
 #include <boost/array.hpp>
 #include <boost/nowide/cstdio.hpp>
+#include <limits>
 #include <stdexcept>
 
-#define CHECKED_READ(...)  \
-    if(!(__VA_ARGS__)) \
+#define CHECKED_READ(...) \
+    if(!(__VA_ARGS__))    \
     throw std::runtime_error("Unknown error during reading " + filePath)
 #define CHECKED_WRITE(...) \
-    if(!(__VA_ARGS__)) \
+    if(!(__VA_ARGS__))     \
     throw std::runtime_error("Unknown error during writing " + filePath)
 
 bool BinaryFile::Open(const std::string& filePath, const OpenFileMode of)
