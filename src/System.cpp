@@ -19,14 +19,13 @@
 #include "System.h"
 #include "getExecutablePath.h"
 #include "ucString.h"
-#include <boost/system/api_config.hpp>
 #include <cstdlib>
-#ifdef BOOST_WINDOWS_API
+#ifdef _WIN32
 #include <windows.h>
 #include <shellapi.h>
 #include <shlobj.h>
 #include <stdexcept>
-#endif // BOOST_WINDOWS_API
+#endif // _WIN32
 
 #if defined(__MINGW32__)
 
@@ -43,11 +42,11 @@ DEFINE_KNOWN_FOLDER(FOLDERID_SavedGames, 0x4c5c32ff, 0xbb9d, 0x43b0, 0xb5, 0xb4,
 // {FDD39AD0-238F-46AF-ADB4-6C85480369C7}
 DEFINE_KNOWN_FOLDER(FOLDERID_Documents, 0xFDD39AD0, 0x238F, 0x46AF, 0xAD, 0xB4, 0x6C, 0x85, 0x48, 0x03, 0x69, 0xC7);
 
-#elif defined BOOST_WINDOWS_API && (NTDDI_VERSION < NTDDI_VISTA)
+#elif defined _WIN32 && (NTDDI_VERSION < NTDDI_VISTA)
 #define KF_FLAG_CREATE 0x00008000
-#endif // __CYGWIN__ || __MINGW32__
+#endif // __MINGW32__
 
-#ifdef BOOST_WINDOWS_API
+#ifdef _WIN32
 
 typedef HRESULT(WINAPI* LPSHGetKnownFolderPath)(REFKNOWNFOLDERID rfid, DWORD dwFlags, HANDLE hToken, PWSTR* ppszPath);
 
@@ -97,35 +96,35 @@ static HRESULT mySHGetKnownFolderPath(REFKNOWNFOLDERID rfid, std::string& path)
 
 bool System::envVarExists(const std::string& name)
 {
-#ifdef BOOST_WINDOWS_API
+#ifdef _WIN32
     return envVarExists(cvUTF8ToWideString(name));
 #else
     return getenv(name.c_str()) != NULL;
-#endif // BOOST_WINDOWS_API
+#endif // _WIN32
 }
 
 bool System::envVarExists(const std::wstring& name)
 {
-#ifdef BOOST_WINDOWS_API
+#ifdef _WIN32
     return GetEnvironmentVariableW(name.c_str(), NULL, 0) > 0;
 #else
     return envVarExists(cvWideStringToUTF8(name));
-#endif // BOOST_WINDOWS_API
+#endif // _WIN32
 }
 
 std::string System::getEnvVar(const std::string& name)
 {
-#ifdef BOOST_WINDOWS_API
+#ifdef _WIN32
     return cvWideStringToUTF8(getEnvVar(cvUTF8ToWideString(name)));
 #else
     const char* value = getenv(name.c_str());
     return value ? value : "";
-#endif // BOOST_WINDOWS_API
+#endif // _WIN32
 }
 
 std::wstring System::getEnvVar(const std::wstring& name)
 {
-#ifdef BOOST_WINDOWS_API
+#ifdef _WIN32
     // Get number of chars including terminating NULL
     DWORD numChars = GetEnvironmentVariableW(name.c_str(), NULL, 0);
     if(!numChars)
@@ -139,60 +138,60 @@ std::wstring System::getEnvVar(const std::wstring& name)
     return std::wstring(tmpString.begin(), tmpString.begin() + numChars);
 #else
     return cvUTF8ToWideString(getEnvVar(cvWideStringToUTF8(name)));
-#endif // BOOST_WINDOWS_API
+#endif // _WIN32
 }
 
 bfs::path System::getPathFromEnvVar(const std::string& name)
 {
-#ifdef BOOST_WINDOWS_API
+#ifdef _WIN32
     return getEnvVar(cvUTF8ToWideString(name));
 #else
     return getEnvVar(name);
-#endif // BOOST_WINDOWS_API
+#endif // _WIN32
 }
 
 bool System::setEnvVar(const std::string& name, const std::string& value)
 {
-#ifdef BOOST_WINDOWS_API
+#ifdef _WIN32
     return setEnvVar(cvUTF8ToWideString(name), cvUTF8ToWideString(value));
 #else
     return setenv(name.c_str(), value.c_str(), 1) == 0;
-#endif // BOOST_WINDOWS_API
+#endif // _WIN32
 }
 
 bool System::setEnvVar(const std::wstring& name, const std::wstring& value)
 {
-#ifdef BOOST_WINDOWS_API
+#ifdef _WIN32
     return SetEnvironmentVariableW(name.c_str(), value.c_str()) == TRUE;
 #else
     return setEnvVar(cvWideStringToUTF8(name), cvWideStringToUTF8(value));
-#endif // BOOST_WINDOWS_API
+#endif // _WIN32
 }
 
 bool System::removeEnvVar(const std::string& name)
 {
-#ifdef BOOST_WINDOWS_API
+#ifdef _WIN32
     return removeEnvVar(cvUTF8ToWideString(name));
 #else
     unsetenv(name.c_str());
     return true;
-#endif // BOOST_WINDOWS_API
+#endif // _WIN32
 }
 
 bool System::removeEnvVar(const std::wstring& name)
 {
-#ifdef BOOST_WINDOWS_API
+#ifdef _WIN32
     return SetEnvironmentVariableW(name.c_str(), NULL) == TRUE;
 #else
     return removeEnvVar(cvWideStringToUTF8(name));
-#endif // BOOST_WINDOWS_API
+#endif // _WIN32
 }
 
 bfs::path System::getHomePath()
 {
     bfs::path homePath;
 
-#ifdef BOOST_WINDOWS_API
+#ifdef _WIN32
     // "$User\Saved Games"
     std::string tmpPath;
     if(mySHGetKnownFolderPath(FOLDERID_SavedGames, tmpPath) == S_OK)
@@ -222,7 +221,7 @@ bfs::path System::getHomePath()
 
 std::string System::getUserName()
 {
-#ifdef BOOST_WINDOWS_API
+#ifdef _WIN32
     DWORD nameLen = 0;
     // Query required size
     GetUserNameW(NULL, &nameLen);
@@ -237,7 +236,7 @@ std::string System::getUserName()
     return cvWideStringToUTF8(std::wstring(userName.begin(), userName.end()));
 #else
     return getEnvVar("USER");
-#endif // BOOST_WINDOWS_API
+#endif // _WIN32
 }
 
 bfs::path System::getExecutablePath(const char* argv0)
