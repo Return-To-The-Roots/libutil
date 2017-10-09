@@ -66,28 +66,25 @@ if(ClangFormat_FOUND)
         message(STATUS "Files for clang-format: ${ClangFormat_FILES}")
     endfunction()
     function(add_ClangFormat_target _style)
-        set(_sources "")
-        foreach (_source ${ClangFormat_FILES})
-            if (NOT TARGET ${_source})
+        if(ClangFormat_BINARY)
+            set(_format_files "")
+            foreach (_source ${ClangFormat_FILES})
                 get_filename_component(_source_file ${_source} NAME)
-                get_source_file_property(_clang_loc "${_source}" LOCATION)
- 
+     
                 set(_format_file clangFormat/${_source_file}.format)
- 
+
                 add_custom_command(OUTPUT ${_format_file}
                         DEPENDS ${_source}
                         COMMENT "Clang-Format ${_source}"
-                        COMMAND ${ClangFormat_BINARY} -style=${_style} -i ${_clang_loc}
+                        COMMAND ${ClangFormat_BINARY} -style=${_style} -i ${_source}
                         COMMAND ${CMAKE_COMMAND} -E touch ${_format_file})
- 
-                list(APPEND _sources ${_format_file})
-            endif ()
-        endforeach ()
- 
-        if (_sources)
-            add_custom_target(clangFormat
-                    DEPENDS ${_sources}
-                    COMMENT "Clang-Format for target ${_target}")
-        endif ()
+
+                list(APPEND _format_files ${_format_file})
+            endforeach ()
+     
+            if (_format_files)
+                add_custom_target(clangFormat DEPENDS ${_format_files})
+            endif()
+        endif()
     endfunction()
 endif()

@@ -137,6 +137,7 @@ public:
     inline unsigned getCount() const { return size(); }
 
     unsigned size() const { return static_cast<unsigned>(elements.size()); }
+    bool empty() const { return elements.empty(); }
 
     /**
      *  ändert die Größe des Arrays
