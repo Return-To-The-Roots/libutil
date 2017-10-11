@@ -54,6 +54,7 @@ std::string getExecutablePath()
 #elif(BOOST_OS_MACOS)
 
 #include <mach-o/dyld.h>
+#include <iostream>
 
 std::string getExecutablePath()
 {
@@ -66,10 +67,8 @@ std::string getExecutablePath()
             return "";
     }
     boost::system::error_code ec;
-    bfs::path p(bfs::canonical(&buf[0], ec));
-    if(!ec)
-        return "";
-    return p.make_preferred().string();
+    bfs::path p(bfs::canonical(&buf.front(), ec));
+    return ec ? "" : p.make_preferred().string();
 }
 
 #elif(BOOST_OS_SOLARIS)
@@ -84,7 +83,7 @@ std::string getExecutablePath()
     {
         boost::system::error_code ec;
         p = bfs::canonical(p, ec);
-        ret = (!ec) ? "" : p.make_preferred().string();
+        ret = (ec) ? "" : p.make_preferred().string();
     }
     return ret;
 }
@@ -105,7 +104,7 @@ std::string getExecutablePath()
     std::string path(buf.begin(), buf.begin() + size);
     boost::system::error_code ec;
     bfs::path p(bfs::canonical(path, ec));
-    return !ec ? "" : p.make_preferred().string();
+    return ec ? "" : p.make_preferred().string();
 }
 
 #elif(BOOST_OS_LINUX)
@@ -121,14 +120,14 @@ std::string getExecutablePath()
         size = readlink("/proc/self/exe", &buf[0], buf.size());
         if(size <= 0)
             return "";
-        if(size < buf.size())
+        if(size < static_cast<int>(buf.size()))
             break;
         buf.resize(buf.size() * 2);
     }
     std::string path(buf.begin(), buf.begin() + size);
     boost::system::error_code ec;
     bfs::path p(bfs::canonical(path, ec));
-    return p.make_preferred().string();
+    return ec ? "" : p.make_preferred().string();
 }
 
 #else
