@@ -54,9 +54,7 @@ public:
     static std::string getUserName();
 
     /// Return the full path to the current executable
-    static bfs::path getExecutablePath(const char* argv0);
-    /// Return the full path to the current executable
-    static bfs::path getExecutablePath(const std::string& argv0);
+    static bfs::path getExecutablePath();
 };
 
 #endif // System_h__

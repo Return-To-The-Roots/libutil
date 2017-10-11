@@ -22,6 +22,6 @@
 
 #include <string>
 
-std::string getExecutablePath(const std::string& argv0);
+std::string getExecutablePath();
 
 #endif // getExecutablePath_h__

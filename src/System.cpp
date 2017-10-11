@@ -239,12 +239,7 @@ std::string System::getUserName()
 #endif // _WIN32
 }
 
-bfs::path System::getExecutablePath(const char* argv0)
+bfs::path System::getExecutablePath()
 {
-    return getExecutablePath(std::string(argv0 ? argv0 : ""));
-}
-
-bfs::path System::getExecutablePath(const std::string& argv0)
-{
-    return ::getExecutablePath(argv0);
+    return ::getExecutablePath();
 }

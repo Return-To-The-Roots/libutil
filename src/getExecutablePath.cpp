@@ -20,109 +20,110 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/predef.h>
-#include <cstdio>
 #include <cstdlib>
+#include <vector>
 
 // Heavily based on https://stackoverflow.com/a/34109000/1930508 by "Ben Key"
-
-std::string getExecutablePathFallback(const std::string& argv0);
+// with inspirations from WhereAmI https://github.com/gpakosz/whereami
 
 #if(BOOST_OS_CYGWIN || BOOST_OS_WINDOWS) // {
 
 #include "ucString.h"
+#include <boost/array.hpp>
 #include <windows.h>
-#include <vector>
 
-std::string getExecutablePath(const std::string& argv0)
+std::string getExecutablePath()
 {
     std::vector<wchar_t> buf(MAX_PATH);
     while(true)
     {
         DWORD ret = GetModuleFileNameW(NULL, &buf[0], static_cast<DWORD>(buf.size()));
         if(ret == 0)
-            return getExecutablePathFallback(argv0);
+            return "";
         else if(ret == static_cast<DWORD>(buf.size()))
             buf.resize(buf.size() * 2);
         else
             break;
     }
-    return cvWideStringToUTF8(&buf[0]);
+    boost::array<wchar_t, MAX_PATH> fullPath;
+    if(!_wfullpath(&fullPath.front(), &buf.front(), fullPath.size()))
+        return "";
+    return cvWideStringToUTF8(&fullPath.front());
 }
 
-#elif(BOOST_OS_MACOS) // } {
+#elif(BOOST_OS_MACOS)
 
 #include <mach-o/dyld.h>
 
-std::string getExecutablePath(const std::string& argv0)
+std::string getExecutablePath()
 {
     std::vector<char> buf(1024, 0);
     uint32_t size = buf.size();
-    int ret = _NSGetExecutablePath(&buf[0], &size);
-    if(ret)
+    if(_NSGetExecutablePath(&buf.front(), &size) == -1)
     {
-        return getExecutablePathFallback(argv0);
+        buf.resize(size);
+        if(!_NSGetExecutablePath(&buf.front(), &size))
+            return "";
     }
     boost::system::error_code ec;
     bfs::path p(bfs::canonical(&buf[0], ec));
+    if(!ec)
+        return "";
     return p.make_preferred().string();
 }
 
-#elif(BOOST_OS_SOLARIS) // } {
+#elif(BOOST_OS_SOLARIS)
 
-#include <stdlib.h>
-
-std::string getExecutablePath(const std::string& argv0)
+std::string getExecutablePath()
 {
     std::string ret = getexecname();
     if(ret.empty())
-    {
-        return getExecutablePathFallback(argv0);
-    }
+        return "";
     bfs::path p(ret);
     if(!p.has_root_directory())
     {
         boost::system::error_code ec;
         p = bfs::canonical(p, ec);
-        ret = p.make_preferred().string();
+        ret = (!ec) ? "" : p.make_preferred().string();
     }
     return ret;
 }
 
-#elif(BOOST_OS_BSD) // } {
+#elif(BOOST_OS_BSD)
 
 #include <sys/sysctl.h>
 
-std::string getExecutablePath(const std::string& argv0)
+std::string getExecutablePath()
 {
-    int mib[4] = {0};
-    mib[0] = CTL_KERN;
-    mib[1] = KERN_PROC;
-    mib[2] = KERN_PROC_PATHNAME;
-    mib[3] = -1;
+    int mib[4] = {CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1};
     std::vector<char> buf(1024, 0);
     size_t size = buf.size();
-    sysctl(mib, 4, &buf[0], &size, NULL, 0);
+    if(sysctl(mib, 4, &buf[0], &size, NULL, 0) != 0)
+        return "";
     if(size == 0 || size == buf.size())
-    {
-        return getExecutablePathFallback(argv0);
-    }
+        return "";
     std::string path(buf.begin(), buf.begin() + size);
     boost::system::error_code ec;
     bfs::path p(bfs::canonical(path, ec));
-    return p.make_preferred().string();
+    return !ec ? "" : p.make_preferred().string();
 }
 
-#elif(BOOST_OS_LINUX) // } {
+#elif(BOOST_OS_LINUX)
 
 #include <unistd.h>
 
-std::string getExecutablePath(const std::string& argv0)
+std::string getExecutablePath()
 {
     std::vector<char> buf(1024, 0);
-    size_t size = readlink("/proc/self/exe", &buf[0], buf.size());
-    if(size == 0 || size == buf.size())
+    int size;
+    while(true)
     {
-        return getExecutablePathFallback(argv0);
+        size = readlink("/proc/self/exe", &buf[0], buf.size());
+        if(size <= 0)
+            return "";
+        if(size < buf.size())
+            break;
+        buf.resize(buf.size() * 2);
     }
     std::string path(buf.begin(), buf.begin() + size);
     boost::system::error_code ec;
@@ -130,20 +131,8 @@ std::string getExecutablePath(const std::string& argv0)
     return p.make_preferred().string();
 }
 
-#else // } {
+#else
 
-std::string getExecutablePath(const std::string& argv0)
-{
-    return getExecutablePathFallback(argv0);
-}
+#error Unsupported plattform!
 
-#endif // }
-
-std::string getExecutablePathFallback(const std::string& argv0)
-{
-    if(argv0.empty())
-        return "";
-    boost::system::error_code ec;
-    bfs::path p(bfs::canonical(argv0, ec));
-    return p.make_preferred().string();
-}
+#endif
