@@ -51,6 +51,8 @@
 #define SUPPRESS_UNUSED
 #endif
 
+#include <stdint.h>
+
 namespace boost { namespace filesystem {
 }} // namespace boost::filesystem
 namespace boost { namespace nowide {

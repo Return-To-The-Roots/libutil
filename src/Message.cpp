@@ -43,7 +43,7 @@ Message* Message::create_base(unsigned short id)
 /**
  *  dupliziert eine Nachricht.
  */
-Message* Message::duplicate() const
+Message* Message::clone() const
 {
     Message* msg = create(id_);
     Serializer ser;

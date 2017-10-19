@@ -26,10 +26,10 @@ protected:
 
 public:
     /// Null-Nachricht.
-    virtual void OnNMSNull(unsigned id);
+    virtual bool OnNMSNull(unsigned id) { return false; }
 
     /// Dead-Nachricht.
-    virtual void OnNMSDead(unsigned id);
+    virtual bool OnNMSDead(unsigned id) { return false; }
 };
 
 #endif //! MESSAGEINTERFACE_H_INCLUDED

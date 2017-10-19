@@ -22,33 +22,11 @@
 #include "Socket.h"
 #include <limits>
 
+MessageQueue::MessageQueue(CreateMsgFunction createfunction) : MessageHandler(createfunction) {}
+
 MessageQueue::~MessageQueue()
 {
     clear();
-}
-
-MessageQueue::MessageQueue(const MessageQueue& mq) : MessageHandler(mq), messages(mq.messages)
-{
-    // Deep copy
-    for(QueueIt it = messages.begin(); it != messages.end(); ++it)
-        *it = (*it)->duplicate();
-}
-
-MessageQueue& MessageQueue::operator=(const MessageQueue& mq)
-{
-    if(this == &mq)
-        return *this;
-
-    MessageHandler::operator=(mq);
-
-    clear();
-    messages = mq.messages;
-
-    // Deep copy
-    for(QueueIt it = messages.begin(); it != messages.end(); ++it)
-        *it = (*it)->duplicate();
-
-    return *this;
 }
 
 /**
@@ -56,8 +34,17 @@ MessageQueue& MessageQueue::operator=(const MessageQueue& mq)
  */
 void MessageQueue::clear()
 {
-    while(!empty())
-        pop();
+    messages.clear();
+}
+
+void MessageQueue::push(Message* message)
+{
+    messages.push_back(message);
+}
+
+Message* MessageQueue::front()
+{
+    return (!messages.empty() ? &messages.front() : NULL);
 }
 
 /**
@@ -65,11 +52,15 @@ void MessageQueue::clear()
  */
 void MessageQueue::pop()
 {
-    if(messages.empty())
-        return;
+    if(!messages.empty())
+        messages.pop_front();
+}
 
-    delete messages.front();
-    messages.pop();
+Message* MessageQueue::popFront()
+{
+    if(messages.empty())
+        return NULL;
+    return messages.pop_front().release();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -96,6 +87,16 @@ bool MessageQueue::flush(Socket& sock)
     return send(sock, static_cast<int>(messages.size()), std::numeric_limits<unsigned>::max());
 }
 
+size_t MessageQueue::size() const
+{
+    return messages.size();
+}
+
+bool MessageQueue::empty() const
+{
+    return messages.empty();
+}
+
 bool MessageQueue::send(Socket& sock, int max, unsigned sizelimit)
 {
     if(!sock.isValid())
@@ -105,7 +106,7 @@ bool MessageQueue::send(Socket& sock, int max, unsigned sizelimit)
     int count = 0;
     while(count <= max && !messages.empty())
     {
-        const Message& msg = *messages.front();
+        const Message& msg = *front();
 
         if(msg.getId() > 0)
         {

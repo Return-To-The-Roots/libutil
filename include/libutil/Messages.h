@@ -39,7 +39,7 @@ class Message_Null : public Message
 {
 public:
     Message_Null() : Message(NMS_NULL_MSG) {}
-    void run(MessageInterface* callback, unsigned id) override { callback->OnNMSNull(id); }
+    bool run(MessageInterface* callback, unsigned id) override { return callback->OnNMSNull(id); }
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ class Message_Dead : public Message
 {
 public:
     Message_Dead() : Message(NMS_DEAD_MSG) {}
-    void run(MessageInterface* callback, unsigned id) override { callback->OnNMSDead(id); }
+    bool run(MessageInterface* callback, unsigned id) override { return callback->OnNMSDead(id); }
 };
 
 #endif // !MESSAGES_H_INCLUDED

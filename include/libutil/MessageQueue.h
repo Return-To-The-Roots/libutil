@@ -18,6 +18,7 @@
 #define MESSAGEQUEUE_H_INCLUDED
 
 #include "MessageHandler.h"
+#include <boost/ptr_container/ptr_deque.hpp>
 #include <cstddef>
 #include <deque>
 #include <queue>
@@ -25,43 +26,21 @@
 class Message;
 class Socket;
 
-template<typename T, typename Container = std::deque<T> >
-class iterable_queue : public std::queue<T, Container>
-{
-public:
-    typedef typename Container::iterator iterator;
-    typedef typename Container::const_iterator const_iterator;
-
-    iterator begin() { return this->c.begin(); }
-    iterator end() { return this->c.end(); }
-    const_iterator begin() const { return this->c.begin(); }
-    const_iterator end() const { return this->c.end(); }
-};
-
 // class Socket;
 class MessageQueue : protected MessageHandler
 {
 public:
-    MessageQueue(CreateMsgFunction createfunction) : MessageHandler(createfunction) {}
-    MessageQueue(const MessageQueue& mq);
+    MessageQueue(CreateMsgFunction createfunction);
     ~MessageQueue();
 
-    MessageQueue& operator=(const MessageQueue& mq);
-
-private:
-    typedef iterable_queue<Message*> Queue;
-    typedef iterable_queue<Message*>::iterator QueueIt;
-    Queue messages;
-
-public:
     void clear();
 
     /// flusht die Queue, verschickt alle Elemente.
     bool flush(Socket& sock);
 
     /// liefert die Größe der Queue
-    size_t count() const { return messages.size(); }
-    bool empty() const { return messages.empty(); }
+    size_t size() const;
+    bool empty() const;
 
     /// verschickt Pakete der Queue, maximal @p max, mit einem maximal @p sizelimit groß (aber beliebig viele kleine)
     bool send(Socket& sock, int max, unsigned sizelimit = 512);
@@ -69,23 +48,18 @@ public:
     /// Sends a message directly
     static bool sendMessage(Socket& sock, const Message& msg) { return MessageHandler::send(sock, msg) >= 0; }
 
-public:
     /// hängt ein Element hinten an.
-    void push(Message* message) { messages.push(message); }
+    void push(Message* message);
     /// liefert das vorderste Element der Queue.
-    Message* front() { return (!messages.empty() ? messages.front() : NULL); }
+    Message* front();
     /// entfernt das vorderste Element aus der Queue.
     void pop();
     /// Returns the first element and removes it from the queue. Returns NULL if there is none
     /// Caller is responsible for deleting it!
-    Message* popFront()
-    {
-        if(messages.empty())
-            return NULL;
-        Message* msg = messages.front();
-        messages.pop();
-        return msg;
-    }
+    Message* popFront();
+
+private:
+    boost::ptr_deque<Message> messages;
 };
 
 #endif // LOBBYMESSAGEQUEUE_H_INCLUDED

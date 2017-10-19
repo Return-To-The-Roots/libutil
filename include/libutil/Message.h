@@ -19,15 +19,17 @@
 
 #pragma once
 
+#include <stdint.h>
+
 class MessageInterface;
 class Serializer;
 
 class Message
 {
-    unsigned short id_;
+    uint16_t id_;
 
 public:
-    Message(unsigned short id) : id_(id) {}
+    Message(uint16_t id) : id_(id) {}
     virtual ~Message() {}
 
     virtual void Serialize(Serializer& /*ser*/) const {}
@@ -37,9 +39,10 @@ public:
     static Message* create_base(unsigned short id);
 
     virtual Message* create(unsigned short id) const { return create_base(id); }
-    virtual Message* duplicate() const;
+    virtual Message* clone() const;
 
-    virtual void run(MessageInterface* callback, unsigned id) = 0;
+    /// Return true if handled
+    virtual bool run(MessageInterface* callback, unsigned id) = 0;
 
 protected:
     Message(const Message& other) : id_(other.id_) {}
@@ -54,5 +57,10 @@ protected:
         return *this;
     }
 };
+
+inline Message* new_clone(const Message& msg)
+{
+    return msg.clone();
+}
 
 #endif //! MESSAGE_H_INCLUDED
