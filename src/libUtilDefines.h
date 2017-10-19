@@ -51,14 +51,10 @@
 #define SUPPRESS_UNUSED
 #endif
 
-namespace boost {
-namespace filesystem {
-}
-} // namespace boost
-namespace boost {
-namespace nowide {
-}
-} // namespace boost
+namespace boost { namespace filesystem {
+}} // namespace boost::filesystem
+namespace boost { namespace nowide {
+}} // namespace boost::nowide
 namespace bfs = boost::filesystem;
 namespace bnw = boost::nowide;
 

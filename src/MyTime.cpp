@@ -28,13 +28,9 @@
 #include <sys/times.h>
 #endif // _WIN32
 
-Time::Time()
-{
-}
+Time::Time() {}
 
-Time::~Time()
-{
-}
+Time::~Time() {}
 
 /**
  *  liefert die aktuelle Zeit.

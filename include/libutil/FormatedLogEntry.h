@@ -35,12 +35,10 @@ BOOST_SCOPED_ENUM_DECLARE_BEGIN(LogTarget){Stdout = 1, Stderr = 2, File = 4, Fil
 {
 public:
     FormatedLogEntry(Log& log, LogTarget target, const std::string& msg) : log_(log), target_(target), fmt(msg), useColor_(false), color_(0)
-    {
-    }
+    {}
     FormatedLogEntry(Log& log, LogTarget target, const std::string& msg, unsigned color)
         : log_(log), target_(target), fmt(msg), useColor_(true), color_(color)
-    {
-    }
+    {}
     ~FormatedLogEntry();
 
     template<typename T>

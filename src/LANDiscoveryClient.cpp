@@ -18,13 +18,9 @@
 #include "libUtilDefines.h" // IWYU pragma: keep
 #include "LANDiscoveryClient.h"
 
-LANDiscoveryClient::LANDiscoveryClient(const Config& cfg) : LANDiscoveryBase(cfg, false), isRunning(false)
-{
-}
+LANDiscoveryClient::LANDiscoveryClient(const Config& cfg) : LANDiscoveryBase(cfg, false), isRunning(false) {}
 
-LANDiscoveryClient::~LANDiscoveryClient()
-{
-}
+LANDiscoveryClient::~LANDiscoveryClient() {}
 
 bool LANDiscoveryClient::Start()
 {

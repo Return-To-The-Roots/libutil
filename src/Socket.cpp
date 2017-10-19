@@ -155,9 +155,7 @@ const sockaddr* PeerAddr::GetAddr() const
     return reinterpret_cast<const sockaddr*>(&addr);
 }
 
-Socket::Socket() : socket_(INVALID_SOCKET), refCount_(NULL), status_(INVALID), isBroadcast(false)
-{
-}
+Socket::Socket() : socket_(INVALID_SOCKET), refCount_(NULL), status_(INVALID), isBroadcast(false) {}
 
 /**
  *  Konstruktor von @p Socket.
@@ -165,9 +163,7 @@ Socket::Socket() : socket_(INVALID_SOCKET), refCount_(NULL), status_(INVALID), i
  *  @param[in] so Socket welches benutzt werden soll
  *  @param[in] st Status der gesetzt werden soll
  */
-Socket::Socket(const SOCKET so, Status st) : socket_(so), refCount_(new int32_t(1)), status_(st), isBroadcast(false)
-{
-}
+Socket::Socket(const SOCKET so, Status st) : socket_(so), refCount_(new int32_t(1)), status_(st), isBroadcast(false) {}
 
 Socket::Socket(const Socket& so) : socket_(so.socket_), refCount_(so.refCount_), status_(so.status_), isBroadcast(so.isBroadcast)
 {

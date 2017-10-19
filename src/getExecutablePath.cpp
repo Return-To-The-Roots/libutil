@@ -53,8 +53,8 @@ std::string getExecutablePath()
 
 #elif(BOOST_OS_MACOS)
 
-#include <mach-o/dyld.h>
 #include <iostream>
+#include <mach-o/dyld.h>
 
 std::string getExecutablePath()
 {

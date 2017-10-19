@@ -31,9 +31,7 @@
 #include <cstring>
 #endif
 
-Log::Log() : logFileWriter(NULL), logFilepath("logs")
-{
-}
+Log::Log() : logFileWriter(NULL), logFilepath("logs") {}
 
 Log::~Log()
 {

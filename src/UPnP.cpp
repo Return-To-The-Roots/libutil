@@ -81,9 +81,7 @@ inline BSTR A2BSTR(LPCSTR lp)
 #include <cstring>
 #include <sstream>
 
-UPnP::UPnP() : remote_port_(0)
-{
-}
+UPnP::UPnP() : remote_port_(0) {}
 
 UPnP::~UPnP()
 {
