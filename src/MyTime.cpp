@@ -21,25 +21,21 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
-#include <string>
 #ifdef _WIN32
 #include <windows.h>
 #else
 #include <sys/times.h>
 #endif // _WIN32
 
-Time::Time() {}
-
-Time::~Time() {}
-
+namespace libutil {
 /**
  *  liefert die aktuelle Zeit.
  *
  *  @return Zeit als Timestamp
  */
-unser_time_t Time::CurrentTime()
+time64_t Time::CurrentTime()
 {
-    return (unser_time_t)time(NULL);
+    return static_cast<time64_t>(time(NULL));
 }
 
 /**
@@ -47,9 +43,9 @@ unser_time_t Time::CurrentTime()
  *
  *  @return Zeit als Ticks
  */
-unser_time_t Time::CurrentTick()
+time64_t Time::CurrentTick()
 {
-    unser_time_t ticks;
+    time64_t ticks;
 #ifdef _WIN32
     ticks = GetTickCount();
 #else
@@ -67,13 +63,9 @@ unser_time_t Time::CurrentTick()
  *
  *  @return Formatted string
  */
-std::string Time::FormatTime(const std::string& format, unser_time_t* time)
+std::string Time::FormatTime(const std::string& format, time64_t time)
 {
-    time_t inTime;
-    if(time)
-        inTime = *time;
-    else
-        inTime = CurrentTime();
+    time_t inTime = static_cast<time_t>(time);
 
     tm* time_data = localtime(&inTime);
     if(!time_data)
@@ -114,3 +106,9 @@ std::string Time::FormatTime(const std::string& format, unser_time_t* time)
 
     return res.str();
 }
+
+std::string Time::FormatTime(const std::string& format)
+{
+    return FormatTime(format, CurrentTime());
+}
+} // namespace libutil

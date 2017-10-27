@@ -19,30 +19,28 @@
 
 #pragma once
 
-#include "Singleton.h"
-#include <cstddef>
 #include <stdint.h>
 #include <string>
-typedef int64_t unser_time_t;
 
-/// Time Klasse.
-class Time : public Singleton<Time>
+namespace libutil {
+
+typedef int64_t time64_t;
+
+struct Time
 {
 public:
-    Time();
-    /// Desktruktor von @p Time.
-    ~Time() override;
-
     /// liefert die aktuelle Zeit.
-    unser_time_t CurrentTime();
+    static time64_t CurrentTime();
     /// liefert die aktuellen Ticks.
-    unser_time_t CurrentTick();
-    /// Formats a time as a string
+    static time64_t CurrentTick();
+    /// Format a time as a string
     /// @param format Format to use  (%Y=4 year (4 digits), %m month, %D day, %H hour, %i minute, %s second (all 2 digits), %% -> %)
     /// @param time Pointer to time to format or NULL to use current time
-    std::string FormatTime(const std::string& format, unser_time_t* time = NULL);
+    static std::string FormatTime(const std::string& format, time64_t time);
+    /// Format the current time as a string
+    static std::string FormatTime(const std::string& format);
 };
 
-#define TIME Time::inst()
+} // namespace libutil
 
 #endif // TIME_H_INCLUDED

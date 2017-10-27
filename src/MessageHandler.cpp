@@ -57,12 +57,12 @@ Message* MessageHandler::recv(Socket& sock, int& error, bool wait)
 {
     error = -1;
 
-    unser_time_t startTime = TIME.CurrentTick();
+    libutil::time64_t startTime = libutil::Time::CurrentTick();
 
     while(true)
     {
         // Warten wir schon 15s auf Antwort?
-        if(wait && TIME.CurrentTick() - startTime > 15000)
+        if(wait && libutil::Time::CurrentTick() - startTime > 15000)
             wait = false;
 
         SocketSet set;
