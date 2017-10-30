@@ -19,16 +19,12 @@
 
 #pragma once
 
-#ifdef _WIN32
-#include <winsock2.h>
-#else
-#include <netinet/in.h>
-#endif // _WIN32
-
-#include "uvector.h"
-#include <algorithm>
+#include "libendian/ConvertEndianess.h"
+#include <boost/container/vector.hpp>
 #include <cassert>
+#include <cstring>
 #include <stdexcept>
+#include <stdint.h>
 #include <string>
 
 class BinaryFile;
@@ -37,37 +33,19 @@ class BinaryFile;
 /// Implementiert einen FIFO (push fügt ans ende, pop entfernt am anfang)
 class Serializer
 {
+    typedef libendian::ConvertEndianess<true> Converter;
+
 public:
-    Serializer() : data_(0), length_(0), pos_(0) {}
+    Serializer();
+    Serializer(const Serializer& other);
+    Serializer(const void* const data, unsigned initial_size);
 
-    Serializer(const Serializer& other) : data_(other.data_), length_(other.length_), pos_(other.pos_) {}
+    virtual ~Serializer();
 
-    Serializer(const void* const data, const unsigned initial_size) : data_(initial_size), length_(0), pos_(0)
-    {
-        PushRawData(data, initial_size);
-    }
-
-    virtual ~Serializer() { Clear(); }
-
-    Serializer& operator=(const Serializer& other)
-    {
-        if(this == &other)
-            return *this;
-
-        data_ = other.data_;
-        length_ = other.length_;
-        pos_ = other.pos_;
-
-        return *this;
-    }
+    Serializer& operator=(const Serializer& other);
 
     /// Aufräumen
-    void Clear()
-    {
-        data_.clear();
-        length_ = 0;
-        pos_ = 0;
-    }
+    void Clear();
 
     unsigned GetPos() const { return pos_; }
 
@@ -75,17 +53,9 @@ public:
     unsigned GetLength() const { return length_; }
 
     /// Schreibzugriff auf die Länge
-    void SetLength(const unsigned length)
-    {
-        EnsureSize(length);
-        this->length_ = length;
-    }
+    void SetLength(const unsigned length);
 
-    unsigned GetBytesLeft() const
-    {
-        assert(pos_ <= length_);
-        return length_ - pos_;
-    }
+    unsigned GetBytesLeft() const;
 
     /// Zugriff auf die Rohdaten
     const unsigned char* GetData() const { return data_.data(); }
@@ -102,138 +72,146 @@ public:
     /// Liest den Buffer aus einer Datei
     virtual void ReadFromFile(BinaryFile& file);
 
-    /// Kopiermethoden
-
-    /// Rohdaten kopieren
-    inline void PushRawData(const void* const data, const unsigned length)
-    {
-        ExtendMemory(length);
-        const char* const bData = reinterpret_cast<const char* const>(data);
-        std::copy(bData, bData + length, this->data_.begin() + this->length_);
-        this->length_ += length;
-    }
+    void PushRawData(const void* data, unsigned length);
 
     /// Sämtliche Integer
-    inline void PushSignedInt(signed int i) { Push(i); }
-    inline void PushUnsignedInt(unsigned i) { Push(i); }
+    void PushSignedInt(int32_t i) { Push(i); }
+    void PushUnsignedInt(uint32_t i) { Push(i); }
 
-    inline void PushSignedShort(signed short int i) { Push(i); }
-    inline void PushUnsignedShort(unsigned short int i) { Push(i); }
+    void PushSignedShort(int16_t i) { Push(i); }
+    void PushUnsignedShort(uint16_t i) { Push(i); }
 
-    inline void PushSignedChar(signed char i) { Push(i); }
-    inline void PushUnsignedChar(unsigned char i) { Push(i); }
+    void PushSignedChar(int8_t i) { Push(i); }
+    void PushUnsignedChar(uint8_t i) { Push(i); }
 
-    inline void PushBool(bool b) { PushUnsignedChar(b ? 1 : 0); }
+    void PushBool(bool b);
 
-    inline void PushString(const std::string& str)
-    {
-        PushUnsignedInt(static_cast<unsigned>(str.length()));
-        for(unsigned i = 0; i < str.length(); ++i)
-            PushSignedChar(str[i]);
-    }
+    void PushString(const std::string& str);
 
     // Lesemethoden
 
     /// Rohdaten kopieren
-    inline void PopRawData(void* const data, const unsigned length)
-    {
-        CheckSize(length);
-
-        char* const bData = reinterpret_cast<char* const>(data);
-        std::copy(this->data_.begin() + pos_, this->data_.begin() + pos_ + length, bData);
-        pos_ += length;
-    }
+    void PopRawData(void* data, unsigned length);
 
     /// Sämtliche Integer
-    inline signed int PopSignedInt() { return Pop<signed int>(); }
-    inline unsigned PopUnsignedInt() { return Pop<unsigned>(); }
+    signed int PopSignedInt() { return Pop<int32_t>(); }
+    unsigned PopUnsignedInt() { return Pop<uint32_t>(); }
 
-    inline signed short PopSignedShort() { return Pop<signed short>(); }
-    inline unsigned short PopUnsignedShort() { return Pop<unsigned short>(); }
+    signed short PopSignedShort() { return Pop<int16_t>(); }
+    unsigned short PopUnsignedShort() { return Pop<uint16_t>(); }
 
-    inline signed char PopSignedChar() { return Pop<signed char>(); }
+    signed char PopSignedChar() { return Pop<int8_t>(); }
+    unsigned char PopUnsignedChar() { return Pop<uint8_t>(); }
 
-    inline unsigned char PopUnsignedChar() { return Pop<unsigned char>(); }
+    bool PopBool();
 
-    inline bool PopBool()
-    {
-        unsigned char value = PopUnsignedChar();
-        assert(value == 0 || value == 1);
-        return ((value != 0) ? true : false);
-    }
-
-    inline std::string PopString()
-    {
-        std::string str;
-        str.resize(PopUnsignedInt());
-
-        CheckSize(static_cast<unsigned>(str.size()));
-
-        for(unsigned i = 0; i < str.length(); ++i)
-            str[i] = PopSignedChar();
-
-        return str;
-    }
+    std::string PopString();
 
 protected:
-    unsigned checkByteOrder(unsigned i) { return htonl(i); }
-
-    signed int checkByteOrder(signed int i) { return htonl(i); }
-
-    unsigned short checkByteOrder(unsigned short i) { return htons(i); }
-
-    signed short checkByteOrder(signed short i) { return htons(i); }
-
-    unsigned char checkByteOrder(unsigned char i) { return i; }
-
-    signed char checkByteOrder(signed char i) { return i; }
+    template<typename T>
+    T Pop();
 
     template<typename T>
-    T Pop()
-    {
-        CheckSize(sizeof(T));
-
-        T i = checkByteOrder(*reinterpret_cast<T*>(&data_[pos_]));
-        pos_ += sizeof(T);
-
-        return i;
-    }
-
-    template<typename T>
-    void Push(const T i)
-    {
-        ExtendMemory(sizeof(T));
-        *reinterpret_cast<T*>(&data_[length_]) = checkByteOrder(i);
-        this->length_ += sizeof(T);
-    }
+    void Push(T i);
 
     /// Erweitert ggf. Speicher um add_length
-    inline void ExtendMemory(const unsigned add_length) { EnsureSize(length_ + add_length); }
+    void ExtendMemory(unsigned add_length) { EnsureSize(length_ + add_length); }
 
     /// Makes sure the internal buffer is at least length bytes long
-    inline void EnsureSize(const unsigned length)
-    {
-        if(data_.size() < length)
-        {
-            data_.reserve(length);
-            data_.resize(data_.capacity());
-        }
-    }
+    void EnsureSize(unsigned length);
 
 private:
     /// data mit den Daten
-    uvector<unsigned char> data_;
+    boost::container::vector<uint8_t> data_;
     /// Logische Länge
     unsigned length_;
     /// Schreib/Leseposition
     unsigned pos_;
 
     /// Checks if data of size len can be popped
-    void CheckSize(const unsigned len)
-    {
-        if(pos_ + len > length_)
-            throw std::range_error("Out of range during deserialization");
-    }
+    void CheckSize(unsigned len) const;
 };
+
+inline unsigned Serializer::GetBytesLeft() const
+{
+    assert(pos_ <= length_);
+    return length_ - pos_;
+}
+
+inline void Serializer::EnsureSize(unsigned length)
+{
+    if(data_.size() < length)
+    {
+        data_.reserve(length);
+        data_.resize(data_.capacity(), boost::container::default_init);
+    }
+}
+
+inline void Serializer::CheckSize(unsigned len) const
+{
+    if(GetBytesLeft() < len)
+        throw std::range_error("Out of range during deserialization");
+}
+
+inline void Serializer::PushRawData(const void* data, unsigned length)
+{
+    if(length == 0)
+        return;
+    ExtendMemory(length);
+    std::memcpy(&data_[length_], data, length);
+    this->length_ += length;
+}
+
+inline void Serializer::PopRawData(void* data, unsigned length)
+{
+    if(length == 0)
+        return;
+    CheckSize(length);
+    std::memcpy(data, &data_[pos_], length);
+    pos_ += length;
+}
+
+template<typename T>
+inline T Serializer::Pop()
+{
+    if(sizeof(T) == 1)
+    {
+        CheckSize(sizeof(T));
+        T i = static_cast<T>(data_[pos_]);
+        pos_ += sizeof(T);
+        return i;
+    }
+    T i;
+    // Note: No casting allowed due to alignment
+    PopRawData(&i, sizeof(i));
+    return Converter::toNative(i);
+}
+
+template<typename T>
+inline void Serializer::Push(T i)
+{
+    if(sizeof(T) == 1)
+    {
+        ExtendMemory(sizeof(T));
+        data_[length_] = static_cast<uint8_t>(i);
+        length_ += sizeof(T);
+    } else
+    {
+        i = Converter::fromNative(i);
+        PushRawData(&i, sizeof(i));
+    }
+}
+
+template<>
+inline void Serializer::Push(bool val)
+{
+    PushBool(val);
+}
+
+template<>
+inline bool Serializer::Pop<bool>()
+{
+    return PopBool();
+}
 
 #endif // !SERIALIZER_H_INCLUDED

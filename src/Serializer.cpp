@@ -19,6 +19,48 @@
 #include "Serializer.h"
 #include "BinaryFile.h"
 
+Serializer::Serializer(const void* const data, unsigned initial_size)
+    : data_(initial_size, boost::container::default_init), length_(0), pos_(0)
+{
+    PushRawData(data, initial_size);
+}
+
+Serializer::Serializer(const Serializer& other) : data_(other.data_), length_(other.length_), pos_(other.pos_) {}
+
+Serializer::Serializer() : data_(0), length_(0), pos_(0) {}
+
+Serializer::~Serializer()
+{
+    Clear();
+}
+
+Serializer& Serializer::operator=(const Serializer& other)
+{
+    if(this == &other)
+        return *this;
+
+    data_ = other.data_;
+    length_ = other.length_;
+    pos_ = other.pos_;
+
+    return *this;
+}
+
+void Serializer::Clear()
+{
+    data_.clear();
+    length_ = 0;
+    pos_ = 0;
+}
+
+void Serializer::SetLength(const unsigned length)
+{
+    EnsureSize(length);
+    length_ = length;
+    if(pos_ > length_)
+        pos_ = length_;
+}
+
 void Serializer::WriteToFile(BinaryFile& file)
 {
     file.WriteUnsignedInt(GetLength());
@@ -33,4 +75,31 @@ void Serializer::ReadFromFile(BinaryFile& file)
     buffer_size = file.ReadUnsignedInt();
     file.ReadRawData(GetDataWritable(buffer_size), buffer_size);
     SetLength(buffer_size);
+}
+
+void Serializer::PushBool(bool b)
+{
+    PushUnsignedChar(b ? 1 : 0);
+}
+
+void Serializer::PushString(const std::string& str)
+{
+    PushUnsignedInt(static_cast<unsigned>(str.length()));
+    PushRawData(str.c_str(), static_cast<unsigned>(str.length()));
+}
+
+bool Serializer::PopBool()
+{
+    unsigned char value = PopUnsignedChar();
+    assert(value == 0 || value == 1);
+    return ((value != 0) ? true : false);
+}
+
+std::string Serializer::PopString()
+{
+    std::string str;
+    str.resize(PopUnsignedInt());
+    PopRawData(&str[0], static_cast<unsigned>(str.length()));
+
+    return str;
 }
