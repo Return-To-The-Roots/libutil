@@ -1,4 +1,4 @@
-FIND_PACKAGE(Boost 1.55 REQUIRED COMPONENTS system filesystem)
+FIND_PACKAGE(Boost 1.55 REQUIRED COMPONENTS system filesystem locale)
 IF (NOT MSVC)
 	FIND_PACKAGE(Miniupnpc REQUIRED)
     include(GatherDll)
