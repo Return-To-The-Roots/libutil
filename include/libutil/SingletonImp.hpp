@@ -18,6 +18,8 @@
 #ifndef SingletonImp_h__
 #define SingletonImp_h__
 
+#include <cassert>
+
 // IWYU pragma: private, include "Singleton.h"
 
 template<typename T, template<class> class L>
