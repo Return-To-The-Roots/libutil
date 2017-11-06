@@ -19,8 +19,13 @@
 #include "Socket.h"
 #include "Log.h"
 #include "SocketSet.h"
+#include "StringConversion.h"
 #include "strFuncs.h"
-#include <boost/lexical_cast.hpp>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <iostream>
+#include <sstream>
 #include <stdexcept>
 
 #ifdef _WIN32
@@ -43,10 +48,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #endif
-#include <cstdio>
-#include <cstdlib>
-#include <iostream>
-#include <sstream>
+
 
 ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr, bool resolveAll)
 {
@@ -96,13 +98,13 @@ ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr, bool resolveAll)
         {
             sockaddr_in6* addr6 = (sockaddr_in6*)addr->ai_addr;
             addr6->sin6_family = AF_INET6;
-            addr6->sin6_port = htons(atoi(hostAddr.port.c_str()));
+            addr6->sin6_port = htons(s25util::fromStringClassic<unsigned short>(hostAddr.port));
             addr6->sin6_addr = in6addr_loopback;
         } else
         {
             sockaddr_in* addr4 = (sockaddr_in*)addr->ai_addr;
             addr4->sin_family = AF_INET;
-            addr4->sin_port = htons(atoi(hostAddr.port.c_str()));
+            addr4->sin_port = htons(s25util::fromStringClassic<unsigned short>(hostAddr.port));
             addr4->sin_addr.s_addr = inet_addr("127.0.0.1");
         }
     }
@@ -423,7 +425,7 @@ Socket Socket::Accept()
 std::vector<HostAddr> Socket::HostToIp(const std::string& hostname, const unsigned port, bool get_ipv6, bool useUDP)
 {
     std::vector<HostAddr> ips;
-    std::string sPort = boost::lexical_cast<std::string>(port);
+    std::string sPort = s25util::toStringClassic(port);
 
     HostAddr hostAddr;
     hostAddr.host = hostname;

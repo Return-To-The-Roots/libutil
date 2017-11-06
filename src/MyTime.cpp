@@ -27,7 +27,7 @@
 #include <sys/times.h>
 #endif // _WIN32
 
-namespace libutil {
+namespace s25util {
 /**
  *  liefert die aktuelle Zeit.
  *
@@ -111,4 +111,4 @@ std::string Time::FormatTime(const std::string& format)
 {
     return FormatTime(format, CurrentTime());
 }
-} // namespace libutil
+} // namespace s25util

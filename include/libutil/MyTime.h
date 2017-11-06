@@ -22,7 +22,7 @@
 #include <stdint.h>
 #include <string>
 
-namespace libutil {
+namespace s25util {
 
 typedef int64_t time64_t;
 
@@ -41,6 +41,6 @@ public:
     static std::string FormatTime(const std::string& format);
 };
 
-} // namespace libutil
+} // namespace s25util
 
 #endif // TIME_H_INCLUDED

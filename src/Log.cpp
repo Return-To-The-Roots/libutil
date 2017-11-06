@@ -53,7 +53,7 @@ void Log::open()
 {
     if(!logFileWriter)
     {
-        bfs::path filePath = bfs::path(logFilepath) / (libutil::Time::FormatTime("%Y-%m-%d_%H-%i-%s") + ".log");
+        bfs::path filePath = bfs::path(logFilepath) / (s25util::Time::FormatTime("%Y-%m-%d_%H-%i-%s") + ".log");
         logFileWriter = new FileWriter(filePath.string());
     }
 }

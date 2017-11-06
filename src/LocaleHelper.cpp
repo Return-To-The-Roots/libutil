@@ -30,17 +30,18 @@ bool LocaleHelper::init()
     // Check and set locale (avoids errors caused by invalid locales later like #420)
     try
     {
-// Check for errors and use classic locale to avoid e.g. thousand separator in int2string conversions via streams
+// Check for errors and use classic locale which is the default anyway.
+// However don't rely on string conversions to yield identical results on all systems as locale settings can be changed!
 #ifdef _WIN32
-        // On windows we want to enforce the encoding (mostly UTF8). Also using "" would use the default which uses "wrong" separators
-        std::locale newLocale(boost::locale::generator().generate("C"));
+        // On windows we want to enforce the encoding (mostly UTF8) so use boost to generate it
+        std::locale newLocale = boost::locale::generator().generate("");
 #else
         // In linux / OSX this suffices
-        std::locale newLocale(std::locale::classic());
+        std::locale newLocale("");
 #endif // _WIN32
         std::locale::global(newLocale);
         // Use also the encoding (mostly UTF8) for bfs paths: http://stackoverflow.com/questions/23393870
-        bfsDefaultLocale = bfs::path::imbue(std::locale());
+        bfsDefaultLocale = bfs::path::imbue(newLocale);
     } catch(std::exception& e)
     {
         std::cerr << "Error initializing your locale setting. ";
