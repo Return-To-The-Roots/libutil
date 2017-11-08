@@ -49,7 +49,6 @@
 #include <unistd.h>
 #endif
 
-
 ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr, bool resolveAll)
 {
     // do not use addr resolution for localhost
