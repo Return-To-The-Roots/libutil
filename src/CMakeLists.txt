@@ -15,6 +15,9 @@ if(WIN32)
     # Exclude some windows defines
     add_definitions(-DNOMINMAX -DNODRAWTEXT -DNOSOUND -DNOTEXTMETRIC -DNOCOMM -DNOMCX)
 endif()
+if(MSVC)
+	add_definitions(-D_WINSOCK_DEPRECATED_NO_WARNINGS)
+endif()
 
 #################################################################################
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2005 - 2015 Settlers Freaks (sf-team at siedler25.org)
+// Copyright (c) 2005 - 2017 Settlers Freaks (sf-team at siedler25.org)
 //
 // This file is part of Return To The Roots.
 //
@@ -651,7 +651,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
         LOG.write("Error connection to %s:%d\n") % hostname % port;
         return false;
     }
-    LOG.write("Sucessfully connected to %s:%d\n") % hostname % port;
+    LOG.write("Successfully connected to %s:%d\n") % hostname % port;
 
     // deaktiviere non-blocking
     unsigned long argp = 0;
