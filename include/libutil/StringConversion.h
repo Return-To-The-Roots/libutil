@@ -22,9 +22,10 @@
 
 #include <boost/config.hpp>
 #include <boost/static_assert.hpp>
+#include <boost/type_traits/is_arithmetic.hpp>
 #include <boost/type_traits/is_float.hpp>
-#include <boost/type_traits/is_unsigned.hpp>
 #include <boost/type_traits/is_integral.hpp>
+#include <boost/type_traits/is_unsigned.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <climits>
 #include <limits>
@@ -56,14 +57,16 @@ namespace detail {
 template<typename T>
 inline std::string toStringClassic(const T value)
 {
+    BOOST_STATIC_ASSERT_MSG(boost::is_arithmetic<T>::value, "Need an arithmetic value!");
     return detail::ToStringClassic<T>::convert(value);
 }
 
 /// Tries to convert from source to target type using either a static_cast or a locale independent string conversion
 /// Returns true on success
 template<typename T>
-inline bool tryFromStringClassic(const std::string& value, T& outVal, bool allowPartialConversion = false)
+inline bool tryFromStringClassic(const std::string& value, T& outVal)
 {
+    BOOST_STATIC_ASSERT_MSG(boost::is_arithmetic<T>::value, "Need an arithmetic value!");
     // Empty = error
     if(value.empty())
         return false;
@@ -72,16 +75,16 @@ inline bool tryFromStringClassic(const std::string& value, T& outVal, bool allow
         return false;
     ClassicImbuedStream<std::istringstream> ss(value);
     ss >> std::noskipws >> outVal;
-    return !!ss && (allowPartialConversion || ss.eof());
+    return !!ss && ss.eof();
 }
 
 /// Tries to convert from source to target type using either a static_cast or a locale independent string conversion
 /// Throws ConversionError on failure.
 template<typename T>
-inline T fromStringClassic(const std::string& value, bool allowPartialConversion = false)
+inline T fromStringClassic(const std::string& value)
 {
     T outVal;
-    if(!tryFromStringClassic(value, outVal, allowPartialConversion))
+    if(!tryFromStringClassic(value, outVal))
         throw ConversionError("Could not convert " + value);
     return outVal;
 }
@@ -89,10 +92,10 @@ inline T fromStringClassic(const std::string& value, bool allowPartialConversion
 /// Tries to convert from source to target type using either a static_cast or a locale independent string conversion
 /// Returns the defaultValue on failure
 template<typename T>
-inline T fromStringClassicDef(const std::string& value, T defaultValue, bool allowPartialConversion = false)
+inline T fromStringClassicDef(const std::string& value, T defaultValue)
 {
     T outVal;
-    if(!tryFromStringClassic(value, outVal, allowPartialConversion))
+    if(!tryFromStringClassic(value, outVal))
         return defaultValue;
     return outVal;
 }
