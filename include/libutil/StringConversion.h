@@ -23,6 +23,7 @@
 #include <boost/config.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_float.hpp>
+#include <boost/type_traits/is_unsigned.hpp>
 #include <boost/type_traits/is_integral.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <climits>
@@ -53,7 +54,7 @@ namespace detail {
 }
 
 template<typename T>
-std::string toStringClassic(const T value)
+inline std::string toStringClassic(const T value)
 {
     return detail::ToStringClassic<T>::convert(value);
 }
@@ -61,20 +62,26 @@ std::string toStringClassic(const T value)
 /// Tries to convert from source to target type using either a static_cast or a locale independent string conversion
 /// Returns true on success
 template<typename T>
-bool tryFromStringClassic(const std::string& value, T& outVal)
+inline bool tryFromStringClassic(const std::string& value, T& outVal, bool allowPartialConversion = false)
 {
+    // Empty = error
+    if(value.empty())
+        return false;
+    // Standard requires underflow when using negative numbers as input to unsigned values. We don't allow this
+    if(boost::is_unsigned<T>::value && value[0] == '-')
+        return false;
     ClassicImbuedStream<std::istringstream> ss(value);
     ss >> std::noskipws >> outVal;
-    return !!ss && ss.eof();
+    return !!ss && (allowPartialConversion || ss.eof());
 }
 
 /// Tries to convert from source to target type using either a static_cast or a locale independent string conversion
 /// Throws ConversionError on failure.
 template<typename T>
-T fromStringClassic(const std::string& value)
+inline T fromStringClassic(const std::string& value, bool allowPartialConversion = false)
 {
     T outVal;
-    if(!tryFromStringClassic(value, outVal))
+    if(!tryFromStringClassic(value, outVal, allowPartialConversion))
         throw ConversionError("Could not convert " + value);
     return outVal;
 }
@@ -82,10 +89,10 @@ T fromStringClassic(const std::string& value)
 /// Tries to convert from source to target type using either a static_cast or a locale independent string conversion
 /// Returns the defaultValue on failure
 template<typename T>
-T fromStringClassic(const std::string& value, T defaultValue)
+inline T fromStringClassicDef(const std::string& value, T defaultValue, bool allowPartialConversion = false)
 {
     T outVal;
-    if(!tryFromStringClassic(value, outVal))
+    if(!tryFromStringClassic(value, outVal, allowPartialConversion))
         return defaultValue;
     return outVal;
 }
