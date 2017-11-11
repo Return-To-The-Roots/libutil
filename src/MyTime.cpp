@@ -26,6 +26,7 @@
 #else
 #include <sys/times.h>
 #endif // _WIN32
+#include "StringConversion.h"
 
 namespace s25util {
 /**
@@ -72,7 +73,7 @@ std::string Time::FormatTime(const std::string& format, time64_t time)
         return "";
 
     using std::setw;
-    std::stringstream res;
+    ClassicImbuedStream<std::stringstream> res;
     res << std::setfill('0');
 
     bool isInFormat = false;
