@@ -142,8 +142,10 @@ inline void Serializer::EnsureSize(unsigned length)
 {
     if(data_.size() < length)
     {
-        data_.reserve(length);
-        data_.resize(data_.capacity(), boost::container::default_init);
+        size_t newSize = 8u;
+        while(newSize < length)
+            newSize *= 2u;
+        data_.resize(newSize, boost::container::default_init);
     }
 }
 
