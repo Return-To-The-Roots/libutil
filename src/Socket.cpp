@@ -126,19 +126,11 @@ ResolvedAddr::~ResolvedAddr()
     }
 }
 
-PeerAddr::PeerAddr(bool isIpv6, unsigned short port)
+PeerAddr::PeerAddr(unsigned short port)
 {
-    if(isIpv6)
-    {
-        throw std::logic_error("Broadcast over IPv6 not supported!");
-        addr.ss_family = AF_INET6;
-        reinterpret_cast<sockaddr_in6&>(addr).sin6_port = htons(port);
-    } else
-    {
-        addr.ss_family = AF_INET;
-        reinterpret_cast<sockaddr_in&>(addr).sin_addr.s_addr = INADDR_BROADCAST;
-        reinterpret_cast<sockaddr_in&>(addr).sin_port = htons(port);
-    }
+    addr.ss_family = AF_INET;
+    reinterpret_cast<sockaddr_in&>(addr).sin_addr.s_addr = INADDR_BROADCAST;
+    reinterpret_cast<sockaddr_in&>(addr).sin_port = htons(port);
 }
 
 std::string PeerAddr::GetIp() const
@@ -832,13 +824,11 @@ std::string Socket::IpToString(const sockaddr* addr)
     static char temp[256];
 
 #ifdef _WIN32
-    size_t size = 0;
+    size_t size;
     if(addr->sa_family == AF_INET)
         size = sizeof(sockaddr_in);
     else
         size = sizeof(sockaddr_in6);
-
-    assert(size != 0);
 
     sockaddr* copy = (sockaddr*)calloc(1, size);
     memcpy(copy, addr, size);

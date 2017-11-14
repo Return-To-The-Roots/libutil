@@ -24,10 +24,10 @@
 
 #define CHECKED_READ(...) \
     if(!(__VA_ARGS__))    \
-    throw std::runtime_error("Unknown error during reading " + filePath)
+    throw std::runtime_error("Unknown error during reading " + filePath_)
 #define CHECKED_WRITE(...) \
     if(!(__VA_ARGS__))     \
-    throw std::runtime_error("Unknown error during writing " + filePath)
+    throw std::runtime_error("Unknown error during writing " + filePath_)
 
 bool BinaryFile::Open(const std::string& filePath, const OpenFileMode of)
 {
@@ -35,7 +35,7 @@ bool BinaryFile::Open(const std::string& filePath, const OpenFileMode of)
     file = bnw::fopen(filePath.c_str(), modes[of]);
     if(file)
     {
-        this->filePath = filePath;
+        this->filePath_ = filePath;
         return true;
     } else
         return false;
@@ -48,7 +48,7 @@ bool BinaryFile::Close()
 
     bool result = (fclose(file) == 0);
     file = NULL;
-    filePath.clear();
+    filePath_.clear();
 
     return result;
 }

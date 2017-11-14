@@ -134,7 +134,7 @@ bool UPnP::OpenPort(const unsigned short& port)
             std::string ss = *addr;
             std::stringstream s, sc;
             s << ss;
-            std::getline(s, ss, '.');
+            std::getline(s, ss, '.'); //-V760
             sc << ss << " ";
             std::getline(s, ss, '.');
             sc << ss << " ";

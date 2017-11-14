@@ -26,16 +26,16 @@ class Serializer;
 
 class Message
 {
-    uint16_t id_;
+    uint16_t msgId_;
 
 public:
-    Message(uint16_t id) : id_(id) {}
+    Message(uint16_t id) : msgId_(id) {}
     virtual ~Message() {}
 
     virtual void Serialize(Serializer& /*ser*/) const {}
     virtual void Deserialize(Serializer& /*ser*/) {}
 
-    unsigned short getId() const { return id_; }
+    unsigned short getId() const { return msgId_; }
     static Message* create_base(unsigned short id);
 
     virtual Message* create(unsigned short id) const { return create_base(id); }
@@ -45,14 +45,14 @@ public:
     virtual bool run(MessageInterface* callback, unsigned id) = 0;
 
 protected:
-    Message(const Message& other) : id_(other.id_) {}
+    Message(const Message& other) : msgId_(other.msgId_) {}
 
     Message& operator=(const Message& other)
     {
         if(this == &other)
             return *this;
 
-        id_ = other.id_;
+        msgId_ = other.msgId_;
 
         return *this;
     }

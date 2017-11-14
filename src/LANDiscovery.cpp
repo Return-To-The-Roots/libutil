@@ -61,6 +61,6 @@ bool LANDiscoveryBase::IsDataAvailable()
 
 void LANDiscoveryBase::Broadcast(const void* const buffer, const int len)
 {
-    PeerAddr addr(false, !isServer ? config.portQuery : config.portResponse);
+    PeerAddr addr(!isServer ? config.portQuery : config.portResponse);
     socket.Send(buffer, len, addr);
 }

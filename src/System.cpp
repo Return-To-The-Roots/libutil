@@ -162,7 +162,7 @@ bool System::setEnvVar(const std::string& name, const std::string& value)
 bool System::setEnvVar(const std::wstring& name, const std::wstring& value)
 {
 #ifdef _WIN32
-    return SetEnvironmentVariableW(name.c_str(), value.c_str()) == TRUE;
+    return SetEnvironmentVariableW(name.c_str(), value.c_str()) != FALSE;
 #else
     return setEnvVar(cvWideStringToUTF8(name), cvWideStringToUTF8(value));
 #endif // _WIN32
@@ -181,7 +181,7 @@ bool System::removeEnvVar(const std::string& name)
 bool System::removeEnvVar(const std::wstring& name)
 {
 #ifdef _WIN32
-    return SetEnvironmentVariableW(name.c_str(), NULL) == TRUE;
+    return SetEnvironmentVariableW(name.c_str(), NULL) != FALSE;
 #else
     return removeEnvVar(cvWideStringToUTF8(name));
 #endif // _WIN32

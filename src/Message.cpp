@@ -45,7 +45,7 @@ Message* Message::create_base(unsigned short id)
  */
 Message* Message::clone() const
 {
-    Message* msg = create(id_);
+    Message* msg = create(msgId_);
     Serializer ser;
     Serialize(ser);
     msg->Deserialize(ser);

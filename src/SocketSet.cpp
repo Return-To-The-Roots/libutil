@@ -20,7 +20,7 @@
 #include "Socket.h"
 #include <cstddef>
 
-SocketSet::SocketSet()
+SocketSet::SocketSet() //-V730
 {
     Clear();
 }

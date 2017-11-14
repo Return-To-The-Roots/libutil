@@ -31,7 +31,7 @@ struct GetUnsignedIterator
     typedef typename oldTraits::value_type OldValueType;
     typedef typename boost::make_unsigned<OldValueType>::type NewValueType;
 
-    class UnsignedIterator : public std::iterator<typename std::forward_iterator_tag, NewValueType>
+    class UnsignedIterator : public std::iterator<typename std::forward_iterator_tag, NewValueType> //-V690
     {
         OldIterator oldIt;
 

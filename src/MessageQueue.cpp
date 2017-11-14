@@ -106,7 +106,7 @@ bool MessageQueue::send(Socket& sock, int max, unsigned sizelimit)
     int count = 0;
     while(count <= max && !messages.empty())
     {
-        const Message& msg = *front();
+        const Message& msg = *front(); //-V522
 
         if(msg.getId() > 0)
         {

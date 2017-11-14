@@ -78,12 +78,12 @@ public:
     /// Datei gültig?
     bool IsValid() const { return file ? true : false; }
 
-    const std::string& getFilePath() const { return filePath; }
+    const std::string& getFilePath() const { return filePath_; }
 
 private:
     /// File-Pointer
     FILE* file;
-    std::string filePath;
+    std::string filePath_;
 };
 
 #endif // !BINARYFILE_H_INCLUDED

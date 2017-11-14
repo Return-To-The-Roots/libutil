@@ -48,7 +48,7 @@ struct addrinfo;
 /// liefert Ip-Adresse(n) für einen Hostnamen.
 struct HostAddr
 {
-    HostAddr() : host(""), port("0"), ipv6(false), isUDP(false) {}
+    HostAddr() : port("0"), ipv6(false), isUDP(false) {}
 
     std::string host;
     std::string port;
@@ -80,8 +80,8 @@ class PeerAddr
 public:
     /// Uninitilized value!
     PeerAddr() {} //-V730
-    /// Initializes the address to a broadcast with the given protocol and port
-    PeerAddr(bool isIpv6, unsigned short port);
+    /// Initializes the address to a broadcast on the given port
+    PeerAddr(unsigned short port);
 
     std::string GetIp() const;
     sockaddr* GetAddr();

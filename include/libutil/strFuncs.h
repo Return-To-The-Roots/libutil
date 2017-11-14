@@ -17,6 +17,7 @@
 #ifndef STR_FUNCS_H_INCLUDED
 #define STR_FUNCS_H_INCLUDED
 
+#include <cassert>
 #include <cstddef>
 
 // Provides safe C-String functions by preventing buffer overflows

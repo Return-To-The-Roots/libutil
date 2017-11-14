@@ -29,18 +29,11 @@
 #if !defined(snprintf) && _MSC_VER < 1800
 #define snprintf _snprintf
 #endif
-#ifndef assert
-#define assert _ASSERT
-#endif
-#else
-#include <assert.h>
 #endif
 
 #ifdef _DEBUG
 #include <crtdbg.h>
 #endif // _DEBUG
-#else  //_WIN32
-#include <cassert>
 #endif //_WIN32
 
 // Macro that can be used to suppress unused warnings. Required e.g. for const boost::arrays defined in headers
@@ -59,5 +52,8 @@ namespace boost { namespace nowide {
 }} // namespace boost::nowide
 namespace bfs = boost::filesystem;
 namespace bnw = boost::nowide;
+
+// Suppress uninitialized v_
+//-V:BOOST_SCOPED_ENUM_DECLARE_BEGIN:101
 
 #endif
