@@ -468,16 +468,15 @@ void Socket::Sleep(unsigned ms)
  *
  *  @p true bei Erfolg, @p false bei Fehler
  */
-bool Socket::Connect(const std::string& hostname, const unsigned short port, bool use_ipv6, const Socket::PROXY_TYPE typ,
-                     const std::string& proxy_hostname, const unsigned proxy_port)
+bool Socket::Connect(const std::string& hostname, const unsigned short port, bool use_ipv6, const ProxySettings& proxy)
 {
-    if(typ == PROXY_SOCKS4)
+    if(proxy.type == PROXY_SOCKS4)
         use_ipv6 = false;
 
     std::vector<HostAddr> proxy_ips;
-    if(typ != PROXY_NONE)
+    if(proxy.type != PROXY_NONE)
     {
-        proxy_ips = HostToIp(proxy_hostname, proxy_port, use_ipv6);
+        proxy_ips = HostToIp(proxy.hostname, proxy.port, use_ipv6);
         if(proxy_ips.empty())
             return false;
     }
@@ -492,7 +491,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
     std::vector<HostAddr>::const_iterator start, end;
 
     // do not use proxy for connecting to localhost
-    if(typ != PROXY_NONE && hostname != "localhost")
+    if(proxy.type != PROXY_NONE && hostname != "localhost")
     {
         start = proxy_ips.begin();
         end = proxy_ips.end();
@@ -525,7 +524,8 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
             continue;
         }
         std::string ip = IpToString(addr.getAddr().ai_addr); //-V807
-        LOG.write("Connection to %s%s:%d\n") % (typ != PROXY_NONE ? "Proxy " : "") % ip % (typ != PROXY_NONE ? proxy_port : port);
+        LOG.write("Connection to %s%s:%d\n") % (proxy.type != PROXY_NONE ? "Proxy " : "") % ip
+          % (proxy.type != PROXY_NONE ? proxy.port : port);
 
         // Und schließlich Verbinden
         if(connect(socket_, addr.getAddr().ai_addr, static_cast<int>(addr.getAddr().ai_addrlen)) != SOCKET_ERROR)
@@ -562,7 +562,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
                         break;
                     }
 
-                    switch(typ)
+                    switch(proxy.type)
                     {
                         default: break;
                         case PROXY_SOCKS4:

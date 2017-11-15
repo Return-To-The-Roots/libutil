@@ -38,6 +38,7 @@ typedef int socklen_t;
 struct addrinfo;
 #endif // !_WIN32
 
+#include "ProxySettings.h"
 #include "UPnP.h"
 #include <algorithm>
 #include <cstddef>
@@ -130,16 +131,8 @@ public:
     /// akzeptiert eingehende Verbindungsversuche.
     Socket Accept();
 
-    enum PROXY_TYPE
-    {
-        PROXY_NONE = 0,
-        PROXY_SOCKS4 = 4,
-        PROXY_SOCKS5 = 5
-    };
-
     /// versucht eine Verbindung mit einem externen Host aufzubauen.
-    bool Connect(const std::string& hostname, const unsigned short port, bool use_ipv6, const PROXY_TYPE typ = PROXY_NONE,
-                 const std::string& proxy_hostname = "", const unsigned proxy_port = 0);
+    bool Connect(const std::string& hostname, const unsigned short port, bool use_ipv6, const ProxySettings& proxy = ProxySettings());
 
     /// liest Daten vom Socket in einen Puffer.
     int Recv(void* const buffer, const int length, bool block = true);
