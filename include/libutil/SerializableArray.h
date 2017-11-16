@@ -40,7 +40,7 @@ public:
     template<class T>
     SerializableArray(const SerializableArray<T>& other)
     {
-        elements.reserve(other.getCount());
+        elements.reserve(other.size());
         std::copy(other.elements.begin(), other.elements.end(), std::back_inserter(elements));
     }
 
@@ -51,7 +51,7 @@ public:
             return *this;
 
         elements.clear();
-        elements.reserve(other.getCount());
+        elements.reserve(other.size());
         std::copy(other.elements.begin(), other.elements.end(), std::back_inserter(elements));
 
         return *this;
@@ -134,8 +134,6 @@ public:
      *  liefert die Anzahl der Elemente.
      *
      */
-    inline unsigned getCount() const { return size(); }
-
     unsigned size() const { return static_cast<unsigned>(elements.size()); }
     bool empty() const { return elements.empty(); }
 
