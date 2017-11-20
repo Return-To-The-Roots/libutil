@@ -38,13 +38,13 @@ public:
     void Clear();
 
     /// fügt ein @p Socket zum @p SocketSet hinzu.
-    void Add(Socket& sock);
+    void Add(const Socket& sock);
 
     /// führt einen Select auf dem @p SocketSet aus.
     int Select(int timeout, int which = 2);
 
     /// ist ein @p Socket im @p SocketSet?
-    bool InSet(Socket& sock);
+    bool InSet(const Socket& sock);
 
 private:
     fd_set set;     /// Das fd_set

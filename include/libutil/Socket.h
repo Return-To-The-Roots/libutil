@@ -163,7 +163,7 @@ public:
     std::string GetSockIP();
 
     /// Gets a reference to the Socket.
-    SOCKET& GetSocket();
+    SOCKET GetSocket() const;
 
     void Sleep(unsigned ms);
 

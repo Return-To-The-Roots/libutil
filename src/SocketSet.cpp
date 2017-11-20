@@ -40,10 +40,10 @@ void SocketSet::Clear()
  *
  *  @param[in] sock Socket welches hinzugefügt werden soll
  */
-void SocketSet::Add(Socket& sock)
+void SocketSet::Add(const Socket& sock)
 {
     // Socket holen
-    SOCKET& s = sock.GetSocket();
+    SOCKET s = sock.GetSocket();
     if(s == INVALID_SOCKET)
         return;
 
@@ -101,9 +101,9 @@ int SocketSet::Select(int timeout, int which)
  *
  *  @return liefert true falls das @p Socket im Set enthalten ist, false andernfalls
  */
-bool SocketSet::InSet(Socket& sock)
+bool SocketSet::InSet(const Socket& sock)
 {
-    SOCKET& s = sock.GetSocket();
+    SOCKET s = sock.GetSocket();
 
     // Bei ungültigem Socket ists nicht drin!
     if(s == INVALID_SOCKET)

@@ -810,7 +810,7 @@ std::string Socket::GetSockIP()
  *
  *  @return reference to @p socket_
  */
-SOCKET& Socket::GetSocket()
+SOCKET Socket::GetSocket() const
 {
     // Zeiger auf Socket liefern
     return socket_;

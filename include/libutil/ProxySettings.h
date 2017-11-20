@@ -28,8 +28,8 @@ enum ProxyType
 };
 struct ProxySettings
 {
-    ProxySettings() :type(PROXY_NONE), port(0) {}
-    ProxySettings(ProxyType type, const std::string& hostname, unsigned port) :type(type), hostname(hostname), port(port) {}
+    ProxySettings() : type(PROXY_NONE), port(0) {}
+    ProxySettings(ProxyType type, const std::string& hostname, unsigned port) : type(type), hostname(hostname), port(port) {}
     ProxyType type;
     std::string hostname;
     unsigned port;
