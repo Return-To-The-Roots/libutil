@@ -19,7 +19,7 @@
 #include "error.h"
 #include "Log.h"
 
-namespace s25Util {
+namespace s25util {
 
 int fatal_error(const std::string& msg)
 {
@@ -40,4 +40,4 @@ int warning(const std::string& msg)
     return EXIT_SUCCESS;
 }
 
-} // namespace s25Util
+} // namespace s25util

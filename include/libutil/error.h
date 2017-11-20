@@ -22,7 +22,7 @@
 
 #include <string>
 
-namespace s25Util {
+namespace s25util {
 
 /// Write the message with fatal-error tag and return EXIT_FAILURE
 int fatal_error(const std::string& msg);
@@ -33,6 +33,6 @@ int error(const std::string& msg);
 /// Write the message with warning tag and return EXIT_SUCCESS
 int warning(const std::string& msg);
 
-} // namespace s25Util
+} // namespace s25util
 
 #endif // !ERROR_H_INCLUDED
