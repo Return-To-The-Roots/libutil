@@ -17,31 +17,62 @@
 
 #include "libUtilDefines.h" // IWYU pragma: keep
 #include "fileFuncs.h"
-#include "System.h"
 #include <boost/filesystem/path.hpp>
+#include <boost/foreach.hpp>
 
-/**
- *  formt Pfade korrekt um.
- *
- *  @param[in] file
- *
- *  @return liefert den umgeformten Pfad zurück
- */
-std::string GetFilePath(const std::string& file)
+std::string makePortableName(const std::string& fileName)
 {
-    if(file.empty())
-        return "";
-
-    bfs::path to;
-
-    // ist der Pfad ein Home-Dir?
-    if(file[0] == '~')
+    if(fileName.empty() || bfs::portable_name(fileName))
+        return fileName;
+    std::string result;
+    result.reserve(fileName.size());
+    BOOST_FOREACH(char c, fileName)
     {
-        to = System::getHomePath();
-        if(file.length() > 1)
-            to /= file.substr(1);
-    } else
-        to = file;
+        // Characters allowed by portable_posix_name. These are also allowed by windows_name
+        if((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '.' || c == '_' || c == '-')
+            result += c;
+    }
+    // Remove leading dots as required by portable_name
+    while(!result.empty() && result[0] == '.' && result != "." && result != "..")
+        result.erase(result.begin());
+    assert(result.empty() || bfs::portable_name(result));
+    return result;
+}
 
-    return to.make_preferred().string();
+std::string makePortableFileName(const std::string& fileName)
+{
+    std::string result = makePortableName(fileName);
+    if(result.empty() || bfs::portable_file_name(result))
+        return result;
+    // Remove all dots but the last
+    size_t pos = result.find('.');
+    if(pos != std::string::npos)
+    {
+        size_t nextPos;
+        while((nextPos = result.find('.', pos + 1)) != std::string::npos)
+        {
+            result.erase(pos, 1u);
+            pos = nextPos - 1u;
+        }
+        // Only 3 additional chars after the dot
+        if(pos + 4u < result.size())
+            result.resize(pos + 4u);
+    }
+    if(result == "." || result == "..")
+        result.clear();
+    assert(result.empty() || bfs::portable_file_name(result));
+    return result;
+}
+
+std::string makePortableDirName(const std::string& fileName)
+{
+    std::string result = makePortableName(fileName);
+    if(result.empty() || bfs::portable_directory_name(result))
+        return result;
+    // Remove all dots unless we are the special DOT or DOTDOT
+    size_t pos;
+    while(result != "." && result == ".." && (pos = result.find('.')) != std::string::npos)
+        result.erase(pos, 1u);
+    assert(result.empty() || bfs::portable_directory_name(result));
+    return result;
 }
