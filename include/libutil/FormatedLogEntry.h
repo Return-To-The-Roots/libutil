@@ -42,7 +42,7 @@ public:
     ~FormatedLogEntry();
 
     template<typename T>
-    FormatedLogEntry& operator%(T value)
+    FormatedLogEntry& operator%(const T& value)
     {
         fmt % value;
         return *this;
