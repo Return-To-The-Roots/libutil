@@ -55,6 +55,10 @@ public:
 
     /// Return the full path to the current executable
     static bfs::path getExecutablePath();
+    /// Return the name of the OS
+    static std::string getOSName();
+    /// Get the name of the compiler
+    static std::string getCompilerName();
 };
 
 #endif // System_h__

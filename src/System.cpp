@@ -17,9 +17,14 @@
 
 #include "libUtilDefines.h" // IWYU pragma: keep
 #include "System.h"
+#include "StringConversion.h"
 #include "getExecutablePath.h"
 #include "ucString.h"
+#include <boost/predef/compiler.h>
+#include <boost/predef/os.h>
+#include <boost/preprocessor/seq/for_each.hpp>
 #include <cstdlib>
+#include <sstream>
 #ifdef _WIN32
 #include <windows.h>
 #include <shellapi.h>
@@ -242,4 +247,112 @@ std::string System::getUserName()
 bfs::path System::getExecutablePath()
 {
     return ::getExecutablePath();
+}
+
+#undef AIX
+#undef AMIGAOS
+#undef ANDROID
+#undef BEOS
+#undef BSD
+#undef CYGWIN
+#undef HPUX
+#undef IRIX
+#undef LINUX
+#undef MACOS
+#undef OS400
+#undef SOLARIS
+#undef UNIX
+#undef SVR4
+#undef VMS
+#undef WINDOWS
+#undef BSD_BSDI
+#undef BSD_DRAGONFLY
+#undef BSD_FREE
+#undef BSD_NET
+#undef BSD_OPEN
+#define RTTR_BOOST_OS_LIST                                                                                                         \
+    (AIX)(AMIGAOS)(ANDROID)(BEOS)(BSD)(CYGWIN)(HPUX)(IRIX)(LINUX)(MACOS)(OS400)(QNX)(SOLARIS)(UNIX)(SVR4)(VMS)(WINDOWS)(BSD_BSDI)( \
+      BSD_DRAGONFLY)(BSD_FREE)(BSD_NET)(BSD_OPEN)
+
+#undef BORLAND
+#undef CLANG
+#undef COMO
+#undef DEC
+#undef DIAB
+#undef DMC
+#undef SYSC
+#undef EDG
+#undef PATH
+#undef GNUC
+#undef GCCXML
+#undef GHS
+#undef HPACC
+#undef IAR
+#undef IBM
+#undef INTEL
+#undef KCC
+#undef LLVM
+#undef HIGHC
+#undef MWERKS
+#undef MRI
+#undef MPW
+#undef PALM
+#undef PGI
+#undef SGI
+#undef SUNPRO
+#undef TENDRA
+#undef MSVC
+#undef WATCOM
+#define RTTR_BOOST_COMP_LIST                                                                                                           \
+    (BORLAND)(CLANG)(COMO)(DEC)(DIAB)(DMC)(SYSC)(EDG)(PATH)(GNUC)(GCCXML)(GHS)(HPACC)(IAR)(IBM)(INTEL)(KCC)(LLVM)(HIGHC)(MWERKS)(MRI)( \
+      MPW)(PALM)(PGI)(SGI)(SUNPRO)(TENDRA)(MSVC)(WATCOM)
+
+std::string boostVersionToStr(uint32_t version)
+{
+    if(version <= BOOST_VERSION_NUMBER_MIN)
+        return "";
+    uint32_t major = version / 10000000u;
+    version -= major * 10000000u;
+    uint32_t minor = version / 100000;
+    uint32_t patch = version - minor * 100000;
+    s25util::ClassicImbuedStream<std::stringstream> ss;
+    ss << " (" << major << "." << minor << "." << patch << ")";
+    return ss.str();
+}
+
+#define RTTR_MAKE_STMT_I2(PREFIX) \
+    if(PREFIX)                    \
+        name += ", " + std::string(PREFIX##_NAME) + boostVersionToStr(PREFIX);
+#define RTTR_MAKE_STMT_I(type, curName) RTTR_MAKE_STMT_I2(BOOST_##type##_##curName)
+#define RTTR_MAKE_STMT(s, type, curName) RTTR_MAKE_STMT_I(type, curName)
+// Generate 1 statement per arg in the form: if(BOOST_type_arg) name += ", " + BOOST_type_arg_name
+#define RTTR_GENERATE_PREDEF_STMTS(type, SEQ) BOOST_PP_SEQ_FOR_EACH(RTTR_MAKE_STMT, type, SEQ)(void) 0
+
+std::string System::getOSName()
+{
+    std::string name;
+    RTTR_GENERATE_PREDEF_STMTS(OS, RTTR_BOOST_OS_LIST);
+    if(!name.empty())
+        name = name.substr(2);
+    else
+        name = "Unknown OS";
+    if(sizeof(void*) == 4)
+        name += " 32";
+    else if(sizeof(void*) == 8)
+        name += " 64";
+    else
+        name += " unknown";
+    name += " Bit";
+    return name;
+}
+
+std::string System::getCompilerName()
+{
+    std::string name;
+    RTTR_GENERATE_PREDEF_STMTS(COMP, RTTR_BOOST_COMP_LIST);
+    if(!name.empty())
+        name = name.substr(2);
+    else
+        name = "Unknown Compiler";
+    return name;
 }
