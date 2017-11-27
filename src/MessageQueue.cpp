@@ -24,9 +24,18 @@
 
 MessageQueue::MessageQueue(CreateMsgFunction createfunction) : MessageHandler(createfunction) {}
 
+MessageQueue::MessageQueue(const MessageQueue& other) : MessageHandler(other), messages(other.messages) {}
+
 MessageQueue::~MessageQueue()
 {
     clear();
+}
+
+MessageQueue& MessageQueue::operator=(const MessageQueue& other)
+{
+    MessageHandler::operator=(other);
+    messages = other.messages;
+    return *this;
 }
 
 /**

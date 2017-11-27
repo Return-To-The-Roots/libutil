@@ -31,7 +31,9 @@ class MessageQueue : protected MessageHandler
 {
 public:
     MessageQueue(CreateMsgFunction createfunction);
+    MessageQueue(const MessageQueue& other);
     ~MessageQueue();
+    MessageQueue& operator=(const MessageQueue& other);
 
     void clear();
 
