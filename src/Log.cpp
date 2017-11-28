@@ -30,7 +30,7 @@
 #include <cstring>
 #endif
 
-Log::Log() : stdoutWriter(new StdStreamWriter(true)), stderrWriter(new StdStreamWriter(false)), fileWriter(NULL), logFilepath("logs") {}
+Log::Log() : stdoutWriter(new StdStreamWriter(true)), stderrWriter(new StdStreamWriter(false)), logFilepath("logs") {}
 
 Log::~Log() {}
 

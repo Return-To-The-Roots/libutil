@@ -23,7 +23,7 @@
 #include <windows.h>
 #endif
 
-StdStreamWriter::StdStreamWriter(bool stdoutOrStderr) : stdoutOrStderr(stdoutOrStderr), os(stdoutOrStderr ? bnw::cout : bnw::cerr) {}
+StdStreamWriter::StdStreamWriter(bool stdoutOrStderr) : stdoutOrStderr_(stdoutOrStderr), os(stdoutOrStderr_ ? bnw::cout : bnw::cerr) {}
 
 void StdStreamWriter::writeText(const std::string& txt, unsigned color)
 {
@@ -68,7 +68,7 @@ void StdStreamWriter::setColor(unsigned color)
     os << colorModifier;
 #else
     // obtain handle
-    HANDLE hStdout = GetStdHandle(stdoutOrStderr ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE);
+    HANDLE hStdout = GetStdHandle(stdoutOrStderr_ ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE);
     CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
     if(GetConsoleScreenBufferInfo(hStdout, &csbiInfo))
     {
@@ -102,7 +102,7 @@ void StdStreamWriter::resetColor()
 #ifndef _WIN32
     os << "\033[0m";
 #else
-    HANDLE hStdout = GetStdHandle(stdoutOrStderr ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE);
+    HANDLE hStdout = GetStdHandle(stdoutOrStderr_ ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE);
     CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
     if(GetConsoleScreenBufferInfo(hStdout, &csbiInfo))
         SetConsoleTextAttribute(hStdout, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);

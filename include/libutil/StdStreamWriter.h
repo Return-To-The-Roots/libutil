@@ -23,7 +23,7 @@
 
 class StdStreamWriter : public TextWriterInterface
 {
-    const bool stdoutOrStderr;
+    const bool stdoutOrStderr_;
     std::ostream& os;
 
 public:
