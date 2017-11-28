@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Settlers Freaks (sf-team at siedler25.org)
+// Copyright (c) 2017 - 2017 Settlers Freaks (sf-team at siedler25.org)
 //
 // This file is part of Return To The Roots.
 //
@@ -15,19 +15,34 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef FileWriter_h__
-#define FileWriter_h__
+#ifndef AvoidDuplicatesWriter_h__
+#define AvoidDuplicatesWriter_h__
 
 #include "TextWriterInterface.h"
-#include <boost/nowide/fstream.hpp>
+#include <boost/shared_ptr.hpp>
+#include <string>
 
-class FileWriter : public TextWriterInterface
+/// Adapter that avoids duplicate lines
+class AvoidDuplicatesWriter : public TextWriterInterface
 {
-    boost::nowide::ofstream file;
-
 public:
-    FileWriter(const std::string& filePath);
+    AvoidDuplicatesWriter(boost::shared_ptr<TextWriterInterface> writer) : origWriter(writer) {}
     void writeText(const std::string& txt, unsigned color) override;
+    void reset() { lastLine.clear(); }
+    boost::shared_ptr<TextWriterInterface> origWriter;
+
+private:
+    std::string lastLine;
 };
 
-#endif // FileWriter_h__
+inline void AvoidDuplicatesWriter::writeText(const std::string& txt, unsigned color)
+{
+    if(lastLine.find(txt) == 0)
+        return;
+    origWriter->writeText(txt, color);
+    if(lastLine.find('\n') != std::string::npos)
+        lastLine.clear();
+    lastLine += txt;
+}
+
+#endif // AvoidDuplicatesWriter_h__

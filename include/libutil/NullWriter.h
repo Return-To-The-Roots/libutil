@@ -15,15 +15,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#include "libUtilDefines.h" // IWYU pragma: keep
-#include "StringStreamWriter.h"
+#ifndef NullWriter_h__
+#define NullWriter_h__
 
-std::string StringStreamWriter::getText() const
-{
-    return stream.str();
-}
+#include "TextWriterInterface.h"
 
-void StringStreamWriter::writeText(const std::string& txt, unsigned color)
+/// Writer that ignores all input
+class NullWriter : public TextWriterInterface
 {
-    stream << txt;
-}
+public:
+    void writeText(const std::string&, unsigned) override {}
+};
+
+#endif // NullWriter_h__

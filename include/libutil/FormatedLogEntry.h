@@ -26,8 +26,13 @@
 
 class Log;
 
-BOOST_SCOPED_ENUM_DECLARE_BEGIN(LogTarget){Stdout = 1, Stderr = 2, File = 4, FileAndStdout = File | Stdout,
-                                           FileAndStderr = File | Stderr} BOOST_SCOPED_ENUM_DECLARE_END(LogTarget)
+BOOST_SCOPED_ENUM_DECLARE_BEGIN(LogTarget){Stdout = 1,
+                                           Stderr = 2,
+                                           File = 4,
+                                           StdoutAndStderr = Stdout | Stderr,
+                                           FileAndStdout = File | Stdout,
+                                           FileAndStderr = File | Stderr,
+                                           All = Stdout | Stderr | File} BOOST_SCOPED_ENUM_DECLARE_END(LogTarget)
   MAKE_BITSET_STRONG(LogTarget)
 
   /// Holds one log entry. Will be flushed on destruction

@@ -15,15 +15,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#include "libUtilDefines.h" // IWYU pragma: keep
-#include "StringStreamWriter.h"
+#ifndef StdStreamWriter_h__
+#define StdStreamWriter_h__
 
-std::string StringStreamWriter::getText() const
-{
-    return stream.str();
-}
+#include "TextWriterInterface.h"
+#include <iosfwd>
 
-void StringStreamWriter::writeText(const std::string& txt, unsigned color)
+class StdStreamWriter : public TextWriterInterface
 {
-    stream << txt;
-}
+    const bool stdoutOrStderr;
+    std::ostream& os;
+
+public:
+    StdStreamWriter(bool stdoutOrStderr);
+
+    void writeText(const std::string& txt, unsigned color) override;
+    void setColor(unsigned color);
+    void resetColor();
+};
+
+#endif // StdStreamWriter_h__

@@ -22,6 +22,7 @@
 
 #include "FormatedLogEntry.h"
 #include "Singleton.h"
+#include <boost/shared_ptr.hpp>
 #include <string>
 
 class TextWriterInterface;
@@ -40,8 +41,9 @@ public:
 
     /// Open the log file if it is not yet open
     void open();
-    /// Use the given writer as the file writer
-    void open(TextWriterInterface* fileWriter);
+    /// Use the given writer for that target passing ownership
+    /// Passing NULL resets it to the default
+    void setWriter(TextWriterInterface* writer, LogTarget target);
     /// Write the last occurred error description with "[text]: " at the front to stdOut and file
     void writeLastError(const std::string& text);
     std::string getLastError() const;
@@ -53,19 +55,16 @@ public:
     /// Write formated text to file only
     FormatedLogEntry writeToFile(const std::string& format);
 
-    /// Set the console text color to one of the predefined colors
-    void SetColor(unsigned color, bool stdoutOrStderr);
-    /// Set the console text color back to original value
-    void ResetColor(bool stdoutOrStderr);
-
-    TextWriterInterface* getFileWriter() { return logFileWriter; }
+    boost::shared_ptr<TextWriterInterface> getStdoutWriter() { return stdoutWriter; }
+    boost::shared_ptr<TextWriterInterface> getStderrWriter() { return stderrWriter; }
+    boost::shared_ptr<TextWriterInterface> getFileWriter() { return fileWriter; }
 
 private:
-    TextWriterInterface* logFileWriter;
+    boost::shared_ptr<TextWriterInterface> stdoutWriter, stderrWriter, fileWriter;
     /// Path where the log files are written to
     std::string logFilepath;
 
-    void flush(const std::string& txt, LogTarget target);
+    void flush(const std::string& txt, LogTarget target, unsigned color = 0);
     // This method is used by the log entry holder
     friend class FormatedLogEntry;
 };

@@ -25,7 +25,7 @@ class TextWriterInterface
 {
 public:
     virtual ~TextWriterInterface() {}
-    virtual void writeText(const std::string& txt) = 0;
+    virtual void writeText(const std::string& txt, unsigned color) = 0;
 };
 
 #endif // TextWriterInterface_h__

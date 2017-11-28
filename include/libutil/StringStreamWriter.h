@@ -26,7 +26,7 @@ class StringStreamWriter : public TextWriterInterface
     std::stringstream stream;
 
 public:
-    void writeText(const std::string& txt) override;
+    void writeText(const std::string& txt, unsigned color) override;
 
     std::string getText() const;
     std::stringstream& getStream() { return stream; }

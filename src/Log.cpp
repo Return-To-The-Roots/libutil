@@ -19,9 +19,8 @@
 #include "Log.h"
 #include "FileWriter.h"
 #include "MyTime.h"
-#include "colors.h"
+#include "StdStreamWriter.h"
 #include <boost/filesystem/path.hpp>
-#include <boost/nowide/iostream.hpp>
 #include <stdexcept>
 
 #ifdef _WIN32
@@ -31,130 +30,56 @@
 #include <cstring>
 #endif
 
-Log::Log() : logFileWriter(NULL), logFilepath("logs") {}
+Log::Log() : stdoutWriter(new StdStreamWriter(true)), stderrWriter(new StdStreamWriter(false)), fileWriter(NULL), logFilepath("logs") {}
 
-Log::~Log()
-{
-    if(logFileWriter)
-    {
-        delete logFileWriter;
-        logFileWriter = NULL;
-    }
-}
+Log::~Log() {}
 
 void Log::setLogFilepath(const std::string& filepath)
 {
-    if(logFileWriter)
+    if(fileWriter)
         throw std::runtime_error("Cannot set log filepath after having already opened the log file");
     logFilepath = filepath;
 }
 
 void Log::open()
 {
-    if(!logFileWriter)
+    if(!fileWriter)
     {
         bfs::path filePath = bfs::path(logFilepath) / (s25util::Time::FormatTime("%Y-%m-%d_%H-%i-%s") + ".log");
-        logFileWriter = new FileWriter(filePath.string());
+        fileWriter.reset(new FileWriter(filePath.string()));
     }
 }
 
-void Log::open(TextWriterInterface* fileWriter)
+void Log::setWriter(TextWriterInterface* writer, LogTarget target)
 {
-    if(logFileWriter)
-    {
-        delete fileWriter;
-        throw std::runtime_error("Cannot reset already opened log file");
-    }
-    logFileWriter = fileWriter;
-}
-
-void Log::SetColor(unsigned color, bool stdoutOrStderr)
-{
-// On Linux, we insert escape-codes into the string. On Windows call system functions.
-#ifndef _WIN32
-    const char* colorModifier;
-
-    // A switch statement doesn't work here because we compare against the array COLORS[] (although it's constant, it can't be dereferenced
-    // at compile time)
-    if(color == COLOR_BLUE)
-        colorModifier = "\033[40m\033[1;34m";
-    else if(color == COLOR_RED)
-        colorModifier = "\033[40m\033[1;31m";
-    else if(color == COLOR_YELLOW)
-        colorModifier = "\033[40m\033[1;33m";
-    else if(color == COLOR_GREEN)
-        colorModifier = "\033[40m\033[1;32m";
-    else if(color == COLOR_MAGENTA)
-        colorModifier = "\033[40m\033[1;35m";
-    else if(color == COLOR_CYAN)
-        colorModifier = "\033[40m\033[1;36m";
-    else if(color == COLOR_BLACK)
-        colorModifier = "\033[47m\033[1;30m";
-    else if(color == COLOR_WHITE)
-        colorModifier = "\033[40m\033[1;37m";
-    else if(color == COLOR_ORANGE)
-        colorModifier = "\033[43m\033[1;30m";
-    else if(color == COLOR_BROWN)
-        colorModifier = "\033[40m\033[33m";
-    else
-        colorModifier = "\033[0m";
-
-    flush(colorModifier, stdoutOrStderr ? LogTarget::Stdout : LogTarget::Stderr);
-#else
-    // obtain handle
-    HANDLE hStdout = GetStdHandle(stdoutOrStderr ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE);
-    CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
-    if(GetConsoleScreenBufferInfo(hStdout, &csbiInfo))
-    {
-        WORD colorAttr = 0;
-        if(color == COLOR_BLUE || color == COLOR_MAGENTA || color == COLOR_CYAN || color == COLOR_WHITE)
-            colorAttr |= FOREGROUND_BLUE;
-        if(color == COLOR_YELLOW || color == COLOR_GREEN || color == COLOR_CYAN || color == COLOR_WHITE || color == COLOR_BROWN)
-            colorAttr |= FOREGROUND_GREEN;
-        if(color == COLOR_RED || color == COLOR_YELLOW || color == COLOR_MAGENTA || color == COLOR_WHITE || color == COLOR_BROWN)
-            colorAttr |= FOREGROUND_RED;
-        if(color == COLOR_BLACK)
-            colorAttr |= BACKGROUND_BLUE;
-        if(color == COLOR_BLACK || color == COLOR_ORANGE)
-            colorAttr |= BACKGROUND_GREEN | BACKGROUND_RED;
-
-        // if color matches any but brown
-        if(colorAttr != 0 && color != COLOR_BROWN)
-            colorAttr |= FOREGROUND_INTENSITY;
-
-        // if color didn't match any, make default gray
-        if(colorAttr == 0)
-            colorAttr = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED;
-
-        SetConsoleTextAttribute(hStdout, colorAttr);
-    }
-#endif
-}
-
-void Log::ResetColor(bool stdoutOrStderr)
-{
-#ifndef _WIN32
-    flush("\033[0m", stdoutOrStderr ? LogTarget::Stdout : LogTarget::Stderr);
-#else
-    HANDLE hStdout = GetStdHandle(stdoutOrStderr ? STD_OUTPUT_HANDLE : STD_ERROR_HANDLE);
-    CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
-    if(GetConsoleScreenBufferInfo(hStdout, &csbiInfo))
-        SetConsoleTextAttribute(hStdout, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
-#endif
-}
-
-void Log::flush(const std::string& txt, LogTarget target)
-{
-    // Write to stdout or stderr
+    // Wrap in a shared so we can use it for more than 1 target
+    boost::shared_ptr<TextWriterInterface> sharedWriter(writer);
     if((target & LogTarget::Stdout) == LogTarget::Stdout)
-        bnw::cout << txt << std::flush;
-    else if((target & LogTarget::Stderr) == LogTarget::Stderr)
-        bnw::cerr << txt << std::flush;
-    // And possibly also to file
+    {
+        stdoutWriter = sharedWriter;
+        if(!stdoutWriter)
+            stdoutWriter.reset(new StdStreamWriter(true));
+    }
+    if((target & LogTarget::Stderr) == LogTarget::Stderr)
+    {
+        stderrWriter = sharedWriter;
+        if(!stderrWriter)
+            stderrWriter.reset(new StdStreamWriter(false));
+    }
+    if((target & LogTarget::File) == LogTarget::File)
+        fileWriter = sharedWriter;
+}
+
+void Log::flush(const std::string& txt, LogTarget target, unsigned color)
+{
+    if((target & LogTarget::Stdout) == LogTarget::Stdout)
+        stdoutWriter->writeText(txt, color);
+    if((target & LogTarget::Stderr) == LogTarget::Stderr)
+        stderrWriter->writeText(txt, color);
     if((target & LogTarget::File) == LogTarget::File)
     {
         open();
-        logFileWriter->writeText(txt);
+        fileWriter->writeText(txt, color);
     }
 }
 

@@ -26,7 +26,7 @@ FileWriter::FileWriter(const std::string& filePath)
         throw std::runtime_error(std::string("Could not open ") + filePath + " for writing");
 }
 
-void FileWriter::writeText(const std::string& txt)
+void FileWriter::writeText(const std::string& txt, unsigned color)
 {
     file << txt;
     file.flush();
