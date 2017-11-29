@@ -19,21 +19,7 @@
 #include "StringConversion.h"
 #include <locale>
 
-namespace s25util {
+namespace s25util { namespace detail {
+    void imbueClassic(std::ios& stream) { stream.imbue(std::locale::classic()); }
 
-template<class T_Base>
-ClassicImbuedStream<T_Base>::ClassicImbuedStream()
-{
-    this->imbue(std::locale::classic());
-}
-template<class T_Base>
-ClassicImbuedStream<T_Base>::ClassicImbuedStream(const std::string& value) : T_Base(value)
-{
-    this->imbue(std::locale::classic());
-}
-
-// Instantiate with all sstream types
-template struct ClassicImbuedStream<std::istringstream>;
-template struct ClassicImbuedStream<std::ostringstream>;
-template struct ClassicImbuedStream<std::stringstream>;
-} // namespace s25util
+}} // namespace s25util::detail

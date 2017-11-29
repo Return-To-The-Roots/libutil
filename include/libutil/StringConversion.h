@@ -41,18 +41,28 @@ struct ConversionError : public std::runtime_error
     ConversionError(const std::string& msg) : std::runtime_error(msg) {}
 };
 
-/// A string stream that has a classic locale imbued in ctor
-template<class T_Base>
-struct ClassicImbuedStream : public T_Base
-{
-    ClassicImbuedStream();
-    ClassicImbuedStream(const std::string& value);
-};
-
 namespace detail {
     template<typename T, typename = void>
     struct ToStringClassic;
-}
+    void imbueClassic(std::ios& stream);
+} // namespace detail
+
+/// A stream that has a classic locale imbued in ctor
+template<class T_Base>
+struct ClassicImbuedStream : public T_Base
+{
+    ClassicImbuedStream() { detail::imbueClassic(*this); }
+    template<typename T>
+    ClassicImbuedStream(const T& value) : T_Base(value)
+    {
+        detail::imbueClassic(*this);
+    }
+    template<typename T, typename T2>
+    ClassicImbuedStream(const T& value, const T2& value2) : T_Base(value, value2)
+    {
+        detail::imbueClassic(*this);
+    }
+};
 
 template<typename T>
 inline std::string toStringClassic(const T value)
