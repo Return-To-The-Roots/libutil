@@ -128,7 +128,8 @@ namespace detail {
         typedef std::numeric_limits<T> limits;
         BOOST_STATIC_ASSERT(limits::radix == 2 && limits::digits > 0);
         BOOST_STATIC_CONSTANT(unsigned long, precision = 2UL + limits::digits * 30103UL / 100000UL);
-        BOOST_STATIC_ASSERT(limits::digits<ULONG_MAX / 30103UL && precision> limits::digits10);
+        BOOST_STATIC_ASSERT(static_cast<unsigned long>(limits::digits) < ULONG_MAX / 30103UL
+                            && precision > static_cast<unsigned long>(limits::digits10));
 
         static std::string convert(const T value)
         {
