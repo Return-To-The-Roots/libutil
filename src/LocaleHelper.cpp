@@ -20,6 +20,7 @@
 #include "System.h"
 #include <boost/filesystem/path.hpp>
 #include <boost/locale.hpp>
+#include <boost/predef.h>
 #include <iostream>
 #include <stdexcept>
 
@@ -35,7 +36,7 @@ bool LocaleHelper::init()
 #ifdef _WIN32
         // On windows we want to enforce the encoding (mostly UTF8) so use boost to generate it
         std::locale newLocale = boost::locale::generator().generate("");
-#elif(BOOST_OS_MACOS)
+#elif BOOST_OS_MACOS
         // Don't change the locale on OSX. Using "" fails with 'locale::facet::_S_create_c_locale name not valid'
         std::locale newLocale;
         try
@@ -62,6 +63,9 @@ bool LocaleHelper::init()
 #ifdef _WIN32
         std::cerr << "Check your system language configuration!";
 #else
+#if BOOST_OS_MACOS
+        std::cerr << "OS X has know problems when using libstdc++. Try setting LC_ALL and LANG to \"C\" or compile with libc++" << std::endl;
+#endif
         std::string lcAll = System::getEnvVar("LC_ALL");
         std::string lang = System::getEnvVar("LANG");
         std::cerr << "Check your environment for invalid settings (e.g. LC_ALL";
