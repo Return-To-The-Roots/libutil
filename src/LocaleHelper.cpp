@@ -30,14 +30,24 @@ bool LocaleHelper::init()
     // Check and set locale (avoids errors caused by invalid locales later like #420)
     try
     {
-// Check for errors and use classic locale which is the default anyway.
-// However don't rely on string conversions to yield identical results on all systems as locale settings can be changed!
+    // Check for errors and use system locale.
+    // So don't rely on string conversions to yield identical results on all systems as locale settings can be changed!
 #ifdef _WIN32
         // On windows we want to enforce the encoding (mostly UTF8) so use boost to generate it
         std::locale newLocale = boost::locale::generator().generate("");
 #elif(BOOST_OS_MACOS)
         // Don't change the locale on OSX. Using "" fails with 'locale::facet::_S_create_c_locale name not valid'
-        std::locale newLocale = bfs::path::imbue(std::locale());
+        std::locale newLocale;
+        try
+        {
+            newLocale = bfs::path::imbue(std::locale());
+        } catch(std::exception& e)
+        {
+            std::cerr << "Caught an exception while setting locale: " << e.what() << std::endl
+                      << "Setting LC_ALL=\"C\" and trying again..." << std::endl;
+            System::setEnvVar("LC_ALL", "C");
+            newLocale = bfs::path::imbue(std::locale());
+        }
 #else
         // In linux we use the system locale but change the codecvt facet to the one boost is using (Assumed to be correct for our system)
         std::locale newLocale("");
