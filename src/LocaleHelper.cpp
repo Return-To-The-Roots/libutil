@@ -35,9 +35,13 @@ bool LocaleHelper::init()
 #ifdef _WIN32
         // On windows we want to enforce the encoding (mostly UTF8) so use boost to generate it
         std::locale newLocale = boost::locale::generator().generate("");
+#elif(BOOST_OS_MACOS)
+        // Don't change the locale on OSX. Using "" fails with 'locale::facet::_S_create_c_locale name not valid'
+        std::locale newLocale = bfs::path::imbue(std::locale());
 #else
-        // In linux / OSX this suffices
+        // In linux we use the system locale but change the codecvt facet to the one boost is using (Assumed to be correct for our system)
         std::locale newLocale("");
+        newLocale.combine<bfs::path::codecvt_type>(bfs::path::imbue(std::locale()));
 #endif // _WIN32
         std::locale::global(newLocale);
         // Use also the encoding (mostly UTF8) for bfs paths: http://stackoverflow.com/questions/23393870
