@@ -64,7 +64,8 @@ bool LocaleHelper::init()
         std::cerr << "Check your system language configuration!";
 #else
 #if BOOST_OS_MACOS
-        std::cerr << "OS X has know problems when using libstdc++. Try setting LC_ALL and LANG to \"C\" or compile with libc++" << std::endl;
+        std::cerr << "OS X has known problems when using libstdc++. Try setting LC_ALL and LANG to \"C\" or compile with libc++"
+                  << std::endl;
 #endif
         std::string lcAll = System::getEnvVar("LC_ALL");
         std::string lang = System::getEnvVar("LANG");
