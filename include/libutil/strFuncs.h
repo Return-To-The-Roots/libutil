@@ -19,6 +19,7 @@
 
 #include <cassert>
 #include <cstddef>
+#include <string>
 
 // Provides safe C-String functions by preventing buffer overflows
 // Better use std::string and boost::format!
@@ -65,5 +66,11 @@ void strcpy_trunc(char (&output)[T_size], const size_t offset, const char* pSrc)
     assert(offset <= T_size);
     detail::strcpyExt_trunc(output + offset, pSrc, T_size - offset);
 }
+
+/// Create a random string of length len using the given categories
+std::string createRandString(size_t len, bool useLowercase = true, bool useUppercase = true, bool useNumbers = true,
+                             bool useSpecialChars = true);
+/// Create a random string with chars from the given charset
+std::string createRandString(size_t len, const std::string& charset);
 
 #endif // STR_FUNCS_H_INCLUDED

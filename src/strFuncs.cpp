@@ -16,6 +16,9 @@
 
 #include "libUtilDefines.h" // IWYU pragma: keep
 #include "strFuncs.h"
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/random_device.hpp>
+#include <boost/random/uniform_int_distribution.hpp>
 #include <algorithm>
 #include <cstring>
 #include <stdexcept>
@@ -42,3 +45,36 @@ void strcpyExt_trunc(char* pOut, const char* pSrc, const size_t maxChars)
 }
 
 } // namespace detail
+
+std::string createRandString(size_t len, bool useLowercase, bool useUppercase, bool useNumbers, bool useSpecialChars)
+{
+    std::string charset;
+    if(useLowercase)
+        charset += "abcdefghijklmnopqrstuvwxyz";
+    if(useUppercase)
+        charset += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    if(useNumbers)
+        charset += "0123456789";
+    if(useSpecialChars)
+        charset += "!@#$%^&*()`~-_=+[{]{\\|;:'\",<.>/? ";
+    return createRandString(len, charset);
+}
+
+struct RandCharCreator
+{
+    const std::string charset;
+    boost::random::mt19937 rng;
+    boost::random::uniform_int_distribution<std::string::size_type> distr;
+    explicit RandCharCreator(const std::string& charset)
+        : charset(charset), rng(boost::random::random_device()()), distr(0, charset.length())
+    {}
+    char operator()() { return charset[distr(rng)]; }
+};
+
+std::string createRandString(size_t len, const std::string& charset)
+{
+    std::string result;
+    result.resize(len);
+    std::generate_n(result.begin(), len, RandCharCreator(charset));
+    return result;
+}
