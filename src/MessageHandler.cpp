@@ -62,29 +62,44 @@ int MessageHandler::send(Socket& sock, const Message& msg)
         return ser.GetLength();
 }
 
-Message* MessageHandler::recv(Socket& sock, int& error, bool wait)
+/// Helper function to determine if the timeout is reached to be used in a loop. Updates lasttime and the remaining timeout
+static inline bool timeoutReached(s25util::time64_t& lastTime, unsigned& remainingTimeoutInMs)
+{
+    if(remainingTimeoutInMs == 0u)
+        return true;
+
+    s25util::time64_t now = s25util::Time::CurrentTick();
+    s25util::time64_t elapsed = now - lastTime;
+    lastTime = now;
+    if(elapsed >= remainingTimeoutInMs)
+    {
+        remainingTimeoutInMs = 0;
+        return true;
+    } else
+    {
+        remainingTimeoutInMs = static_cast<unsigned>(remainingTimeoutInMs - elapsed);
+        return false;
+    }
+}
+
+Message* MessageHandler::recv(Socket& sock, int& error, unsigned timeoutInMs)
 {
     error = -1;
 
-    s25util::time64_t startTime = s25util::Time::CurrentTick();
+    s25util::time64_t lastTime = s25util::Time::CurrentTick();
     MsgHeader header;
-
-    while(true)
+    do
     {
-        // Warten wir schon 15s auf Antwort?
-        if(wait && s25util::Time::CurrentTick() - startTime > 15000)
-            wait = false;
-
         SocketSet set;
         // Socket hinzufgen
         set.Add(sock);
 
         // liegen Daten an?
-        int retval = set.Select(0, 0);
+        int retval = set.Select(timeoutInMs, 0);
 
         if(retval <= 0)
         {
-            if(wait)
+            if(timeoutInMs)
                 continue;
 
             if(retval != -1)
@@ -97,7 +112,7 @@ Message* MessageHandler::recv(Socket& sock, int& error, bool wait)
         unsigned numBytesAv;
         if(!set.InSet(sock) || sock.BytesWaiting(&numBytesAv) != 0)
         {
-            if(wait)
+            if(timeoutInMs)
                 continue;
 
             error = 1;
@@ -111,14 +126,14 @@ Message* MessageHandler::recv(Socket& sock, int& error, bool wait)
         // haben wir schon eine vollständige nachricht?
         if(numBytesAv < sizeof(header))
         {
-            if(wait)
+            if(timeoutInMs)
                 continue;
 
             error = 2;
             return NULL;
         }
         break;
-    }
+    } while(!timeoutReached(lastTime, timeoutInMs));
 
     // block empfangen
     int read = sock.Recv(&header, sizeof(header), false);
@@ -134,14 +149,24 @@ Message* MessageHandler::recv(Socket& sock, int& error, bool wait)
     if(header.msgLen < 0)
         throw std::runtime_error("Integer overflow during recv of message");
 
-    read = sock.BytesWaiting();
+    do
+    {
+        read = sock.BytesWaiting();
+        if(read < 0)
+            return NULL;
+        if(read >= static_cast<int>(header.msgLen + sizeof(header)) || !timeoutInMs)
+            break;
+        // Wait for socket again (non-blocking)
+        SocketSet set;
+        set.Add(sock);
+        if(set.Select(0, 0) < 0)
+            break;
+    } while(!timeoutReached(lastTime, timeoutInMs));
 
     static unsigned blocktimeout = 0;
     if(read < static_cast<int>(header.msgLen + sizeof(header)))
     {
         ++blocktimeout;
-        LOG.write("recv: block-waiting: not enough input (%d/%d) for message (0x%04X), waiting for next try\n") % read
-          % (header.msgLen + sizeof(header)) % header.msgId;
         if(blocktimeout < 120 && read != -1)
             error = 4;
 
@@ -174,6 +199,6 @@ Message* MessageHandler::recv(Socket& sock, int& error, bool wait)
         return NULL;
 
     msg->Deserialize(ser);
-
+    error = 0;
     return msg;
 }

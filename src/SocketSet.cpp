@@ -63,14 +63,14 @@ void SocketSet::Add(const Socket& sock)
  *
  *  @return liefert SOCKET_ERROR bei Fehler, Null bei Timeout, größer Null für die Anzahl der bereiten Sockets im Set
  */
-int SocketSet::Select(int timeout, int which)
+int SocketSet::Select(unsigned timeoutInMs, int which)
 {
     if(highest == INVALID_SOCKET)
         return SOCKET_ERROR;
 
     timeval tv;
-    tv.tv_sec = 0;
-    tv.tv_usec = timeout;
+    tv.tv_sec = timeoutInMs / 1000u;
+    tv.tv_usec = (timeoutInMs - tv.tv_sec * 1000) * 1000;
 
     fd_set *read, *write, *except;
     read = write = except = NULL;
@@ -78,16 +78,10 @@ int SocketSet::Select(int timeout, int which)
     // unser Set zuweisen
     switch(which)
     {
-        case 0: { read = &set;
-        }
-        break;
-        case 1: { write = &set;
-        }
-        break;
+        case 0: read = &set; break;
+        case 1: write = &set; break;
         default:
-        case 2: { except = &set;
-        }
-        break;
+        case 2: except = &set; break;
     }
 
     // Select ausführen

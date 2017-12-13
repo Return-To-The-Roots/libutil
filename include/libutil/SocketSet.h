@@ -41,7 +41,7 @@ public:
     void Add(const Socket& sock);
 
     /// führt einen Select auf dem @p SocketSet aus.
-    int Select(int timeout, int which = 2);
+    int Select(unsigned timeoutInMs, int which = 2);
 
     /// ist ein @p Socket im @p SocketSet?
     bool InSet(const Socket& sock);

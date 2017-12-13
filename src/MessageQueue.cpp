@@ -72,22 +72,31 @@ Message* MessageQueue::popFront()
     return messages.pop_front().release();
 }
 
-///////////////////////////////////////////////////////////////////////////////
-/// ruft eine nachricht ab und hängt sie in die queue
-bool MessageQueue::recv(Socket& sock, bool wait)
+int MessageQueue::recv(Socket& sock, unsigned timeoutInMs)
 {
     // Nachricht abrufen
     int error = -1;
-    Message* msg = MessageHandler::recv(sock, error, wait);
+    Message* msg = MessageHandler::recv(sock, error, timeoutInMs);
 
     if(msg)
     {
         push(msg);
-        return true;
-    }
+        return 1;
+    } else
+        return error < 0 ? -1 : 0;
+}
 
-    // noch nicht alles empfangen, true liefern für okay (error == -1 bedeutet fehler)
-    return (error >= 0);
+int MessageQueue::recvAll(Socket& sock, unsigned timeoutInMs)
+{
+    // Receive first msg
+    int result = recv(sock, timeoutInMs);
+    // If any received get also all remaining without further waiting
+    if(result > 0)
+    {
+        while(recv(sock) > 0)
+            result++;
+    }
+    return result;
 }
 
 bool MessageQueue::flush(Socket& sock)
