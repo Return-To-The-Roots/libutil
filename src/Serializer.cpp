@@ -77,6 +77,20 @@ void Serializer::ReadFromFile(BinaryFile& file)
     SetLength(buffer_size);
 }
 
+void Serializer::PushVarSize(uint32_t i)
+{
+    do
+    {
+        // 7 bit at a time
+        uint8_t curVal = i & 0x7F;
+        i >>= 7;
+        // Anything left? Set highest bit
+        if(i)
+            curVal |= 0x80;
+        Push(curVal);
+    } while(i);
+}
+
 void Serializer::PushBool(bool b)
 {
     PushUnsignedChar(b ? 1 : 0);
@@ -84,8 +98,28 @@ void Serializer::PushBool(bool b)
 
 void Serializer::PushString(const std::string& str)
 {
+    PushVarSize(static_cast<unsigned>(str.length()));
+    PushRawData(str.c_str(), static_cast<unsigned>(str.length()));
+}
+
+void Serializer::PushLongString(const std::string& str)
+{
     PushUnsignedInt(static_cast<unsigned>(str.length()));
     PushRawData(str.c_str(), static_cast<unsigned>(str.length()));
+}
+
+uint32_t Serializer::PopVarSize()
+{
+    uint32_t result = 0;
+    for(int i = 0; i < 5; i++)
+    {
+        uint8_t curVal = PopUnsignedChar();
+        result |= (curVal & 0x7F) << (i * 7);
+        if(!(curVal & 0x80))
+            return result;
+    }
+    // Can't have more than 5 bytes
+    throw std::runtime_error("Invalid var size entry!");
 }
 
 bool Serializer::PopBool()
@@ -96,6 +130,14 @@ bool Serializer::PopBool()
 }
 
 std::string Serializer::PopString()
+{
+    std::string str;
+    str.resize(PopVarSize());
+    PopRawData(&str[0], static_cast<unsigned>(str.length()));
+    return str;
+}
+
+std::string Serializer::PopLongString()
 {
     std::string str;
     str.resize(PopUnsignedInt());

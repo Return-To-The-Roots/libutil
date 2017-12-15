@@ -83,10 +83,13 @@ public:
 
     void PushSignedChar(int8_t i) { Push(i); }
     void PushUnsignedChar(uint8_t i) { Push(i); }
+    /// Push a variable sized uint32_t. Uses less space when value is small
+    void PushVarSize(uint32_t i);
 
     void PushBool(bool b);
 
     void PushString(const std::string& str);
+    void PushLongString(const std::string& str);
 
     // Lesemethoden
 
@@ -94,18 +97,20 @@ public:
     void PopRawData(void* data, unsigned length);
 
     /// Sämtliche Integer
-    signed int PopSignedInt() { return Pop<int32_t>(); }
-    unsigned PopUnsignedInt() { return Pop<uint32_t>(); }
+    int32_t PopSignedInt() { return Pop<int32_t>(); }
+    uint32_t PopUnsignedInt() { return Pop<uint32_t>(); }
 
-    signed short PopSignedShort() { return Pop<int16_t>(); }
-    unsigned short PopUnsignedShort() { return Pop<uint16_t>(); }
+    int16_t PopSignedShort() { return Pop<int16_t>(); }
+    uint16_t PopUnsignedShort() { return Pop<uint16_t>(); }
 
-    signed char PopSignedChar() { return Pop<int8_t>(); }
-    unsigned char PopUnsignedChar() { return Pop<uint8_t>(); }
+    int8_t PopSignedChar() { return Pop<int8_t>(); }
+    uint8_t PopUnsignedChar() { return Pop<uint8_t>(); }
+    uint32_t PopVarSize();
 
     bool PopBool();
 
     std::string PopString();
+    std::string PopLongString();
 
 protected:
     template<typename T>
