@@ -1,4 +1,9 @@
-FIND_PACKAGE(Boost 1.55 REQUIRED COMPONENTS system filesystem locale random)
+set(_BoostComponents system filesystem random)
+if(WIN32)
+	# Locale only on windows
+	set(_BoostComponents ${_BoostComponents} locale)
+endif()
+FIND_PACKAGE(Boost 1.55 REQUIRED COMPONENTS ${_BoostComponents})
 IF (NOT MSVC)
 	FIND_PACKAGE(Miniupnpc REQUIRED)
     include(GatherDll)
