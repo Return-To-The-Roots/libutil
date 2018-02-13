@@ -22,50 +22,26 @@
 #include <boost/core/scoped_enum.hpp>
 
 #ifdef BOOST_NO_CXX11_SCOPED_ENUMS
-#define MAKE_BITSET_STRONG_UL(Type)                          \
-    \
-inline Type                                                  \
-    operator&(Type lhs, BOOST_SCOPED_ENUM_NATIVE(Type) rhs)  \
-    {                                                        \
-        return Type(boost::underlying_cast<int>(lhs) & rhs); \
-    }                                                        \
-    \
-inline Type                                                  \
-    operator&(BOOST_SCOPED_ENUM_NATIVE(Type) lhs, Type rhs)  \
-    {                                                        \
-        return Type(lhs & boost::underlying_cast<int>(rhs)); \
-    }                                                        \
-    \
-inline Type                                                  \
-    operator|(Type lhs, BOOST_SCOPED_ENUM_NATIVE(Type) rhs)  \
-    {                                                        \
-        return Type(boost::underlying_cast<int>(lhs) | rhs); \
-    }                                                        \
-    \
-inline Type                                                  \
-    operator|(BOOST_SCOPED_ENUM_NATIVE(Type) lhs, Type rhs)  \
-    {                                                        \
-        return Type(lhs | boost::underlying_cast<int>(rhs)); \
-    }
+#define MAKE_BITSET_STRONG_UL(Type)                                                                                              \
+                                                                                                                                 \
+    inline Type operator&(Type lhs, BOOST_SCOPED_ENUM_NATIVE(Type) rhs) { return Type(boost::underlying_cast<int>(lhs) & rhs); } \
+                                                                                                                                 \
+    inline Type operator&(BOOST_SCOPED_ENUM_NATIVE(Type) lhs, Type rhs) { return Type(lhs & boost::underlying_cast<int>(rhs)); } \
+                                                                                                                                 \
+    inline Type operator|(Type lhs, BOOST_SCOPED_ENUM_NATIVE(Type) rhs) { return Type(boost::underlying_cast<int>(lhs) | rhs); } \
+                                                                                                                                 \
+    inline Type operator|(BOOST_SCOPED_ENUM_NATIVE(Type) lhs, Type rhs) { return Type(lhs | boost::underlying_cast<int>(rhs)); }
 #else
 #define MAKE_BITSET_STRONG_UL(Type)
 #endif
 
 /// Makes a strongly typed enum usable as a bitset
-#define MAKE_BITSET_STRONG(Type)                                                          \
-    \
-inline Type                                                                               \
-    operator&(Type lhs, Type rhs)                                                         \
-    {                                                                                     \
-        return Type(boost::underlying_cast<int>(lhs) & boost::underlying_cast<int>(rhs)); \
-    }                                                                                     \
-    \
-inline Type                                                                               \
-    operator|(Type lhs, Type rhs)                                                         \
-    {                                                                                     \
-        return Type(boost::underlying_cast<int>(lhs) | boost::underlying_cast<int>(rhs)); \
-    }                                                                                     \
-    \
-MAKE_BITSET_STRONG_UL(Type)
+#define MAKE_BITSET_STRONG(Type)                                                                                                    \
+                                                                                                                                    \
+    inline Type operator&(Type lhs, Type rhs) { return Type(boost::underlying_cast<int>(lhs) & boost::underlying_cast<int>(rhs)); } \
+                                                                                                                                    \
+    inline Type operator|(Type lhs, Type rhs) { return Type(boost::underlying_cast<int>(lhs) | boost::underlying_cast<int>(rhs)); } \
+                                                                                                                                    \
+    MAKE_BITSET_STRONG_UL(Type)
 
 #endif // enumUtils_h__
