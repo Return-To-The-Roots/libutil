@@ -40,12 +40,15 @@ if(LUA_FIND_VERSION_EXACT)
 		set(_LUA_VERSIONS ${LUA_FIND_VERSION_MAJOR}.${LUA_FIND_VERSION_MINOR})
 	endif ()
 elseif(LUA_FIND_VERSION)
-	list(INSERT 0 LUA_VERSIONS ${LUA_FIND_VERSION})
+	list(INSERT 0 _LUA_VERSIONS ${LUA_FIND_VERSION})
+	if(LUA_FIND_VERSION_COUNT GREATER 1)
+		list(INSERT 0 _LUA_VERSIONS ${LUA_FIND_VERSION_MAJOR}.${LUA_FIND_VERSION_MINOR})
+	endif ()
 endif()
 
 # Add possible include suffixes
 unset(_LUA_SUFFIXES)
-foreach(version ${LUA_VERSIONS})
+foreach(version ${_LUA_VERSIONS})
 	if(version MATCHES "^([0-9]+)\\.([0-9]+)$")
 		list(APPEND _LUA_SUFFIXES
 		     lua${CMAKE_MATCH_1}${CMAKE_MATCH_2}
