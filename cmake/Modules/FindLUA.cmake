@@ -1,14 +1,16 @@
-# Find module which defines the target LUA::LUA
-# For MSVC it also sets LUA_DLL
+# Find module which defines the target lua::lua
+# Accepts a hint via variable LUA_DIR (CMake or env var)
+# Find lua versions 5.2 and up.
+
 
 function(_lua_extract_header_version)
 	set(LUA_VERSION_STRING "" PARENT_SCOPE)
 	if(LUA_INCLUDE_DIR)
-		set(LUA_VERSION_REGEX "^#define LUA_VERSION_(MAJOR|MINOR|RELEASE) +\"([0-9]+)\"$")
+		set(LUA_VERSION_REGEX "^#define[ \t]+LUA_VERSION_(MAJOR|MINOR|RELEASE)[ \t]+\"([0-9]+)\"$")
 		file(STRINGS "${LUA_INCLUDE_DIR}/lua.h" LUA_VERSION_STRINGS REGEX ${LUA_VERSION_REGEX})
 		set(LUA_VERSION_OK TRUE)
 		foreach(subVer MAJOR MINOR RELEASE)
-			if(LUA_VERSION_STRINGS MATCHES "#define LUA_VERSION_${subVer} +\"([0-9]+)\"")
+			if(LUA_VERSION_STRINGS MATCHES "#define[ \t]+LUA_VERSION_${subVer}[ \t]+\"([0-9]+)\"")
 				set(LUA_VERSION_${subVer} ${CMAKE_MATCH_1})
 			else()
 				unset(LUA_VERSION_${subVer})
