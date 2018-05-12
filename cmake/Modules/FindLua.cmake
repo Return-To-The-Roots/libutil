@@ -66,7 +66,7 @@ function(_lua_set_version_vars)
         set(_lua_append_versions ${LUA_VERSIONS5})
     endif ()
 
-    list(APPEND _lua_include_subdirs "include/lua" "include")
+    list(APPEND _lua_include_subdirs "include/lua" "include" "../include")
 
     foreach (ver IN LISTS _lua_append_versions)
         string(REGEX MATCH "^([0-9]+)\\.([0-9]+)$" _ver "${ver}")
