@@ -106,7 +106,7 @@ function(_lua_set_version_vars)
 endfunction(_lua_set_version_vars)
 
 function(_lua_get_header_version)
-    unset(LUA_VERSION_STRING PARENT_SCOPE)
+    set(LUA_VERSION_STRING "" PARENT_SCOPE)
     set(_hdr_file "${LUA_INCLUDE_DIR}/lua.h")
 
     if (NOT EXISTS "${_hdr_file}")
@@ -183,7 +183,7 @@ function(_lua_find_header)
         list(APPEND CMAKE_IGNORE_PATH "${LUA_INCLUDE_DIR}")
         unset(LUA_INCLUDE_DIR CACHE)
         unset(LUA_INCLUDE_DIR)
-        unset(LUA_INCLUDE_DIR PARENT_SCOPE)
+        set(LUA_INCLUDE_DIR "" PARENT_SCOPE)
     endwhile ()
 endfunction()
 
