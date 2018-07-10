@@ -1,5 +1,5 @@
 
-MACRO(ADD_FLAGS parameter)
+function(ADD_FLAGS parameter)
 	# Create a separated list of the arguments to loop over
 	SET(p_list ${${parameter}})
 	SEPARATE_ARGUMENTS(p_list)
@@ -27,18 +27,18 @@ MACRO(ADD_FLAGS parameter)
 			FOREACH(p_arg ${p_list})
 				IF (${p_arg} STREQUAL ${option})
 					SET(found TRUE)
-				ENDIF (${p_arg} STREQUAL ${option})
-			ENDFOREACH(p_arg)
+				ENDIF()
+			ENDFOREACH()
 			
 			IF(NOT found)
 				# The required argument wasn't found, so we need to add it in.
 				SET(new_parameter "${new_parameter} ${option}")
-			ENDIF(NOT found)
-		ENDFOREACH(option ${TMP})
-	ENDFOREACH(required_arg ${ARGN})
+			ENDIF()
+		ENDFOREACH()
+	ENDFOREACH()
 	
     # unfix arch-argument bug
     STRING(REPLACE "-arch=" "-arch " new_parameter "${new_parameter}")
 
-	SET(${parameter} ${new_parameter})
-ENDMACRO(ADD_FLAGS)
+	SET(${parameter} ${new_parameter} PARENT_SCOPE)
+endfunction()
