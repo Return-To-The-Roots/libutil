@@ -10,7 +10,7 @@ function(DetectOsXArchs)
     MESSAGE(STATUS "Checking ${LIB_SYSTEM_PATH} for possible architectures")
     
     get_filename_component(LIBSYSTEM_EXT "${LIB_SYSTEM_PATH}" EXT)
-    if("${LIBSYSTEM_EXT}" STREQUAL "B.dylib")
+    if(LIBSYSTEM_EXT STREQUAL ".B.dylib")
         # find lipo
         set(LIPO_NAMES apple-lipo lipo)
         if(${CMAKE_CXX_COMPILER} MATCHES "^(.*)-[^-]+$" OR ${CMAKE_C_COMPILER} MATCHES "^(.*)-[^-]+$")
@@ -18,32 +18,29 @@ function(DetectOsXArchs)
             list(INSERT LIPO_NAMES 0 "${CMAKE_MATCH_1}-lipo")
         endif()
 		FIND_PROGRAM(LIPO NAMES ${LIPO_NAMES})
-		# read supported platforms	
-		EXECUTE_PROCESS(
-			COMMAND ${CMAKE_LIPO} "-info" "${LIB_SYSTEM_PATH}"
-			RESULT_VARIABLE LIPO_RESULT
-			ERROR_VARIABLE LIPO_ERROR
-			OUTPUT_VARIABLE LIPO_OUTPUT
-		)
+        set(_cmd "${LIPO}")
+        set(_args -info)
 	ELSE()
 		# Newer OSX have only a text file *.tbd instead of the dylib file
-        # Reuse the LIPO_ variables
-		EXECUTE_PROCESS(
-			COMMAND "grep" "archs" "${LIB_SYSTEM_PATH}"
-			RESULT_VARIABLE LIPO_RESULT
-			ERROR_VARIABLE LIPO_ERROR
-			OUTPUT_VARIABLE LIPO_OUTPUT
-		)
+        set(_cmd grep)
+        set(_args archs)
 	ENDIF()
     
-    if(NOT ${LIPO_RESULT} EQUAL 0)
-        message(FATAL_ERROR "Lipo/Grep command failed with status ${LIPO_RESULT} and output: ${LIPO_ERROR}")
+    # read supported platforms	
+    EXECUTE_PROCESS(
+        COMMAND "${_cmd}" ${_args} "${LIB_SYSTEM_PATH}"
+        RESULT_VARIABLE _RESULT
+        ERROR_VARIABLE _ERROR
+        OUTPUT_VARIABLE _OUTPUT
+    )
+    if(NOT _RESULT EQUAL 0)
+        message(FATAL_ERROR "Command '${_cmd}' failed with status ${_RESULT} and output: ${_ERROR}")
     endif()
 
     set(OSX_POSSIBLE_ARCHS x86_64 i386 i686 ppc)
 	set(OSX_DETECTED_ARCHS)
     foreach(arch IN LISTS OSX_POSSIBLE_ARCHS)
-        IF(${LIPO_OUTPUT} MATCHES ${arch})
+        IF(${_OUTPUT} MATCHES ${arch})
             list(APPEND OSX_DETECTED_ARCHS ${arch})
         ENDIF()
     endforeach()
