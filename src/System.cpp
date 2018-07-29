@@ -32,7 +32,7 @@
 #include <stdexcept>
 #endif // _WIN32
 
-#if defined(__MINGW32__) && (__GNUC__ < 6)
+#if defined(__MINGW32__) && !defined(REFKNOWNFOLDERID)
 
 typedef GUID KNOWNFOLDERID;
 #define REFKNOWNFOLDERID const KNOWNFOLDERID&
