@@ -72,5 +72,7 @@ std::string createRandString(size_t len, bool useLowercase = true, bool useUpper
                              bool useSpecialChars = true);
 /// Create a random string with chars from the given charset
 std::string createRandString(size_t len, const std::string& charset);
+/// Create a random string with chars from the given charset and seed
+std::string createRandString(size_t len, const std::string& charset, uint32_t seed);
 
 #endif // STR_FUNCS_H_INCLUDED

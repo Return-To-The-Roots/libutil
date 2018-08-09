@@ -68,13 +68,24 @@ struct RandCharCreator
     explicit RandCharCreator(const std::string& charset)
         : charset(charset), rng(boost::random::random_device()()), distr(0, charset.length())
     {}
+    RandCharCreator(const std::string& charset, uint32_t seed) : charset(charset), rng(seed), distr(0, charset.length()) {}
     char operator()() { return charset[distr(rng)]; }
 };
 
-std::string createRandString(size_t len, const std::string& charset)
+std::string createRandString(size_t len, RandCharCreator creator)
 {
     std::string result;
     result.resize(len);
-    std::generate_n(result.begin(), len, RandCharCreator(charset));
+    std::generate_n(result.begin(), len, creator);
     return result;
+}
+
+std::string createRandString(size_t len, const std::string& charset)
+{
+    return createRandString(len, RandCharCreator(charset));
+}
+
+std::string createRandString(size_t len, const std::string& charset, uint32_t seed)
+{
+    return createRandString(len, RandCharCreator(charset, seed));
 }
