@@ -68,10 +68,11 @@ if(ClangFormat_FOUND)
     function(add_ClangFormat_target _style)
         if(ClangFormat_BINARY)
             set(_format_files "")
+            set(_clangFormatFolder ${CMAKE_CURRENT_BINARY_DIR}/clangFormat)
+            file(MAKE_DIRECTORY ${_clangFormatFolder})
             foreach (_source ${ClangFormat_FILES})
                 get_filename_component(_source_file ${_source} NAME)
-     
-                set(_format_file clangFormat/${_source_file}.format)
+                set(_format_file ${_clangFormatFolder}/${_source_file}.format)
 
                 add_custom_command(OUTPUT ${_format_file}
                         DEPENDS ${_source}
