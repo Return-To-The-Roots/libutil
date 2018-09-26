@@ -20,6 +20,8 @@
 #include "StringConversion.h"
 #include "getExecutablePath.h"
 #include "ucString.h"
+#include <boost/filesystem/operations.hpp>
+#include <boost/nowide/system.hpp>
 #include <boost/predef/compiler.h>
 #include <boost/predef/os.h>
 #include <boost/preprocessor/seq/for_each.hpp>
@@ -355,4 +357,32 @@ std::string System::getCompilerName()
     else
         name = "Unknown Compiler";
     return name;
+}
+
+bool System::execute(const bfs::path& command, const std::string& arguments)
+{
+    // Early exit
+    if(!bfs::exists(command))
+        return false;
+    // Windows has problems with system() call:
+    // - Spaces in the command cannot be easily escaped -> Change to folder and execute command
+    // - Need backslashes -> Make preferred
+    const bfs::path folder = command.parent_path().make_preferred();
+    const std::string executable = command.filename().string();
+    if(executable.find(' ') != std::string::npos)
+        throw std::runtime_error("Executable must not contain spaces!");
+    ScopedCurrentPathChange tmp(folder);
+    int result = boost::nowide::system((executable + " " + arguments).c_str());
+    return result == 0; // Assume 0 == OK
+}
+
+System::ScopedCurrentPathChange::ScopedCurrentPathChange(const boost::filesystem::path& newCurrentPath) : oldCurPath(bfs::current_path())
+{
+    if(!newCurrentPath.empty())
+        bfs::current_path(newCurrentPath);
+}
+
+System::ScopedCurrentPathChange::~ScopedCurrentPathChange()
+{
+    bfs::current_path(oldCurPath);
 }

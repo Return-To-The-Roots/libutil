@@ -28,6 +28,17 @@
 class System
 {
 public:
+    /// Changes the current directory and back when destroyed
+    /// Note: Failure in initial change throws and in final change terminates the program
+    class ScopedCurrentPathChange
+    {
+        const boost::filesystem::path oldCurPath;
+
+    public:
+        explicit ScopedCurrentPathChange(const boost::filesystem::path& newCurrentPath);
+        ~ScopedCurrentPathChange();
+    };
+
     /// Return true iff the environment variable exists
     static bool envVarExists(const std::string& name);
     /// Return true iff the environment variable exists
@@ -38,7 +49,7 @@ public:
     static std::wstring getEnvVar(const std::wstring& name);
     /// Return the environment variable as a path
     /// (might be faster than constructing one from a string)
-    static bfs::path getPathFromEnvVar(const std::string& name);
+    static boost::filesystem::path getPathFromEnvVar(const std::string& name);
 
     /// Set the environment variable. Return true on success
     static bool setEnvVar(const std::string& name, const std::string& value);
@@ -50,15 +61,19 @@ public:
     static bool removeEnvVar(const std::wstring& name);
 
     /// Gets the users home directory
-    static bfs::path getHomePath();
+    static boost::filesystem::path getHomePath();
     static std::string getUserName();
 
     /// Return the full path to the current executable
-    static bfs::path getExecutablePath();
+    static boost::filesystem::path getExecutablePath();
     /// Return the name of the OS
     static std::string getOSName();
     /// Get the name of the compiler
     static std::string getCompilerName();
+    /// Execute the given command with the given arguments
+    /// The executable must not contain a space (the path to it may)
+    /// Arguments need to be properly quoted
+    static bool execute(const boost::filesystem::path& command, const std::string& arguments = "");
 };
 
 #endif // System_h__
