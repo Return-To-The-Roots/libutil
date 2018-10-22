@@ -368,7 +368,8 @@ bool System::execute(const bfs::path& command, const std::string& arguments)
     // - Spaces in the command cannot be easily escaped -> Change to folder and execute command
     // - Need backslashes -> Make preferred
     const bfs::path folder = command.parent_path().make_preferred();
-    const std::string executable = command.filename().string();
+    // Linux needs "./cmd" form, not only "cmd"
+    const std::string executable = (bfs::path(".") / command.filename()).string();
     if(executable.find(' ') != std::string::npos)
         throw std::runtime_error("Executable must not contain spaces!");
     ScopedCurrentPathChange tmp(folder);
