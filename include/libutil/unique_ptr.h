@@ -38,6 +38,7 @@ template<typename T, class D = Deleter<T> >
 struct unique_ptr : boost::interprocess::unique_ptr<typename boost::remove_extent<T>::type, D>
 {
     typedef boost::interprocess::unique_ptr<typename boost::remove_extent<T>::type, D> base;
+    typedef typename base::pointer pointer;
     typedef typename boost::mpl::if_<boost::is_reference<D>, D, typename boost::add_reference<const D>::type>::type DeleterParam;
     unique_ptr() {}
     explicit unique_ptr(pointer p) : base(p) {}
@@ -46,11 +47,14 @@ struct unique_ptr : boost::interprocess::unique_ptr<typename boost::remove_exten
     unique_ptr(BOOST_RV_REF(unique_ptr) u) : base(static_cast<BOOST_RV_REF(base)>(u)) {}
     unique_ptr& operator=(BOOST_RV_REF(unique_ptr) u)
     {
-        swap(u);
+        base::operator=(static_cast<BOOST_RV_REF(base)>(u));
         return *this;
     }
+
+private:
+    BOOST_MOVABLE_BUT_NOT_COPYABLE(unique_ptr)
 };
 #endif
-}
+} // namespace libutil
 
 #endif // unique_ptr_h__
