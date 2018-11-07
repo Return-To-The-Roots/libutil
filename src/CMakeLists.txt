@@ -10,20 +10,6 @@ IF (NOT MSVC)
     gather_dll(MINIUPNPC)
 ENDIF()
 
-get_filename_component(parentPath ${CMAKE_CURRENT_SOURCE_DIR} DIRECTORY)
-set(includePath ${parentPath}/include)
-INCLUDE_DIRECTORIES(${includePath}/libutil ${UTF8_INCLUDE_DIR})
-INCLUDE_DIRECTORIES(SYSTEM ${Boost_INCLUDE_DIRS} ${MINIUPNPC_INCLUDE_DIR})
-
-if(WIN32)
-    add_definitions(-DWIN32_LEAN_AND_MEAN -D_WIN32_WINNT=_WIN32_WINNT_WINXP)
-    # Exclude some windows defines
-    add_definitions(-DNOMINMAX -DNODRAWTEXT -DNOSOUND -DNOTEXTMETRIC -DNOCOMM -DNOMCX)
-endif()
-if(MSVC)
-	add_definitions(-D_WINSOCK_DEPRECATED_NO_WARNINGS)
-endif()
-
 #################################################################################
 
 FILE(GLOB SRC_FILES *.cpp)
@@ -33,15 +19,28 @@ ADD_LIBRARY(s25util STATIC ${SRC_FILES} ${HEADER_FILES})
 # Required for linking into shared libs
 set_property(TARGET s25util PROPERTY POSITION_INDEPENDENT_CODE ON)
 
-target_include_directories(s25util INTERFACE ${includePath})
-TARGET_LINK_LIBRARIES(s25util PUBLIC endian PUBLIC nowide-static PUBLIC ${Boost_LIBRARIES})
+get_filename_component(parentPath ${CMAKE_CURRENT_SOURCE_DIR} DIRECTORY)
+set(includePath ${parentPath}/include)
+target_include_directories(s25util
+    INTERFACE ${includePath}
+    PRIVATE ${includePath}/libutil
+    SYSTEM PUBLIC ${Boost_INCLUDE_DIRS})
+target_link_libraries(s25util PUBLIC endian nowide-static utf8 ${Boost_LIBRARIES})
 
-IF (NOT MSVC)
-	TARGET_LINK_LIBRARIES(s25util PUBLIC ${MINIUPNPC_LIBRARY})
+if(MSVC)
+    target_compile_definitions(s25util PRIVATE _WINSOCK_DEPRECATED_NO_WARNINGS)
+else()
+	target_link_libraries(s25util PUBLIC ${MINIUPNPC_LIBRARY})
+    target_include_directories(s25util SYSTEM PRIVATE ${MINIUPNPC_INCLUDE_DIR})
 ENDIF()
 
 IF (WIN32)
-	TARGET_LINK_LIBRARIES(s25util PUBLIC iphlpapi PUBLIC ws2_32)
+    target_compile_definitions(s25util PRIVATE -DWIN32_LEAN_AND_MEAN -D_WIN32_WINNT=_WIN32_WINNT_WINXP)
+    # Exclude some windows defines
+    target_compile_definitions(s25util PRIVATE -DNOMINMAX -DNODRAWTEXT -DNOSOUND -DNOTEXTMETRIC -DNOCOMM -DNOMCX)
+    # Disable automatic boost linking
+    target_compile_definitions(s25util PUBLIC -DBOOST_ALL_NO_LIB)
+	target_link_libraries(s25util PUBLIC iphlpapi PUBLIC ws2_32)
 ENDIF ()
 
 if(ClangFormat_FOUND)
