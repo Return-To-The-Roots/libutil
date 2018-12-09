@@ -57,4 +57,10 @@ private:
 #endif
 } // namespace libutil
 
+#ifdef BOOST_NO_CXX11_RVALUE_REFERENCES
+#define RTTR_MOVE_RET(value) boost::move(value)
+#else
+#define RTTR_MOVE_RET(value) value
+#endif
+
 #endif // unique_ptr_h__
