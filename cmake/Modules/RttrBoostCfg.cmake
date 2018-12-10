@@ -9,7 +9,7 @@ IF(WIN32 OR APPLE)
 ELSE()
 	SET(RTTR_USE_STATIC_BOOST_DEFAULT OFF)
 ENDIF()
-	
+
 OPTION(RTTR_USE_STATIC_BOOST "Build with static BOOST libraries instead of dynamic" ${RTTR_USE_STATIC_BOOST_DEFAULT})
 IF((NOT "${Boost_USE_STATIC_LIBS}" AND ${RTTR_USE_STATIC_BOOST}) OR
    ("${Boost_USE_STATIC_LIBS}" AND NOT ${RTTR_USE_STATIC_BOOST}))
@@ -24,7 +24,7 @@ else(Boost_USE_STATIC_LIBS)
 endif(Boost_USE_STATIC_LIBS)
 
 # For some reason boost needs sometimes 1.xy and sometimes 1.xy.0 to detect folder structures like boost_1_55_0
-SET(TMP_VERSIONS "1.65" "1.64" "1.63" "1.62" "1.61" "1.60" "1.59" "1.58" "1.57" "1.56" "1.55")
+SET(TMP_VERSIONS 1.69 1.68 1.67 1.66 1.65 1.64)
 foreach(I_VERSION ${TMP_VERSIONS})
 	list(APPEND Boost_ADDITIONAL_VERSIONS "${I_VERSION}.1" "${I_VERSION}.0" "${I_VERSION}")
 endforeach()

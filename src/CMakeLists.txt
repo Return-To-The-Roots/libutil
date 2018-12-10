@@ -26,6 +26,7 @@ target_include_directories(s25util
     PRIVATE ${includePath}/libutil
     SYSTEM PUBLIC ${Boost_INCLUDE_DIRS})
 target_link_libraries(s25util PUBLIC endian nowide-static utf8 ${Boost_LIBRARIES})
+target_compile_definitions(s25util PUBLIC "$<$<NOT:$<COMPILE_FEATURES:cxx_override>>:override=>")
 
 if(MSVC)
     target_compile_definitions(s25util PRIVATE _WINSOCK_DEPRECATED_NO_WARNINGS)
