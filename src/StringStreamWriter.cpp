@@ -23,7 +23,7 @@ std::string StringStreamWriter::getText() const
     return stream.str();
 }
 
-void StringStreamWriter::writeText(const std::string& txt, unsigned color)
+void StringStreamWriter::writeText(const std::string& txt, unsigned /*color*/)
 {
     stream << txt;
 }
