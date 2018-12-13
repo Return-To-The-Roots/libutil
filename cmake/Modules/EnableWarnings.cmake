@@ -29,12 +29,13 @@ function(enable_warnings target)
       target_compile_options(${target} ${visibility} /WX) # warning = error
     endif()
   else()
-    target_compile_options(${target} ${visibility} -Wall -Wextra -pedantic -Wpedantic)
+    target_compile_options(${target} ${visibility} -Wall -Wextra -pedantic)
     if(RTTR_ENABLE_WERROR)
       target_compile_options(${target} ${visibility} -Werror)
     endif()
     include(CheckAndAddFlag)
     check_and_add_cxx_warnings(${target} ${visibility}
+      -Wpedantic
       -Wparentheses
       -Wno-error=type-limits
       -Wfloat-conversion
@@ -46,11 +47,18 @@ function(enable_warnings target)
     )
 
     if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+      set(flags )
+      # Variadic macros are part of C99 but supported by all big compilers in C++03
+      foreach(warningFlag -Wno-c99-extensions -Wno-c++11-extensions -Wno-variadic-macros
+        -Wno-unused-local-typedef # For Boost < 1.59 (static-assert emulation)
+      )
+        check_cxx_warning(${warningFlag} supported)
+        if(supported)
+          list(APPEND flags ${warningFlag})
+        endif()
+      endforeach()
       target_compile_options(${target} ${visibility}
-        # Variadic macros are part of C99 but supported by all big compilers in C++03
-        "$<$<AND:$<COMPILE_LANGUAGE:CXX>,$<NOT:$<COMPILE_FEATURES:cxx_std_11>>>:-Wno-c++11-extensions;-Wno-variadic-macros;-Wno-c99-extensions>"
-        # For Boost < 1.59 (static-assert emulation)
-        "$<$<AND:$<COMPILE_LANGUAGE:CXX>,$<NOT:$<COMPILE_FEATURES:cxx_static_assert>>>:-Wno-unused-local-typedef>"
+        "$<$<AND:$<COMPILE_LANGUAGE:CXX>,$<NOT:$<COMPILE_FEATURES:cxx_std_11>>>:${flags}>"
       )
       if(CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 5.1)
         target_compile_options(${target} ${visibility}
