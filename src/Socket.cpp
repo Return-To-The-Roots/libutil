@@ -454,7 +454,7 @@ std::vector<HostAddr> Socket::HostToIp(const std::string& hostname, const unsign
 void Socket::Sleep(unsigned ms)
 {
 #ifdef _WIN32
-    ::Sleep(250);
+    ::Sleep(ms);
 #else
     usleep(ms * 1000);
 #endif
