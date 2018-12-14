@@ -29,7 +29,11 @@ function(enable_warnings target)
       target_compile_options(${target} ${visibility} /WX) # warning = error
     endif()
   else()
-    target_compile_options(${target} ${visibility} -Wall -Wextra -pedantic)
+    target_compile_options(${target} ${visibility} -Wall -pedantic)
+    if(NOT (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.3"))
+      # GCC until 4.3 is just annoying with -Wextra
+      target_compile_options(${target} ${visibility} -Wextra)
+    endif()
     if(RTTR_ENABLE_WERROR)
       target_compile_options(${target} ${visibility} -Werror)
     endif()
