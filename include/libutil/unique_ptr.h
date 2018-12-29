@@ -55,6 +55,27 @@ private:
     BOOST_MOVABLE_BUT_NOT_COPYABLE(unique_ptr)
 };
 #endif
+
+template<typename T>
+unique_ptr<T> make_unique()
+{
+    return unique_ptr<T>(new T);
+}
+template<typename T, typename U1>
+unique_ptr<T> make_unique(BOOST_FWD_REF(U1) u1)
+{
+    return unique_ptr<T>(new T(boost::forward<U1>(u1)));
+}
+template<typename T, typename U1, typename U2>
+unique_ptr<T> make_unique(BOOST_FWD_REF(U1) u1, BOOST_FWD_REF(U2) u2)
+{
+    return unique_ptr<T>(new T(boost::forward<U1>(u1), boost::forward<U2>(u2)));
+}
+template<typename T, typename U1, typename U2, typename U3>
+unique_ptr<T> make_unique(BOOST_FWD_REF(U1) u1, BOOST_FWD_REF(U2) u2, BOOST_FWD_REF(U2) u3)
+{
+    return unique_ptr<T>(new T(boost::forward<U1>(u1), boost::forward<U2>(u2), boost::forward<U3>(u3)));
+}
 } // namespace libutil
 
 #ifdef BOOST_NO_CXX11_RVALUE_REFERENCES
