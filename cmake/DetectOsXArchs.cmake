@@ -2,7 +2,7 @@
 # Sets the possible values in OSX_DETECTED_ARCHS
 # If a NO{ARCH} variable is set, then {ARCH} will be ignored
 
-function(DetectOsXArchs)
+function(detect_osx_archs)
     find_library(LIB_SYSTEM_PATH NAMES libSystem.B.tbd libSystem.B.dylib)
    	IF(NOT LIB_SYSTEM_PATH OR NOT EXISTS "${LIB_SYSTEM_PATH}")
 		MESSAGE(FATAL_ERROR "No libSystem.B.* found while trying to detect the architecture")
