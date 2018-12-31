@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#include "libUtilDefines.h" // IWYU pragma: keep
 #include "StringStreamWriter.h"
 
 std::string StringStreamWriter::getText() const

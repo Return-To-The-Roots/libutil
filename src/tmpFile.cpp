@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#include "libUtilDefines.h" // IWYU pragma: keep
 #include "tmpFile.h"
 #include <boost/filesystem.hpp>
 #include <stdexcept>
@@ -24,6 +23,9 @@
 #else
 #include <unistd.h>
 #endif
+
+namespace bnw = boost::nowide;
+namespace bfs = boost::filesystem;
 
 /// Creates and opens a temporary binary file with the given extension
 /// file must be a closed file stream and open() will be called on it

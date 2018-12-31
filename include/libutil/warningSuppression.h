@@ -1,4 +1,4 @@
-// Copyright (c) 2005 - 2017 Settlers Freaks (sf-team at siedler25.org)
+// Copyright (c) 2005 - 2018 Settlers Freaks (sf-team at siedler25.org)
 //
 // This file is part of Return To The Roots.
 //
@@ -15,26 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
-#ifndef LIB_UTIL_DEFINES_H__
-#define LIB_UTIL_DEFINES_H__
-
-#ifdef _WIN32
-#ifndef _CRTDBG_MAP_ALLOC
-#define _CRTDBG_MAP_ALLOC
-#endif
-
-#ifdef _MSC_VER
-#define getch _getch
-#if !defined(snprintf) && _MSC_VER < 1800
-#define snprintf _snprintf
-#endif
-#endif
-
-#ifdef _DEBUG
-#include <crtdbg.h>
-#endif // _DEBUG
-#endif //_WIN32
+#ifndef warningSuppression_h__
+#define warningSuppression_h__
 
 // Macro that can be used to suppress unused warnings. Required e.g. for const boost::arrays defined in headers
 // Don't use this if not absolutely necessary!
@@ -44,16 +26,7 @@
 #define SUPPRESS_UNUSED
 #endif
 
-#include <stdint.h>
+/// Silence unused variable warning
+#define RTTR_UNUSED(x) (void)(x)
 
-namespace boost { namespace filesystem {
-}} // namespace boost::filesystem
-namespace boost { namespace nowide {
-}} // namespace boost::nowide
-namespace bfs = boost::filesystem;
-namespace bnw = boost::nowide;
-
-// Suppress uninitialized v_
-//-V:BOOST_SCOPED_ENUM_DECLARE_BEGIN:101
-
-#endif
+#endif // warningSuppression_h__

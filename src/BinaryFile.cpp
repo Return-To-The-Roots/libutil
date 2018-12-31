@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#include "libUtilDefines.h" // IWYU pragma: keep
 #include "BinaryFile.h"
 #include <boost/array.hpp>
 #include <boost/nowide/cstdio.hpp>
@@ -32,7 +31,7 @@
 bool BinaryFile::Open(const std::string& filePath, const OpenFileMode of)
 {
     static const boost::array<const char*, 3> modes = {{"w+b", "a+b", "rb"}};
-    file = bnw::fopen(filePath.c_str(), modes[of]);
+    file = boost::nowide::fopen(filePath.c_str(), modes[of]);
     if(file)
     {
         this->filePath_ = filePath;

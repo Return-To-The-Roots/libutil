@@ -14,7 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 
-#include "libUtilDefines.h" // IWYU pragma: keep
 #include "strFuncs.h"
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/random_device.hpp>

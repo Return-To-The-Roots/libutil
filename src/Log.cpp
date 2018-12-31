@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#include "libUtilDefines.h" // IWYU pragma: keep
 #include "Log.h"
 #include "FileWriter.h"
 #include "MyTime.h"
@@ -29,6 +28,8 @@
 #include <cerrno>
 #include <cstring>
 #endif
+
+namespace bfs = boost::filesystem;
 
 Log::Log() : stdoutWriter(new StdStreamWriter(true)), stderrWriter(new StdStreamWriter(false)), logFilepath("logs") {}
 

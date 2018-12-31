@@ -15,13 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#include "libUtilDefines.h" // IWYU pragma: keep
 #include "StdStreamWriter.h"
 #include "colors.h"
 #include <boost/nowide/iostream.hpp>
 #ifdef _WIN32
 #include <windows.h>
 #endif
+
+namespace bnw = boost::nowide;
 
 StdStreamWriter::StdStreamWriter(bool stdoutOrStderr) : stdoutOrStderr_(stdoutOrStderr), os(stdoutOrStderr_ ? bnw::cout : bnw::cerr) {}
 
