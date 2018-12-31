@@ -40,6 +40,7 @@ struct addrinfo;
 
 #include "ProxySettings.h"
 #include "UPnP.h"
+#include <boost/core/scoped_enum.hpp>
 #include <algorithm>
 #include <cstddef>
 #include <stdint.h>
@@ -94,13 +95,13 @@ public:
 class Socket
 {
 private:
-    enum Status
+    BOOST_SCOPED_ENUM_DECLARE_BEGIN(Status)
     {
-        INVALID = INVALID_SOCKET,
-        VALID = 0,
-        LISTEN,
-        CONNECT
-    };
+        Invalid,
+        Valid,
+        Listen,
+        Connected
+    }BOOST_SCOPED_ENUM_DECLARE_END(Status)
 
 public:
     Socket();
@@ -173,7 +174,7 @@ public:
     static std::string IpToString(const sockaddr* addr);
 
     /// liefert den Status des Sockets.
-    bool isValid() const { return status_ != INVALID; }
+    bool isValid() const { return status_ != Status::Invalid; }
     /// Returns true, if this is a broadcast socket (only meaningfull if it is valid)
     bool IsBroadcast() const { return isBroadcast; }
 

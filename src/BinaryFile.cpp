@@ -175,12 +175,12 @@ std::string BinaryFile::ReadLongString()
 
 void BinaryFile::Seek(const long pos, const int origin)
 {
-    fseek(file, pos, origin);
+    fseek(file, pos, origin); //-V303
 }
 
 unsigned BinaryFile::Tell() const
 {
-    return ftell(file);
+    return ftell(file); //-V303
 }
 
 void BinaryFile::Flush()

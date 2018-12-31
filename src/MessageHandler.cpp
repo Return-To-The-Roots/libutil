@@ -167,7 +167,7 @@ Message* MessageHandler::recv(Socket& sock, int& error, unsigned timeoutInMs)
     if(read < static_cast<int>(header.msgLen + sizeof(header)))
     {
         ++blocktimeout;
-        if(blocktimeout < 120 && read != -1)
+        if(blocktimeout < 120)
             error = 4;
 
         return NULL;

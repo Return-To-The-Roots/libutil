@@ -148,7 +148,7 @@ const sockaddr* PeerAddr::GetAddr() const
     return reinterpret_cast<const sockaddr*>(&addr);
 }
 
-Socket::Socket() : socket_(INVALID_SOCKET), refCount_(NULL), status_(INVALID), isBroadcast(false) {}
+Socket::Socket() : socket_(INVALID_SOCKET), refCount_(NULL), status_(Status::Invalid), isBroadcast(false) {}
 
 /**
  *  Konstruktor von @p Socket.
@@ -156,7 +156,10 @@ Socket::Socket() : socket_(INVALID_SOCKET), refCount_(NULL), status_(INVALID), i
  *  @param[in] so Socket welches benutzt werden soll
  *  @param[in] st Status der gesetzt werden soll
  */
-Socket::Socket(const SOCKET so, Status st) : socket_(so), refCount_(new int32_t(1)), status_(st), isBroadcast(false) {}
+Socket::Socket(const SOCKET so, Status st) : socket_(so), refCount_(new int32_t), status_(st), isBroadcast(false)
+{
+    *refCount_ = 1;
+}
 
 Socket::Socket(const Socket& so) : socket_(so.socket_), refCount_(so.refCount_), status_(so.status_), isBroadcast(so.isBroadcast)
 {
@@ -237,7 +240,7 @@ bool Socket::Create(int family, bool asUDPBroadcast)
     socket_ = asUDPBroadcast ? socket(family, SOCK_DGRAM, IPPROTO_UDP) : socket(family, SOCK_STREAM, 0);
 
     // Ist es gültig?
-    status_ = (INVALID_SOCKET == socket_ ? INVALID : VALID);
+    status_ = (INVALID_SOCKET == socket_ ? Status::Invalid : Status::Valid);
 
     if(asUDPBroadcast)
     {
@@ -256,7 +259,7 @@ bool Socket::Create(int family, bool asUDPBroadcast)
     refCount_ = new int32_t(1); //-V508
     isBroadcast = asUDPBroadcast;
 
-    return (status_ != INVALID);
+    return (status_ != Status::Invalid);
 }
 
 /**
@@ -267,7 +270,7 @@ void Socket::Close()
     // Check if we have a socket
     if(!refCount_)
     {
-        assert(status_ == INVALID && socket_ == INVALID_SOCKET);
+        assert(status_ == Status::Invalid && socket_ == INVALID_SOCKET);
         return;
     }
     // Decrease ref count (not thread safe!)
@@ -282,7 +285,7 @@ void Socket::Close()
     }
 
     // Cleanup (even if the socket is still open, we just don't "have" it anymore)
-    Set(INVALID_SOCKET, INVALID);
+    Set(INVALID_SOCKET, Status::Invalid);
     refCount_ = NULL;
 }
 
@@ -374,7 +377,7 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
             LOG.writeLastError("Automatisches Erstellen des Portforwardings mit UPnP fehlgeschlagen\nFehler");
 
     // Status setzen
-    status_ = LISTEN;
+    status_ = Status::Listen;
 
     // und Alles gut :-)
     return true;
@@ -389,7 +392,7 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
  */
 Socket Socket::Accept()
 {
-    if(status_ != LISTEN)
+    if(status_ != Status::Listen)
         return Socket();
 
     // Verbindung annehmen
@@ -402,7 +405,7 @@ Socket Socket::Accept()
     setsockopt(tmp, IPPROTO_TCP, TCP_NODELAY, (char*)&disable, sizeof(int));
 
     // Status setzen
-    Socket client = Socket(tmp, CONNECT);
+    Socket client = Socket(tmp, Status::Connected);
 
     // Alles gut :-)
     return client;
@@ -550,7 +553,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
                 {
                     unsigned err;
                     socklen_t len = sizeof(unsigned);
-                    getsockopt(socket_, SOL_SOCKET, SO_ERROR, (char*)&err, &len);
+                    getsockopt(socket_, SOL_SOCKET, SO_ERROR, (char*)&err, &len); //-V206
 
                     if(err != 0)
                     {
@@ -653,7 +656,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
     ioctl(socket_, FIONBIO, &argp);
 #endif
 
-    status_ = CONNECT;
+    status_ = Status::Connected;
 
     // Alles ok
     return true;
@@ -670,7 +673,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
  */
 int Socket::Recv(void* buffer, const int length, bool block)
 {
-    if(status_ == INVALID)
+    if(!isValid())
         return -1;
 
     // und empfangen
@@ -696,7 +699,7 @@ int Socket::Recv(void* const buffer, const int length, PeerAddr& addr)
  */
 int Socket::Send(const void* const buffer, const int length)
 {
-    if(status_ == INVALID)
+    if(!isValid())
         return -1;
 
     // und verschicken
@@ -705,7 +708,7 @@ int Socket::Send(const void* const buffer, const int length)
 
 int Socket::Send(const void* const buffer, const int length, const PeerAddr& addr)
 {
-    if(status_ == INVALID)
+    if(!isValid())
         return -1;
 
     return sendto(socket_, reinterpret_cast<const char*>(buffer), length, 0, addr.GetAddr(), addr.GetSize());
