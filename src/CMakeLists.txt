@@ -12,6 +12,9 @@ ENDIF()
 
 #################################################################################
 
+get_filename_component(parentPath ${CMAKE_CURRENT_SOURCE_DIR} DIRECTORY)
+set(includePath ${parentPath}/include)
+
 FILE(GLOB SRC_FILES *.cpp)
 FILE(GLOB HEADER_FILES ${includePath}/libutil/*.* *.h)
 ADD_LIBRARY(s25util STATIC ${SRC_FILES} ${HEADER_FILES})
@@ -19,8 +22,6 @@ ADD_LIBRARY(s25util STATIC ${SRC_FILES} ${HEADER_FILES})
 # Required for linking into shared libs
 set_property(TARGET s25util PROPERTY POSITION_INDEPENDENT_CODE ON)
 
-get_filename_component(parentPath ${CMAKE_CURRENT_SOURCE_DIR} DIRECTORY)
-set(includePath ${parentPath}/include)
 target_include_directories(s25util
     INTERFACE ${includePath}
     PRIVATE ${includePath}/libutil

@@ -95,16 +95,9 @@ public:
 class Socket
 {
 private:
-    BOOST_SCOPED_ENUM_DECLARE_BEGIN(Status)
-    {
-        Invalid,
-        Valid,
-        Listen,
-        Connected
-    }BOOST_SCOPED_ENUM_DECLARE_END(Status)
+    BOOST_SCOPED_ENUM_DECLARE_BEGIN(Status){Invalid, Valid, Listen, Connected} BOOST_SCOPED_ENUM_DECLARE_END(Status)
 
-public:
-    Socket();
+      public : Socket();
     Socket(const SOCKET so, Status st);
     Socket(const Socket& so);
     ~Socket();
