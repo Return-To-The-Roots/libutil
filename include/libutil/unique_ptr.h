@@ -23,9 +23,11 @@
 #include <boost/move/unique_ptr.hpp>
 #else
 #include "Deleter.h"
+#include <boost/core/enable_if.hpp>
 #include <boost/interprocess/smart_ptr/unique_ptr.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/add_reference.hpp>
+#include <boost/type_traits/is_base_of.hpp>
 #include <boost/type_traits/is_reference.hpp>
 #include <boost/type_traits/remove_extent.hpp>
 #endif
@@ -34,10 +36,18 @@ namespace libutil {
 #if BOOST_VERSION >= 105700
 using boost::movelib::unique_ptr;
 #else
+
+namespace detail {
+    template<typename T, class D>
+    struct unique_base
+    {
+        typedef boost::interprocess::unique_ptr<typename boost::remove_extent<T>::type, D> type;
+    };
+} // namespace detail
 template<typename T, class D = Deleter<T> >
-struct unique_ptr : boost::interprocess::unique_ptr<typename boost::remove_extent<T>::type, D>
+struct unique_ptr : typename unique_base<T, D>::type
 {
-    typedef boost::interprocess::unique_ptr<typename boost::remove_extent<T>::type, D> base;
+    typedef typename detail::unique_base<T, D>::type base;
     typedef typename base::pointer pointer;
     typedef typename boost::mpl::if_<boost::is_reference<D>, D, typename boost::add_reference<const D>::type>::type DeleterParam;
     unique_ptr() {}
@@ -45,9 +55,20 @@ struct unique_ptr : boost::interprocess::unique_ptr<typename boost::remove_exten
     unique_ptr(pointer p, DeleterParam d) : base(p, d) {}
 
     unique_ptr(BOOST_RV_REF(unique_ptr) u) : base(static_cast<BOOST_RV_REF(base)>(u)) {}
-    unique_ptr& operator=(BOOST_RV_REF(unique_ptr) u)
+    unique_ptr& operator=(BOOST_RV_REF(unique_ptr))
     {
         base::operator=(static_cast<BOOST_RV_REF(base)>(u));
+        return *this;
+    }
+    template<typename U, typename E>
+    unique_ptr(BOOST_RV_REF_BEG unique_ptr<U, E> BOOST_RV_REF_END u, typename boost::enable_if<boost::is_base_of<T, U> >::type* = NULL)
+        : base(static_cast<BOOST_RV_REF_BEG typename detail::unique_base<U, E>::type BOOST_RV_REF_END>(u))
+    {}
+    template<typename U, typename E>
+    unique_ptr& operator=(BOOST_RV_REF_BEG unique_ptr<U, E> BOOST_RV_REF_END u,
+                          typename boost::enable_if<boost::is_base_of<T, U> >::type* = NULL)
+    {
+        base::operator=(static_cast<BOOST_RV_REF_BEG typename detail::unique_base<U, E>::type BOOST_RV_REF_END>(u));
         return *this;
     }
 
