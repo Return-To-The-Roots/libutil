@@ -19,6 +19,7 @@
 
 #include <cassert>
 #include <cstddef>
+#include <stdint.h>
 #include <string>
 
 // Provides safe C-String functions by preventing buffer overflows

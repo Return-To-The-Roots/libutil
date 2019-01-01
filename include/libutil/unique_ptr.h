@@ -23,13 +23,13 @@
 #include <boost/move/unique_ptr.hpp>
 #else
 #include "Deleter.h"
-#include <boost/core/enable_if.hpp>
 #include <boost/interprocess/smart_ptr/unique_ptr.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/add_reference.hpp>
 #include <boost/type_traits/is_base_of.hpp>
 #include <boost/type_traits/is_reference.hpp>
 #include <boost/type_traits/remove_extent.hpp>
+#include <boost/utility/enable_if.hpp>
 #endif
 
 namespace libutil {
@@ -45,7 +45,7 @@ namespace detail {
     };
 } // namespace detail
 template<typename T, class D = Deleter<T> >
-struct unique_ptr : typename unique_base<T, D>::type
+struct unique_ptr : detail::unique_base<T, D>::type
 {
     typedef typename detail::unique_base<T, D>::type base;
     typedef typename base::pointer pointer;
@@ -55,18 +55,17 @@ struct unique_ptr : typename unique_base<T, D>::type
     unique_ptr(pointer p, DeleterParam d) : base(p, d) {}
 
     unique_ptr(BOOST_RV_REF(unique_ptr) u) : base(static_cast<BOOST_RV_REF(base)>(u)) {}
-    unique_ptr& operator=(BOOST_RV_REF(unique_ptr))
+    unique_ptr& operator=(BOOST_RV_REF(unique_ptr) u)
     {
         base::operator=(static_cast<BOOST_RV_REF(base)>(u));
         return *this;
     }
     template<typename U, typename E>
-    unique_ptr(BOOST_RV_REF_BEG unique_ptr<U, E> BOOST_RV_REF_END u, typename boost::enable_if<boost::is_base_of<T, U> >::type* = NULL)
+    unique_ptr(BOOST_RV_REF_BEG unique_ptr<U, E> BOOST_RV_REF_END u)
         : base(static_cast<BOOST_RV_REF_BEG typename detail::unique_base<U, E>::type BOOST_RV_REF_END>(u))
     {}
     template<typename U, typename E>
-    unique_ptr& operator=(BOOST_RV_REF_BEG unique_ptr<U, E> BOOST_RV_REF_END u,
-                          typename boost::enable_if<boost::is_base_of<T, U> >::type* = NULL)
+    unique_ptr& operator=(BOOST_RV_REF_BEG unique_ptr<U, E> BOOST_RV_REF_END u)
     {
         base::operator=(static_cast<BOOST_RV_REF_BEG typename detail::unique_base<U, E>::type BOOST_RV_REF_END>(u));
         return *this;
@@ -87,15 +86,30 @@ unique_ptr<T> make_unique(BOOST_FWD_REF(U1) u1)
 {
     return unique_ptr<T>(new T(boost::forward<U1>(u1)));
 }
+template<typename T, typename U1>
+unique_ptr<T> make_unique(U1& u1)
+{
+    return unique_ptr<T>(new T(u1));
+}
 template<typename T, typename U1, typename U2>
 unique_ptr<T> make_unique(BOOST_FWD_REF(U1) u1, BOOST_FWD_REF(U2) u2)
 {
     return unique_ptr<T>(new T(boost::forward<U1>(u1), boost::forward<U2>(u2)));
 }
-template<typename T, typename U1, typename U2, typename U3>
-unique_ptr<T> make_unique(BOOST_FWD_REF(U1) u1, BOOST_FWD_REF(U2) u2, BOOST_FWD_REF(U2) u3)
+template<typename T, typename U1, typename U2>
+unique_ptr<T> make_unique(U1& u1, BOOST_FWD_REF(U2) u2)
 {
-    return unique_ptr<T>(new T(boost::forward<U1>(u1), boost::forward<U2>(u2), boost::forward<U3>(u3)));
+    return unique_ptr<T>(new T(u1, boost::forward<U2>(u2)));
+}
+template<typename T, typename U1, typename U2>
+unique_ptr<T> make_unique(BOOST_FWD_REF(U1) u1, U2& u2)
+{
+    return unique_ptr<T>(new T(boost::forward<U1>(u1), u2));
+}
+template<typename T, typename U1, typename U2>
+unique_ptr<T> make_unique(U1& u1, U2& u2)
+{
+    return unique_ptr<T>(new T(u1, u2));
 }
 } // namespace libutil
 

@@ -18,6 +18,7 @@
 #ifndef ProxySettings_h__
 #define ProxySettings_h__
 
+#include <stdint.h>
 #include <string>
 
 enum ProxyType

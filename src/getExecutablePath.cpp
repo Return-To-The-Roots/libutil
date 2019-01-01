@@ -18,9 +18,11 @@
 #include "getExecutablePath.h"
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
-#include <boost/predef.h>
+#include <boost/predef/os.h>
 #include <cstdlib>
 #include <vector>
+
+namespace bfs = boost::filesystem;
 
 // Heavily based on https://stackoverflow.com/a/34109000/1930508 by "Ben Key"
 // with inspirations from WhereAmI https://github.com/gpakosz/whereami

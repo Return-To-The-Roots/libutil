@@ -20,11 +20,20 @@
 
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_array.hpp>
+#include <boost/type_traits/is_convertible.hpp>
 #include <boost/type_traits/remove_extent.hpp>
+#include <boost/utility/enable_if.hpp>
 
 template<typename T>
 struct Deleter
 {
+    template<typename U>
+    struct can_assign
+    {
+        BOOST_STATIC_CONSTEXPR bool value =
+          boost::is_array<T>::value == boost::is_array<U>::value
+          && boost::is_convertible<typename boost::remove_extent<U>::type*, typename boost::remove_extent<T>::type*>::value;
+    };
     template<class U>
     void operator()(U* ptr) const
     {
@@ -33,6 +42,17 @@ struct Deleter
         BOOST_STATIC_ASSERT(sizeof(U) > 0);
         Type* p = static_cast<Type*>(ptr);
         boost::is_array<T>::value ? delete[] p : delete p;
+    }
+
+    Deleter() {}
+    Deleter(const Deleter&) {}
+    template<class U>
+    Deleter(const Deleter<U>&, typename boost::enable_if<can_assign<U> >::type* = NULL)
+    {}
+    template<class U>
+    typename boost::enable_if<can_assign<U>, Deleter&>::type operator=(const Deleter<U>&)
+    {
+        return *this;
     }
 };
 

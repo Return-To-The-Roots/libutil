@@ -20,8 +20,8 @@
 #ifndef COLORS_H_INCLUDED
 #define COLORS_H_INCLUDED
 
-#include <boost/array.hpp>
 #include "warningSuppression.h"
+#include <boost/array.hpp>
 
 /// Farbkonstanten
 const unsigned COLOR_BLUE = 0xFF0073FF;
