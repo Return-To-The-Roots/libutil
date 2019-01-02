@@ -1,7 +1,11 @@
+if(NOT TARGET Boost::unit_test_framework)
+    find_package(Boost REQUIRED COMPONENTS unit_test_framework)
+endif()
+
 # Add a new test case for boost tests with working directory in the binary dir root
 # Params:
 # NAME <name>
-# SOURCES/LIBS/INCLUDES <value, value, ...>
+# LIBS/INCLUDES <value, value, ...>
 function(add_testcase)
     set(options )
     set(oneValueArgs NAME)
@@ -11,10 +15,11 @@ function(add_testcase)
     file(GLOB sources *.[ch]pp *.[hc] *.cxx)
     add_executable(${name} ${sources})
     target_link_libraries(${name} PRIVATE ${ARG_LIBS}
-		PRIVATE ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+		PRIVATE Boost::unit_test_framework
 	)
     target_include_directories(${name} PRIVATE ${ARG_INCLUDES})
-    if(NOT Boost_USE_STATIC_LIBS)
+    # Heuristically guess if we are compiling against dynamic boost
+    if(NOT Boost_USE_STATIC_LIBS AND NOT Boost_UNIT_TEST_FRAMEWORK_LIBRARY MATCHES "\\${CMAKE_STATIC_LIBRARY_SUFFIX}\$")
         target_compile_definitions(${name} PRIVATE BOOST_TEST_DYN_LINK)
     endif()
     if(MSVC)
@@ -22,4 +27,7 @@ function(add_testcase)
         target_compile_options(${name} PUBLIC /FC)
     endif()
     add_test(NAME ${name} COMMAND ${name} WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+    if(MSVC)
+        set_property(TARGET ${name} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+    endif()
 endfunction()

@@ -19,9 +19,9 @@ IF((NOT "${Boost_USE_STATIC_LIBS}" AND ${RTTR_USE_STATIC_BOOST}) OR
 ENDIF()
 if(Boost_USE_STATIC_LIBS)
    message(STATUS "Linking against boost static libraries")
-else(Boost_USE_STATIC_LIBS)
-   message(STATUS "Linking against boost dynamic libraries")
-endif(Boost_USE_STATIC_LIBS)
+else()
+   message(STATUS "Linking against boost dynamic or static libraries")
+endif()
 
 # For some reason boost needs sometimes 1.xy and sometimes 1.xy.0 to detect folder structures like boost_1_55_0
 SET(TMP_VERSIONS 1.69 1.68 1.67 1.66 1.65 1.64)

@@ -1,4 +1,4 @@
-set(_BoostComponents system filesystem random)
+set(_BoostComponents filesystem random)
 if(WIN32)
 	# Locale only on windows
 	set(_BoostComponents ${_BoostComponents} locale)
@@ -24,25 +24,22 @@ set_property(TARGET s25util PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 target_include_directories(s25util
     INTERFACE ${includePath}
-    PRIVATE ${includePath}/libutil
-    SYSTEM PUBLIC ${Boost_INCLUDE_DIRS})
-target_link_libraries(s25util PUBLIC endian nowide-static utf8 ${Boost_LIBRARIES})
+    PRIVATE ${includePath}/libutil)
+target_link_libraries(s25util PUBLIC endian::static nowide::static Boost::filesystem PRIVATE utf8 Boost::random)
 target_compile_definitions(s25util PUBLIC "$<$<NOT:$<COMPILE_FEATURES:cxx_override>>:override=>")
 
 if(MSVC)
     target_compile_definitions(s25util PRIVATE _WINSOCK_DEPRECATED_NO_WARNINGS)
 else()
-	target_link_libraries(s25util PUBLIC ${MINIUPNPC_LIBRARY})
+	target_link_libraries(s25util PRIVATE ${MINIUPNPC_LIBRARY})
     target_include_directories(s25util SYSTEM PRIVATE ${MINIUPNPC_INCLUDE_DIR})
 ENDIF()
 
 IF (WIN32)
-    target_compile_definitions(s25util PRIVATE -DWIN32_LEAN_AND_MEAN -D_WIN32_WINNT=_WIN32_WINNT_WINXP)
+    target_compile_definitions(s25util PRIVATE WIN32_LEAN_AND_MEAN _WIN32_WINNT=_WIN32_WINNT_WINXP)
     # Exclude some windows defines
-    target_compile_definitions(s25util PRIVATE -DNOMINMAX -DNODRAWTEXT -DNOSOUND -DNOTEXTMETRIC -DNOCOMM -DNOMCX)
-    # Disable automatic boost linking
-    target_compile_definitions(s25util PUBLIC -DBOOST_ALL_NO_LIB)
-	target_link_libraries(s25util PUBLIC iphlpapi PUBLIC ws2_32)
+    target_compile_definitions(s25util PRIVATE NOMINMAX NODRAWTEXT NOSOUND NOTEXTMETRIC NOCOMM NOMCX)
+	target_link_libraries(s25util PUBLIC Boost::locale Boost::disable_autolinking iphlpapi ws2_32)
 ENDIF ()
 
 include(EnableWarnings)
