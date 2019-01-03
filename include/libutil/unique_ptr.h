@@ -86,15 +86,16 @@ unique_ptr<T> make_unique(BOOST_FWD_REF(U1) u1)
 {
     return unique_ptr<T>(new T(boost::forward<U1>(u1)));
 }
-template<typename T, typename U1>
-unique_ptr<T> make_unique(U1& u1)
-{
-    return unique_ptr<T>(new T(u1));
-}
 template<typename T, typename U1, typename U2>
 unique_ptr<T> make_unique(BOOST_FWD_REF(U1) u1, BOOST_FWD_REF(U2) u2)
 {
     return unique_ptr<T>(new T(boost::forward<U1>(u1), boost::forward<U2>(u2)));
+}
+#ifdef BOOST_NO_CXX11_RVALUE_REFERENCES
+template<typename T, typename U1>
+unique_ptr<T> make_unique(U1& u1)
+{
+    return unique_ptr<T>(new T(u1));
 }
 template<typename T, typename U1, typename U2>
 unique_ptr<T> make_unique(U1& u1, BOOST_FWD_REF(U2) u2)
@@ -111,12 +112,12 @@ unique_ptr<T> make_unique(U1& u1, U2& u2)
 {
     return unique_ptr<T>(new T(u1, u2));
 }
-} // namespace libutil
 
-#ifdef BOOST_NO_CXX11_RVALUE_REFERENCES
 #define RTTR_MOVE_RET(value) boost::move(value)
 #else
 #define RTTR_MOVE_RET(value) value
 #endif
+
+} // namespace libutil
 
 #endif // unique_ptr_h__
