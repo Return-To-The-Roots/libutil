@@ -1,5 +1,5 @@
 if(NOT TARGET Boost::unit_test_framework)
-    find_package(Boost REQUIRED COMPONENTS unit_test_framework)
+    find_package(Boost 1.64 REQUIRED COMPONENTS unit_test_framework)
 endif()
 
 # Add a new test case for boost tests with working directory in the binary dir root
