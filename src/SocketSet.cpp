@@ -72,7 +72,7 @@ int SocketSet::Select(unsigned timeoutInMs, int which)
     tv.tv_usec = (timeoutInMs - tv.tv_sec * 1000) * 1000;
 
     fd_set *read, *write, *except;
-    read = write = except = NULL;
+    read = write = except = nullptr;
 
     // unser Set zuweisen
     switch(which)

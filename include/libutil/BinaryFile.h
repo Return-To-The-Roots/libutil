@@ -35,7 +35,7 @@ enum OpenFileMode
 class BinaryFile
 {
 public:
-    BinaryFile() : file(NULL) {}
+    BinaryFile() : file(nullptr) {}
     ~BinaryFile() { Close(); }
 
     /// Öffnet eine Datei: liefert true falls erfolgreich

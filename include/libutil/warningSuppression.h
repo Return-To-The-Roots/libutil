@@ -18,7 +18,7 @@
 #ifndef warningSuppression_h__
 #define warningSuppression_h__
 
-// Macro that can be used to suppress unused warnings. Required e.g. for const boost::arrays defined in headers
+// Macro that can be used to suppress unused warnings. Required e.g. for const std::arrays defined in headers
 // Don't use this if not absolutely necessary!
 #ifdef __GNUC__
 #define SUPPRESS_UNUSED __attribute__((unused))

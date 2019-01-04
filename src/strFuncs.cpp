@@ -15,11 +15,9 @@
 // You should have received a copy of the GNU General Public License
 
 #include "strFuncs.h"
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/random_device.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
 #include <algorithm>
 #include <cstring>
+#include <random>
 #include <stdexcept>
 
 namespace detail {
@@ -62,11 +60,9 @@ std::string createRandString(size_t len, bool useLowercase, bool useUppercase, b
 struct RandCharCreator
 {
     const std::string charset;
-    boost::random::mt19937 rng;
-    boost::random::uniform_int_distribution<std::string::size_type> distr;
-    explicit RandCharCreator(const std::string& charset)
-        : charset(charset), rng(boost::random::random_device()()), distr(0, charset.length())
-    {}
+    std::mt19937 rng;
+    std::uniform_int_distribution<std::string::size_type> distr;
+    explicit RandCharCreator(const std::string& charset) : charset(charset), rng(std::random_device()()), distr(0, charset.length()) {}
     RandCharCreator(const std::string& charset, uint32_t seed) : charset(charset), rng(seed), distr(0, charset.length()) {}
     char operator()() { return charset[distr(rng)]; }
 };

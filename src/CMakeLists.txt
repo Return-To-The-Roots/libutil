@@ -1,4 +1,4 @@
-set(_BoostComponents filesystem random)
+set(_BoostComponents filesystem)
 if(WIN32)
 	# Locale only on windows
 	set(_BoostComponents ${_BoostComponents} locale)
@@ -19,14 +19,13 @@ FILE(GLOB SRC_FILES *.cpp)
 FILE(GLOB HEADER_FILES ${includePath}/libutil/*.* *.h)
 ADD_LIBRARY(s25util STATIC ${SRC_FILES} ${HEADER_FILES})
 
-# Required for linking into shared libs
-set_property(TARGET s25util PROPERTY POSITION_INDEPENDENT_CODE ON)
-
 target_include_directories(s25util
     INTERFACE ${includePath}
     PRIVATE ${includePath}/libutil)
-target_link_libraries(s25util PUBLIC endian::static nowide::static Boost::filesystem PRIVATE utf8 Boost::random)
-target_compile_definitions(s25util PUBLIC "$<$<NOT:$<COMPILE_FEATURES:cxx_override>>:override=>")
+target_link_libraries(s25util PUBLIC endian::static nowide::static Boost::filesystem PRIVATE utf8)
+target_compile_features(s25util PUBLIC cxx_std_14)
+# PIC Required for linking into shared libs
+set_target_properties(s25util PROPERTIES CXX_EXTENSIONS OFF POSITION_INDEPENDENT_CODE ON)
 
 if(MSVC)
     target_compile_definitions(s25util PRIVATE _WINSOCK_DEPRECATED_NO_WARNINGS)

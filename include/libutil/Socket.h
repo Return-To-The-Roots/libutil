@@ -40,7 +40,6 @@ struct addrinfo;
 
 #include "ProxySettings.h"
 #include "UPnP.h"
-#include <boost/core/scoped_enum.hpp>
 #include <algorithm>
 #include <cstddef>
 #include <stdint.h>
@@ -72,7 +71,7 @@ public:
     ~ResolvedAddr();
 
     addrinfo& getAddr() { return *addr; }
-    bool isValid() const { return addr != NULL; }
+    bool isValid() const { return addr != nullptr; }
 };
 
 class PeerAddr
@@ -95,9 +94,16 @@ public:
 class Socket
 {
 private:
-    BOOST_SCOPED_ENUM_DECLARE_BEGIN(Status){Invalid, Valid, Listen, Connected} BOOST_SCOPED_ENUM_DECLARE_END(Status)
+    enum class Status
+    {
+        Invalid,
+        Valid,
+        Listen,
+        Connected
+    };
 
-      public : Socket();
+public:
+    Socket();
     Socket(const SOCKET so, Status st);
     Socket(const Socket& so);
     ~Socket();

@@ -59,7 +59,7 @@ void Singleton<T, L>::DestroySingleton()
 {
     assert(!isDestroyed_);
     delete me;
-    me = NULL;
+    me = nullptr;
     isDestroyed_ = true;
 }
 

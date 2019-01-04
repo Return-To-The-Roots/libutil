@@ -16,8 +16,8 @@
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
 #include "BinaryFile.h"
-#include <boost/array.hpp>
 #include <boost/nowide/cstdio.hpp>
+#include <array>
 #include <limits>
 #include <stdexcept>
 
@@ -30,7 +30,7 @@
 
 bool BinaryFile::Open(const std::string& filePath, const OpenFileMode of)
 {
-    static const boost::array<const char*, 3> modes = {{"w+b", "a+b", "rb"}};
+    static const std::array<const char*, 3> modes = {{"w+b", "a+b", "rb"}};
     file = boost::nowide::fopen(filePath.c_str(), modes[of]);
     if(file)
     {
@@ -46,7 +46,7 @@ bool BinaryFile::Close()
         return true;
 
     bool result = (fclose(file) == 0);
-    file = NULL;
+    file = nullptr;
     filePath_.clear();
 
     return result;

@@ -52,7 +52,7 @@ void MessageQueue::push(Message* message)
 
 Message* MessageQueue::front()
 {
-    return (!messages.empty() ? &messages.front() : NULL);
+    return (!messages.empty() ? &messages.front() : nullptr);
 }
 
 /**
@@ -67,7 +67,7 @@ void MessageQueue::pop()
 Message* MessageQueue::popFront()
 {
     if(messages.empty())
-        return NULL;
+        return nullptr;
     return messages.pop_front().release();
 }
 

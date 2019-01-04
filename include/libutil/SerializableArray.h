@@ -115,7 +115,7 @@ public:
         if(i < elements.size())
             return &elements.at(i);
 
-        return NULL;
+        return nullptr;
     }
 
     /**
@@ -127,7 +127,7 @@ public:
         if(i < elements.size())
             return &elements.at(i);
 
-        return NULL;
+        return nullptr;
     }
 
     /**

@@ -35,7 +35,7 @@ namespace s25util {
  */
 time64_t Time::CurrentTime()
 {
-    return static_cast<time64_t>(time(NULL));
+    return static_cast<time64_t>(time(nullptr));
 }
 
 /**

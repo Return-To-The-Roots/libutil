@@ -74,7 +74,7 @@ void unlinkFile(const std::string& filePath)
     if(DeleteFileW(filepathFull.c_str()))
         return;
     // Fallback: Delete on reboot
-    MoveFileExW(filepathFull.c_str(), NULL, MOVEFILE_DELAY_UNTIL_REBOOT);
+    MoveFileExW(filepathFull.c_str(), nullptr, MOVEFILE_DELAY_UNTIL_REBOOT);
 #else
     unlink(filepathFull.c_str());
 #endif // WIN32

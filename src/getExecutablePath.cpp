@@ -30,15 +30,15 @@ namespace bfs = boost::filesystem;
 #if(BOOST_OS_CYGWIN || BOOST_OS_WINDOWS) // {
 
 #include "ucString.h"
-#include <boost/array.hpp>
 #include <windows.h>
+#include <array>
 
 std::string getExecutablePath()
 {
     std::vector<wchar_t> buf(MAX_PATH);
     while(true)
     {
-        DWORD ret = GetModuleFileNameW(NULL, &buf[0], static_cast<DWORD>(buf.size()));
+        DWORD ret = GetModuleFileNameW(nullptr, &buf[0], static_cast<DWORD>(buf.size()));
         if(ret == 0)
             return "";
         else if(ret == static_cast<DWORD>(buf.size()))
@@ -46,7 +46,7 @@ std::string getExecutablePath()
         else
             break;
     }
-    boost::array<wchar_t, MAX_PATH> fullPath;
+    std::array<wchar_t, MAX_PATH> fullPath;
     if(!_wfullpath(&fullPath.front(), &buf.front(), fullPath.size()))
         return "";
     return cvWideStringToUTF8(&fullPath.front());
@@ -98,7 +98,7 @@ std::string getExecutablePath()
     int mib[4] = {CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1};
     std::vector<char> buf(1024, 0);
     size_t size = buf.size();
-    if(sysctl(mib, 4, &buf[0], &size, NULL, 0) != 0)
+    if(sysctl(mib, 4, &buf[0], &size, nullptr, 0) != 0)
         return "";
     if(size == 0 || size == buf.size())
         return "";

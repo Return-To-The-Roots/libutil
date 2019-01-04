@@ -54,7 +54,7 @@ void Log::open()
 void Log::setWriter(TextWriterInterface* writer, LogTarget target)
 {
     // Wrap in a shared so we can use it for more than 1 target
-    boost::shared_ptr<TextWriterInterface> sharedWriter(writer);
+    std::shared_ptr<TextWriterInterface> sharedWriter(writer);
     if((target & LogTarget::Stdout) == LogTarget::Stdout)
     {
         stdoutWriter = sharedWriter;
@@ -97,9 +97,9 @@ std::string Log::getLastError() const
 {
 #ifdef _WIN32
     LPVOID lpMsgBuf;
-    FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, GetLastError(),
+    FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr, GetLastError(),
                    0, // Default language
-                   (LPSTR)&lpMsgBuf, 0, NULL);
+                   (LPSTR)&lpMsgBuf, 0, nullptr);
     std::string error = static_cast<const char*>(lpMsgBuf);
     // Free the buffer.
     LocalFree(lpMsgBuf);

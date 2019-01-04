@@ -38,7 +38,7 @@
 class Message_Null : public Message
 {
 public:
-    Message_Null() : Message(NMS_NULL_MSG) {}
+    Message_Null() : Message(NMS_nullptr_MSG) {}
     bool run(MessageInterface* callback, unsigned id) override { return callback->OnNMSNull(id); }
 };
 

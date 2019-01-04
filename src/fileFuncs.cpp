@@ -17,7 +17,6 @@
 
 #include "fileFuncs.h"
 #include <boost/filesystem/path.hpp>
-#include <boost/foreach.hpp>
 
 namespace bfs = boost::filesystem;
 
@@ -27,7 +26,7 @@ std::string makePortableName(const std::string& fileName)
         return fileName;
     std::string result;
     result.reserve(fileName.size());
-    BOOST_FOREACH(char c, fileName)
+    for(char c : fileName)
     {
         // Characters allowed by portable_posix_name. These are also allowed by windows_name
         if((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '.' || c == '_' || c == '-')

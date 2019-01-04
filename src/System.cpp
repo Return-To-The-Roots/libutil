@@ -58,8 +58,8 @@ DEFINE_KNOWN_FOLDER(FOLDERID_Documents, 0xFDD39AD0, 0x238F, 0x46AF, 0xAD, 0xB4, 
 
 typedef HRESULT(WINAPI* LPSHGetKnownFolderPath)(REFKNOWNFOLDERID rfid, DWORD dwFlags, HANDLE hToken, PWSTR* ppszPath);
 
-static LPSHGetKnownFolderPath gSHGetKnownFolderPath = NULL;
-static HINSTANCE gShell32DLLInst = NULL;
+static LPSHGetKnownFolderPath gSHGetKnownFolderPath = nullptr;
+static HINSTANCE gShell32DLLInst = nullptr;
 
 /**
  *  Wrapper around SHGetKnownFolderPath, on Vista and up it uses SHGetKnownFolderPath,
@@ -73,7 +73,7 @@ static HINSTANCE gShell32DLLInst = NULL;
 static HRESULT mySHGetKnownFolderPath(REFKNOWNFOLDERID rfid, std::string& path)
 {
     HRESULT retval = S_FALSE;
-    LPWSTR ppszPath = NULL;
+    LPWSTR ppszPath = nullptr;
 
     if(!gShell32DLLInst)
         gShell32DLLInst = LoadLibraryW(L"Shell32.dll");
@@ -82,11 +82,11 @@ static HRESULT mySHGetKnownFolderPath(REFKNOWNFOLDERID rfid, std::string& path)
         gSHGetKnownFolderPath = (LPSHGetKnownFolderPath)GetProcAddress(gShell32DLLInst, "SHGetKnownFolderPath");
 
     if(gSHGetKnownFolderPath)
-        retval = gSHGetKnownFolderPath(rfid, KF_FLAG_CREATE, NULL, &ppszPath);
+        retval = gSHGetKnownFolderPath(rfid, KF_FLAG_CREATE, nullptr, &ppszPath);
     else if(rfid == FOLDERID_Documents)
     {
         ppszPath = (LPWSTR)CoTaskMemAlloc(MAX_PATH * sizeof(WCHAR));
-        if(SUCCEEDED(SHGetFolderPathW(NULL, CSIDL_PERSONAL | CSIDL_FLAG_CREATE, NULL, 0, ppszPath)))
+        if(SUCCEEDED(SHGetFolderPathW(nullptr, CSIDL_PERSONAL | CSIDL_FLAG_CREATE, nullptr, 0, ppszPath)))
             retval = S_OK;
     }
 
@@ -107,14 +107,14 @@ bool System::envVarExists(const std::string& name)
 #ifdef _WIN32
     return envVarExists(cvUTF8ToWideString(name));
 #else
-    return getenv(name.c_str()) != NULL;
+    return getenv(name.c_str()) != nullptr;
 #endif // _WIN32
 }
 
 bool System::envVarExists(const std::wstring& name)
 {
 #ifdef _WIN32
-    return GetEnvironmentVariableW(name.c_str(), NULL, 0) > 0;
+    return GetEnvironmentVariableW(name.c_str(), nullptr, 0) > 0;
 #else
     return envVarExists(cvWideStringToUTF8(name));
 #endif // _WIN32
@@ -133,13 +133,13 @@ std::string System::getEnvVar(const std::string& name)
 std::wstring System::getEnvVar(const std::wstring& name)
 {
 #ifdef _WIN32
-    // Get number of chars including terminating NULL
-    DWORD numChars = GetEnvironmentVariableW(name.c_str(), NULL, 0);
+    // Get number of chars including terminating nullptr
+    DWORD numChars = GetEnvironmentVariableW(name.c_str(), nullptr, 0);
     if(!numChars)
         return L"";
     std::vector<wchar_t> tmpString(numChars);
     numChars = GetEnvironmentVariableW(name.c_str(), &tmpString[0], static_cast<DWORD>(tmpString.size()));
-    // This does NOT include the terminating NULL
+    // This does NOT include the terminating nullptr
     if(numChars + 1 != static_cast<DWORD>(tmpString.size()))
         throw std::runtime_error("Invalid size returned");
     // Convert to wstring but do not include terminating 0
@@ -189,7 +189,7 @@ bool System::removeEnvVar(const std::string& name)
 bool System::removeEnvVar(const std::wstring& name)
 {
 #ifdef _WIN32
-    return SetEnvironmentVariableW(name.c_str(), NULL) != FALSE;
+    return SetEnvironmentVariableW(name.c_str(), nullptr) != FALSE;
 #else
     return removeEnvVar(cvWideStringToUTF8(name));
 #endif // _WIN32
@@ -232,7 +232,7 @@ std::string System::getUserName()
 #ifdef _WIN32
     DWORD nameLen = 0;
     // Query required size
-    GetUserNameW(NULL, &nameLen);
+    GetUserNameW(nullptr, &nameLen);
     if(nameLen == 0)
         throw std::runtime_error("Could not query username length");
     std::vector<wchar_t> userName(nameLen);

@@ -21,17 +21,12 @@
 #define StringConversion_h__
 
 #include <boost/config.hpp>
-#include <boost/static_assert.hpp>
-#include <boost/type_traits/is_arithmetic.hpp>
-#include <boost/type_traits/is_float.hpp>
-#include <boost/type_traits/is_integral.hpp>
-#include <boost/type_traits/is_unsigned.hpp>
-#include <boost/utility/enable_if.hpp>
 #include <climits>
 #include <limits>
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 
 /// This provides locale independent conversion functions
 
@@ -67,7 +62,7 @@ struct ClassicImbuedStream : public T_Base
 template<typename T>
 inline std::string toStringClassic(const T value)
 {
-    BOOST_STATIC_ASSERT_MSG(boost::is_arithmetic<T>::value, "Need an arithmetic value!");
+    static_assert(std::is_arithmetic<T>::value, "Need an arithmetic value!");
     return detail::ToStringClassic<T>::convert(value);
 }
 
@@ -76,12 +71,12 @@ inline std::string toStringClassic(const T value)
 template<typename T>
 inline bool tryFromStringClassic(const std::string& value, T& outVal)
 {
-    BOOST_STATIC_ASSERT_MSG(boost::is_arithmetic<T>::value, "Need an arithmetic value!");
+    static_assert(std::is_arithmetic<T>::value, "Need an arithmetic value!");
     // Empty = error
     if(value.empty())
         return false;
     // Standard requires underflow when using negative numbers as input to unsigned values. We don't allow this
-    if(boost::is_unsigned<T>::value && value[0] == '-')
+    if(std::is_unsigned<T>::value && value[0] == '-')
         return false;
     ClassicImbuedStream<std::istringstream> ss(value);
     ss >> std::noskipws >> outVal;
@@ -112,7 +107,7 @@ inline T fromStringClassicDef(const std::string& value, T defaultValue)
 
 namespace detail {
     template<typename T>
-    struct ToStringClassic<T, typename boost::enable_if<boost::is_integral<T> >::type>
+    struct ToStringClassic<T, std::enable_if_t<std::is_integral<T>::value>>
     {
         static std::string convert(const T value)
         {
@@ -122,14 +117,15 @@ namespace detail {
         }
     };
     template<typename T>
-    struct ToStringClassic<T, typename boost::enable_if<boost::is_float<T> >::type>
+    struct ToStringClassic<T, std::enable_if_t<std::is_floating_point<T>::value>>
     {
         // Calculate required precision as done by Boost.Lexical_Cast
         typedef std::numeric_limits<T> limits;
-        BOOST_STATIC_ASSERT(limits::radix == 2 && limits::digits > 0);
-        BOOST_STATIC_CONSTANT(unsigned long, precision = 2UL + limits::digits * 30103UL / 100000UL);
-        BOOST_STATIC_ASSERT(static_cast<unsigned long>(limits::digits) < ULONG_MAX / 30103UL
-                            && precision > static_cast<unsigned long>(limits::digits10));
+        static_assert(limits::radix == 2 && limits::digits > 0, "");
+        static constexpr unsigned long precision = 2UL + limits::digits * 30103UL / 100000UL;
+        static_assert(static_cast<unsigned long>(limits::digits) < ULONG_MAX / 30103UL
+                        && precision > static_cast<unsigned long>(limits::digits10),
+                      "");
 
         static std::string convert(const T value)
         {

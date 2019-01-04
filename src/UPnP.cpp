@@ -32,25 +32,25 @@
 
 inline BSTR A2WBSTR(LPCSTR lp, int nLen = -1)
 {
-    if(lp == NULL || nLen == 0)
-        return NULL;
-    BSTR str = NULL;
+    if(lp == nullptr || nLen == 0)
+        return nullptr;
+    BSTR str = nullptr;
 
-    int nConvertedLen = MultiByteToWideChar(CP_THREAD_ACP, 0, lp, nLen, NULL, 0);
+    int nConvertedLen = MultiByteToWideChar(CP_THREAD_ACP, 0, lp, nLen, nullptr, 0);
 
     int nAllocLen = nConvertedLen;
     if(nLen == -1)
         nAllocLen -= 1; // Don't allocate terminating '\0'
-    str = ::SysAllocStringLen(NULL, nAllocLen);
+    str = ::SysAllocStringLen(nullptr, nAllocLen);
 
-    if(str != NULL)
+    if(str != nullptr)
     {
         int nResult;
         nResult = MultiByteToWideChar(CP_THREAD_ACP, 0, lp, nLen, str, nConvertedLen);
         if(nResult != nConvertedLen)
         {
             SysFreeString(str);
-            return NULL;
+            return nullptr;
         }
     }
     return str;
@@ -100,10 +100,10 @@ bool UPnP::OpenPort(const unsigned short& port)
 #ifdef _MSC_VER
     HRESULT hr;
 
-    CoInitialize(NULL);
+    CoInitialize(nullptr);
 
     IUPnPNAT* upnpnat;
-    hr = CoCreateInstance(CLSID_UPnPNAT, NULL, CLSCTX_INPROC_SERVER, IID_IUPnPNAT, (void**)&upnpnat);
+    hr = CoCreateInstance(CLSID_UPnPNAT, nullptr, CLSCTX_INPROC_SERVER, IID_IUPnPNAT, (void**)&upnpnat);
     if(FAILED(hr) || !upnpnat)
     {
         if(!upnpnat)
@@ -112,7 +112,7 @@ bool UPnP::OpenPort(const unsigned short& port)
         return false;
     }
 
-    IStaticPortMappingCollection* upnpspmc = NULL;
+    IStaticPortMappingCollection* upnpspmc = nullptr;
     hr = upnpnat->get_StaticPortMappingCollection(&upnpspmc);
     if(FAILED(hr) || !upnpspmc)
     {
@@ -167,7 +167,7 @@ bool UPnP::OpenPort(const unsigned short& port)
     BSTR bstrLocalAddress = A2BSTR(local_address.c_str());
     BSTR bstrDescription = A2BSTR("Return To The Roots");
 
-    IStaticPortMapping* upnpspm = NULL;
+    IStaticPortMapping* upnpspm = nullptr;
     hr = upnpspmc->Add(port, bstrProtocol, port, bstrLocalAddress, VARIANT_TRUE, bstrDescription, &upnpspm);
 
     SysFreeString(bstrProtocol);
@@ -183,16 +183,16 @@ bool UPnP::OpenPort(const unsigned short& port)
         return true;
 #else
     int hr;
-    UPNPDev* devicelist = NULL;
+    UPNPDev* devicelist = nullptr;
 #ifdef UPNPDISCOVER_SUCCESS
     int upnperror = 0;
 #if(MINIUPNPC_API_VERSION >= 14) /* miniUPnPc API version 14 adds TTL parameter */
-    devicelist = upnpDiscover(2000, NULL, NULL, 0, 0 /* ipv6 */, 2, &upnperror);
+    devicelist = upnpDiscover(2000, nullptr, nullptr, 0, 0 /* ipv6 */, 2, &upnperror);
 #else
-    devicelist = upnpDiscover(2000, NULL, NULL, 0, 0 /* ipv6 */, &upnperror);
+    devicelist = upnpDiscover(2000, nullptr, nullptr, 0, 0 /* ipv6 */, &upnperror);
 #endif
 #else
-    devicelist = upnpDiscover(2000, NULL, NULL, 0);
+    devicelist = upnpDiscover(2000, nullptr, nullptr, 0);
 #endif
     if(!devicelist)
         return false;
@@ -209,10 +209,10 @@ bool UPnP::OpenPort(const unsigned short& port)
 
 #ifdef UPNPDISCOVER_SUCCESS
         hr = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype, p.str().c_str(), p.str().c_str(), lanAddr, "Return To The Roots",
-                                 "TCP", NULL, NULL);
+                                 "TCP", nullptr, nullptr);
 #else
         hr = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype, p.str().c_str(), p.str().c_str(), lanAddr, "Return To The Roots",
-                                 "TCP", NULL);
+                                 "TCP", nullptr);
 #endif
     }
 
@@ -233,11 +233,11 @@ void UPnP::ClosePort()
     HRESULT hr;
 
     IUPnPNAT* upnpnat;
-    hr = CoCreateInstance(CLSID_UPnPNAT, NULL, CLSCTX_INPROC_SERVER, IID_IUPnPNAT, (void**)&upnpnat);
+    hr = CoCreateInstance(CLSID_UPnPNAT, nullptr, CLSCTX_INPROC_SERVER, IID_IUPnPNAT, (void**)&upnpnat);
     if(FAILED(hr) || !upnpnat)
         return;
 
-    IStaticPortMappingCollection* upnpspmc = NULL;
+    IStaticPortMappingCollection* upnpspmc = nullptr;
     hr = upnpnat->get_StaticPortMappingCollection(&upnpspmc);
     if(FAILED(hr) || !upnpspmc)
         return;
@@ -255,28 +255,28 @@ void UPnP::ClosePort()
         return;
 #else
     int hr;
-    UPNPDev* devicelist = NULL;
+    UPNPDev* devicelist = nullptr;
 #ifdef UPNPDISCOVER_SUCCESS
     int upnperror = 0;
 #if(MINIUPNPC_API_VERSION >= 14) /* miniUPnPc API version 14 adds TTL parameter */
-    devicelist = upnpDiscover(2000, NULL, NULL, 0, 0 /* ipv6 */, 2, &upnperror);
+    devicelist = upnpDiscover(2000, nullptr, nullptr, 0, 0 /* ipv6 */, 2, &upnperror);
 #else
-    devicelist = upnpDiscover(2000, NULL, NULL, 0, 0 /* ipv6 */, &upnperror);
+    devicelist = upnpDiscover(2000, nullptr, nullptr, 0, 0 /* ipv6 */, &upnperror);
 #endif
 #else
-    devicelist = upnpDiscover(2000, NULL, NULL, 0);
+    devicelist = upnpDiscover(2000, nullptr, nullptr, 0);
 #endif
     if(!devicelist)
         return;
 
     UPNPUrls urls;
     IGDdatas data;
-    hr = UPNP_GetValidIGD(devicelist, &urls, &data, NULL, 0);
+    hr = UPNP_GetValidIGD(devicelist, &urls, &data, nullptr, 0);
     if(hr == 1 || hr == 2)
     {
         std::stringstream p;
         p << remote_port_;
-        hr = UPNP_DeletePortMapping(urls.controlURL, data.first.servicetype, p.str().c_str(), "TCP", NULL);
+        hr = UPNP_DeletePortMapping(urls.controlURL, data.first.servicetype, p.str().c_str(), "TCP", nullptr);
     }
 
     freeUPNPDevlist(devicelist);
@@ -298,7 +298,7 @@ std::vector<std::string> UPnP::GetAllv4Addresses()
 #ifdef _WIN32
     // read addresses from adapters
     ULONG OutBufLen = 0;
-    GetAdaptersInfo(NULL, &OutBufLen);
+    GetAdaptersInfo(nullptr, &OutBufLen);
 
     PIP_ADAPTER_INFO pAdapterInfo = (PIP_ADAPTER_INFO)HeapAlloc(GetProcessHeap(), 0, OutBufLen);
 
@@ -323,14 +323,14 @@ std::vector<std::string> UPnP::GetAllv4Addresses()
 
     if(getifaddrs(&ifaddr) > 0)
     {
-        for(ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
+        for(ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next)
         {
             family = ifa->ifa_addr->sa_family;
 
             if(family == AF_INET || family == AF_INET6)
             {
                 if(getnameinfo(ifa->ifa_addr, (family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6), address,
-                               NI_MAXHOST, NULL, 0, NI_NUMERICHOST)
+                               NI_MAXHOST, nullptr, 0, NI_NUMERICHOST)
                    == 0)
                     addresses.push_back(address);
             }

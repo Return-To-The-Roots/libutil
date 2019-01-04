@@ -63,7 +63,7 @@ public:
     Message* front();
     /// entfernt das vorderste Element aus der Queue.
     void pop();
-    /// Returns the first element and removes it from the queue. Returns NULL if there is none
+    /// Returns the first element and removes it from the queue. Returns nullptr if there is none
     /// Caller is responsible for deleting it!
     Message* popFront();
 

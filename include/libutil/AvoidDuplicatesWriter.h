@@ -19,17 +19,17 @@
 #define AvoidDuplicatesWriter_h__
 
 #include "TextWriterInterface.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <string>
 
 /// Adapter that avoids duplicate lines
 class AvoidDuplicatesWriter : public TextWriterInterface
 {
 public:
-    AvoidDuplicatesWriter(boost::shared_ptr<TextWriterInterface> writer) : origWriter(writer) {}
+    AvoidDuplicatesWriter(std::shared_ptr<TextWriterInterface> writer) : origWriter(writer) {}
     void writeText(const std::string& txt, unsigned color) override;
     void reset() { lastLine.clear(); }
-    boost::shared_ptr<TextWriterInterface> origWriter;
+    std::shared_ptr<TextWriterInterface> origWriter;
 
 private:
     std::string lastLine;

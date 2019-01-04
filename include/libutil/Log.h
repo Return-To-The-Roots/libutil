@@ -22,7 +22,7 @@
 
 #include "FormatedLogEntry.h"
 #include "Singleton.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <string>
 
 class TextWriterInterface;
@@ -42,7 +42,7 @@ public:
     /// Open the log file if it is not yet open
     void open();
     /// Use the given writer for that target passing ownership
-    /// Passing NULL resets it to the default
+    /// Passing nullptr resets it to the default
     void setWriter(TextWriterInterface* writer, LogTarget target);
     /// Write the last occurred error description with "[text]: " at the front to stdOut and file
     void writeLastError(const std::string& text);
@@ -55,12 +55,12 @@ public:
     /// Write formated text to file only
     FormatedLogEntry writeToFile(const std::string& format);
 
-    boost::shared_ptr<TextWriterInterface> getStdoutWriter() { return stdoutWriter; }
-    boost::shared_ptr<TextWriterInterface> getStderrWriter() { return stderrWriter; }
-    boost::shared_ptr<TextWriterInterface> getFileWriter() { return fileWriter; }
+    std::shared_ptr<TextWriterInterface> getStdoutWriter() { return stdoutWriter; }
+    std::shared_ptr<TextWriterInterface> getStderrWriter() { return stderrWriter; }
+    std::shared_ptr<TextWriterInterface> getFileWriter() { return fileWriter; }
 
 private:
-    boost::shared_ptr<TextWriterInterface> stdoutWriter, stderrWriter, fileWriter;
+    std::shared_ptr<TextWriterInterface> stdoutWriter, stderrWriter, fileWriter;
     /// Path where the log files are written to
     std::string logFilepath;
 

@@ -82,7 +82,7 @@ ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr, bool resolveAll)
 #else
             std::cerr << "getaddrinfo: " << gai_strerror(error) << "\n";
 #endif // _WIN32
-            addr = NULL;
+            addr = nullptr;
         }
     } else // fill with loopback
     {
@@ -115,13 +115,13 @@ ResolvedAddr::~ResolvedAddr()
         if(addr)
         {
             freeaddrinfo(addr);
-            addr = NULL;
+            addr = nullptr;
         }
     } else
     {
         free(addr->ai_addr);
         delete addr;
-        addr = NULL;
+        addr = nullptr;
     }
 }
 
@@ -147,7 +147,7 @@ const sockaddr* PeerAddr::GetAddr() const
     return reinterpret_cast<const sockaddr*>(&addr);
 }
 
-Socket::Socket() : socket_(INVALID_SOCKET), refCount_(NULL), status_(Status::Invalid), isBroadcast(false) {}
+Socket::Socket() : socket_(INVALID_SOCKET), refCount_(nullptr), status_(Status::Invalid), isBroadcast(false) {}
 
 /**
  *  Konstruktor von @p Socket.
@@ -285,7 +285,7 @@ void Socket::Close()
 
     // Cleanup (even if the socket is still open, we just don't "have" it anymore)
     Set(INVALID_SOCKET, Status::Invalid);
-    refCount_ = NULL;
+    refCount_ = nullptr;
 }
 
 bool Socket::Bind(unsigned short port, bool useIPv6)
@@ -448,7 +448,7 @@ std::vector<HostAddr> Socket::HostToIp(const std::string& hostname, const unsign
         ips.push_back(h);
 
         addr = addr->ai_next;
-    } while(addr != NULL);
+    } while(addr != nullptr);
 
     return ips;
 }
@@ -842,7 +842,7 @@ std::string Socket::IpToString(const sockaddr* addr)
 
     DWORD le = GetLastError();
     DWORD templen = sizeof(temp);
-    WSAAddressToStringA(copy, static_cast<DWORD>(size), NULL, temp, &templen);
+    WSAAddressToStringA(copy, static_cast<DWORD>(size), nullptr, temp, &templen);
     SetLastError(le);
 
     free(copy);

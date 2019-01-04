@@ -23,12 +23,12 @@
 
 Message* Message::create_base(unsigned short id)
 {
-    Message* msg = NULL;
+    Message* msg = nullptr;
     switch(id)
     {
         default: printf("ERROR: Message with id %u couldn't be created!\n", unsigned(id)); break;
 
-        case NMS_NULL_MSG: { msg = new Message_Null();
+        case NMS_nullptr_MSG: { msg = new Message_Null();
         }
         break;
         case NMS_DEAD_MSG: { msg = new Message_Dead();

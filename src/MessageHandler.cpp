@@ -104,7 +104,7 @@ Message* MessageHandler::recv(Socket& sock, int& error, unsigned timeoutInMs)
             if(retval != -1)
                 error = 0;
 
-            return NULL;
+            return nullptr;
         }
 
         // liegen diese Daten an unserem Socket, bzw wieviele Bytes liegen an?
@@ -115,12 +115,12 @@ Message* MessageHandler::recv(Socket& sock, int& error, unsigned timeoutInMs)
                 continue;
 
             error = 1;
-            return NULL;
+            return nullptr;
         }
 
         // socket ist geschlossen worden
         if(numBytesAv == 0)
-            return NULL;
+            return nullptr;
 
         // haben wir schon eine vollständige nachricht?
         if(numBytesAv < sizeof(header))
@@ -129,7 +129,7 @@ Message* MessageHandler::recv(Socket& sock, int& error, unsigned timeoutInMs)
                 continue;
 
             error = 2;
-            return NULL;
+            return nullptr;
         }
         break;
     } while(!timeoutReached(lastTime, timeoutInMs));
@@ -142,7 +142,7 @@ Message* MessageHandler::recv(Socket& sock, int& error, unsigned timeoutInMs)
         if(read != -1)
             error = 3;
 
-        return NULL;
+        return nullptr;
     }
 
     if(header.msgLen < 0)
@@ -152,7 +152,7 @@ Message* MessageHandler::recv(Socket& sock, int& error, unsigned timeoutInMs)
     {
         read = sock.BytesWaiting();
         if(read < 0)
-            return NULL;
+            return nullptr;
         if(read >= static_cast<int>(header.msgLen + sizeof(header)) || !timeoutInMs)
             break;
         // Wait for socket again (non-blocking)
@@ -169,7 +169,7 @@ Message* MessageHandler::recv(Socket& sock, int& error, unsigned timeoutInMs)
         if(blocktimeout < 120)
             error = 4;
 
-        return NULL;
+        return nullptr;
     }
     blocktimeout = 0;
 
@@ -178,7 +178,7 @@ Message* MessageHandler::recv(Socket& sock, int& error, unsigned timeoutInMs)
     if(read != sizeof(header))
     {
         LOG.write("recv: id,length: only got %d bytes instead of %d\n") % read % sizeof(header);
-        return NULL;
+        return nullptr;
     }
 
     Serializer ser;
@@ -188,14 +188,14 @@ Message* MessageHandler::recv(Socket& sock, int& error, unsigned timeoutInMs)
         if(read < header.msgLen)
         {
             LOG.write("recv: data: only got %d bytes instead of %d\n") % read % header.msgLen;
-            return NULL;
+            return nullptr;
         }
         ser.SetLength(header.msgLen);
     }
 
     Message* msg = createMsg(header.msgId);
     if(!msg)
-        return NULL;
+        return nullptr;
 
     msg->Deserialize(ser);
     error = 0;

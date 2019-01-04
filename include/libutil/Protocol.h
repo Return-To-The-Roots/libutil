@@ -21,7 +21,7 @@
 
 enum
 {
-    NMS_NULL_MSG = 0x0000,
+    NMS_nullptr_MSG = 0x0000,
 
     NMS_DEAD_MSG = 0xFFFF
 };

@@ -21,7 +21,7 @@
 #define COLORS_H_INCLUDED
 
 #include "warningSuppression.h"
-#include <boost/array.hpp>
+#include <array>
 
 /// Farbkonstanten
 const unsigned COLOR_BLUE = 0xFF0073FF;
@@ -47,7 +47,7 @@ const unsigned COLOR_30_PERCENT = 0xFFFFBF33;
 const unsigned COLOR_60_PERCENT = 0xFF71B63C;
 
 /// Spielerfarben
-const boost::array<unsigned, 11> SUPPRESS_UNUSED PLAYER_COLORS = {{
+const std::array<unsigned, 11> SUPPRESS_UNUSED PLAYER_COLORS = {{
   0xFF0079DB,   // blue
   0xFFCBCB00,   // yellow
   0xFFD70000,   // red

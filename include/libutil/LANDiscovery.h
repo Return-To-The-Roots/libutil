@@ -19,14 +19,14 @@
 #define LANDISCOVERY_H_INCLUDED
 
 #include "Socket.h"
-#include <boost/array.hpp>
+#include <array>
 #include <stdint.h>
 #include <string>
 
 class LANDiscoveryBase
 {
 public:
-    typedef boost::array<char, 7> Magic_t;
+    typedef std::array<char, 7> Magic_t;
     struct Config
     {
         Magic_t magicQuery, magicResponse;
@@ -39,15 +39,15 @@ public:
     struct Request
     {
         // Struct must be send over network with a fixed size
-        boost::array<char, sizeof(Magic_t) + sizeof(uint8_t)> data;
+        std::array<char, sizeof(Magic_t) + sizeof(uint8_t)> data;
         Magic_t& GetMagic() { return reinterpret_cast<Magic_t&>(data[0]); }
         uint8_t& GetVersion() { return reinterpret_cast<uint8_t&>(data[sizeof(Magic_t)]); }
     };
     struct Info
     {
         // Struct must be send over network with a fixed size
-        typedef boost::array<char, 192> Payload;
-        boost::array<char, sizeof(Magic_t) + sizeof(uint8_t) * 2 + sizeof(Payload)> data;
+        typedef std::array<char, 192> Payload;
+        std::array<char, sizeof(Magic_t) + sizeof(uint8_t) * 2 + sizeof(Payload)> data;
         Magic_t& GetMagic() { return reinterpret_cast<Magic_t&>(data[0]); }
         uint8_t& GetVersion() { return reinterpret_cast<uint8_t&>(data[sizeof(Magic_t)]); }
         uint8_t& GetIsActive() { return reinterpret_cast<uint8_t&>(data[sizeof(Magic_t) + sizeof(uint8_t)]); }                      //-V119

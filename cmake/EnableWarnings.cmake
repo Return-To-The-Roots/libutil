@@ -29,11 +29,7 @@ function(enable_warnings target)
       target_compile_options(${target} ${visibility} /WX) # warning = error
     endif()
   else()
-    target_compile_options(${target} ${visibility} -Wall -pedantic)
-    if(NOT (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.3"))
-      # GCC until 4.3 is just annoying with -Wextra
-      target_compile_options(${target} ${visibility} -Wextra)
-    endif()
+    target_compile_options(${target} ${visibility} -Wall -pedantic -Wextra)
     if(RTTR_ENABLE_WERROR)
       target_compile_options(${target} ${visibility} -Werror)
     endif()
@@ -50,25 +46,9 @@ function(enable_warnings target)
       -Qunused-arguments
     )
 
-    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
-      set(flags )
-      # Variadic macros are part of C99 but supported by all big compilers in C++03
-      foreach(warningFlag -Wno-c99-extensions -Wno-c++11-extensions -Wno-variadic-macros
-        -Wno-unused-local-typedef # For Boost < 1.59 (static-assert emulation)
-      )
-        check_cxx_warning(${warningFlag} supported)
-        if(supported)
-          list(APPEND flags ${warningFlag})
-        endif()
-      endforeach()
-      target_compile_options(${target} ${visibility}
-        "$<$<AND:$<COMPILE_LANGUAGE:CXX>,$<NOT:$<COMPILE_FEATURES:cxx_std_11>>>:${flags}>"
-      )
-      if(CMAKE_CXX_COMPILER_ID MATCHES "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 5.1)
-        target_compile_options(${target} ${visibility}
-          "$<$<AND:$<COMPILE_LANGUAGE:CXX>,$<COMPILE_FEATURES:cxx_override>>:-Wsuggest-override;-Wno-error=suggest-override>"
-        )
-      endif()
+    check_cxx_warning(-Wsuggest-override supported)
+    if(supported)
+      target_compile_options(${target} ${visibility} "$<$<COMPILE_LANGUAGE:CXX>:-Wsuggest-override;-Wno-error=suggest-override>")
     endif()
   endif()
 endfunction()

@@ -19,24 +19,25 @@
 #define FormatedLogEntry_h__
 
 #include "enumUtils.h"
-#include <boost/core/scoped_enum.hpp>
 #include <boost/format.hpp>
-#include <boost/static_assert.hpp>
 #include <string>
 
 class Log;
 
-BOOST_SCOPED_ENUM_DECLARE_BEGIN(LogTarget){Stdout = 1,
-                                           Stderr = 2,
-                                           File = 4,
-                                           StdoutAndStderr = Stdout | Stderr,
-                                           FileAndStdout = File | Stdout,
-                                           FileAndStderr = File | Stderr,
-                                           All = Stdout | Stderr | File} BOOST_SCOPED_ENUM_DECLARE_END(LogTarget)
-  MAKE_BITSET_STRONG(LogTarget)
+enum class LogTarget
+{
+    Stdout = 1,
+    Stderr = 2,
+    File = 4,
+    StdoutAndStderr = Stdout | Stderr,
+    FileAndStdout = File | Stdout,
+    FileAndStderr = File | Stderr,
+    All = Stdout | Stderr | File
+};
+MAKE_BITSET_STRONG(LogTarget)
 
-  /// Holds one log entry. Will be flushed on destruction
-  class FormatedLogEntry
+/// Holds one log entry. Will be flushed on destruction
+class FormatedLogEntry
 {
 public:
     FormatedLogEntry(Log& log, LogTarget target, const std::string& msg) : log_(log), target_(target), fmt(msg), useColor_(false), color_(0)
@@ -57,7 +58,7 @@ public:
     template<typename T>
     void operator,(T)
     {
-        BOOST_STATIC_ASSERT_MSG(!sizeof(T), "Invalid use of , for messages. Forgot to replace by %?");
+        static_assert(!sizeof(T), "Invalid use of , for messages. Forgot to replace by %?");
     }
 
 private:

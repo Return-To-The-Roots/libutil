@@ -17,8 +17,8 @@
 
 #include "ucString.h"
 #include "libutf8/utf8.h"
-#include <boost/type_traits.hpp>
 #include <algorithm>
+#include <type_traits>
 
 /// Decorator for an iterator that converts the elements to their unsigned equivalents
 /// Required because sign of char/wchar_t is undefined and we need it to be unsigned for some conversions
@@ -28,7 +28,7 @@ struct GetUnsignedIterator
     typedef typename T_Container::const_iterator OldIterator;
     typedef std::iterator_traits<OldIterator> oldTraits;
     typedef typename oldTraits::value_type OldValueType;
-    typedef typename boost::make_unsigned<OldValueType>::type NewValueType;
+    typedef std::make_unsigned_t<OldValueType> NewValueType;
 
     class UnsignedIterator : public std::iterator<typename std::forward_iterator_tag, NewValueType> //-V690
     {
