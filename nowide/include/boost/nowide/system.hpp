@@ -8,9 +8,8 @@
 #ifndef BOOST_NOWIDE_CSTDLIB_HPP
 #define BOOST_NOWIDE_CSTDLIB_HPP
 
+#include <boost/nowide/config.hpp>
 #include <stdlib.h>
-#include <errno.h>
-#include <boost/nowide/stackstring.hpp>
 namespace boost {
 namespace nowide {
 
@@ -25,17 +24,7 @@ using ::system;
 ///
 /// If the input is not valid UTF-8, -1 returned and errno set to EINVAL
 ///
-inline int system(char const *cmd)
-{
-    if(!cmd)
-        return _wsystem(0);
-    wstackstring wcmd;
-    if(!wcmd.convert(cmd)) {
-        errno = EINVAL;
-        return -1;
-    }
-    return _wsystem(wcmd.c_str());
-}
+BOOST_NOWIDE_DECL int system(char const *cmd);
 
 #endif
 } // nowide

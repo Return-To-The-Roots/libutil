@@ -11,9 +11,9 @@
 #include <iosfwd>
 #include <boost/config.hpp>
 #include <boost/nowide/stackstring.hpp>
+#include <boost/nowide/cstdio.hpp>
 #include <fstream>
 #include <streambuf>
-#include <stdio.h>
 #ifdef BOOST_NOWIDE_USE_FILESYSTEM
 #ifdef BOOST_WINDOWS
 #include <boost/filesystem/path.hpp>
@@ -129,7 +129,7 @@ namespace nowide {
             wchar_t const *smode = get_mode(mode);
             if(!smode)
                 return 0;
-            FILE *f = ::_wfopen(s,smode);
+            FILE *f = fopen(s,smode);
             if(!f)
                 return 0;
             if(ate && fseek(f,0,SEEK_END)!=0) {
