@@ -18,7 +18,7 @@
 #include "tmpFile.h"
 #include <boost/filesystem.hpp>
 #include <stdexcept>
-#ifdef WIN32
+#ifdef _WIN32
 #include <windows.h>
 #else
 #include <unistd.h>
@@ -69,7 +69,7 @@ void unlinkFile(const std::string& filePath)
     bfs::path filepathFull = filePath;
     if(!bfs::exists(filepathFull))
         return;
-#ifdef WIN32
+#ifdef _WIN32
     // Try to remove it (works for non-open files and files in non-exclusive mode)
     if(DeleteFileW(filepathFull.c_str()))
         return;
@@ -77,7 +77,7 @@ void unlinkFile(const std::string& filePath)
     MoveFileExW(filepathFull.c_str(), nullptr, MOVEFILE_DELAY_UNTIL_REBOOT);
 #else
     unlink(filepathFull.c_str());
-#endif // WIN32
+#endif // _WIN32
 }
 
 TmpFile::TmpFile(const std::string& ext /*= ".tmp"*/) : filePath(createTempFile(stream, ext)) {}
