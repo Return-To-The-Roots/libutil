@@ -4,7 +4,7 @@
 # Add additional boost versions to Boost_ADDITIONAL_VERSIONS
 
 # Default boost libs are static on self-build windows versions and dynamic in the linux package repos
-IF(WIN32 OR APPLE)
+IF(WIN32)
 	SET(RTTR_USE_STATIC_BOOST_DEFAULT ON)
 ELSE()
 	SET(RTTR_USE_STATIC_BOOST_DEFAULT OFF)
