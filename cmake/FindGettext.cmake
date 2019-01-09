@@ -40,7 +40,12 @@ function(GETTEXT_CREATE_TRANSLATIONS _potFile)
       GET_FILENAME_COMPONENT(_abs_PATH ${_absFile} PATH)
       GET_FILENAME_COMPONENT(_lang ${_absFile} NAME_WE)
       file(RELATIVE_PATH _rel_PATH ${CMAKE_CURRENT_SOURCE_DIR} ${_abs_PATH})
-      SET(_gmoFile ${CMAKE_CURRENT_BINARY_DIR}/${_rel_PATH}/${_lang}.mo)
+
+      if(_poFiles_DESTINATION)
+         SET(_gmoFile ${CMAKE_CURRENT_BINARY_DIR}/${_poFiles_DESTINATION}/${_lang}.mo)
+      else()
+         SET(_gmoFile ${CMAKE_CURRENT_BINARY_DIR}/${_rel_PATH}/${_lang}.mo)
+      endif()
 
       ADD_CUSTOM_COMMAND( 
          OUTPUT ${_gmoFile} 
