@@ -12,36 +12,47 @@
 #    ALL option is used, the translations will also be created when
 #    building the default target.
 
-
+#
+# This file has been modified. Do not use vanilla FindGettext.cmake
+#
 
 FIND_PROGRAM(GETTEXT_MSGMERGE_EXECUTABLE msgmerge)
 
 FIND_PROGRAM(GETTEXT_MSGFMT_EXECUTABLE msgfmt)
 
-function(GETTEXT_CREATE_TRANSLATIONS _potFile _firstPoFile)
+function(GETTEXT_CREATE_TRANSLATIONS _potFile)
    SET(_gmoFiles)
    GET_FILENAME_COMPONENT(_potBasename ${_potFile} NAME_WE)
    GET_FILENAME_COMPONENT(_absPotFile ${_potFile} ABSOLUTE)
 
+   set(options ALL)
+   set(oneValueArgs DESTINATION)
+   set(multiValueArgs)
+   cmake_parse_arguments(_poFiles "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
+
    SET(_addToAll)
-   IF(${_firstPoFile} STREQUAL "ALL")
+   IF(_poFiles_ALL)
       SET(_addToAll "ALL")
-      SET(_firstPoFile)
    ENDIF()
 
-   FOREACH (_currentPoFile ${ARGN})
+   FOREACH (_currentPoFile ${_poFiles_UNPARSED_ARGUMENTS})
       GET_FILENAME_COMPONENT(_absFile ${_currentPoFile} ABSOLUTE)
       GET_FILENAME_COMPONENT(_abs_PATH ${_absFile} PATH)
       GET_FILENAME_COMPONENT(_lang ${_absFile} NAME_WE)
-      SET(_gmoFile ${_abs_PATH}/${_lang}.mo)
+      file(RELATIVE_PATH _rel_PATH ${CMAKE_CURRENT_SOURCE_DIR} ${_abs_PATH})
+      SET(_gmoFile ${CMAKE_CURRENT_BINARY_DIR}/${_rel_PATH}/${_lang}.mo)
 
       ADD_CUSTOM_COMMAND( 
          OUTPUT ${_gmoFile} 
+         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/${_rel_PATH}
          COMMAND ${GETTEXT_MSGMERGE_EXECUTABLE} --sort-output --no-wrap --quiet --update --backup=none -s ${_absFile} ${_absPotFile}
          COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} -o ${_gmoFile} ${_absFile}
          DEPENDS ${_absPotFile} ${_absFile} 
       )
 
+      if(_poFiles_DESTINATION)
+         install(FILES ${_gmoFile} DESTINATION ${_poFiles_DESTINATION})
+      endif()
       SET(_gmoFiles ${_gmoFiles} ${_gmoFile})
 
    ENDFOREACH (_currentPoFile )
