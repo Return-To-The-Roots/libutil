@@ -42,14 +42,16 @@ function(GETTEXT_CREATE_TRANSLATIONS _potFile)
       file(RELATIVE_PATH _rel_PATH ${CMAKE_CURRENT_SOURCE_DIR} ${_abs_PATH})
 
       if(_poFiles_DESTINATION)
-         SET(_gmoFile ${CMAKE_CURRENT_BINARY_DIR}/${_poFiles_DESTINATION}/${_lang}.mo)
+         set(_destination ${CMAKE_CURRENT_BINARY_DIR}/${_poFiles_DESTINATION})
       else()
-         SET(_gmoFile ${CMAKE_CURRENT_BINARY_DIR}/${_rel_PATH}/${_lang}.mo)
+         set(_destination ${CMAKE_CURRENT_BINARY_DIR}/${_rel_PATH})
       endif()
+
+      SET(_gmoFile ${_destination}/${_lang}.mo)
 
       ADD_CUSTOM_COMMAND( 
          OUTPUT ${_gmoFile} 
-         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/${_rel_PATH}
+         COMMAND ${CMAKE_COMMAND} -E make_directory ${_destination}
          COMMAND ${GETTEXT_MSGMERGE_EXECUTABLE} --sort-output --no-wrap --quiet --update --backup=none -s ${_absFile} ${_absPotFile}
          COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} -o ${_gmoFile} ${_absFile}
          DEPENDS ${_absPotFile} ${_absFile} 
