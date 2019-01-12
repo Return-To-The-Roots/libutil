@@ -16,57 +16,63 @@
 # This file has been modified. Do not use vanilla FindGettext.cmake
 #
 
-FIND_PROGRAM(GETTEXT_MSGMERGE_EXECUTABLE msgmerge)
-
-FIND_PROGRAM(GETTEXT_MSGFMT_EXECUTABLE msgfmt)
-
-function(GETTEXT_CREATE_TRANSLATIONS _potFile)
-   SET(_gmoFiles)
-   GET_FILENAME_COMPONENT(_potBasename ${_potFile} NAME_WE)
-   GET_FILENAME_COMPONENT(_absPotFile ${_potFile} ABSOLUTE)
-
-   set(options ALL)
-   set(oneValueArgs DESTINATION)
-   set(multiValueArgs)
-   cmake_parse_arguments(_poFiles "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
-
-   SET(_addToAll)
-   IF(_poFiles_ALL)
-      SET(_addToAll "ALL")
-   ENDIF()
-
-   FOREACH (_currentPoFile ${_poFiles_UNPARSED_ARGUMENTS})
-      GET_FILENAME_COMPONENT(_absFile ${_currentPoFile} ABSOLUTE)
-      GET_FILENAME_COMPONENT(_abs_PATH ${_absFile} PATH)
-      GET_FILENAME_COMPONENT(_lang ${_absFile} NAME_WE)
-      file(RELATIVE_PATH _rel_PATH ${CMAKE_CURRENT_SOURCE_DIR} ${_abs_PATH})
-
-      if(_poFiles_DESTINATION)
-         set(_destination ${CMAKE_CURRENT_BINARY_DIR}/${_poFiles_DESTINATION})
-      else()
-         set(_destination ${CMAKE_CURRENT_BINARY_DIR}/${_rel_PATH})
-      endif()
-
-      SET(_gmoFile ${_destination}/${_lang}.mo)
-
-      ADD_CUSTOM_COMMAND( 
-         OUTPUT ${_gmoFile} 
-         COMMAND ${CMAKE_COMMAND} -E make_directory ${_destination}
-         COMMAND ${GETTEXT_MSGMERGE_EXECUTABLE} --sort-output --no-wrap --quiet --update --backup=none -s ${_absFile} ${_absPotFile}
-         COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} -o ${_gmoFile} ${_absFile}
-         DEPENDS ${_absPotFile} ${_absFile} 
-      )
-
-      if(_poFiles_DESTINATION)
-         install(FILES ${_gmoFile} DESTINATION ${_poFiles_DESTINATION})
-      endif()
-      SET(_gmoFiles ${_gmoFiles} ${_gmoFile})
-
-   ENDFOREACH (_currentPoFile )
-
-   ADD_CUSTOM_TARGET(translations ${_addToAll} DEPENDS ${_gmoFiles})
-
-endfunction()
+find_program(GETTEXT_MSGMERGE_EXECUTABLE msgmerge)
+find_program(GETTEXT_MSGFMT_EXECUTABLE msgfmt)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Gettext DEFAULT_MSG GETTEXT_MSGMERGE_EXECUTABLE GETTEXT_MSGFMT_EXECUTABLE)
+
+if(Gettext_FOUND)
+    function(gettext_create_translations potFile)
+        get_filename_component(potBasename ${potFile} NAME_WE)
+        get_filename_component(absPotFile ${potFile} ABSOLUTE)
+
+        set(options ALL)
+        set(oneValueArgs DESTINATION INSTALL_DESTINATION)
+        set(multiValueArgs FILES)
+        cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+        foreach(reqArg DESTINATION FILES)
+            if(NOT ARG_${reqArg})
+                message(FATAL_ERROR "Missing argument ${reqArg}")
+            endif()
+        endforeach()
+        if(ARG_UNPARSED_ARGUMENTS)
+            message(FATAL_ERROR "Unknown arguments: ${ARG_UNPARSED_ARGUMENTS}")
+        endif()
+        if(IS_ABSOLUTE ${ARG_DESTINATION})
+            set(destination ${ARG_DESTINATION})
+        else()
+            set(destination ${CMAKE_CURRENT_BINARY_DIR}/${ARG_DESTINATION})
+        endif()
+        file(MAKE_DIRECTORY ${destination})
+
+        set(moFiles "")
+        foreach (currentPoFile ${ARG_FILES})
+            get_filename_component(absFile ${currentPoFile} ABSOLUTE)
+            get_filename_component(lang ${absFile} NAME_WE)
+
+            set(moFile ${destination}/${lang}.mo)
+
+            add_custom_command( 
+              OUTPUT ${moFile}
+              COMMAND ${GETTEXT_MSGMERGE_EXECUTABLE} --sort-output --no-wrap --quiet --update --backup=none -s ${absFile} ${absPotFile}
+              COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} -o ${moFile} ${absFile}
+              DEPENDS ${absPotFile} ${absFile}
+            )
+
+            list(APPEND moFiles ${moFile})
+       endforeach()
+
+        if(ARG_ALL)
+            set(addToAll "ALL")
+        else()
+            set(addToAll "")
+        endif()
+        add_custom_target(translations ${addToAll} DEPENDS ${moFiles})
+
+        if(ARG_INSTALL_DESTINATION)
+            install(FILES ${moFiles} DESTINATION ${ARG_INSTALL_DESTINATION})
+        endif()
+    endfunction()
+endif()
