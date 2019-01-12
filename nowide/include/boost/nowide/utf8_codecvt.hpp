@@ -317,20 +317,20 @@ protected:
 
     typedef CharType uchar;
 
-    virtual std::codecvt_base::result do_unshift(std::mbstate_t &/*s*/,char *from,char * /*to*/,char *&next) const
+    virtual std::codecvt_base::result do_unshift(std::mbstate_t &/*s*/,char *from,char * /*to*/,char *&next) const override
     {
         next=from;
         return std::codecvt_base::ok;
     }
-    virtual int do_encoding() const throw()
+    virtual int do_encoding() const throw() override
     {
         return 0;
     }
-    virtual int do_max_length() const throw()
+    virtual int do_max_length() const throw() override
     {
         return 4;
     }
-    virtual bool do_always_noconv() const throw()
+    virtual bool do_always_noconv() const throw() override
     {
         return false;
     }
@@ -343,7 +343,7 @@ protected:
             &/*state*/,
             char const *from,
             char const *from_end,
-            size_t max) const
+            size_t max) const override
     {
         #ifndef BOOST_NOWIDE_DO_LENGTH_MBSTATE_CONST 
         char const *start_from = from;
@@ -375,7 +375,7 @@ protected:
             char const *&from_next,
             uchar *to,
             uchar *to_end,
-            uchar *&to_next) const
+            uchar *&to_next) const override
     {
         std::codecvt_base::result r=std::codecvt_base::ok;
         
@@ -440,7 +440,7 @@ protected:
             uchar const *&from_next,
             char *to,
             char *to_end,
-            char *&to_next) const
+            char *&to_next) const override
     {
         std::codecvt_base::result r=std::codecvt_base::ok;
         while(to < to_end && from < from_end)

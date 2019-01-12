@@ -179,7 +179,7 @@ namespace nowide {
         }
     protected:
         
-        virtual std::streambuf *setbuf(char *s,std::streamsize n)
+        virtual std::streambuf *setbuf(char *s,std::streamsize n) override
         {
             if(!buffer_ && n>=0) {
                 buffer_ = s;
@@ -242,7 +242,7 @@ namespace nowide {
 #else
 #endif        
         
-        int overflow(int c)
+        int overflow(int c) override
         {
 #ifdef BOOST_NOWIDE_DEBUG_FILEBUF
             print_guard g(this,__FUNCTION__);
@@ -275,12 +275,12 @@ namespace nowide {
         }
         
         
-        int sync()
+        int sync() override
         {
             return overflow(EOF);
         }
 
-        int underflow()
+        int underflow() override
         {
 #ifdef BOOST_NOWIDE_DEBUG_FILEBUF
             print_guard g(this,__FUNCTION__);
@@ -306,14 +306,14 @@ namespace nowide {
             return std::char_traits<char>::to_int_type(*gptr());
         }
 
-        int pbackfail(int)
+        int pbackfail(int) override
         {
             return pubseekoff(-1,std::ios::cur);
         }
 
         std::streampos seekoff(std::streamoff off,
                             std::ios_base::seekdir seekdir,
-                            std::ios_base::openmode /*m*/)
+                            std::ios_base::openmode /*m*/) override
         {
 #ifdef BOOST_NOWIDE_DEBUG_FILEBUF
             print_guard g(this,__FUNCTION__);
@@ -338,7 +338,7 @@ namespace nowide {
                 return -1;
             return ftell(file_);
         }
-        std::streampos seekpos(std::streampos off,std::ios_base::openmode m)
+        std::streampos seekpos(std::streampos off,std::ios_base::openmode m) override
         {
             return seekoff(std::streamoff(off),std::ios_base::beg,m);
         }
