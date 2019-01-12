@@ -44,8 +44,6 @@ find_package_handle_standard_args(ClangFormat
     VERSION_VAR ClangFormat_VERSION_STRING)
 
 if(ClangFormat_FOUND)
-    option(ENABLE_CLANGFORMAT "Activate running clang-format" OFF)
-
     set(ClangFormat_FILES "" CACHE INTERNAL "")
     set(ClangFormat_SRC_EXTENSIONS "*.cpp;*.h;*.hpp;*.c;*.tpp" CACHE STRING "Extensions to consider for add_ClangFormat_folder")
     mark_as_advanced(ClangFormat_SRC_EXTENSIONS)
@@ -74,7 +72,7 @@ if(ClangFormat_FOUND)
         message(STATUS "Files for clang-format: ${ClangFormat_FILES}")
     endfunction()
     function(add_ClangFormat_target style)
-        if(ENABLE_CLANGFORMAT AND ClangFormat_BINARY)
+        if(ClangFormat_BINARY)
             set(format_files "")
             set(clangFormatFolder ${CMAKE_CURRENT_BINARY_DIR}/clangFormat)
             # Cache last folder. To be more usefull sort the list first
