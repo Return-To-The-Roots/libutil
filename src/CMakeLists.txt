@@ -43,7 +43,3 @@ ENDIF ()
 
 include(EnableWarnings)
 enable_warnings(s25util)
-
-if(ClangFormat_FOUND)
-    add_clangFormat_files(${SRC_FILES} ${HEADER_FILES})
-endif()
