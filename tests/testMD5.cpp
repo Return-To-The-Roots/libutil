@@ -23,9 +23,18 @@ BOOST_AUTO_TEST_CASE(Fixed_Cases)
 {
     BOOST_TEST_REQUIRE(s25util::md5("").toString() == "d41d8cd98f00b204e9800998ecf8427e");
     BOOST_TEST_REQUIRE(s25util::md5("Test").toString() == "0cbc6611f5540bd0809a388dc95a615b");
-    BOOST_TEST_REQUIRE(s25util::md5("SomeVeryLongInputSomeVeryLongInputSomeVeryLongInputSomeVeryLongInputSomeVeryLongInputSomeVeryLongInputSomeVeryLongInput").toString() == "4f5586fbeb407ffd0d5e23762167ac67");
-    BOOST_TEST_REQUIRE(s25util::md5("64CharsOfInput56789012345678901234567890123456789012345678901234").toString() == "c123841d524187153dd686e0f87bde7d");
-    BOOST_TEST_REQUIRE(s25util::md5("64CharsOfInput5678901234567890123456789012345678901234567890123464CharsOfInput56789012345678901234567890123456789012345678901234").toString() == "65a5f6c7d0925bcaad324108046a5644");    
+    BOOST_TEST_REQUIRE(
+      s25util::md5(
+        "SomeVeryLongInputSomeVeryLongInputSomeVeryLongInputSomeVeryLongInputSomeVeryLongInputSomeVeryLongInputSomeVeryLongInput")
+        .toString()
+      == "4f5586fbeb407ffd0d5e23762167ac67");
+    BOOST_TEST_REQUIRE(s25util::md5("64CharsOfInput56789012345678901234567890123456789012345678901234").toString()
+                       == "c123841d524187153dd686e0f87bde7d");
+    BOOST_TEST_REQUIRE(
+      s25util::md5(
+        "64CharsOfInput5678901234567890123456789012345678901234567890123464CharsOfInput56789012345678901234567890123456789012345678901234")
+        .toString()
+      == "65a5f6c7d0925bcaad324108046a5644");
 }
 
 BOOST_AUTO_TEST_CASE(StreamOp)
