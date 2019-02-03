@@ -68,7 +68,8 @@ std::string getExecutablePath()
             return "";
     }
     boost::system::error_code ec;
-    bfs::path p(bfs::canonical(&buf.front(), ec));
+    using bfs::canonical;
+    bfs::path p(canonical(&buf.front(), ec));
     return ec ? "" : p.make_preferred().string();
 }
 
@@ -83,7 +84,8 @@ std::string getExecutablePath()
     if(!p.has_root_directory())
     {
         boost::system::error_code ec;
-        p = bfs::canonical(p, ec);
+        using bfs::canonical;
+        p = canonical(p, ec);
         ret = (ec) ? "" : p.make_preferred().string();
     }
     return ret;
@@ -104,7 +106,8 @@ std::string getExecutablePath()
         return "";
     std::string path(buf.begin(), buf.begin() + size);
     boost::system::error_code ec;
-    bfs::path p(bfs::canonical(path, ec));
+    using bfs::canonical;
+    bfs::path p(canonical(path, ec));
     return ec ? "" : p.make_preferred().string();
 }
 
@@ -127,7 +130,8 @@ std::string getExecutablePath()
     }
     std::string path(buf.begin(), buf.begin() + size);
     boost::system::error_code ec;
-    bfs::path p(bfs::canonical(path, ec));
+    using bfs::canonical;
+    bfs::path p(canonical(path, ec));
     return ec ? "" : p.make_preferred().string();
 }
 
