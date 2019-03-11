@@ -27,7 +27,7 @@ public:
 
     const uint8_t* digest() const { return msg_digest_.data(); }
     std::string toString() const;
-    void process(const void* data, size_type len, bool add);
+    void process(const void* vdata, size_type len, bool add);
     void process(const std::string& data, bool add) { process(data.data(), data.length(), add); }
 
 private:
@@ -44,7 +44,7 @@ private:
 
     // resets internal context
     void clear();
-    void process(context& c, const uint8_t* msg) const;
+    void process(context& ctx, const uint8_t* msg) const;
     void store_msg_digest(const context&);
 
     context ctx_, ctx_backup_;

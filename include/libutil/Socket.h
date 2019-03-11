@@ -108,7 +108,7 @@ public:
     Socket(const Socket& so);
     ~Socket();
 
-    Socket& operator=(const Socket& so);
+    Socket& operator=(const Socket& rhs);
 
     /// Initialisiert die Socket-Bibliothek.
     static bool Initialize();
@@ -154,7 +154,7 @@ public:
     int BytesWaiting();
 
     /// prüft auf wartende Bytes.
-    int BytesWaiting(unsigned* dwReceived);
+    int BytesWaiting(unsigned* received);
 
     /// liefert die IP des Remote-Hosts.
     std::string GetPeerIP();
@@ -188,7 +188,7 @@ public:
 
 private:
     /// Setzt ein Socket auf übergebene Werte.
-    void Set(const SOCKET so, Status st);
+    void Set(const SOCKET socket, Status status);
 
     SOCKET socket_; /// Unser Socket
     /// Number of references to the socket, free only on <=0!
