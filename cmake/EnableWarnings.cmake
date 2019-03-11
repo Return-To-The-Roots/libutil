@@ -34,16 +34,58 @@ function(enable_warnings target)
       target_compile_options(${target} ${visibility} -Werror)
     endif()
     include(CheckAndAddFlag)
+    # Additional options besides -Wall, -Wextra, -pedantic
+    # Keep those sorted to check for uniqueness
     check_and_add_cxx_warnings(${target} ${visibility}
-      -Wpedantic
-      -Wparentheses
-      -Wno-error=type-limits
-      -Wfloat-conversion
-      -Wno-long-long
-      -Wno-deprecated-register
-      -Wno-unknown-pragmas
       -fno-strict-aliasing
+      #-pedantic-errors
       -Qunused-arguments
+      #-Wcast-align
+      #-Wcast-qual
+      #-Wconversion
+      #-Wctor-dtor-privacy
+      #-Wdisabled-optimization
+      -Wfloat-conversion
+      #-Wfloat-equal
+      #-Wformat-nonliteral
+      #-Wformat-security
+      #-Wformat=2
+      #-Wimplicit
+      #-Wimport
+      #-Winit-self
+      #-Winline
+      #-Winvalid-pch
+      #-Wlogical-op
+      #-Wmissing-declarations
+      #-Wmissing-field-initializers
+      #-Wmissing-format-attribute
+      #-Wmissing-include-dirs
+      #-Wmissing-noreturn
+      -Wno-unknown-pragmas
+      #-Wnoexcept
+      #-Wold-style-cast
+      #-Woverloaded-virtual
+      #-Wpacked
+      #-Wpadded
+      -Wparentheses
+      -Wpedantic
+      #-Wpointer-arith
+      #-Wredundant-decls
+      #-Wshadow
+      #-Wsign-conversion
+      #-Wsign-promo
+      #-Wstack-protector
+      #-Wstrict-aliasing=2
+      #-Wstrict-null-sentinel
+      #-Wstrict-overflow=5
+      #-Wswitch-default
+      #-Wswitch-enum
+      #-Wundef
+      #-Wunreachable-code
+      #-Wunused
+      #-Wunused-parameter
+      #-Wvariadic-macros
+      #-Wwrite-strings
     )
 
     check_cxx_warning(-Wsuggest-override supported)
