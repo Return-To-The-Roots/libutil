@@ -33,52 +33,58 @@ function(enable_warnings target)
     if(RTTR_ENABLE_WERROR)
       target_compile_options(${target} ${visibility} -Werror)
     endif()
-    include(CheckAndAddFlag)
+    include(CheckAndAddWarnings)
     # Additional options besides -Wall, -Wextra, -pedantic
     # Keep those sorted to check for uniqueness
-    check_and_add_cxx_warnings(${target} ${visibility}
-      -fno-strict-aliasing
-      -pedantic-errors
-      -Qunused-arguments
-      -Wcast-qual
-      #-Wconversion
-      -Wctor-dtor-privacy
-      -Wdisabled-optimization
-      -Wfloat-conversion
-      -Wformat-nonliteral
-      -Wformat-security
-      -Wformat=2
-      -Wimplicit
-      -Wimport
-      -Winit-self
-      #-Winline
-      -Wlogical-op
-      -Wmissing-declarations
-      -Wmissing-field-initializers
-      -Wmissing-format-attribute
-      -Wmissing-include-dirs
-      -Wmissing-noreturn
-      -Wno-unknown-pragmas
-      #-Wnoexcept
-      #-Wold-style-cast
-      -Woverloaded-virtual
-      -Wpacked
-      -Wparentheses
-      -Wpedantic
-      -Wpointer-arith
-      -Wredundant-decls
-      #-Wshadow
-      #-Wsign-conversion # Lot's of work, maybe later?
-      -Wsign-promo
-      -Wstack-protector
-      -Wstrict-aliasing=2
-      -Wstrict-null-sentinel
-      -Wstrict-overflow=5
-      -Wundef
-      -Wunreachable-code
-      -Wunused
-      -Wunused-parameter
-      -Wwrite-strings
+    check_and_add_warnings(TARGET ${target} VISIBILITY ${visibility}
+      ALL
+        -fno-strict-aliasing
+        -pedantic-errors
+        -Qunused-arguments
+        -Wcast-qual
+        #-Wconversion
+        -Wdisabled-optimization
+        -Wfloat-conversion
+        -Wformat-nonliteral
+        -Wformat-security
+        -Wformat=2
+        -Wimport
+        -Winit-self
+        #-Winline
+        -Wlogical-op
+        -Wmissing-declarations
+        -Wmissing-field-initializers
+        -Wmissing-format-attribute
+        -Wmissing-include-dirs
+        -Wmissing-noreturn
+        #-Wold-style-cast
+        -Wpacked
+        -Wparentheses
+        -Wpedantic
+        -Wpointer-arith
+        -Wredundant-decls
+        #-Wshadow
+        #-Wsign-conversion # Lot's of work, maybe later?
+        -Wstack-protector
+        -Wstrict-aliasing=2
+        -Wstrict-overflow=5
+        -Wundef
+        -Wunreachable-code
+        -Wunused
+        -Wunused-parameter
+        -Wwrite-strings
+        -Wno-unknown-pragmas
+      C
+        -Wimplicit
+      CXX
+        -Wctor-dtor-privacy
+        -Wnoexcept
+        -Woverloaded-virtual
+        -Wsign-promo
+        -Wstrict-null-sentinel
+        -Wsuggest-override
+        -Wno-error=inconsistent-missing-override
+        -Wno-error=suggest-override
     )
     # Not used:
       #-Wpadded
@@ -86,14 +92,5 @@ function(enable_warnings target)
       #-Wswitch-enum
       #-Wfloat-equal
       #-Wcast-align
-
-    check_cxx_warning(-Wsuggest-override supported)
-    if(supported)
-      target_compile_options(${target} ${visibility} "$<$<COMPILE_LANGUAGE:CXX>:-Wsuggest-override;-Wno-error=suggest-override>")
-    endif()
-    check_cxx_warning(-Winconsistent-missing-override supported)
-    if(supported)
-      target_compile_options(${target} ${visibility} "$<$<COMPILE_LANGUAGE:CXX>:-Wno-error=inconsistent-missing-override>")
-    endif()
   endif()
 endfunction()
