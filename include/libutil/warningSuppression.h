@@ -18,6 +18,8 @@
 #ifndef warningSuppression_h__
 #define warningSuppression_h__
 
+#include <boost/predef/compiler.h>
+
 // Macro that can be used to suppress unused warnings. Required e.g. for const std::arrays defined in headers
 // Don't use this if not absolutely necessary!
 #ifdef __GNUC__
@@ -26,6 +28,19 @@
 #define SUPPRESS_UNUSED
 #endif
 
+#if BOOST_COMP_CLANG
+#define RTTR_PUSH_DIAGNOSTIC _Pragma("clang diagnostic push")
+#define RTTR_IGNORE_UNREACHABLE_CODE RTTR_PUSH_DIAGNOSTIC _Pragma("clang diagnostic ignored \"-Wunreachable-code\"")
+#define RTTR_POP_DIAGNOSTIC _Pragma("clang diagnostic pop")
+#elif BOOST_COMP_MSVC
+#define RTTR_PUSH_DIAGNOSTIC
+#define RTTR_IGNORE_UNREACHABLE_CODE
+#define RTTR_POP_DIAGNOSTIC
+#else
+#define RTTR_PUSH_DIAGNOSTIC _Pragma("GCC diagnostic push")
+#define RTTR_IGNORE_UNREACHABLE_CODE RTTR_PUSH_DIAGNOSTIC _Pragma("GCC diagnostic ignored \"-Wunreachable-code\"")
+#define RTTR_POP_DIAGNOSTIC _Pragma("GCC diagnostic pop")
+#endif
 /// Silence unused variable warning
 #define RTTR_UNUSED(x) (void)(x)
 
