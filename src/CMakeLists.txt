@@ -17,6 +17,12 @@ set(includePath ${parentPath}/include)
 
 FILE(GLOB SRC_FILES *.cpp)
 FILE(GLOB HEADER_FILES ${includePath}/libutil/*.* *.h)
+if(WIN32)
+    list(REMOVE_ITEM SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/System_Other.cpp)
+else()
+    list(REMOVE_ITEM SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/System_Win32.cpp)
+endif()
+
 ADD_LIBRARY(s25util STATIC ${SRC_FILES} ${HEADER_FILES})
 
 target_include_directories(s25util
