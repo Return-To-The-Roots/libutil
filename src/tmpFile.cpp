@@ -27,7 +27,7 @@
 namespace bnw = boost::nowide;
 namespace bfs = boost::filesystem;
 
-/// Creates and opens a temporary binary file with the given extension
+namespace { /// Creates and opens a temporary binary file with the given extension
 /// file must be a closed file stream and open() will be called on it
 /// Returns the filename used or an empty string on error
 std::string createTempFile(bnw::ofstream& file, const std::string& ext /* = ".tmp"*/)
@@ -63,6 +63,7 @@ std::string createTempFile(bnw::ofstream& file, const std::string& ext /* = ".tm
     // Could not find a file :(
     return "";
 }
+} // namespace
 
 void unlinkFile(const std::string& filePath)
 {

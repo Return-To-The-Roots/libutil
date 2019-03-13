@@ -67,6 +67,7 @@ struct RandCharCreator
     char operator()() { return charset[distr(rng)]; }
 };
 
+namespace {
 std::string createRandString(size_t len, RandCharCreator creator) //-V813
 {
     std::string result;
@@ -74,6 +75,7 @@ std::string createRandString(size_t len, RandCharCreator creator) //-V813
     std::generate_n(result.begin(), len, creator);
     return result;
 }
+} // namespace
 
 std::string createRandString(size_t len, const std::string& charset)
 {

@@ -21,26 +21,12 @@
 #include <boost/config.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/nowide/system.hpp>
-#include <sstream>
 
 namespace bfs = boost::filesystem;
 
 bfs::path System::getExecutablePath()
 {
     return ::getExecutablePath();
-}
-
-std::string boostVersionToStr(uint32_t version)
-{
-    if(version <= BOOST_VERSION_NUMBER_MIN)
-        return "";
-    uint32_t major = version / 10000000u;
-    version -= major * 10000000u;
-    uint32_t minor = version / 100000;
-    uint32_t patch = version - minor * 100000;
-    s25util::ClassicImbuedStream<std::stringstream> ss;
-    ss << " (" << major << "." << minor << "." << patch << ")";
-    return ss.str();
 }
 
 std::string System::getOSName()

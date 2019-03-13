@@ -31,6 +31,7 @@
 #if BOOST_COMP_CLANG
 #define RTTR_PUSH_DIAGNOSTIC _Pragma("clang diagnostic push")
 #define RTTR_IGNORE_UNREACHABLE_CODE RTTR_PUSH_DIAGNOSTIC _Pragma("clang diagnostic ignored \"-Wunreachable-code\"")
+#define RTTR_IGNORE_OVERLOADED_VIRTUAL RTTR_PUSH_DIAGNOSTIC _Pragma("clang diagnostic ignored \"-Woverloaded-virtual\"")
 #define RTTR_POP_DIAGNOSTIC _Pragma("clang diagnostic pop")
 #elif BOOST_COMP_MSVC
 #define RTTR_PUSH_DIAGNOSTIC
@@ -39,6 +40,7 @@
 #else
 #define RTTR_PUSH_DIAGNOSTIC _Pragma("GCC diagnostic push")
 #define RTTR_IGNORE_UNREACHABLE_CODE RTTR_PUSH_DIAGNOSTIC _Pragma("GCC diagnostic ignored \"-Wunreachable-code\"")
+#define RTTR_IGNORE_OVERLOADED_VIRTUAL RTTR_PUSH_DIAGNOSTIC _Pragma("GCC diagnostic ignored \"-Woverloaded-virtual\"")
 #define RTTR_POP_DIAGNOSTIC _Pragma("GCC diagnostic pop")
 #endif
 /// Silence unused variable warning
