@@ -84,7 +84,7 @@ void BinaryFile::WriteUnsignedChar(unsigned char i) const
 
 void BinaryFile::WriteRawData(const void* const data, const unsigned length) const
 {
-    CHECKED_WRITE(libendian::write((char*)data, length, file));
+    CHECKED_WRITE(libendian::write((const char*)data, length, file));
 }
 
 void BinaryFile::WriteShortString(const std::string& str)

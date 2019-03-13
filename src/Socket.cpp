@@ -723,7 +723,7 @@ int Socket::Send(const void* const buffer, const int length, const PeerAddr& add
  */
 bool Socket::SetSockOpt(int nOptionName, const void* lpOptionValue, int nOptionLen, int nLevel)
 {
-    return (SOCKET_ERROR != setsockopt(socket_, nLevel, nOptionName, (char*)lpOptionValue, nOptionLen));
+    return (SOCKET_ERROR != setsockopt(socket_, nLevel, nOptionName, (const char*)lpOptionValue, nOptionLen));
 }
 
 /**
@@ -847,14 +847,14 @@ std::string Socket::IpToString(const sockaddr* addr)
 
     free(copy);
 #else
-    void* ip;
+    const void* ip;
 
     if(addr->sa_family == AF_INET)
     {
-        ip = &(((sockaddr_in*)addr)->sin_addr);
+        ip = &(((const sockaddr_in*)addr)->sin_addr);
     } else
     {
-        ip = &(((sockaddr_in6*)addr)->sin6_addr);
+        ip = &(((const sockaddr_in6*)addr)->sin6_addr);
     }
 
     inet_ntop(addr->sa_family, ip, temp, sizeof(temp));

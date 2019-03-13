@@ -38,55 +38,54 @@ function(enable_warnings target)
     # Keep those sorted to check for uniqueness
     check_and_add_cxx_warnings(${target} ${visibility}
       -fno-strict-aliasing
-      #-pedantic-errors
+      -pedantic-errors
       -Qunused-arguments
-      #-Wcast-align
-      #-Wcast-qual
+      -Wcast-qual
       #-Wconversion
-      #-Wctor-dtor-privacy
-      #-Wdisabled-optimization
+      -Wctor-dtor-privacy
+      -Wdisabled-optimization
       -Wfloat-conversion
-      #-Wfloat-equal
-      #-Wformat-nonliteral
-      #-Wformat-security
-      #-Wformat=2
-      #-Wimplicit
-      #-Wimport
-      #-Winit-self
+      -Wformat-nonliteral
+      -Wformat-security
+      -Wformat=2
+      -Wimplicit
+      -Wimport
+      -Winit-self
       #-Winline
-      #-Winvalid-pch
-      #-Wlogical-op
-      #-Wmissing-declarations
-      #-Wmissing-field-initializers
-      #-Wmissing-format-attribute
-      #-Wmissing-include-dirs
-      #-Wmissing-noreturn
+      -Wlogical-op
+      -Wmissing-declarations
+      -Wmissing-field-initializers
+      -Wmissing-format-attribute
+      -Wmissing-include-dirs
+      -Wmissing-noreturn
       -Wno-unknown-pragmas
       #-Wnoexcept
       #-Wold-style-cast
-      #-Woverloaded-virtual
-      #-Wpacked
-      #-Wpadded
+      -Woverloaded-virtual
+      -Wpacked
       -Wparentheses
       -Wpedantic
-      #-Wpointer-arith
-      #-Wredundant-decls
+      -Wpointer-arith
+      -Wredundant-decls
       #-Wshadow
-      #-Wsign-conversion
-      #-Wsign-promo
-      #-Wstack-protector
-      #-Wstrict-aliasing=2
-      #-Wstrict-null-sentinel
-      #-Wstrict-overflow=5
+      #-Wsign-conversion # Lot's of work, maybe later?
+      -Wsign-promo
+      -Wstack-protector
+      -Wstrict-aliasing=2
+      -Wstrict-null-sentinel
+      -Wstrict-overflow=5
+      -Wundef
+      -Wunreachable-code
+      -Wunused
+      -Wunused-parameter
+      -Wwrite-strings
+    )
+    # Not used:
+      #-Wpadded
       #-Wswitch-default
       #-Wswitch-enum
-      #-Wundef
-      #-Wunreachable-code
-      #-Wunused
-      #-Wunused-parameter
-      #-Wvariadic-macros
-      #-Wwrite-strings
-    )
+      #-Wfloat-equal
+      #-Wcast-align
 
     check_cxx_warning(-Wsuggest-override supported)
     if(supported)
