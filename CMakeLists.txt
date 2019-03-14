@@ -14,8 +14,9 @@ add_subdirectory(nowide EXCLUDE_FROM_ALL)
 add_subdirectory(src)
 if(ClangFormat_FOUND)
     add_ClangFormat_folder(src TRUE)
+    add_ClangFormat_folder(include TRUE)
 endif()
-    
+
 include(RttrTestingCfg)
 if(BUILD_TESTING)
     add_subdirectory(tests)
