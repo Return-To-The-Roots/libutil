@@ -41,7 +41,7 @@ else()
 ENDIF()
 
 IF (WIN32)
-    target_compile_definitions(s25util PRIVATE WIN32_LEAN_AND_MEAN _WIN32_WINNT=_WIN32_WINNT_WINXP)
+    target_compile_definitions(s25util PRIVATE WIN32_LEAN_AND_MEAN _WIN32_WINNT=0x0600) # Win Vista
     # Exclude some windows defines
     target_compile_definitions(s25util PRIVATE NOMINMAX NODRAWTEXT NOSOUND NOTEXTMETRIC NOCOMM NOMCX)
 	target_link_libraries(s25util PUBLIC Boost::locale Boost::disable_autolinking iphlpapi ws2_32)
