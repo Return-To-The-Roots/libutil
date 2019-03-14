@@ -62,7 +62,6 @@ function(enable_warnings target)
         -Wparentheses
         -Wpedantic
         -Wpointer-arith
-        -Wredundant-decls
         #-Wshadow
         #-Wsign-conversion # Lot's of work, maybe later?
         -Wstack-protector
@@ -85,6 +84,13 @@ function(enable_warnings target)
         -Wno-error=inconsistent-missing-override
         -Wno-error=suggest-override
     )
+    if(NOT WIN32)
+      # Lot's of false-positives on windows.
+      # E.g. __builtin_ia32_crc32qi on MinGW and SDL
+      check_and_add_warnings(TARGET ${target} VISIBILITY ${visibility}
+        ALL -Wredundant-decls
+      )
+    endif()
     # Not used:
       #-Wpadded
       #-Wswitch-default
