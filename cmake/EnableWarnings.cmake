@@ -67,7 +67,7 @@ function(enable_warnings target)
         #-Wsign-conversion # Lot's of work, maybe later?
         -Wstack-protector
         -Wstrict-aliasing=2
-        -Wstrict-overflow=5
+        -Wstrict-overflow=2
         -Wundef
         -Wunreachable-code
         -Wunused
