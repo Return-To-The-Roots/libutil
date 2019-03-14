@@ -19,6 +19,7 @@
 #define warningSuppression_h__
 
 #include <boost/predef/compiler.h>
+#include <boost/preprocessor/stringize.hpp>
 
 // Macro that can be used to suppress unused warnings. Required e.g. for const std::arrays defined in headers
 // Don't use this if not absolutely necessary!
@@ -29,20 +30,21 @@
 #endif
 
 #if BOOST_COMP_CLANG
-#define RTTR_PUSH_DIAGNOSTIC _Pragma("clang diagnostic push")
-#define RTTR_IGNORE_UNREACHABLE_CODE RTTR_PUSH_DIAGNOSTIC _Pragma("clang diagnostic ignored \"-Wunreachable-code\"")
-#define RTTR_IGNORE_OVERLOADED_VIRTUAL RTTR_PUSH_DIAGNOSTIC _Pragma("clang diagnostic ignored \"-Woverloaded-virtual\"")
-#define RTTR_POP_DIAGNOSTIC _Pragma("clang diagnostic pop")
+#define RTTR_DIAGNOSTIC(what) _Pragma(BOOST_PP_STRINGIZE(clang diagnostic what))
 #elif BOOST_COMP_MSVC
-#define RTTR_PUSH_DIAGNOSTIC
-#define RTTR_IGNORE_UNREACHABLE_CODE
-#define RTTR_POP_DIAGNOSTIC
+#define RTTR_DIAGNOSTIC(what)
 #else
-#define RTTR_PUSH_DIAGNOSTIC _Pragma("GCC diagnostic push")
-#define RTTR_IGNORE_UNREACHABLE_CODE RTTR_PUSH_DIAGNOSTIC _Pragma("GCC diagnostic ignored \"-Wunreachable-code\"")
-#define RTTR_IGNORE_OVERLOADED_VIRTUAL RTTR_PUSH_DIAGNOSTIC _Pragma("GCC diagnostic ignored \"-Woverloaded-virtual\"")
-#define RTTR_POP_DIAGNOSTIC _Pragma("GCC diagnostic pop")
+#define RTTR_DIAGNOSTIC(what) _Pragma(BOOST_PP_STRINGIZE(GCC diagnostic what))
 #endif
+
+#define RTTR_PUSH_DIAGNOSTIC RTTR_DIAGNOSTIC(push)
+#define RTTR_POP_DIAGNOSTIC RTTR_DIAGNOSTIC(pop)
+#define RTTR_IGNORE_DIAGNOSTIC(warning) \
+    RTTR_PUSH_DIAGNOSTIC                \
+    RTTR_DIAGNOSTIC(ignored warning)
+#define RTTR_IGNORE_UNREACHABLE_CODE RTTR_IGNORE_DIAGNOSTIC("-Wunreachable-code")
+#define RTTR_IGNORE_OVERLOADED_VIRTUAL RTTR_IGNORE_DIAGNOSTIC("-Woverloaded-virtual")
+
 /// Silence unused variable warning
 #define RTTR_UNUSED(x) (void)(x)
 
