@@ -64,10 +64,8 @@ function(enable_warnings target)
         -Wpointer-arith
         #-Wshadow
         #-Wsign-conversion # Lot's of work, maybe later?
-        -Wstack-protector
         -Wstrict-aliasing=2
         -Wundef
-        -Wunreachable-code
         -Wunused
         -Wunused-parameter
         -Wwrite-strings
@@ -91,8 +89,15 @@ function(enable_warnings target)
         ALL -Wredundant-decls
       )
     endif()
+    if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+      # Lot's of false-positives on for e.g. strcmp
+      check_and_add_warnings(TARGET ${target} VISIBILITY ${visibility}
+        ALL -Wunreachable-code
+      )
+    endif()
     # Not used:
       #-Wpadded
+      #-Wstack-protector
       #-Wswitch-default
       #-Wswitch-enum
       #-Wfloat-equal
