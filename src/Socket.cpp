@@ -94,13 +94,13 @@ ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr, bool resolveAll)
 
         if(hostAddr.ipv6)
         {
-            sockaddr_in6* addr6 = (sockaddr_in6*)addr->ai_addr;
+            auto* addr6 = (sockaddr_in6*)addr->ai_addr;
             addr6->sin6_family = AF_INET6;
             addr6->sin6_port = htons(s25util::fromStringClassic<unsigned short>(hostAddr.port));
             addr6->sin6_addr = in6addr_loopback;
         } else
         {
-            sockaddr_in* addr4 = (sockaddr_in*)addr->ai_addr;
+            auto* addr4 = (sockaddr_in*)addr->ai_addr;
             addr4->sin_family = AF_INET;
             addr4->sin_port = htons(s25util::fromStringClassic<unsigned short>(hostAddr.port));
             addr4->sin_addr.s_addr = inet_addr("127.0.0.1");
@@ -503,7 +503,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
         end = ips.end();
     }
 
-    for(std::vector<HostAddr>::const_iterator it = start; it != end; ++it)
+    for(auto it = start; it != end; ++it)
     {
         if(it->isUDP)
             throw std::invalid_argument("Cannot connect to UDP (yet)");

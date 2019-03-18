@@ -65,7 +65,7 @@ time64_t Time::CurrentTick()
  */
 std::string Time::FormatTime(const std::string& format, time64_t time)
 {
-    time_t inTime = static_cast<time_t>(time);
+    auto inTime = static_cast<time_t>(time);
 
     tm* time_data = localtime(&inTime);
     if(!time_data)

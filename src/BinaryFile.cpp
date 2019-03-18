@@ -91,14 +91,14 @@ void BinaryFile::WriteShortString(const std::string& str)
 {
     if(str.length() + 1 > std::numeric_limits<unsigned char>::max())
         throw std::out_of_range("String '" + str + "' is to long for a short string");
-    unsigned char length = static_cast<unsigned char>(str.length() + 1);
+    auto length = static_cast<unsigned char>(str.length() + 1);
     WriteUnsignedChar(length);
     WriteRawData(str.c_str(), length);
 }
 
 void BinaryFile::WriteLongString(const std::string& str)
 {
-    unsigned length = unsigned(str.length() + 1);
+    auto length = unsigned(str.length() + 1);
     WriteUnsignedInt(length);
     WriteRawData(str.c_str(), length);
 }
@@ -154,7 +154,7 @@ std::string BinaryFile::ReadShortString()
 {
     unsigned char length;
     length = ReadUnsignedChar();
-    char* tmp = new char[length];
+    auto* tmp = new char[length];
     ReadRawData(tmp, length);
     std::string str = tmp;
     delete[] tmp;
@@ -165,7 +165,7 @@ std::string BinaryFile::ReadLongString()
 {
     unsigned length;
     length = ReadUnsignedInt();
-    char* tmp = new char[length];
+    auto* tmp = new char[length];
     ReadRawData(tmp, length);
     std::string str = tmp;
     delete[] tmp;

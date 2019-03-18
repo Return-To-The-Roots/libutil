@@ -50,7 +50,7 @@ public:
     void add(unsigned longevity, DestructionFunPtr destFunc)
     {
         // Remove same entries first. Calling a dtor twice is not supported!
-        for(Container::iterator it = items_.begin(); it != items_.end(); ++it)
+        for(auto it = items_.begin(); it != items_.end(); ++it)
         {
             if(it->destFunc_ == destFunc)
             {

@@ -60,7 +60,7 @@ std::string md5::toString() const
 
 void md5::process(const void* vdata, size_type len, bool add)
 {
-    const uint8_t* data = reinterpret_cast<const uint8_t*>(vdata);
+    const auto* data = reinterpret_cast<const uint8_t*>(vdata);
     if(add)
         ctx_ = ctx_backup_;
 

@@ -360,7 +360,7 @@ std::vector<std::string> UPnP::GetAllv4Addresses()
 
     // remove duplicates
     std::sort(addresses.begin(), addresses.end());
-    std::vector<std::string>::iterator begin = std::unique(addresses.begin(), addresses.end());
+    auto begin = std::unique(addresses.begin(), addresses.end());
     addresses.erase(begin, addresses.end());
 
     return addresses;
