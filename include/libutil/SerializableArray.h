@@ -26,11 +26,11 @@
 template<typename Type>
 class SerializableArray
 {
-    typedef std::vector<Type> Storage;
+    using Storage = std::vector<Type>;
 
 public:
-    typedef typename Storage::iterator iterator;
-    typedef typename Storage::const_iterator const_iterator;
+    using iterator = typename Storage::iterator;
+    using const_iterator = typename Storage::const_iterator;
 
     SerializableArray() {}
 

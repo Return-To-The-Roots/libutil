@@ -36,7 +36,7 @@ class LifetimeTracker : public Singleton<LifetimeTracker, SingletonPolicies::Def
     };
 
     // Queue that sorts items in ascending order (front() points to smallest element)
-    typedef std::multiset<LifetimeTrackerItem> Container;
+    using Container = std::multiset<LifetimeTrackerItem>;
     Container items_;
 
 public:

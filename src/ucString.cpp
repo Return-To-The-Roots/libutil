@@ -25,10 +25,10 @@
 template<class T_Container>
 struct GetUnsignedIterator
 {
-    typedef typename T_Container::const_iterator OldIterator;
-    typedef std::iterator_traits<OldIterator> oldTraits;
-    typedef typename oldTraits::value_type OldValueType;
-    typedef std::make_unsigned_t<OldValueType> NewValueType;
+    using OldIterator = typename T_Container::const_iterator;
+    using oldTraits = std::iterator_traits<OldIterator>;
+    using OldValueType = typename oldTraits::value_type;
+    using NewValueType = std::make_unsigned_t<OldValueType>;
 
     class UnsignedIterator : public std::iterator<typename std::forward_iterator_tag, NewValueType> //-V690
     {
@@ -53,13 +53,13 @@ struct GetUnsignedIterator
         NewValueType operator*() { return *oldIt; }
     };
 
-    typedef UnsignedIterator type;
+    using type = UnsignedIterator;
 };
 
 ucString cvUTF8ToUnicode(const std::string& other)
 {
     ucString result;
-    typedef utf8::iterator<std::string::const_iterator> iterator;
+    using iterator = utf8::iterator<std::string::const_iterator>;
     result.assign(iterator(other.begin(), other.begin(), other.end()), iterator(other.end(), other.begin(), other.end()));
     return result;
 }
@@ -91,7 +91,7 @@ std::string cvWideStringToUTF8(const std::wstring& other)
         // If that fails, assume pure unicode
         result.clear();
         // Use unsigned elements to avoid wrong sign extension
-        typedef GetUnsignedIterator<std::wstring>::type UIterator;
+        using UIterator = GetUnsignedIterator<std::wstring>::type;
         utf8::utf32to8(UIterator(other.begin()), UIterator(other.end()), std::back_inserter(result));
         return result;
     }
@@ -112,7 +112,7 @@ ucString cvWideStringToUnicode(const std::wstring& other)
         ucString result;
         result.reserve(other.size());
         // Use unsigned elements to avoid wrong sign extension
-        typedef GetUnsignedIterator<std::wstring>::UnsignedIterator UIterator;
+        using UIterator = GetUnsignedIterator<std::wstring>::UnsignedIterator;
         result.assign(UIterator(other.begin()), UIterator(other.end()));
         return result;
     }
@@ -142,7 +142,7 @@ std::string cvStringToUTF8(const std::string& other)
     std::string result;
     result.reserve(other.length());
     // Use unsigned elements to avoid wrong sign extension
-    typedef GetUnsignedIterator<std::string>::type UIterator;
+    using UIterator = GetUnsignedIterator<std::string>::type;
     utf8::utf32to8(UIterator(other.begin()), UIterator(other.end()), std::back_inserter(result));
     return result;
 }
@@ -151,7 +151,7 @@ ucString cvStringToUnicode(const std::string& other)
 {
     ucString result;
     // Use unsigned elements to avoid wrong sign extension
-    typedef GetUnsignedIterator<std::string>::type UIterator;
+    using UIterator = GetUnsignedIterator<std::string>::type;
     result.assign(UIterator(other.begin()), UIterator(other.end()));
     return result;
 }

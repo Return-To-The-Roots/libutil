@@ -33,7 +33,7 @@ class BinaryFile;
 /// Implementiert einen FIFO (push fügt ans ende, pop entfernt am anfang)
 class Serializer
 {
-    typedef libendian::ConvertEndianess<true> Converter;
+    using Converter = libendian::ConvertEndianess<true>;
 
 public:
     Serializer() = default;

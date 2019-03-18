@@ -24,7 +24,7 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 
-typedef int socklen_t;
+using socklen_t = int;
 #else
 #include <netinet/in.h>
 #include <sys/socket.h>

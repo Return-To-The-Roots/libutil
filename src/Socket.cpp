@@ -395,7 +395,7 @@ Socket Socket::Accept()
         return Socket();
 
     // Verbindung annehmen
-    SOCKET tmp = accept(socket_, 0, 0);
+    SOCKET tmp = accept(socket_, nullptr, nullptr);
     if(tmp == INVALID_SOCKET)
         return Socket();
 

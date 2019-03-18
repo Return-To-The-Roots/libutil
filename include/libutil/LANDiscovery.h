@@ -26,7 +26,7 @@
 class LANDiscoveryBase
 {
 public:
-    typedef std::array<char, 7> Magic_t;
+    using Magic_t = std::array<char, 7>;
     struct Config
     {
         Magic_t magicQuery, magicResponse;
@@ -46,7 +46,7 @@ public:
     struct Info
     {
         // Struct must be send over network with a fixed size
-        typedef std::array<char, 192> Payload;
+        using Payload = std::array<char, 192>;
         std::array<char, sizeof(Magic_t) + sizeof(uint8_t) * 2 + sizeof(Payload)> data;
         Magic_t& GetMagic() { return reinterpret_cast<Magic_t&>(data[0]); }
         uint8_t& GetVersion() { return reinterpret_cast<uint8_t&>(data[sizeof(Magic_t)]); }

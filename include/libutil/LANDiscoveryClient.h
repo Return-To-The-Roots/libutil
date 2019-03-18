@@ -30,7 +30,7 @@ public:
         std::string ip;
         Info info;
     };
-    typedef std::map<std::string, ServiceInfo> ServiceMap;
+    using ServiceMap = std::map<std::string, ServiceInfo>;
 
     LANDiscoveryClient(const Config& cfg);
     ~LANDiscoveryClient();

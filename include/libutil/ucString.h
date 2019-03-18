@@ -22,7 +22,7 @@
 #include <string>
 
 /// Typedef for storing and managing an Unicode (UTF-32) string
-typedef std::basic_string<uint32_t> ucString;
+using ucString = std::basic_string<uint32_t>;
 
 //////////////////////////////////////////////////////////////////////////
 // Convert UTF8<->Unicode strings

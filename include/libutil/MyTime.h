@@ -24,7 +24,7 @@
 
 namespace s25util {
 
-typedef int64_t time64_t;
+using time64_t = int64_t;
 
 struct Time
 {

@@ -120,7 +120,7 @@ namespace detail {
     struct ToStringClassic<T, std::enable_if_t<std::is_floating_point<T>::value>>
     {
         // Calculate required precision as done by Boost.Lexical_Cast
-        typedef std::numeric_limits<T> limits;
+        using limits = std::numeric_limits<T>;
         static_assert(limits::radix == 2 && limits::digits > 0, "");
         static constexpr unsigned long precision = 2UL + limits::digits * 30103UL / 100000UL;
         static_assert(static_cast<unsigned long>(limits::digits) < ULONG_MAX / 30103UL

@@ -348,7 +348,7 @@ std::vector<std::string> UPnP::GetAllv4Addresses()
     struct hostent* hosts = gethostbyname(host);
     if(hosts)
     {
-        for(int i = 0; hosts->h_addr_list[i] != 0; ++i)
+        for(int i = 0; hosts->h_addr_list[i] != nullptr; ++i)
         {
             struct in_addr addr;
             memcpy(&addr, hosts->h_addr_list[i], sizeof(struct in_addr));

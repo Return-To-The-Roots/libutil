@@ -26,7 +26,7 @@ namespace bfs = boost::filesystem;
 
 #if defined(__MINGW32__) && !defined(REFKNOWNFOLDERID)
 
-typedef GUID KNOWNFOLDERID;
+using KNOWNFOLDERID = GUID;
 #define REFKNOWNFOLDERID const KNOWNFOLDERID&
 
 #define DEFINE_KNOWN_FOLDER(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
