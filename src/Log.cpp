@@ -33,7 +33,7 @@ namespace bfs = boost::filesystem;
 
 Log::Log() : stdoutWriter(new StdStreamWriter(true)), stderrWriter(new StdStreamWriter(false)), logFilepath("logs") {}
 
-Log::~Log() {}
+Log::~Log() = default;
 
 void Log::setLogFilepath(const std::string& filepath)
 {

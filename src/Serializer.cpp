@@ -24,27 +24,6 @@ Serializer::Serializer(const void* const data, unsigned initial_size)
     PushRawData(data, initial_size);
 }
 
-Serializer::Serializer(const Serializer& other) : data_(other.data_), length_(other.length_), pos_(other.pos_) {}
-
-Serializer::Serializer() : data_(0), length_(0), pos_(0) {}
-
-Serializer::~Serializer()
-{
-    Clear();
-}
-
-Serializer& Serializer::operator=(const Serializer& other)
-{
-    if(this == &other)
-        return *this;
-
-    data_ = other.data_;
-    length_ = other.length_;
-    pos_ = other.pos_;
-
-    return *this;
-}
-
 void Serializer::Clear()
 {
     data_.clear();
@@ -70,8 +49,7 @@ void Serializer::ReadFromFile(BinaryFile& file)
 {
     Clear();
 
-    unsigned buffer_size;
-    buffer_size = file.ReadUnsignedInt();
+    unsigned buffer_size = file.ReadUnsignedInt();
     file.ReadRawData(GetDataWritable(buffer_size), buffer_size);
     SetLength(buffer_size);
 }

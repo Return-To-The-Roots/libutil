@@ -30,10 +30,8 @@ class Socket;
 class MessageQueue : protected MessageHandler
 {
 public:
-    MessageQueue(CreateMsgFunction createfunction);
-    MessageQueue(const MessageQueue& other);
+    explicit MessageQueue(CreateMsgFunction createfunction);
     ~MessageQueue();
-    MessageQueue& operator=(const MessageQueue& other);
 
     void clear();
 

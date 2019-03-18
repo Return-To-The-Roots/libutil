@@ -36,13 +36,10 @@ class Serializer
     typedef libendian::ConvertEndianess<true> Converter;
 
 public:
-    Serializer();
-    Serializer(const Serializer& other);
+    Serializer() = default;
     Serializer(const void* const data, unsigned initial_size);
 
-    virtual ~Serializer();
-
-    Serializer& operator=(const Serializer& other);
+    virtual ~Serializer() = default;
 
     /// Aufräumen
     void Clear();
@@ -129,9 +126,9 @@ private:
     /// data mit den Daten
     boost::container::vector<uint8_t> data_;
     /// Logische Länge
-    unsigned length_;
+    unsigned length_ = 0;
     /// Schreib/Leseposition
-    unsigned pos_;
+    unsigned pos_ = 0;
 
     /// Checks if data of size len can be popped
     void CheckSize(unsigned len) const;

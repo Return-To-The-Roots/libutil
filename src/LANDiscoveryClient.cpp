@@ -19,7 +19,7 @@
 
 LANDiscoveryClient::LANDiscoveryClient(const Config& cfg) : LANDiscoveryBase(cfg, false), isRunning(false) {}
 
-LANDiscoveryClient::~LANDiscoveryClient() {}
+LANDiscoveryClient::~LANDiscoveryClient() = default;
 
 bool LANDiscoveryClient::Start()
 {
