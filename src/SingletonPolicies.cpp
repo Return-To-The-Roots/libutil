@@ -43,8 +43,8 @@ public:
     ~LifetimeTracker() override
     {
         // Destroy all items
-        for(Container::iterator it = items_.begin(); it != items_.end(); ++it)
-            it->destFunc_();
+        for(auto item : items_)
+            item.destFunc_();
     }
 
     void add(unsigned longevity, DestructionFunPtr destFunc)
