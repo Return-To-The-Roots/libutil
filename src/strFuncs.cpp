@@ -19,6 +19,7 @@
 #include <cstring>
 #include <random>
 #include <stdexcept>
+#include <utility>
 
 namespace detail {
 
@@ -72,7 +73,7 @@ std::string createRandString(size_t len, RandCharCreator creator) //-V813
 {
     std::string result;
     result.resize(len);
-    std::generate_n(result.begin(), len, creator);
+    std::generate_n(result.begin(), len, std::move(creator));
     return result;
 }
 } // namespace

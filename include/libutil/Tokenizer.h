@@ -35,7 +35,7 @@ public:
      *
      *  @author FloSoft
      */
-    explicit Tokenizer(const std::string& data, const std::string& delimiter = "; \t");
+    explicit Tokenizer(std::string data, std::string delimiter = "; \t");
 
     /**
      *  Get the state of the Tokenizer
