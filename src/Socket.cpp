@@ -20,6 +20,7 @@
 #include "SocketSet.h"
 #include "StringConversion.h"
 #include "strFuncs.h"
+#include <array>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -571,8 +572,8 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
                         {
                             union
                             {
-                                char proxyinit[18];
-                                unsigned short proxyInitShort[9];
+                                std::array<char, 18> proxyinit;
+                                std::array<unsigned short, 9> proxyInitShort;
                             };
 
                             proxyinit[0] = 4; // socks v4
@@ -585,7 +586,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
                             }
                             strcpy_check(proxyinit, 8, "siedler25"); // userid
 
-                            Send(proxyinit, 18);
+                            Send(proxyinit);
 
                             int proxy_timeout = 0;
                             while(BytesWaiting() < 8 && proxy_timeout < 8)
@@ -823,7 +824,7 @@ SOCKET Socket::GetSocket() const
  */
 std::string Socket::IpToString(const sockaddr* addr)
 {
-    static char temp[256];
+    std::array<char, 256> temp;
 
 #ifdef _WIN32
     size_t size;
@@ -842,7 +843,7 @@ std::string Socket::IpToString(const sockaddr* addr)
 
     DWORD le = GetLastError();
     DWORD templen = sizeof(temp);
-    WSAAddressToStringA(copy, static_cast<DWORD>(size), nullptr, temp, &templen);
+    WSAAddressToStringA(copy, static_cast<DWORD>(size), nullptr, temp.data(), &templen);
     SetLastError(le);
 
     free(copy);
@@ -857,8 +858,8 @@ std::string Socket::IpToString(const sockaddr* addr)
         ip = &(((const sockaddr_in6*)addr)->sin6_addr);
     }
 
-    inet_ntop(addr->sa_family, ip, temp, sizeof(temp));
+    inet_ntop(addr->sa_family, ip, temp.data(), sizeof(temp));
 #endif
 
-    return temp;
+    return temp.data();
 }

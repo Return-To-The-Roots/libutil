@@ -97,7 +97,7 @@ std::string getExecutablePath()
 
 std::string getExecutablePath()
 {
-    int mib[4] = {CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1};
+    std::array<int, 4> mib = {CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1};
     std::vector<char> buf(1024, 0);
     size_t size = buf.size();
     if(sysctl(mib, 4, &buf[0], &size, nullptr, 0) != 0)

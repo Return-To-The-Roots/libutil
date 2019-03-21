@@ -41,6 +41,7 @@ struct addrinfo;
 #include "ProxySettings.h"
 #include "UPnP.h"
 #include <algorithm>
+#include <array>
 #include <cstddef>
 #include <stdint.h>
 #include <string>
@@ -138,11 +139,21 @@ public:
     int Recv(void* const buffer, const int length, bool block = true);
     /// Reads data from socket and returns peer address. Can be used for unbound sockets
     int Recv(void* const buffer, const int length, PeerAddr& addr);
+    template<typename T, size_t T_size>
+    int Recv(std::array<T, T_size>& buffer, const int length = T_size * sizeof(T), bool block = true)
+    {
+        return Recv(buffer.data(), length, block);
+    }
 
     /// schreibt Daten von einem Puffer auf das Socket.
     int Send(const void* const buffer, const int length);
     /// Sends data to the specified address (only for connectionless sockets!)
     int Send(const void* const buffer, const int length, const PeerAddr& addr);
+    template<typename T, size_t T_size>
+    int Send(const std::array<T, T_size>& buffer)
+    {
+        return Send(buffer.data(), buffer.size() * sizeof(T));
+    }
 
     /// setzt eine Socketoption.
     bool SetSockOpt(int nOptionName, const void* lpOptionValue, int nOptionLen, int nLevel = IPPROTO_TCP);

@@ -17,6 +17,7 @@
 #ifndef STR_FUNCS_H_INCLUDED
 #define STR_FUNCS_H_INCLUDED
 
+#include <array>
 #include <cassert>
 #include <cstddef>
 #include <stdint.h>
@@ -50,6 +51,13 @@ void strcpy_check(char (&output)[T_size], const size_t offset, const char* pSrc)
 {
     assert(offset <= T_size);
     detail::strcpyExt_check(output + offset, pSrc, T_size - offset);
+}
+
+template<size_t T_size>
+void strcpy_check(std::array<char, T_size>& output, const size_t offset, const char* pSrc)
+{
+    assert(offset <= T_size);
+    detail::strcpyExt_check(output.data() + offset, pSrc, T_size - offset);
 }
 
 /// Copies a C-String into a buffer (with terminating zero)

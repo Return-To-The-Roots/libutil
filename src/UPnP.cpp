@@ -16,6 +16,7 @@
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
 #include "UPnP.h"
+#include <array>
 
 #ifdef _WIN32
 #include "Log.h"
@@ -200,8 +201,8 @@ bool UPnP::OpenPort(const unsigned short& port)
 
     UPNPUrls urls;
     IGDdatas data;
-    char lanAddr[64];
-    hr = UPNP_GetValidIGD(devicelist, &urls, &data, lanAddr, sizeof(lanAddr));
+    std::array<char, 64> lanAddr;
+    hr = UPNP_GetValidIGD(devicelist, &urls, &data, lanAddr.data(), sizeof(lanAddr));
 
     if(hr == 1 || hr == 2)
     {
@@ -209,11 +210,11 @@ bool UPnP::OpenPort(const unsigned short& port)
         p << port;
 
 #ifdef UPNPDISCOVER_SUCCESS
-        hr = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype, p.str().c_str(), p.str().c_str(), lanAddr, "Return To The Roots",
-                                 "TCP", nullptr, nullptr);
+        hr = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype, p.str().c_str(), p.str().c_str(), lanAddr.data(),
+                                 "Return To The Roots", "TCP", nullptr, nullptr);
 #else
-        hr = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype, p.str().c_str(), p.str().c_str(), lanAddr, "Return To The Roots",
-                                 "TCP", nullptr);
+        hr = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype, p.str().c_str(), p.str().c_str(), lanAddr.data(),
+                                 "Return To The Roots", "TCP", nullptr);
 #endif
     }
 
@@ -321,7 +322,7 @@ std::vector<std::string> UPnP::GetAllv4Addresses()
 #else
     struct ifaddrs *ifaddr, *ifa;
     int family;
-    char address[NI_MAXHOST];
+    std::array<char, NI_MAXHOST> address;
 
     if(getifaddrs(&ifaddr) > 0)
     {
@@ -331,10 +332,10 @@ std::vector<std::string> UPnP::GetAllv4Addresses()
 
             if(family == AF_INET || family == AF_INET6)
             {
-                if(getnameinfo(ifa->ifa_addr, (family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6), address,
-                               NI_MAXHOST, nullptr, 0, NI_NUMERICHOST)
+                if(getnameinfo(ifa->ifa_addr, (family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6),
+                               address.data(), address.size(), nullptr, 0, NI_NUMERICHOST)
                    == 0)
-                    addresses.push_back(address);
+                    addresses.push_back(address.data());
             }
         }
         freeifaddrs(ifaddr);
@@ -342,10 +343,10 @@ std::vector<std::string> UPnP::GetAllv4Addresses()
 #endif
 
     // and failback solution: read address from hostname
-    char host[512];
-    gethostname(host, 512);
+    std::array<char, 512> host;
+    gethostname(host.data(), sizeof(host));
 
-    struct hostent* hosts = gethostbyname(host);
+    struct hostent* hosts = gethostbyname(host.data());
     if(hosts)
     {
         for(int i = 0; hosts->h_addr_list[i] != nullptr; ++i)
