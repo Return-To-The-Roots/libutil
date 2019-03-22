@@ -189,5 +189,5 @@ void BinaryFile::Flush()
 
 bool BinaryFile::EndOfFile() const
 {
-    return feof(file) ? true : false;
+    return feof(file) != 0;
 }

@@ -30,7 +30,7 @@ public:
     bool OpenPort(const unsigned short& port);
     void ClosePort();
 
-    std::vector<std::string> GetAllv4Addresses();
+    static std::vector<std::string> GetAllv4Addresses();
 
 private:
     unsigned short remote_port_;

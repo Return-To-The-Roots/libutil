@@ -88,17 +88,9 @@ UPnP::~UPnP()
     ClosePort();
 }
 
-/**
- *  Erstellt per UPnP ein Portforwarding.
- */
-bool UPnP::OpenPort(const unsigned short& port)
-{
-    if(remote_port_ != 0)
-        ClosePort();
-
-    remote_port_ = port;
-
 #ifdef _MSC_VER
+static bool doOpenPort(const uint16_t port)
+{
     HRESULT hr;
 
     CoInitialize(nullptr);
@@ -124,14 +116,14 @@ bool UPnP::OpenPort(const unsigned short& port)
     }
 
     std::string local_address;
-    std::vector<std::string> addresses = GetAllv4Addresses();
+    std::vector<std::string> addresses = UPnP.GetAllv4Addresses();
 
     // if we have multiple addresses, search the private one
     if(addresses.size() > 1)
     {
-        for(std::vector<std::string>::iterator addr = addresses.begin(); addr != addresses.end(); ++addr)
+        for(const std::string& addr : addresses)
         {
-            std::string ss = *addr;
+            std::string ss = addr;
             std::stringstream s, sc;
             s << ss;
             std::getline(s, ss, '.'); //-V760
@@ -149,7 +141,7 @@ bool UPnP::OpenPort(const unsigned short& port)
                (ab & 0xff000000) == 0x7f000000 || // 127.0.0.0/8
                (ab & 0xfff00000) == 0xac100000 || // 172.16.0.0/12
                (ab & 0xffff0000) == 0xc0a80000)   // 192.168.0.0/16
-                local_address = *addr;
+                local_address = addr;
         }
     }
 
@@ -180,8 +172,22 @@ bool UPnP::OpenPort(const unsigned short& port)
 
     SetLastError(hr);
 
-    if(SUCCEEDED(hr) && upnpspm)
-        return true;
+    return (SUCCEEDED(hr) && upnpspm);
+}
+#endif
+
+/**
+ *  Erstellt per UPnP ein Portforwarding.
+ */
+bool UPnP::OpenPort(const unsigned short& port)
+{
+    if(remote_port_ != 0)
+        ClosePort();
+
+    remote_port_ = port;
+
+#ifdef _MSC_VER
+    return doOpenPort(port);
 #else
     int hr;
     UPNPDev* devicelist = nullptr;
@@ -220,10 +226,8 @@ bool UPnP::OpenPort(const unsigned short& port)
 
     freeUPNPDevlist(devicelist);
 
-    if(hr == 0)
-        return true;
+    return (hr == 0);
 #endif
-    return false;
 }
 
 void UPnP::ClosePort()

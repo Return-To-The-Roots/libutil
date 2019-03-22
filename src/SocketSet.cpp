@@ -102,10 +102,5 @@ bool SocketSet::InSet(const Socket& sock)
     if(s == INVALID_SOCKET)
         return false;
 
-    // Ist unser Socket im Set?
-    if(FD_ISSET(s, &set))
-        return true;
-
-    // nein, nicht drin
-    return false;
+    return FD_ISSET(s, &set);
 }

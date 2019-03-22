@@ -103,7 +103,7 @@ bool Serializer::PopBool()
 {
     unsigned char value = PopUnsignedChar();
     assert(value == 0 || value == 1);
-    return ((value != 0) ? true : false);
+    return (value != 0);
 }
 
 std::string Serializer::PopString()
