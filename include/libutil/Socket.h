@@ -29,10 +29,9 @@ using socklen_t = int;
 #include <netinet/in.h>
 #include <sys/socket.h>
 
-#define SOCKET int
-#define INVALID_SOCKET -1
-#define SOCKET_ERROR -1
-#define HINSTANCE void*
+using SOCKET = int;
+constexpr auto INVALID_SOCKET = -1;
+constexpr auto SOCKET_ERROR = -1;
 
 #define closesocket close
 struct addrinfo;

@@ -21,7 +21,7 @@
 
 /// Makes a strongly typed enum usable as a bitset
 #define MAKE_BITSET_STRONG(Type)                                                                              \
-    inline Type operator&(Type lhs, Type rhs) { return Type(static_cast<int>(lhs) & static_cast<int>(rhs)); } \
-    inline Type operator|(Type lhs, Type rhs) { return Type(static_cast<int>(lhs) | static_cast<int>(rhs)); }
+    inline auto operator&(Type lhs, Type rhs) { return Type(static_cast<int>(lhs) & static_cast<int>(rhs)); } \
+    inline auto operator|(Type lhs, Type rhs) { return Type(static_cast<int>(lhs) | static_cast<int>(rhs)); }
 
 #endif // enumUtils_h__

@@ -23,7 +23,7 @@
 #include <winsock2.h>
 #else
 #include <sys/select.h>
-#define SOCKET int
+using SOCKET = int;
 #endif // _WIN32
 
 class Socket;
