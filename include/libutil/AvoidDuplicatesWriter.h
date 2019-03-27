@@ -21,12 +21,13 @@
 #include "TextWriterInterface.h"
 #include <memory>
 #include <string>
+#include <utility>
 
 /// Adapter that avoids duplicate lines
 class AvoidDuplicatesWriter : public TextWriterInterface
 {
 public:
-    AvoidDuplicatesWriter(std::shared_ptr<TextWriterInterface> writer) : origWriter(writer) {}
+    AvoidDuplicatesWriter(std::shared_ptr<TextWriterInterface> writer) : origWriter(std::move(writer)) {}
     void writeText(const std::string& txt, unsigned color) override;
     void reset() { lastLine.clear(); }
     std::shared_ptr<TextWriterInterface> origWriter;

@@ -20,6 +20,7 @@
 
 #include <cstdint>
 #include <string>
+#include <utility>
 
 enum ProxyType
 {
@@ -30,7 +31,7 @@ enum ProxyType
 struct ProxySettings
 {
     ProxySettings() : type(PROXY_NONE), port(0) {}
-    ProxySettings(ProxyType type, const std::string& hostname, uint16_t port) : type(type), hostname(hostname), port(port) {}
+    ProxySettings(ProxyType type, std::string hostname, uint16_t port) : type(type), hostname(std::move(hostname)), port(port) {}
     ProxyType type;
     std::string hostname;
     uint16_t port;
