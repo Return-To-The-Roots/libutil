@@ -23,7 +23,7 @@ namespace nowide {
     public:
         args(int &,char **&) {}
         args(int &,char **&,char **&){}
-        ~args() {}
+        ~args() = default;
     };
 
     #else

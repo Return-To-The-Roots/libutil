@@ -18,7 +18,7 @@
 #ifndef ucString_h__
 #define ucString_h__
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 
 /// Typedef for storing and managing an Unicode (UTF-32) string

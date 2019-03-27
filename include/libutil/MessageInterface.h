@@ -22,7 +22,7 @@
 class MessageInterface
 {
 protected:
-    virtual ~MessageInterface() {}
+    virtual ~MessageInterface() = default;
 
 public:
     /// Null-Nachricht.

@@ -29,7 +29,7 @@ public:
     LANDiscoveryService(const Config& cfg);
     ~LANDiscoveryService();
     /// Sets the payload data to send
-    void SetPayload(const void* const data, size_t len);
+    void SetPayload(const void* data, size_t len);
     /// Initializes the service so it can be run
     bool Start();
     /// Closes the service sending a final close packet if it was running

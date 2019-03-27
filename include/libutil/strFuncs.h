@@ -20,7 +20,7 @@
 #include <array>
 #include <cassert>
 #include <cstddef>
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 
 // Provides safe C-String functions by preventing buffer overflows
@@ -30,7 +30,7 @@ namespace detail {
 
 /// Copies a C-String into a buffer (with terminating zero)
 /// Throws an exception on buffer overflow (strlen(pSrc) >= maxChars)
-void strcpyExt(char* pOut, const char* pSrc, const size_t maxChars);
+void strcpyExt(char* pOut, const char* pSrc, size_t maxChars);
 } // namespace detail
 
 /// Copies a C-String into a buffer (with terminating zero)

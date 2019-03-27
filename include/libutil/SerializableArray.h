@@ -32,7 +32,7 @@ public:
     using iterator = typename Storage::iterator;
     using const_iterator = typename Storage::const_iterator;
 
-    SerializableArray() {}
+    SerializableArray() = default;
 
     template<typename T>
     friend class SerializableArray;

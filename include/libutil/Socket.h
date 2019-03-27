@@ -42,7 +42,7 @@ struct addrinfo;
 #include <algorithm>
 #include <array>
 #include <cstddef>
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -80,7 +80,7 @@ class PeerAddr
 
 public:
     /// Uninitilized value!
-    PeerAddr() {} //-V730
+    PeerAddr() = default; //-V730
     /// Initializes the address to a broadcast on the given port
     PeerAddr(unsigned short port);
 
@@ -104,7 +104,7 @@ private:
 
 public:
     Socket();
-    Socket(const SOCKET so, Status st);
+    Socket(SOCKET so, Status st);
     Socket(const Socket& so);
     ~Socket();
 
@@ -132,12 +132,12 @@ public:
     Socket Accept();
 
     /// versucht eine Verbindung mit einem externen Host aufzubauen.
-    bool Connect(const std::string& hostname, const unsigned short port, bool use_ipv6, const ProxySettings& proxy = ProxySettings());
+    bool Connect(const std::string& hostname, unsigned short port, bool use_ipv6, const ProxySettings& proxy = ProxySettings());
 
     /// liest Daten vom Socket in einen Puffer.
-    int Recv(void* const buffer, const int length, bool block = true);
+    int Recv(void* buffer, int length, bool block = true);
     /// Reads data from socket and returns peer address. Can be used for unbound sockets
-    int Recv(void* const buffer, const int length, PeerAddr& addr);
+    int Recv(void* buffer, int length, PeerAddr& addr);
     template<typename T, size_t T_size>
     int Recv(std::array<T, T_size>& buffer, const int length = T_size * sizeof(T), bool block = true)
     {
@@ -145,9 +145,9 @@ public:
     }
 
     /// schreibt Daten von einem Puffer auf das Socket.
-    int Send(const void* const buffer, const int length);
+    int Send(const void* buffer, int length);
     /// Sends data to the specified address (only for connectionless sockets!)
-    int Send(const void* const buffer, const int length, const PeerAddr& addr);
+    int Send(const void* buffer, int length, const PeerAddr& addr);
     template<typename T, size_t T_size>
     int Send(const std::array<T, T_size>& buffer)
     {
@@ -177,7 +177,7 @@ public:
 
     void Sleep(unsigned ms);
 
-    std::vector<HostAddr> HostToIp(const std::string& hostname, const unsigned port, bool get_ipv6, bool useUDP = false);
+    std::vector<HostAddr> HostToIp(const std::string& hostname, unsigned port, bool get_ipv6, bool useUDP = false);
 
     /// liefert einen string der übergebenen Ip.
     static std::string IpToString(const sockaddr* addr);
@@ -198,7 +198,7 @@ public:
 
 private:
     /// Setzt ein Socket auf übergebene Werte.
-    void Set(const SOCKET socket, Status status);
+    void Set(SOCKET socket, Status status);
 
     SOCKET socket_; /// Unser Socket
     /// Number of references to the socket, free only on <=0!

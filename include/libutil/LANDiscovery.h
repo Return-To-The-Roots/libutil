@@ -20,7 +20,7 @@
 
 #include "Socket.h"
 #include <array>
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 
 class LANDiscoveryBase
@@ -65,7 +65,7 @@ protected:
     /// Returns true if any data is available to read
     bool IsDataAvailable();
     /// Sends a broadcast
-    void Broadcast(const void* const buffer, const int len);
+    void Broadcast(const void* buffer, int len);
 
     const Config config;
     Socket socket;

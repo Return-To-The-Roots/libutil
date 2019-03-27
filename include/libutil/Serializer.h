@@ -22,9 +22,9 @@
 #include "libendian/ConvertEndianess.h"
 #include <boost/container/vector.hpp>
 #include <cassert>
+#include <cstdint>
 #include <cstring>
 #include <stdexcept>
-#include <stdint.h>
 #include <string>
 
 class BinaryFile;
@@ -37,7 +37,7 @@ class Serializer
 
 public:
     Serializer() = default;
-    Serializer(const void* const data, unsigned initial_size);
+    Serializer(const void* data, unsigned initial_size);
 
     virtual ~Serializer() = default;
 
@@ -50,7 +50,7 @@ public:
     unsigned GetLength() const { return length_; }
 
     /// Schreibzugriff auf die Länge
-    void SetLength(const unsigned length);
+    void SetLength(unsigned length);
 
     unsigned GetBytesLeft() const;
 
@@ -114,7 +114,7 @@ protected:
     T Pop();
 
     template<typename T>
-    void Push(T i);
+    void Push(T val);
 
     /// Erweitert ggf. Speicher um add_length
     void ExtendMemory(unsigned add_length) { EnsureSize(length_ + add_length); }
@@ -192,17 +192,17 @@ inline T Serializer::Pop()
 }
 
 template<typename T>
-inline void Serializer::Push(T i)
+inline void Serializer::Push(T val)
 {
     if(sizeof(T) == 1)
     {
         ExtendMemory(sizeof(T));
-        data_[length_] = static_cast<uint8_t>(i);
+        data_[length_] = static_cast<uint8_t>(val);
         length_ += sizeof(T);
     } else
     {
-        i = Converter::fromNative(i);
-        PushRawData(&i, sizeof(i));
+        val = Converter::fromNative(val);
+        PushRawData(&val, sizeof(val));
     }
 }
 

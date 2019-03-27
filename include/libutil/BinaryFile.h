@@ -39,7 +39,7 @@ public:
     ~BinaryFile() { Close(); }
 
     /// Öffnet eine Datei: liefert true falls erfolgreich
-    bool Open(const std::string& filePath, const OpenFileMode of);
+    bool Open(const std::string& filePath, OpenFileMode of);
     /// Schließt eine Datei: liefert true falls erfolgreich
     bool Close();
 
@@ -50,7 +50,7 @@ public:
     void WriteUnsignedShort(uint16_t i) const;
     void WriteSignedChar(char i) const;
     void WriteUnsignedChar(unsigned char i) const;
-    void WriteRawData(const void* const data, const unsigned length) const;
+    void WriteRawData(const void* data, unsigned length) const;
 
     void WriteShortString(const std::string& str); /// Länge max 254
     void WriteLongString(const std::string& str);  /// Länge max 2^32-2
@@ -62,13 +62,13 @@ public:
     unsigned short ReadUnsignedShort();
     char ReadSignedChar();
     unsigned char ReadUnsignedChar();
-    void ReadRawData(void* const data, const unsigned length);
+    void ReadRawData(void* data, unsigned length);
 
     std::string ReadShortString(); /// Länge max 254
     std::string ReadLongString();  /// Länge max 2^32-2
 
     /// Setzt den Dateizeiger
-    void Seek(const long pos, const int origin);
+    void Seek(long pos, int origin);
     /// Liefert Den Dateizeiger
     unsigned Tell() const;
     /// Schreibt alles richtig in die Datei

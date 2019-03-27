@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 
 class MessageInterface;
 class Serializer;
@@ -30,7 +30,7 @@ class Message
 
 public:
     Message(uint16_t id) : msgId_(id) {}
-    virtual ~Message() {}
+    virtual ~Message() = default;
 
     virtual void Serialize(Serializer& /*ser*/) const {}
     virtual void Deserialize(Serializer& /*ser*/) {}
@@ -45,7 +45,7 @@ public:
     virtual bool run(MessageInterface* callback, unsigned id) = 0;
 
 protected:
-    Message(const Message& other) : msgId_(other.msgId_) {}
+    Message(const Message& other) = default;
 
     Message& operator=(const Message& other)
     {
