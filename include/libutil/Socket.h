@@ -106,9 +106,10 @@ public:
     Socket();
     Socket(SOCKET so, Status st);
     Socket(const Socket& so);
+    Socket(Socket&& so);
     ~Socket();
 
-    Socket& operator=(const Socket& rhs);
+    Socket& operator=(Socket rhs);
 
     /// Initialisiert die Socket-Bibliothek.
     static bool Initialize();

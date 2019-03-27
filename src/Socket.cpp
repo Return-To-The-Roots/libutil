@@ -167,22 +167,21 @@ Socket::Socket(const Socket& so) : socket_(so.socket_), refCount_(so.refCount_),
         ++*refCount_;
 }
 
+Socket::Socket(Socket&& so) : socket_(so.socket_), refCount_(so.refCount_), status_(so.status_), isBroadcast(so.isBroadcast)
+{
+    so.socket_ = INVALID_SOCKET;
+    so.refCount_ = nullptr;
+    so.status_ = Status::Invalid;
+}
+
 Socket::~Socket()
 {
     Close();
 }
 
-Socket& Socket::operator=(const Socket& rhs)
+Socket& Socket::operator=(Socket rhs)
 {
-    if(this == &rhs)
-        return *this;
-    // Close our socket
-    Close();
-    // Get the other one
-    Set(rhs.socket_, rhs.status_);
-    refCount_ = rhs.refCount_;
-    if(refCount_)
-        ++*refCount_;
+    swap(*this, rhs);
     return *this;
 }
 
