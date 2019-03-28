@@ -76,12 +76,12 @@ std::string Time::FormatTime(const std::string& format, time64_t time)
     res << std::setfill('0');
 
     bool isInFormat = false;
-    for(std::string::const_iterator c = format.begin(); c != format.end(); ++c)
+    for(const auto c : format)
     {
         if(isInFormat)
         {
             isInFormat = false;
-            switch(*c)
+            switch(c)
             {
                 case 'Y': res << setw(4) << (1900 + time_data->tm_year); break;
                 case 'm': res << setw(2) << (time_data->tm_mon + 1); break;
@@ -92,13 +92,13 @@ std::string Time::FormatTime(const std::string& format, time64_t time)
                 case '%': res << '%'; break;
                 default:
                     std::cerr << "Invalid format string: " << format << std::endl;
-                    res << *c;
+                    res << c;
                     break;
             }
-        } else if(*c == '%')
+        } else if(c == '%')
             isInFormat = true;
         else
-            res << *c;
+            res << c;
     }
 
     if(isInFormat)

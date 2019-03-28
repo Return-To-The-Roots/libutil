@@ -62,12 +62,10 @@ class ResolvedAddr
     bool lookup;
     addrinfo* addr;
 
-    // Do not copy
-    ResolvedAddr(const ResolvedAddr&);
-    ResolvedAddr& operator=(const ResolvedAddr&);
-
 public:
     ResolvedAddr(const HostAddr& hostAddr, bool resolveAll = false);
+    ResolvedAddr(const ResolvedAddr&) = delete;
+    ResolvedAddr& operator=(const ResolvedAddr&) = delete;
     ~ResolvedAddr();
 
     addrinfo& getAddr() { return *addr; }
@@ -106,7 +104,7 @@ public:
     Socket();
     Socket(SOCKET so, Status st);
     Socket(const Socket& so);
-    Socket(Socket&& so);
+    Socket(Socket&& so) noexcept;
     ~Socket();
 
     Socket& operator=(Socket rhs);

@@ -167,7 +167,7 @@ Socket::Socket(const Socket& so) : socket_(so.socket_), refCount_(so.refCount_),
         ++*refCount_;
 }
 
-Socket::Socket(Socket&& so) : socket_(so.socket_), refCount_(so.refCount_), status_(so.status_), isBroadcast(so.isBroadcast)
+Socket::Socket(Socket&& so) noexcept : socket_(so.socket_), refCount_(so.refCount_), status_(so.status_), isBroadcast(so.isBroadcast)
 {
     so.socket_ = INVALID_SOCKET;
     so.refCount_ = nullptr;
@@ -490,25 +490,15 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
 
     bool done = false;
 
-    std::vector<HostAddr>::const_iterator start, end;
-
     // do not use proxy for connecting to localhost
-    if(proxy.type != PROXY_NONE && hostname != "localhost")
-    {
-        start = proxy_ips.begin();
-        end = proxy_ips.end();
-    } else
-    {
-        start = ips.begin();
-        end = ips.end();
-    }
+    const std::vector<HostAddr>& usedIPs = (proxy.type != PROXY_NONE && hostname != "localhost") ? proxy_ips : ips;
 
-    for(auto it = start; it != end; ++it)
+    for(const auto& it : usedIPs)
     {
-        if(it->isUDP)
+        if(it.isUDP)
             throw std::invalid_argument("Cannot connect to UDP (yet)");
 
-        if(!Create(it->ipv6 ? AF_INET6 : AF_INET))
+        if(!Create(it.ipv6 ? AF_INET6 : AF_INET))
             continue;
 
         // aktiviere non-blocking
@@ -519,10 +509,10 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
         ioctl(socket_, FIONBIO, &argp);
 #endif
 
-        ResolvedAddr addr(*it);
+        ResolvedAddr addr(it);
         if(!addr.isValid())
         {
-            LOG.write("Could not resolve %s. Skipping...\n") % it->host;
+            LOG.write("Could not resolve %s. Skipping...\n") % it.host;
             continue;
         }
         std::string ip = IpToString(addr.getAddr().ai_addr); //-V807
@@ -578,10 +568,11 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
                             proxyinit[0] = 4; // socks v4
                             proxyinit[1] = 1; // 1=connect
                             proxyInitShort[1] = htons(port);
-                            for(std::vector<HostAddr>::const_iterator it = ips.begin(); it != ips.end(); ++it)
+                            for(const auto& hostAddr : ips)
                             {
-                                if(!it->ipv6)
-                                    sscanf(it->host.c_str(), "%c.%c.%c.%c", &proxyinit[4], &proxyinit[5], &proxyinit[6], &proxyinit[7]);
+                                if(!hostAddr.ipv6)
+                                    sscanf(hostAddr.host.c_str(), "%c.%c.%c.%c", &proxyinit[4], &proxyinit[5], &proxyinit[6],
+                                           &proxyinit[7]);
                             }
                             strcpy_check(proxyinit, 8, "siedler25"); // userid
 

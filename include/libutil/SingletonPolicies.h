@@ -24,7 +24,7 @@
 namespace SingletonPolicies {
 
 /// Type of the pointer to the destruction function
-typedef void (*DestructionFunPtr)();
+using DestructionFunPtr = void (*)();
 
 /// Policy that throws an exception on a dead ref
 template<typename T>

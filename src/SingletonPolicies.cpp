@@ -17,6 +17,7 @@
 
 #include "SingletonPolicies.h"
 #include "Singleton.h"
+#include <algorithm>
 #include <set>
 
 namespace SingletonPolicies {
@@ -36,28 +37,22 @@ class LifetimeTracker : public Singleton<LifetimeTracker, SingletonPolicies::Def
     };
 
     // Queue that sorts items in ascending order (front() points to smallest element)
-    using Container = std::multiset<LifetimeTrackerItem>;
-    Container items_;
+    std::multiset<LifetimeTrackerItem> items_;
 
 public:
     ~LifetimeTracker() override
     {
         // Destroy all items
-        for(auto item : items_)
+        for(const auto& item : items_)
             item.destFunc_();
     }
 
     void add(unsigned longevity, DestructionFunPtr destFunc)
     {
         // Remove same entries first. Calling a dtor twice is not supported!
-        for(auto it = items_.begin(); it != items_.end(); ++it)
-        {
-            if(it->destFunc_ == destFunc)
-            {
-                items_.erase(it);
-                break;
-            }
-        }
+        const auto it = std::find_if(items_.begin(), items_.end(), [destFunc](const auto& x) { return x.destFunc_ == destFunc; });
+        if(it != items_.end())
+            items_.erase(it);
         items_.insert(LifetimeTrackerItem(longevity, destFunc));
     }
 };

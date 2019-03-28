@@ -20,7 +20,7 @@ namespace s25util {
 class md5
 {
 public:
-    typedef std::size_t size_type;
+    using size_type = std::size_t;
 
     md5(const std::string& data) { process(data, false); }
     md5(const void* data, size_type len) { process(data, len, false); }

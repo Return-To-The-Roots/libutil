@@ -33,12 +33,12 @@ protected:
     Singleton();
 
 private:
-    Singleton(const Singleton&);
-    Singleton& operator=(const Singleton&);
     static void MakeInstance();
     static void DestroySingleton();
 
 public:
+    Singleton(const Singleton&) = delete;
+    Singleton& operator=(const Singleton&) = delete;
     virtual ~Singleton();
 
     // Access to single instance

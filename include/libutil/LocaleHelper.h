@@ -24,11 +24,12 @@
 
 class LocaleHelper
 {
-    // Static class
-    LocaleHelper();
     static std::locale bfsDefaultLocale;
 
 public:
+    // Static class
+    LocaleHelper() = delete;
+
     /// Init classic locale with UTF8 encoding for the global locale and boost::filesystem
     /// Return true on success, false on error with an error message in stderr
     static bool init();

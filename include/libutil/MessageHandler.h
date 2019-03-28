@@ -21,7 +21,7 @@
 class Message;
 class Socket;
 
-typedef Message* (*CreateMsgFunction)(unsigned short);
+using CreateMsgFunction = Message* (*)(unsigned short);
 
 class MessageHandler
 {

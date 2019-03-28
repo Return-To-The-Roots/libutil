@@ -84,8 +84,8 @@ public:
     {
         ser.PushUnsignedInt(static_cast<unsigned>(elements.size()));
 
-        for(typename std::vector<Type>::const_iterator it = elements.begin(); it != elements.end(); ++it)
-            it->serialize(ser);
+        for(const auto& el : elements)
+            el.serialize(ser);
     }
 
     /**
