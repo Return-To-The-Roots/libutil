@@ -9,8 +9,7 @@
 #define BOOST_NOWIDE_UTF8_CODECVT_HPP
 
 #include <boost/locale/utf.hpp>
-#include <boost/ccstdintpp>
-#include <boost/static_assert.hpp>
+#include <boost/cstdint.hpp>
 #include <locale>
 
 namespace boost {
@@ -19,7 +18,7 @@ namespace nowide {
 //
 // Make sure that mbstate can keep 16 bit of UTF-16 sequence
 //
-BOOST_STATIC_ASSERT(sizeof(std::mbstate_t)>=2);
+static_assert(sizeof(std::mbstate_t)>=2, "");
 
 #if defined _MSC_VER && _MSC_VER < 1700
 // MSVC do_length is non-standard it counts wide characters instead of narrow and does not change mbstate
