@@ -49,11 +49,9 @@
 #include <unistd.h>
 #endif
 
-ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr, bool resolveAll)
+// do not use addr resolution for localhost
+ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr, bool resolveAll) : lookup((hostAddr.host != "localhost"))
 {
-    // do not use addr resolution for localhost
-    lookup = (hostAddr.host != "localhost");
-
     if(lookup)
     {
         addrinfo hints;
@@ -111,18 +109,14 @@ ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr, bool resolveAll)
 
 ResolvedAddr::~ResolvedAddr()
 {
+    if(!addr)
+        return;
     if(lookup)
-    {
-        if(addr)
-        {
-            freeaddrinfo(addr);
-            addr = nullptr;
-        }
-    } else
+        freeaddrinfo(addr);
+    else
     {
         free(addr->ai_addr);
         delete addr;
-        addr = nullptr;
     }
 }
 

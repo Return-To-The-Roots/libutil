@@ -59,7 +59,7 @@ struct HostAddr
 /// Resolves a host address
 class ResolvedAddr
 {
-    bool lookup;
+    const bool lookup;
     addrinfo* addr;
 
 public:

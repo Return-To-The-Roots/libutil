@@ -31,7 +31,9 @@
 
 namespace bfs = boost::filesystem;
 
-Log::Log() : stdoutWriter(new StdStreamWriter(true)), stderrWriter(new StdStreamWriter(false)), logFilepath("logs") {}
+Log::Log()
+    : stdoutWriter(std::make_shared<StdStreamWriter>(true)), stderrWriter(std::make_shared<StdStreamWriter>(false)), logFilepath("logs")
+{}
 
 Log::~Log() = default;
 
@@ -47,7 +49,7 @@ void Log::open()
     if(!fileWriter)
     {
         bfs::path filePath = bfs::path(logFilepath) / (s25util::Time::FormatTime("%Y-%m-%d_%H-%i-%s") + ".log");
-        fileWriter.reset(new FileWriter(filePath.string()));
+        fileWriter = std::make_shared<FileWriter>(filePath.string());
     }
 }
 
@@ -59,13 +61,13 @@ void Log::setWriter(TextWriterInterface* writer, LogTarget target)
     {
         stdoutWriter = sharedWriter;
         if(!stdoutWriter)
-            stdoutWriter.reset(new StdStreamWriter(true));
+            stdoutWriter = std::make_shared<StdStreamWriter>(true);
     }
     if((target & LogTarget::Stderr) == LogTarget::Stderr)
     {
         stderrWriter = sharedWriter;
         if(!stderrWriter)
-            stderrWriter.reset(new StdStreamWriter(false));
+            stderrWriter = std::make_shared<StdStreamWriter>(false);
     }
     if((target & LogTarget::File) == LogTarget::File)
         fileWriter = sharedWriter;
