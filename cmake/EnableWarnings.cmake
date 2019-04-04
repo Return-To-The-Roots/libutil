@@ -94,7 +94,7 @@ function(enable_warnings target)
       check_and_add_warnings(TARGET ${target} VISIBILITY ${visibility}
         ALL -Wunreachable-code
       )
-    elseif(CMAKEX_CXX_COMPILER_VERSION VERSION_LESS 6)
+    elseif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 6)
       # Wrong warnings for std::array until clang 6
       target_compile_options(${target} ${visibility} -Wno-missing-braces)
     endif()
