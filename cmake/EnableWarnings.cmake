@@ -79,6 +79,7 @@ function(enable_warnings target)
         -Wsign-promo
         -Wstrict-null-sentinel
         -Wsuggest-override
+        -Wno-maybe-uninitialized # False positives e.g. with variant/optional
         -Wno-error=inconsistent-missing-override
         -Wno-error=suggest-override
     )
