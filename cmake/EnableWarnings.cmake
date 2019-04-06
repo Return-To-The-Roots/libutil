@@ -12,12 +12,12 @@ function(enable_warnings target)
       /MP # parallel compilation
       /w34062 # Enum not handled in switch
       /w34389 # Signed/Unsigned operations
-      /wd4250 # 'class1' : inherits 'class2::member' via dominance (virtual inheritance related)
-      /wd4127 # conditional expr is constant
       /wd4100 # unreferenced formal parameter
-      /wd4512 # assignment operator could not be created
+      /wd4127 # conditional expr is constant
+      /wd4250 # 'class1' : inherits 'class2::member' via dominance (virtual inheritance related)
       /wd4267 # 'var' : conversion from 'size_t' to 'type', possible loss of data
-      /wd4250 # "use secure function"
+      /wd4373 # override where const in parameters differs handled differently in pre VS2008
+      /wd4512 # assignment operator could not be created
     )
 
     target_compile_definitions(${target} ${visibility}

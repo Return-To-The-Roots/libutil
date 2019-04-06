@@ -102,5 +102,5 @@ bool SocketSet::InSet(const Socket& sock)
     if(s == INVALID_SOCKET)
         return false;
 
-    return FD_ISSET(s, &set);
+    return FD_ISSET(s, &set) != 0;
 }

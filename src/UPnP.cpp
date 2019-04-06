@@ -116,7 +116,7 @@ static bool doOpenPort(const uint16_t port)
     }
 
     std::string local_address;
-    std::vector<std::string> addresses = UPnP.GetAllv4Addresses();
+    std::vector<std::string> addresses = UPnP::GetAllv4Addresses();
 
     // if we have multiple addresses, search the private one
     if(addresses.size() > 1)
