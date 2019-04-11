@@ -17,7 +17,6 @@
 
 #include "libutil/fileFuncs.h"
 #include <boost/test/unit_test.hpp>
-#include <sstream>
 
 BOOST_AUTO_TEST_CASE(PortableName)
 {

@@ -17,7 +17,6 @@
 
 #include "SocketSet.h"
 #include "Socket.h"
-#include <cstddef>
 
 SocketSet::SocketSet() //-V730
 {

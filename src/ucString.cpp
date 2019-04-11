@@ -16,8 +16,7 @@
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
 #include "ucString.h"
-#include "libutf8/utf8.h"
-#include <algorithm>
+#include <libutf8/utf8.h>
 #include <type_traits>
 
 /// Decorator for an iterator that converts the elements to their unsigned equivalents

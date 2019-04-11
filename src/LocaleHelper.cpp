@@ -18,10 +18,10 @@
 #include "LocaleHelper.h"
 #include "System.h"
 #include <boost/filesystem/path.hpp>
-#include <boost/locale.hpp>
-#include <boost/predef.h>
 #include <iostream>
-#include <stdexcept>
+#ifdef _WIN32
+#include <boost/locale.hpp>
+#endif
 
 namespace bfs = boost::filesystem;
 

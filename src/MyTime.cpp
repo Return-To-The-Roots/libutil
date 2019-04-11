@@ -19,7 +19,6 @@
 #include <ctime>
 #include <iomanip>
 #include <iostream>
-#include <sstream>
 #ifdef _WIN32
 #include <windows.h>
 #else

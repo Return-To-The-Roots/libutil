@@ -23,8 +23,6 @@
 #include "Socket.h"
 #include "SocketSet.h"
 #include <boost/endian/arithmetic.hpp>
-#include <cstddef>
-#include <cstdint>
 #include <cstring>
 #include <stdexcept>
 

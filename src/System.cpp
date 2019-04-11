@@ -16,9 +16,7 @@
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
 #include "System.h"
-#include "StringConversion.h"
 #include "getExecutablePath.h"
-#include <boost/config.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/nowide/system.hpp>
 
