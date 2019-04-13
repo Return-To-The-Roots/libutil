@@ -31,7 +31,7 @@
 
 #if BOOST_COMP_CLANG
 #define RTTR_DIAGNOSTIC(what) _Pragma(BOOST_PP_STRINGIZE(clang diagnostic what))
-#elif BOOST_COMP_MSVC
+#elif BOOST_COMP_MSVC || defined(__INTELLISENSE__)
 #define RTTR_DIAGNOSTIC(what)
 #else
 #define RTTR_DIAGNOSTIC(what) _Pragma(BOOST_PP_STRINGIZE(GCC diagnostic what))

@@ -22,7 +22,6 @@
 #include <type_traits>
 
 namespace libutil {
-class ArchivItem;
 
 template<class T, class U>
 std::unique_ptr<T> dynamicUniqueCast(std::unique_ptr<U>&& src)
