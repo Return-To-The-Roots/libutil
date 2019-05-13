@@ -76,7 +76,6 @@ function(enable_warnings target)
         -Wctor-dtor-privacy
         -Wnoexcept
         -Woverloaded-virtual
-        -Wsign-promo
         -Wstrict-null-sentinel
         -Wsuggest-override
         -Wno-maybe-uninitialized # False positives e.g. with variant/optional
@@ -107,5 +106,6 @@ function(enable_warnings target)
       #-Wfloat-equal
       #-Wcast-align
       #-Wstrict-overflow=2 # To many false positives
+      #-Wsign-promo # std::to_string(uint8_t{42}) should work
   endif()
 endfunction()
