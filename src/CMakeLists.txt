@@ -17,11 +17,20 @@ set(includePath ${parentPath}/include)
 
 FILE(GLOB SRC_FILES *.cpp)
 FILE(GLOB HEADER_FILES ${includePath}/libutil/*.* *.h)
-if(WIN32)
-    list(REMOVE_ITEM SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/System_Other.cpp)
-else()
-    list(REMOVE_ITEM SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/System_Win32.cpp)
-endif()
+
+# Use/Keep a file depending on condition
+function(conditional_src listVar cond nameTrue nameFalse)
+    if(${cond})
+        set(srcToRemove ${nameFalse})
+    else()
+        set(srcToRemove ${nameTrue})
+    endif()
+    list(REMOVE_ITEM ${listVar} ${CMAKE_CURRENT_SOURCE_DIR}/${srcToRemove})
+    set(${listVar} ${${listVar}} PARENT_SCOPE)
+endfunction()
+
+conditional_src(SRC_FILES WIN32 System_Win32.cpp System_Other.cpp)
+conditional_src(SRC_FILES MSVC UPnP_MSVC.cpp UPnP_Other.cpp)
 
 ADD_LIBRARY(s25util STATIC ${SRC_FILES} ${HEADER_FILES})
 

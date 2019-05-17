@@ -19,6 +19,7 @@
 #include "Log.h"
 #include "SocketSet.h"
 #include "StringConversion.h"
+#include "UPnP.h"
 #include "strFuncs.h"
 #include <array>
 #include <cstdio>
@@ -141,7 +142,7 @@ const sockaddr* PeerAddr::GetAddr() const
     return reinterpret_cast<const sockaddr*>(&addr);
 }
 
-Socket::Socket() : socket_(INVALID_SOCKET), refCount_(nullptr), status_(Status::Invalid), isBroadcast(false) {}
+Socket::Socket() : socket_(INVALID_SOCKET), refCount_(nullptr), status_(Status::Invalid), isBroadcast(false), upnpPort_(0) {}
 
 /**
  *  Konstruktor von @p Socket.
@@ -149,23 +150,22 @@ Socket::Socket() : socket_(INVALID_SOCKET), refCount_(nullptr), status_(Status::
  *  @param[in] so Socket welches benutzt werden soll
  *  @param[in] st Status der gesetzt werden soll
  */
-Socket::Socket(const SOCKET so, Status st) : socket_(so), refCount_(new int32_t), status_(st), isBroadcast(false)
+Socket::Socket(const SOCKET so, Status st) : socket_(so), refCount_(new int32_t), status_(st), isBroadcast(false), upnpPort_(0)
 {
     *refCount_ = 1;
 }
 
-Socket::Socket(const Socket& so) : socket_(so.socket_), refCount_(so.refCount_), status_(so.status_), isBroadcast(so.isBroadcast)
+Socket::Socket(const Socket& so)
+    : socket_(so.socket_), refCount_(so.refCount_), status_(so.status_), isBroadcast(so.isBroadcast), upnpPort_(0)
 {
     if(refCount_)
         ++*refCount_;
 }
 
-Socket::Socket(Socket&& so) noexcept : socket_(so.socket_), refCount_(so.refCount_), status_(so.status_), isBroadcast(so.isBroadcast)
-{
-    so.socket_ = INVALID_SOCKET;
-    so.refCount_ = nullptr;
-    so.status_ = Status::Invalid;
-}
+Socket::Socket(Socket&& so) noexcept
+    : socket_(std::exchange(so.socket_, INVALID_SOCKET)), refCount_(std::exchange(so.refCount_, nullptr)),
+      status_(std::exchange(so.status_, Status::Invalid)), isBroadcast(so.isBroadcast), upnpPort_(std::exchange(so.upnpPort_, 0))
+{}
 
 Socket::~Socket()
 {
@@ -270,10 +270,20 @@ void Socket::Close()
     if(*refCount_ <= 0)
     {
         // Physically close socket, if no references left
-        upnp_.ClosePort();
         if(socket_ != INVALID_SOCKET)
             closesocket(socket_);
         delete refCount_;
+
+        if(upnpPort_)
+        {
+            try
+            {
+                UPnP::ClosePort(upnpPort_);
+            } catch(const std::runtime_error& e)
+            {
+                LOG.write("Failed to renove UPnP portforwarding: %1%") % e.what();
+            }
+        }
     }
 
     // Cleanup (even if the socket is still open, we just don't "have" it anymore)
@@ -364,9 +374,16 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
     } while(error);
 
     // try to open portforwarding if we're using ipv4
-    if(use_upnp)
-        if(!ipv6 && !upnp_.OpenPort(port))
-            LOG.writeLastError("Automatisches Erstellen des Portforwardings mit UPnP fehlgeschlagen\nFehler");
+    if(use_upnp && !ipv6)
+    {
+        try
+        {
+            UPnP::OpenPort(port);
+        } catch(const std::runtime_error& e)
+        {
+            LOG.write("Failed to forward port via UPnP: %1%") % e.what();
+        }
+    }
 
     // Status setzen
     status_ = Status::Listen;

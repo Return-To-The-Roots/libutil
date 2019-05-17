@@ -38,7 +38,6 @@ struct addrinfo;
 #endif // !_WIN32
 
 #include "ProxySettings.h"
-#include "UPnP.h"
 #include <algorithm>
 #include <array>
 #include <cstddef>
@@ -191,7 +190,7 @@ public:
         using std::swap;
         swap(s1.status_, s2.status_);
         swap(s1.socket_, s2.socket_);
-        swap(s1.upnp_, s2.upnp_);
+        swap(s1.upnpPort_, s2.upnpPort_);
         swap(s1.refCount_, s2.refCount_);
     }
 
@@ -202,9 +201,9 @@ private:
     SOCKET socket_; /// Unser Socket
     /// Number of references to the socket, free only on <=0!
     int32_t* refCount_;
-    UPnP upnp_; /// UPnP Handle
     Status status_;
     bool isBroadcast;
+    int16_t upnpPort_; /// UPnP opened port or 0
 };
 
 #endif // SOCKET_H_INCLUDED
