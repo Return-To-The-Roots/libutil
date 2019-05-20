@@ -1,4 +1,4 @@
-// Copyright (c) 2005 - 2017 Settlers Freaks (sf-team at siedler25.org)
+// Copyright (c) 2005 - 2019 Settlers Freaks (sf-team at siedler25.org)
 //
 // This file is part of Return To The Roots.
 //
@@ -16,31 +16,25 @@
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
 #include "Tokenizer.h"
-
 #include <utility>
 
-Tokenizer::Tokenizer(std::string data, std::string delimiter) : data(std::move(data)), delimiter(std::move(delimiter)) {}
+Tokenizer::Tokenizer(std::string data, std::string delimiter) : data(std::move(data)), delimiter(std::move(delimiter)), curPos(0) {}
 
 Tokenizer::operator bool() const
 {
-    return !data.empty();
+    return curPos != std::string::npos;
 }
 
 std::string Tokenizer::next()
 {
-    std::string r;
-    std::string::size_type p = data.find_first_of(delimiter);
+    if(!*this)
+        return "";
 
-    if(std::string::npos != p)
-    {
-        r = data.substr(0, p);
-        data = data.substr(p + 1);
-    } else
-    {
-        r = data;
-        data.erase();
-    }
-    return r;
+    const auto newPos = data.find_first_of(delimiter, curPos);
+    const auto result = data.substr(curPos, newPos - curPos);
+
+    curPos = (newPos == std::string::npos) ? newPos : newPos + 1;
+    return result;
 }
 
 std::vector<std::string> Tokenizer::explode()

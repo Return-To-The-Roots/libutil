@@ -23,7 +23,7 @@
 #include <string>
 #include <vector>
 
-/// Tokenizer-Klasse.
+/// Split a string at given delimiter chars
 class Tokenizer
 {
 public:
@@ -32,8 +32,6 @@ public:
      *
      *  @param[in] data      Data to be separated
      *  @param[in] delimiter Chars to cut the data
-     *
-     *  @author FloSoft
      */
     explicit Tokenizer(std::string data, std::string delimiter = "; \t");
 
@@ -42,8 +40,6 @@ public:
      *
      *  @return @p true If next() will return data
      *          @p false if all data has been used
-     *
-     *  @author FloSoft
      */
     operator bool() const;
 
@@ -51,8 +47,6 @@ public:
      *  Extract next token
      *
      *  @return The next token
-     *
-     *  @author FloSoft
      */
     std::string next();
 
@@ -60,10 +54,11 @@ public:
     std::vector<std::string> explode();
 
 private:
-    /// The internal (remaining) string
+    /// The string
     std::string data;
     /// Delimiters
     std::string delimiter;
+    size_t curPos;
 };
 
 #endif // !TOKENIZER_HPP_INCLUDED
