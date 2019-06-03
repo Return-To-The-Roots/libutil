@@ -18,6 +18,7 @@
 #include "LocaleHelper.h"
 #include "System.h"
 #include <boost/filesystem/path.hpp>
+#include <boost/predef/os.h>
 #include <iostream>
 #ifdef _WIN32
 #include <boost/locale.hpp>
@@ -25,43 +26,73 @@
 
 namespace bfs = boost::filesystem;
 
-std::locale LocaleHelper::bfsDefaultLocale;
+namespace {
+std::locale getBfsLocale()
+{
+    std::locale result;
+    try
+    {
+        result = bfs::path::imbue(std::locale());
+        // Reset
+        bfs::path::imbue(result);
+        return result;
+    } catch(std::exception& e)
+    {
+        if(!BOOST_OS_WINDOWS && System::getEnvVar("LC_CALL") != "C")
+        {
+            std::cerr << "Caught an exception while setting locale: " << e.what() << std::endl
+                      << "Setting LC_ALL=\"C\" and trying again..." << std::endl;
+            System::setEnvVar("LC_ALL", "C");
+            return getBfsLocale();
+        } else
+            throw e;
+    }
+}
+#if BOOST_OS_WINDOWS
+std::locale createUtf8Locale()
+{
+    // On windows we want to enforce the encoding (mostly UTF8) so use boost to generate it
+    return boost::locale::generator().generate("");
+}
+#elif BOOST_OS_MACOS
+std::locale createUtf8Locale()
+{
+    // Don't change the locale on OSX. Using "" fails with 'locale::facet::_S_create_c_locale name not valid'
+    return LocaleHelper::getBfsDefaultLocale();
+}
+#else
+std::locale createUtf8Locale()
+{
+    // In linux we use the system locale but change the codecvt facet to the one boost is using (Assumed to be correct for our system)
+    std::locale newLocale("");
+    return newLocale.combine<bfs::path::codecvt_type>(LocaleHelper::getBfsDefaultLocale());
+}
+#endif
+} // namespace
+
+const std::locale& LocaleHelper::getBfsDefaultLocale()
+{
+    static std::locale bfsDefaultLocale = getBfsLocale();
+    return bfsDefaultLocale;
+}
 
 bool LocaleHelper::init()
 {
     // Check and set locale (avoids errors caused by invalid locales later like #420)
     try
     {
-    // Check for errors and use system locale.
-    // So don't rely on string conversions to yield identical results on all systems as locale settings can be changed!
-#ifdef _WIN32
-        // On windows we want to enforce the encoding (mostly UTF8) so use boost to generate it
-        std::locale newLocale = boost::locale::generator().generate("");
-#elif BOOST_OS_MACOS
-        // Don't change the locale on OSX. Using "" fails with 'locale::facet::_S_create_c_locale name not valid'
-        std::locale newLocale;
-        try
-        {
-            newLocale = bfs::path::imbue(std::locale());
-        } catch(std::exception& e)
-        {
-            std::cerr << "Caught an exception while setting locale: " << e.what() << std::endl
-                      << "Setting LC_ALL=\"C\" and trying again..." << std::endl;
-            System::setEnvVar("LC_ALL", "C");
-            newLocale = bfs::path::imbue(std::locale());
-        }
-#else
-        // In linux we use the system locale but change the codecvt facet to the one boost is using (Assumed to be correct for our system)
-        std::locale newLocale("");
-        newLocale.combine<bfs::path::codecvt_type>(bfs::path::imbue(std::locale()));
-#endif // _WIN32
+        // Call first to correctly init static variable
+        getBfsDefaultLocale();
+        // Check for errors and use system locale.
+        // So don't rely on string conversions to yield identical results on all systems as locale settings can be changed!
+        std::locale newLocale = createUtf8Locale();
         std::locale::global(newLocale);
         // Use also the encoding (mostly UTF8) for bfs paths: http://stackoverflow.com/questions/23393870
-        bfsDefaultLocale = bfs::path::imbue(newLocale);
+        bfs::path::imbue(newLocale);
     } catch(std::exception& e)
     {
         std::cerr << "Error initializing your locale setting. ";
-#ifdef _WIN32
+#if BOOST_OS_WINDOWS
         std::cerr << "Check your system language configuration!";
 #else
 #if BOOST_OS_MACOS
