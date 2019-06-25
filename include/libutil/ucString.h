@@ -21,17 +21,14 @@
 #include <cstdint>
 #include <string>
 
-/// Typedef for storing and managing an Unicode (UTF-32) string
-using ucString = std::basic_string<uint32_t>;
-
 //////////////////////////////////////////////////////////////////////////
 // Convert UTF8<->Unicode strings
 
 /// Convert an UTF-8 string to unicode string
-ucString cvUTF8ToUnicode(const std::string& other);
+std::u32string cvUTF8ToUnicode(const std::string& other);
 
 /// Convert an unicode string to UTF-8 string
-std::string cvUnicodeToUTF8(const ucString& other);
+std::string cvUnicodeToUTF8(const std::u32string& other);
 
 /// Return true if text is valid UTF-8
 bool isValidUTF8(const std::string& text);
@@ -42,7 +39,7 @@ bool isValidUTF8(const std::string& text);
 /// Convert a widestring (assumed to be UTF-16 or UCS-2) to unicode string
 std::string cvWideStringToUTF8(const std::wstring& other);
 /// Convert a widestring (assumed to be UTF-16 or UCS-2) to unicode string
-ucString cvWideStringToUnicode(const std::wstring& other);
+std::u32string cvWideStringToUnicode(const std::wstring& other);
 /// Convert an UTF-8 string to a widestring (UTF-16 or UCS-2)
 std::wstring cvUTF8ToWideString(const std::string& other);
 
@@ -55,6 +52,6 @@ std::wstring cvUTF8ToWideString(const std::string& other);
 /// Convert a string (assumed to be codepage local) to UTF-8 unless it already is UTF-8
 std::string cvStringToUTF8(const std::string& other);
 /// Convert a string (assumed to be codepage local) to unicode string
-ucString cvStringToUnicode(const std::string& other);
+std::u32string cvStringToUnicode(const std::string& other);
 
 #endif // ucString_h__

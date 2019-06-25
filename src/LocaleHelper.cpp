@@ -23,9 +23,9 @@
 #if BOOST_OS_WINDOWS
 #include <boost/locale.hpp>
 #elif !BOOST_OS_MACOS
-#include <libutf8/utf8.h>
 #include <iomanip>
 #include <sstream>
+#include <utf8.h>
 #endif
 
 namespace bfs = boost::filesystem;
@@ -76,7 +76,7 @@ std::locale createUtf8Locale()
     ss << std::fixed << std::setprecision(10) << 123456.789; // Include thousand and number separator
     const auto sNumber = ss.str();
     // If the string is not a valid UTF-8 string, fall back to classic locale
-    if(!utf8::is_valid(sNumber.begin(), sNumber.end()))
+    if(!utf8::is_valid(sNumber))
         newLocale = std::locale::classic();
     return newLocale.combine<bfs::path::codecvt_type>(LocaleHelper::getBfsDefaultLocale());
 }

@@ -37,7 +37,7 @@ ADD_LIBRARY(s25util STATIC ${SRC_FILES} ${HEADER_FILES})
 target_include_directories(s25util
     INTERFACE ${includePath}
     PRIVATE ${includePath}/libutil)
-target_link_libraries(s25util PUBLIC endian::static nowide::static Boost::filesystem PRIVATE utf8)
+target_link_libraries(s25util PUBLIC endian::static nowide::static Boost::filesystem PRIVATE utf8::cpp)
 target_compile_features(s25util PUBLIC cxx_std_14)
 # PIC Required for linking into shared libs
 set_target_properties(s25util PROPERTIES CXX_EXTENSIONS OFF POSITION_INDEPENDENT_CODE ON)
@@ -45,7 +45,7 @@ set_target_properties(s25util PROPERTIES CXX_EXTENSIONS OFF POSITION_INDEPENDENT
 if(MSVC)
     target_compile_definitions(s25util PRIVATE _WINSOCK_DEPRECATED_NO_WARNINGS)
 else()
-	target_link_libraries(s25util PRIVATE utf8 ${MINIUPNPC_LIBRARY})
+	target_link_libraries(s25util PRIVATE ${MINIUPNPC_LIBRARY})
     target_include_directories(s25util SYSTEM PRIVATE ${MINIUPNPC_INCLUDE_DIR})
 ENDIF()
 

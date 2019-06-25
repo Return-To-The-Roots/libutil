@@ -32,12 +32,12 @@ DEALINGS IN THE SOFTWARE.
 
 namespace utf8
 {
-    // The typedefs for 8-bit, 16-bit and 32-bit unsignedegers
+    // The typedefs for 8-bit, 16-bit and 32-bit unsigned integers
     // You may need to change them to match your system.
     // These typedefs have the same names as ones from cstdint, or boost/cstdint
-    using uint8_t = unsigned char  ;
-    using uint16_t = unsigned short ;
-    using uint32_t = unsigned   ;
+    typedef unsigned char   uint8_t;
+    typedef unsigned short  uint16_t;
+    typedef unsigned int    uint32_t;
 
 // Helper code - not intended to be directly called by the library users. May be changed at any time
 namespace internal
@@ -49,8 +49,8 @@ namespace internal
     const uint16_t LEAD_SURROGATE_MAX  = 0xdbffu;
     const uint16_t TRAIL_SURROGATE_MIN = 0xdc00u;
     const uint16_t TRAIL_SURROGATE_MAX = 0xdfffu;
-    const uint16_t LEAD_OFFSET         = LEAD_SURROGATE_MIN - (0x10000 >> 10);
-    const uint32_t SURROGATE_OFFSET    = 0x10000u - (LEAD_SURROGATE_MIN << 10) - TRAIL_SURROGATE_MIN;
+    const uint16_t LEAD_OFFSET         = 0xd7c0u;       // LEAD_SURROGATE_MIN - (0x10000 >> 10)
+    const uint32_t SURROGATE_OFFSET    = 0xfca02400u;   // 0x10000u - (LEAD_SURROGATE_MIN << 10) - TRAIL_SURROGATE_MIN
 
     // Maximum valid value for a Unicode code point
     const uint32_t CODE_POINT_MAX      = 0x0010ffffu;
@@ -116,15 +116,15 @@ namespace internal
     inline bool is_overlong_sequence(uint32_t cp, octet_difference_type length)
     {
         if (cp < 0x80) {
-            if (length != 1)
+            if (length != 1) 
                 return true;
         }
         else if (cp < 0x800) {
-            if (length != 2)
+            if (length != 2) 
                 return true;
         }
         else if (cp < 0x10000) {
-            if (length != 3)
+            if (length != 3) 
                 return true;
         }
 
@@ -146,7 +146,7 @@ namespace internal
         return UTF8_OK;
     }
 
-    #define UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR(IT, END) {utf_error ret = increase_safely(IT, END); if (ret != UTF8_OK) return ret;}
+    #define UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR(IT, END) {utf_error ret = increase_safely(IT, END); if (ret != UTF8_OK) return ret;}    
 
     /// get_sequence_x functions decode utf-8 sequences of the length x
     template <typename octet_iterator>
@@ -163,7 +163,7 @@ namespace internal
     template <typename octet_iterator>
     utf_error get_sequence_2(octet_iterator& it, octet_iterator end, uint32_t& code_point)
     {
-        if (it == end)
+        if (it == end) 
             return NOT_ENOUGH_ROOM;
 
         code_point = utf8::internal::mask8(*it);
@@ -180,7 +180,7 @@ namespace internal
     {
         if (it == end)
             return NOT_ENOUGH_ROOM;
-
+            
         code_point = utf8::internal::mask8(*it);
 
         UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR(it, end)
@@ -222,13 +222,16 @@ namespace internal
     template <typename octet_iterator>
     utf_error validate_next(octet_iterator& it, octet_iterator end, uint32_t& code_point)
     {
+        if (it == end)
+            return NOT_ENOUGH_ROOM;
+
         // Save the original value of it so we can go back in case of failure
         // Of course, it does not make much sense with i.e. stream iterators
         octet_iterator original_it = it;
 
         uint32_t cp = 0;
         // Determine the sequence length based on the lead octet
-        using octet_difference_type = typename std::iterator_traits<octet_iterator>::difference_type;
+        typedef typename std::iterator_traits<octet_iterator>::difference_type octet_difference_type;
         const octet_difference_type length = utf8::internal::sequence_length(it);
 
         // Get trail octets and calculate the code point
@@ -262,7 +265,7 @@ namespace internal
                 else
                     err = OVERLONG_SEQUENCE;
             }
-            else
+            else 
                 err = INVALID_CODE_POINT;
         }
 
@@ -310,18 +313,7 @@ namespace internal
             ((it != end) && (utf8::internal::mask8(*it++)) == bom[1]) &&
             ((it != end) && (utf8::internal::mask8(*it))   == bom[2])
            );
-    }
-
-    //Deprecated in release 2.3
-    template <typename octet_iterator>
-    inline bool is_bom (octet_iterator it)
-    {
-        return (
-            (utf8::internal::mask8(*it++)) == bom[0] &&
-            (utf8::internal::mask8(*it++)) == bom[1] &&
-            (utf8::internal::mask8(*it))   == bom[2]
-           );
-    }
+    }	
 } // namespace utf8
 
 #endif // header guard

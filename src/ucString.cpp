@@ -16,8 +16,8 @@
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
 #include "ucString.h"
-#include <libutf8/utf8.h>
 #include <type_traits>
+#include <utf8.h>
 
 /// Decorator for an iterator that converts the elements to their unsigned equivalents
 /// Required because sign of char/wchar_t is undefined and we need it to be unsigned for some conversions
@@ -55,25 +55,19 @@ struct GetUnsignedIterator
     using type = UnsignedIterator;
 };
 
-ucString cvUTF8ToUnicode(const std::string& other)
+std::u32string cvUTF8ToUnicode(const std::string& other)
 {
-    ucString result;
-    using iterator = utf8::iterator<std::string::const_iterator>;
-    result.assign(iterator(other.begin(), other.begin(), other.end()), iterator(other.end(), other.begin(), other.end()));
-    return result;
+    return utf8::utf8to32(other);
 }
 
-std::string cvUnicodeToUTF8(const ucString& other)
+std::string cvUnicodeToUTF8(const std::u32string& other)
 {
-    std::string result;
-    result.reserve(other.length());
-    utf8::utf32to8(other.begin(), other.end(), std::back_inserter(result));
-    return result;
+    return utf8::utf32to8(other);
 }
 
 bool isValidUTF8(const std::string& text)
 {
-    return utf8::is_valid(text.begin(), text.end());
+    return utf8::is_valid(text);
 }
 
 std::string cvWideStringToUTF8(const std::wstring& other)
@@ -96,7 +90,7 @@ std::string cvWideStringToUTF8(const std::wstring& other)
     }
 }
 
-ucString cvWideStringToUnicode(const std::wstring& other)
+std::u32string cvWideStringToUnicode(const std::wstring& other)
 {
     try
     {
@@ -108,7 +102,7 @@ ucString cvWideStringToUnicode(const std::wstring& other)
     } catch(...)
     {
         // If that fails, assume pure unicode
-        ucString result;
+        std::u32string result;
         result.reserve(other.size());
         // Use unsigned elements to avoid wrong sign extension
         using UIterator = GetUnsignedIterator<std::wstring>::UnsignedIterator;
@@ -119,18 +113,19 @@ ucString cvWideStringToUnicode(const std::wstring& other)
 
 std::wstring cvUTF8ToWideString(const std::string& other)
 {
-    std::string text;
+    std::wstring result;
+    result.reserve(other.length());
+
     if(!isValidUTF8(other))
     {
-        text.reserve(other.length());
-        utf8::replace_invalid(other.begin(), other.end(), std::back_inserter(text));
+        std::string tmp;
+        tmp.reserve(other.length());
+        utf8::replace_invalid(other.begin(), other.end(), std::back_inserter(tmp));
+        utf8::utf8to16(tmp.begin(), tmp.end(), std::back_inserter(result));
     } else
-        text = other;
+        utf8::utf8to16(other.begin(), other.end(), std::back_inserter(result));
 
-    std::wstring tmp;
-    tmp.reserve(text.length());
-    utf8::utf8to16(text.begin(), text.end(), std::back_inserter(tmp));
-    return tmp;
+    return result;
 }
 
 std::string cvStringToUTF8(const std::string& other)
@@ -146,11 +141,9 @@ std::string cvStringToUTF8(const std::string& other)
     return result;
 }
 
-ucString cvStringToUnicode(const std::string& other)
+std::u32string cvStringToUnicode(const std::string& other)
 {
-    ucString result;
     // Use unsigned elements to avoid wrong sign extension
     using UIterator = GetUnsignedIterator<std::string>::type;
-    result.assign(UIterator(other.begin()), UIterator(other.end()));
-    return result;
+    return std::u32string(UIterator(other.begin()), UIterator(other.end()));
 }
