@@ -45,7 +45,7 @@ set_target_properties(s25util PROPERTIES CXX_EXTENSIONS OFF POSITION_INDEPENDENT
 if(MSVC)
     target_compile_definitions(s25util PRIVATE _WINSOCK_DEPRECATED_NO_WARNINGS)
 else()
-	target_link_libraries(s25util PRIVATE ${MINIUPNPC_LIBRARY})
+	target_link_libraries(s25util PRIVATE utf8 ${MINIUPNPC_LIBRARY})
     target_include_directories(s25util SYSTEM PRIVATE ${MINIUPNPC_INCLUDE_DIR})
 ENDIF()
 

@@ -20,8 +20,12 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/predef/os.h>
 #include <iostream>
-#ifdef _WIN32
+#if BOOST_OS_WINDOWS
 #include <boost/locale.hpp>
+#elif !BOOST_OS_MACOS
+#include <libutf8/utf8.h>
+#include <iomanip>
+#include <sstream>
 #endif
 
 namespace bfs = boost::filesystem;
@@ -63,8 +67,17 @@ std::locale createUtf8Locale()
 #else
 std::locale createUtf8Locale()
 {
-    // In linux we use the system locale but change the codecvt facet to the one boost is using (Assumed to be correct for our system)
+    // In linux we use the system locale but change the codecvt facet to the one boost is using
+    // (Assumed to be correct for our system)
     std::locale newLocale("");
+    // Check that the system locale produces correct UTF-8 numbers
+    std::stringstream ss;
+    ss.imbue(newLocale);
+    ss << std::fixed << std::setprecision(10) << 123456.789; // Include thousand and number separator
+    const auto sNumber = ss.str();
+    // If the string is not a valid UTF-8 string, fall back to classic locale
+    if(!utf8::is_valid(sNumber.begin(), sNumber.end()))
+        newLocale = std::locale::classic();
     return newLocale.combine<bfs::path::codecvt_type>(LocaleHelper::getBfsDefaultLocale());
 }
 #endif
