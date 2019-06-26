@@ -23,9 +23,9 @@
 #if BOOST_OS_WINDOWS
 #include <boost/locale.hpp>
 #elif !BOOST_OS_MACOS
+#include <utf8.h>
 #include <iomanip>
 #include <sstream>
-#include <utf8.h>
 #endif
 
 namespace bfs = boost::filesystem;

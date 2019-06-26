@@ -16,8 +16,8 @@
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
 #include "ucString.h"
-#include <type_traits>
 #include <utf8.h>
+#include <type_traits>
 
 /// Decorator for an iterator that converts the elements to their unsigned equivalents
 /// Required because sign of char/wchar_t is undefined and we need it to be unsigned for some conversions
