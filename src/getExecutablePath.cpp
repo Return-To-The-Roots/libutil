@@ -134,6 +134,24 @@ std::string getExecutablePath()
     return ec ? "" : p.make_preferred().string();
 }
 
+#elif(BOOST_OS_HAIKU)
+/* #FIXME */
+std::string getExecutablePath()
+{
+    std::string ret = "/boot/system/apps/RTTR/s25client";
+    if(ret.empty())
+        return "";
+    bfs::path p(ret);
+    if(!p.has_root_directory())
+    {
+        boost::system::error_code ec;
+        using bfs::canonical;
+        p = canonical(p, ec);
+        ret = (ec) ? "" : p.make_preferred().string();
+    }
+    return ret;
+}
+
 #else
 
 #error Unsupported plattform!
