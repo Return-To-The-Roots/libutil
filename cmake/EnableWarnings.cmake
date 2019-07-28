@@ -37,7 +37,7 @@ function(enable_warnings target)
     # Additional options besides -Wall, -Wextra, -pedantic
     # Keep those sorted to check for uniqueness
     check_and_add_warnings(TARGET ${target} VISIBILITY ${visibility}
-      ALL
+      CXX
         -fno-strict-aliasing
         -pedantic-errors
         -Qunused-arguments
@@ -70,9 +70,6 @@ function(enable_warnings target)
         -Wunused-parameter
         -Wwrite-strings
         -Wno-unknown-pragmas
-      C
-        -Wimplicit
-      CXX
         -Wctor-dtor-privacy
         -Wnoexcept
         -Woverloaded-virtual
@@ -86,13 +83,13 @@ function(enable_warnings target)
       # Lot's of false-positives on windows.
       # E.g. __builtin_ia32_crc32qi on MinGW and SDL
       check_and_add_warnings(TARGET ${target} VISIBILITY ${visibility}
-        ALL -Wredundant-decls
+        CXX -Wredundant-decls
       )
     endif()
     if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
       # Lot's of false-positives on for e.g. strcmp
       check_and_add_warnings(TARGET ${target} VISIBILITY ${visibility}
-        ALL -Wunreachable-code
+        CXX -Wunreachable-code
       )
     elseif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "6" OR CMAKE_CXX_COMPILER_ID MATCHES "AppleClang")
       # Wrong warnings for std::array until clang 6
