@@ -18,15 +18,7 @@ if((NOT Boost_USE_STATIC_LIBS AND RTTR_USE_STATIC_BOOST) OR
 endif()
 
 # Need to be explicitely set
-if(RTTR_USE_STATIC_BOOST)
-   set(Boost_USE_STATIC_LIBS ON)
-   # Bug in Boost 1.70 -.-
-   set(BUILD_SHARED_LIBS OFF)
-else()
-   set(Boost_USE_STATIC_LIBS OFF)
-   # Bug in Boost 1.70 -.-
-   set(BUILD_SHARED_LIBS ON)
-endif()
+set(Boost_USE_STATIC_LIBS ${RTTR_USE_STATIC_BOOST})
 
 if(Boost_USE_STATIC_LIBS)
    message(STATUS "Linking against boost static libraries")
