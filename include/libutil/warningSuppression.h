@@ -29,6 +29,15 @@
 #define SUPPRESS_UNUSED
 #endif
 
+// Use for functions which use "unfixable" undefined behavior, but which is safe
+#if defined(__clang__)
+#define RTTR_ATTRIBUTE_NO_UBSAN(what) __attribute__((no_sanitize(BOOST_PP_STRINGIZE(what))))
+#elif defined(__GNUC__)
+#define RTTR_ATTRIBUTE_NO_UBSAN(what) __attribute__((no_sanitize_undefined))
+#else
+#define RTTR_ATTRIBUTE_NO_UBSAN(what)
+#endif
+
 #if BOOST_COMP_CLANG
 #define RTTR_DIAGNOSTIC(what) _Pragma(BOOST_PP_STRINGIZE(clang diagnostic what))
 #elif BOOST_COMP_MSVC || defined(__INTELLISENSE__)
