@@ -37,6 +37,8 @@ function(enable_warnings target)
     # Additional options besides -Wall, -Wextra, -pedantic
     # Keep those sorted to check for uniqueness
     check_and_add_warnings(TARGET ${target} VISIBILITY ${visibility}
+      ALL
+        -Wno-unused-command-line-argument
       CXX
         -fno-strict-aliasing
         -pedantic-errors
