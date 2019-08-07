@@ -40,7 +40,7 @@ class LifetimeTracker : public Singleton<LifetimeTracker, SingletonPolicies::Def
     std::multiset<LifetimeTrackerItem> items_;
 
 public:
-    ~LifetimeTracker() override
+    ~LifetimeTracker()
     {
         // Destroy all items
         for(const auto& item : items_)

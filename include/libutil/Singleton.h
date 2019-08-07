@@ -31,22 +31,22 @@ class Singleton
 protected:
     // protected ctor
     Singleton();
+    ~Singleton();
 
 private:
     static void MakeInstance();
     static void DestroySingleton();
+    static bool& getIsDestroyed();
 
 public:
     Singleton(const Singleton&) = delete;
     Singleton& operator=(const Singleton&) = delete;
-    virtual ~Singleton();
 
     // Access to single instance
     inline static T& inst();
 
 private:
     static T* me;
-    static bool isDestroyed_;
 };
 
 #include "SingletonImp.hpp"

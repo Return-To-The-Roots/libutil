@@ -24,20 +24,25 @@
 
 template<typename T, template<class> class L>
 T* Singleton<T, L>::me;
+
 template<typename T, template<class> class L>
-bool Singleton<T, L>::isDestroyed_;
+bool& Singleton<T, L>::getIsDestroyed()
+{
+    static bool is_destroyed = false;
+    return is_destroyed;
+}
 
 template<typename T, template<class> class L>
 Singleton<T, L>::Singleton()
 {
     // Init invalid access detection
-    isDestroyed_ = false;
+    getIsDestroyed() = false;
 }
 
 template<typename T, template<class> class L>
 Singleton<T, L>::~Singleton()
 {
-    isDestroyed_ = true;
+    getIsDestroyed() = true;
 }
 
 template<typename T, template<class> class LifetimePolicy>
@@ -45,10 +50,10 @@ void Singleton<T, LifetimePolicy>::MakeInstance()
 {
     if(me)
         return;
-    if(isDestroyed_)
+    if(getIsDestroyed())
     {
         LifetimePolicy<T>::OnDeadReference();
-        isDestroyed_ = false;
+        getIsDestroyed() = false;
     }
     me = new T;
     LifetimePolicy<T>::ScheduleDestruction(me, &DestroySingleton);
@@ -57,10 +62,10 @@ void Singleton<T, LifetimePolicy>::MakeInstance()
 template<typename T, template<class> class L>
 void Singleton<T, L>::DestroySingleton()
 {
-    assert(!isDestroyed_);
+    assert(!getIsDestroyed());
     delete me;
     me = nullptr;
-    isDestroyed_ = true;
+    getIsDestroyed() = true;
 }
 
 template<typename T, template<class> class L>

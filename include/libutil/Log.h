@@ -22,6 +22,7 @@
 
 #include "FormatedLogEntry.h"
 #include "Singleton.h"
+#include <boost/config.hpp>
 #include <memory>
 #include <string>
 
@@ -33,7 +34,7 @@ public:
     static const unsigned Longevity = 100;
 
     Log();
-    ~Log() override;
+    ~Log();
 
     /// Sets the path where the log will be written to
     /// Must be done before the first write
