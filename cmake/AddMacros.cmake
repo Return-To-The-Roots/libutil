@@ -2,6 +2,9 @@ if(NOT TARGET Boost::unit_test_framework)
     find_package(Boost 1.64 REQUIRED COMPONENTS unit_test_framework)
 endif()
 
+set(RTTR_UBSAN_SUPPRESSION_FILE ${CMAKE_CURRENT_LIST_DIR}/ubsan.supp)
+set(RTTR_LSAN_SUPPRESSION_FILE ${CMAKE_CURRENT_LIST_DIR}/lsan.supp)
+
 # Add a new test case for boost tests with working directory in the binary dir root
 # Params:
 # NAME <name>
@@ -31,5 +34,12 @@ function(add_testcase)
     if(MSVC)
         set_property(TARGET ${name} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
     endif()
-    set_tests_properties(${name} PROPERTIES ENVIRONMENT ASAN_OPTIONS=detect_odr_violation=0)
+    if(RTTR_ENABLE_SANITIZERS)
+        set(options
+            ASAN_OPTIONS=detect_odr_violation=0
+            UBSAN_OPTIONS=suppressions=${RTTR_UBSAN_SUPPRESSION_FILE}
+            LSAN_OPTIONS=suppressions=${RTTR_LSAN_SUPPRESSION_FILE}
+        )
+        set_tests_properties(${name} PROPERTIES ENVIRONMENT "${options}")
+    endif()
 endfunction()
