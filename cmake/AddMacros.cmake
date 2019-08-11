@@ -18,7 +18,7 @@ function(add_testcase)
     file(GLOB sources *.[ch]pp *.[hc] *.cxx)
     add_executable(${name} ${sources})
     target_link_libraries(${name} PRIVATE ${ARG_LIBS}
-		PRIVATE Boost::unit_test_framework
+        PRIVATE Boost::unit_test_framework Boost::disable_autolinking
     )
     get_cmake_property(_variableNames VARIABLES)
     target_include_directories(${name} PRIVATE ${ARG_INCLUDES})
