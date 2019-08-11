@@ -4,7 +4,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang"
   if(RTTR_ENABLE_SANITIZERS)
     # Use ASAN and UBSAN, make it fail on any error, improve stack traces
     set(sanitizer_flags -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer)
-    list(APPEND sanitizer_flags -fsanitize-recover=enum)
+    list(APPEND sanitizer_flags -fsanitize-recover=enum,alignment)
 
     add_compile_options(${sanitizer_flags})
     string(REPLACE ";" " " sanitizer_flags "${sanitizer_flags}")

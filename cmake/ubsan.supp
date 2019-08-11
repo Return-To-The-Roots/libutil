@@ -1,1 +1,2 @@
 enum:/boost/dll/shared_library_load_mode.hpp
+alignment:/boost/endian/buffers.hpp
