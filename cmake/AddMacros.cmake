@@ -37,7 +37,7 @@ function(add_testcase)
     if(RTTR_ENABLE_SANITIZERS)
         set(options
             ASAN_OPTIONS=detect_odr_violation=0
-            UBSAN_OPTIONS=halt_on_error=1,suppressions=${RTTR_UBSAN_SUPPRESSION_FILE}
+            UBSAN_OPTIONS=halt_on_error=1,print_stacktrace=1,suppressions=${RTTR_UBSAN_SUPPRESSION_FILE}
             LSAN_OPTIONS=halt_on_error=1,suppressions=${RTTR_LSAN_SUPPRESSION_FILE}
         )
         set_tests_properties(${name} PROPERTIES ENVIRONMENT "${options}")
