@@ -1,2 +1,5 @@
 enum:/boost/dll/shared_library_load_mode.hpp
+# Fixed in 1.67
 alignment:/boost/endian/buffers.hpp
+# Fixed in 1.66
+vptr:/boost/format/alt_sstream.hpp
