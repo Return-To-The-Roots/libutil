@@ -108,7 +108,7 @@ std::wstring System::getEnvVar(const std::wstring& name)
     if(!numChars)
         return L"";
     std::vector<wchar_t> tmpString(numChars);
-    numChars = GetEnvironmentVariableW(name.c_str(), &tmpString[0], static_cast<DWORD>(tmpString.size()));
+    numChars = GetEnvironmentVariableW(name.c_str(), tmpString.data(), static_cast<DWORD>(tmpString.size()));
     // This does NOT include the terminating nullptr
     if(numChars + 1 != static_cast<DWORD>(tmpString.size()))
         throw std::runtime_error("Invalid size returned");
@@ -177,7 +177,7 @@ std::string System::getUserName()
     if(nameLen == 0)
         throw std::runtime_error("Could not query username length");
     std::vector<wchar_t> userName(nameLen);
-    if(GetUserNameW(&userName[0], &nameLen) == 0)
+    if(GetUserNameW(userName.data(), &nameLen) == 0)
         throw std::runtime_error("Could not get username");
 
     userName.resize(nameLen - 1); // nameLen already contains terminating 0

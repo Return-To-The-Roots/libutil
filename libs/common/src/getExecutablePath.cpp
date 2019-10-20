@@ -37,7 +37,7 @@ std::string getExecutablePath()
     std::vector<wchar_t> buf(MAX_PATH);
     while(true)
     {
-        DWORD ret = GetModuleFileNameW(nullptr, &buf[0], static_cast<DWORD>(buf.size()));
+        DWORD ret = GetModuleFileNameW(nullptr, buf.data(), static_cast<DWORD>(buf.size()));
         if(ret == 0)
             return "";
         else if(ret == static_cast<DWORD>(buf.size()))
@@ -99,7 +99,7 @@ std::string getExecutablePath()
     std::array<int, 4> mib = {CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1};
     std::vector<char> buf(1024, 0);
     size_t size = buf.size();
-    if(sysctl(mib, 4, &buf[0], &size, nullptr, 0) != 0)
+    if(sysctl(mib.data(), 4, buf.data(), &size, nullptr, 0) != 0)
         return "";
     if(size == 0 || size == buf.size())
         return "";
@@ -120,7 +120,7 @@ std::string getExecutablePath()
     int size;
     while(true)
     {
-        size = readlink("/proc/self/exe", &buf[0], buf.size());
+        size = readlink("/proc/self/exe", buf.data(), buf.size());
         if(size <= 0)
             return "";
         if(size < static_cast<int>(buf.size()))
