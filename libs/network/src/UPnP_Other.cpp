@@ -16,8 +16,8 @@
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
 #include "UPnP.h"
-#include "StringConversion.h"
-#include "UniqueHandle.h"
+#include "s25util/StringConversion.h"
+#include "s25util/UniqueHandle.h"
 #include <cstring>
 #include <miniupnpc/miniupnpc.h>
 #include <miniupnpc/upnpcommands.h>

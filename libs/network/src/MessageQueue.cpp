@@ -16,9 +16,9 @@
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
 #include "MessageQueue.h"
-#include "s25util/Log.h"
 #include "Message.h"
 #include "Socket.h"
+#include "s25util/Log.h"
 #include <limits>
 
 MessageQueue::MessageQueue(CreateMsgFunction createfunction) : MessageHandler(createfunction) {}

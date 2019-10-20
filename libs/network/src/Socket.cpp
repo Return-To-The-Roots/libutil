@@ -16,10 +16,10 @@
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
 #include "Socket.h"
-#include "s25util/Log.h"
 #include "SocketSet.h"
-#include "s25util/StringConversion.h"
 #include "UPnP.h"
+#include "s25util/Log.h"
+#include "s25util/StringConversion.h"
 #include "s25util/strFuncs.h"
 #include <array>
 #include <cstdio>
@@ -90,6 +90,8 @@ ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr, bool resolveAll) : lookup((
         addr->ai_addrlen = (hostAddr.ipv6 ? sizeof(sockaddr_in6) : sizeof(sockaddr_in));
         addr->ai_socktype = hostAddr.isUDP ? SOCK_DGRAM : SOCK_STREAM;
         addr->ai_addr = (sockaddr*)calloc(1, addr->ai_addrlen);
+        if(!addr->ai_addr)
+            throw std::bad_alloc();
 
         if(hostAddr.ipv6)
         {
@@ -569,20 +571,19 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
                         default: break;
                         case ProxyType::Socks4:
                         {
-                            union
-                            {
-                                std::array<char, 18> proxyinit;
-                                std::array<unsigned short, 9> proxyInitShort;
-                            };
+                            std::array<char, 18> proxyinit;
 
                             proxyinit[0] = 4; // socks v4
                             proxyinit[1] = 1; // 1=connect
-                            proxyInitShort[1] = htons(port);
+                            const uint16_t nwOrderPort = htons(port);
+                            std::memcpy(&proxyinit[2], &nwOrderPort, sizeof(nwOrderPort));
                             for(const auto& hostAddr : ips)
                             {
-                                if(!hostAddr.ipv6)
-                                    sscanf(hostAddr.host.c_str(), "%c.%c.%c.%c", &proxyinit[4], &proxyinit[5], &proxyinit[6],
-                                           &proxyinit[7]);
+                                if(!hostAddr.ipv6
+                                   && sscanf(hostAddr.host.c_str(), "%c.%c.%c.%c", &proxyinit[4], &proxyinit[5], &proxyinit[6],
+                                             &proxyinit[7])
+                                        == 4)
+                                    break;
                             }
                             strcpy_check(proxyinit, 8, "siedler25"); // userid
 
@@ -824,29 +825,33 @@ SOCKET Socket::GetSocket() const
  */
 std::string Socket::IpToString(const sockaddr* addr)
 {
-    std::array<char, 256> temp;
+    std::array<char, 256> temp{};
 
 #ifdef _WIN32
+    union
+    {
+        sockaddr base;
+        sockaddr_in ipv4;
+        sockaddr_in6 ipv6;
+    } copy;
+    std::memset(&copy, 0, sizeof(copy));
     size_t size;
     if(addr->sa_family == AF_INET)
+    {
         size = sizeof(sockaddr_in);
-    else
+        std::memcpy(&copy.ipv4, addr, size);
+        copy.ipv4.sin_port = 0;
+    } else
+    {
         size = sizeof(sockaddr_in6);
-
-    sockaddr* copy = (sockaddr*)calloc(1, size);
-    memcpy(copy, addr, size);
-
-    if(addr->sa_family == AF_INET)
-        ((sockaddr_in*)copy)->sin_port = 0;
-    else
-        ((sockaddr_in6*)copy)->sin6_port = 0;
+        std::memcpy(&copy.ipv6, addr, size);
+        copy.ipv6.sin6_port = 0;
+    }
 
     DWORD le = GetLastError();
     DWORD templen = sizeof(temp);
-    WSAAddressToStringA(copy, static_cast<DWORD>(size), nullptr, temp.data(), &templen);
+    WSAAddressToStringA(&copy.base, static_cast<DWORD>(size), nullptr, temp.data(), &templen);
     SetLastError(le);
-
-    free(copy);
 #else
     const void* ip;
 

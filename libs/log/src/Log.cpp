@@ -17,8 +17,8 @@
 
 #include "Log.h"
 #include "FileWriter.h"
-#include "s25util/MyTime.h"
 #include "StdStreamWriter.h"
+#include "s25util/MyTime.h"
 #include <boost/filesystem/path.hpp>
 #include <stdexcept>
 
