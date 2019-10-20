@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#include "libutil/Tokenizer.h"
+#include "s25util/Tokenizer.h"
 #include <boost/test/unit_test.hpp>
 
 BOOST_AUTO_TEST_CASE(Extract)

@@ -16,7 +16,7 @@
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
 #include "IP.hpp"
-#include "Tokenizer.h"
+#include "s25util/Tokenizer.h"
 #include <stdexcept>
 
 namespace {

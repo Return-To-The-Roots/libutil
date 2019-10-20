@@ -13,10 +13,9 @@ set(UTF8_INSTALL OFF CACHE INTERNAL "")
 set(UTF8_SAMPLES OFF CACHE INTERNAL "")
 add_subdirectory(utfcpp)
 
-add_subdirectory(src)
+add_subdirectory(libs)
 if(ClangFormat_FOUND)
-    add_ClangFormat_folder(src TRUE)
-    add_ClangFormat_folder(include TRUE)
+    add_ClangFormat_folder(libs TRUE)
 endif()
 
 include(RttrTestingCfg)

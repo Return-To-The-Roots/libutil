@@ -17,7 +17,7 @@
 
 #include "IP.hpp"
 #include "UPnP.h"
-#include "UniqueHandle.h"
+#include "s25util/UniqueHandle.h"
 #include <windows.h>
 #include <algorithm>
 #include <array>

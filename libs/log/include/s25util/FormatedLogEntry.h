@@ -18,7 +18,7 @@
 #ifndef FormatedLogEntry_h__
 #define FormatedLogEntry_h__
 
-#include "enumUtils.h"
+#include "s25util/enumUtils.h"
 #include <boost/format.hpp>
 #include <string>
 

@@ -15,39 +15,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#include "Message.h"
-#include "Messages.h"
-#include "Protocol.h"
-#include "Serializer.h"
-#include <cstdio>
+#ifndef ProxySettings_h__
+#define ProxySettings_h__
 
-Message* Message::create_base(unsigned short id)
+#include <cstdint>
+#include <string>
+#include <utility>
+
+enum class ProxyType
 {
-    Message* msg = nullptr;
-    switch(id)
-    {
-        default: printf("ERROR: Message with id %u couldn't be created!\n", unsigned(id)); break;
-
-        case NMS_nullptr_MSG: { msg = new Message_Null();
-        }
-        break;
-        case NMS_DEAD_MSG: { msg = new Message_Dead();
-        }
-        break;
-    }
-
-    return msg;
-}
-
-/**
- *  dupliziert eine Nachricht.
- */
-Message* Message::clone() const
+    None = 0,
+    Socks4 = 4,
+    Socks5 = 5
+};
+struct ProxySettings
 {
-    Message* msg = create(msgId_);
-    Serializer ser;
-    Serialize(ser);
-    msg->Deserialize(ser);
+    ProxySettings() : type(ProxyType::None), port(0) {}
+    ProxySettings(ProxyType type, std::string hostname, uint16_t port) : type(type), hostname(std::move(hostname)), port(port) {}
+    ProxyType type;
+    std::string hostname;
+    uint16_t port;
+};
 
-    return msg;
-}
+#endif // ProxySettings_h__

@@ -16,10 +16,10 @@
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
 #include "MessageHandler.h"
-#include "Log.h"
+#include "s25util/Log.h"
 #include "Message.h"
-#include "MyTime.h"
-#include "Serializer.h"
+#include "s25util/MyTime.h"
+#include "s25util/Serializer.h"
 #include "Socket.h"
 #include "SocketSet.h"
 #include <boost/endian/arithmetic.hpp>

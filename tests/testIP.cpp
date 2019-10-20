@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#include "libutil/IP.hpp"
+#include "s25util/IP.hpp"
 #include <boost/test/unit_test.hpp>
 #include <stdexcept>
 

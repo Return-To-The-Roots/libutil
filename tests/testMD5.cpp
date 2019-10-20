@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#include "libutil/md5.hpp"
+#include "s25util/md5.hpp"
 #include <boost/test/unit_test.hpp>
 #include <sstream>
 

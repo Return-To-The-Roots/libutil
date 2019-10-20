@@ -16,7 +16,7 @@
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdStreamWriter.h"
-#include "colors.h"
+#include "s25util/colors.h"
 #include <boost/nowide/iostream.hpp>
 #ifdef _WIN32
 #include <windows.h>

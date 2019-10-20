@@ -16,11 +16,11 @@
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
 #include "Socket.h"
-#include "Log.h"
+#include "s25util/Log.h"
 #include "SocketSet.h"
-#include "StringConversion.h"
+#include "s25util/StringConversion.h"
 #include "UPnP.h"
-#include "strFuncs.h"
+#include "s25util/strFuncs.h"
 #include <array>
 #include <cstdio>
 #include <cstdlib>
@@ -482,11 +482,11 @@ void Socket::Sleep(unsigned ms)
  */
 bool Socket::Connect(const std::string& hostname, const unsigned short port, bool use_ipv6, const ProxySettings& proxy)
 {
-    if(proxy.type == PROXY_SOCKS4)
+    if(proxy.type == ProxyType::Socks4)
         use_ipv6 = false;
 
     std::vector<HostAddr> proxy_ips;
-    if(proxy.type != PROXY_NONE)
+    if(proxy.type != ProxyType::None)
     {
         proxy_ips = HostToIp(proxy.hostname, proxy.port, use_ipv6);
         if(proxy_ips.empty())
@@ -501,7 +501,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
     bool done = false;
 
     // do not use proxy for connecting to localhost
-    const std::vector<HostAddr>& usedIPs = (proxy.type != PROXY_NONE && hostname != "localhost") ? proxy_ips : ips;
+    const std::vector<HostAddr>& usedIPs = (proxy.type != ProxyType::None && hostname != "localhost") ? proxy_ips : ips;
 
     for(const auto& it : usedIPs)
     {
@@ -526,8 +526,8 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
             continue;
         }
         std::string ip = IpToString(addr.getAddr().ai_addr); //-V807
-        LOG.write("Connection to %s%s:%d\n") % (proxy.type != PROXY_NONE ? "Proxy " : "") % ip
-          % (proxy.type != PROXY_NONE ? proxy.port : port);
+        LOG.write("Connection to %s%s:%d\n") % (proxy.type != ProxyType::None ? "Proxy " : "") % ip
+          % (proxy.type != ProxyType::None ? proxy.port : port);
 
         // Und schließlich Verbinden
         if(connect(socket_, addr.getAddr().ai_addr, static_cast<int>(addr.getAddr().ai_addrlen)) != SOCKET_ERROR)
@@ -567,7 +567,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
                     switch(proxy.type)
                     {
                         default: break;
-                        case PROXY_SOCKS4:
+                        case ProxyType::Socks4:
                         {
                             union
                             {
@@ -610,7 +610,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
                             }
                         }
                         break;
-                        case PROXY_SOCKS5:
+                        case ProxyType::Socks5:
                         {
                             // not implemented
                             return false;

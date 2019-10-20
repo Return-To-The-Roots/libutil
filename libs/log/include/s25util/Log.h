@@ -21,7 +21,7 @@
 #define LOG_H_INCLUDED
 
 #include "FormatedLogEntry.h"
-#include "Singleton.h"
+#include "s25util/Singleton.h"
 #include <boost/config.hpp>
 #include <memory>
 #include <string>
