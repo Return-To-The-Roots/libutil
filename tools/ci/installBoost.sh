@@ -13,6 +13,8 @@ function all_libs_exist() {
     for lib in "${required_libs[@]}"; do
         if ! ls "${INSTALL_DIR}/lib/*${lib}*.*" &> /dev/null; then
             echo "Missing Boost.${lib}. Building boost..."
+			echo "Checked '${INSTALL_DIR}/lib/*${lib}*.*' but found only:"
+			ls "${INSTALL_DIR}/lib/" 2> /dev/null || true
             return 1
         fi
     done
@@ -43,8 +45,14 @@ fi
 
 cd "${FILE_NAME}"
 
-# Linux and OSX version
-NPROC=$(nproc 2>/dev/null || sysctl -n hw.ncpu)
+if [[ "${TRAVIS_OS_NAME:-}" == "windows" ]]; then
+	TOOLSET="toolset=msvc"
+	NPROC=2
+else
+	# Linux and OSX version
+	NPROC=$(nproc 2>/dev/null || sysctl -n hw.ncpu)
+	TOOLSET=
+fi
 
 ./bootstrap.sh --with-libraries=$(join , ${required_libs[@]}) threading=multi >/dev/null
-./b2 link=${link} variant=release --prefix="${INSTALL_DIR}" -j${NPROC} install >/dev/null
+./b2 link=${link} ${TOOLSET} variant=release --prefix="${INSTALL_DIR}" -j${NPROC} install >/dev/null
