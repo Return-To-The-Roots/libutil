@@ -11,7 +11,7 @@ required_libs=( ${required_libs//,/ } )
 
 function all_libs_exist() {
     for lib in "${required_libs[@]}"; do
-        if ! ls "${INSTALL_DIR}/lib/*${lib}*.*" &> /dev/null; then
+        if ! ls "${INSTALL_DIR}/lib/"*"${lib}"*.* &> /dev/null; then
             echo "Missing Boost.${lib}. Building boost..."
 			echo "Checked '${INSTALL_DIR}/lib/*${lib}*.*' but found only:"
 			ls "${INSTALL_DIR}/lib/" 2> /dev/null || true
