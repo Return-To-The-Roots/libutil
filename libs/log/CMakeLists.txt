@@ -3,6 +3,7 @@ find_package(Boost 1.64 REQUIRED COMPONENTS filesystem)
 file(GLOB HEADER_FILES include/s25util/*.*)
 add_library(s25util_log STATIC
 	${HEADER_FILES}
+	src/error.cpp
 	src/FileWriter.cpp
 	src/FormatedLogEntry.cpp
 	src/Log.cpp
