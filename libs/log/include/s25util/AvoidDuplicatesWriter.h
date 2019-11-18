@@ -27,7 +27,7 @@
 class AvoidDuplicatesWriter : public TextWriterInterface
 {
 public:
-    AvoidDuplicatesWriter(std::shared_ptr<TextWriterInterface> writer) : origWriter(std::move(writer)) {}
+    explicit AvoidDuplicatesWriter(std::shared_ptr<TextWriterInterface> writer) : origWriter(std::move(writer)) {}
     void writeText(const std::string& txt, unsigned color) override;
     void reset() { lastLine.clear(); }
     std::shared_ptr<TextWriterInterface> origWriter;

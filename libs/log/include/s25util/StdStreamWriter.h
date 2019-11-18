@@ -27,7 +27,7 @@ class StdStreamWriter : public TextWriterInterface
     std::ostream& os;
 
 public:
-    StdStreamWriter(bool stdoutOrStderr);
+    explicit StdStreamWriter(bool stdoutOrStderr) noexcept;
 
     void writeText(const std::string& txt, unsigned color) override;
     void setColor(unsigned color);

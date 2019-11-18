@@ -26,7 +26,7 @@ class FileWriter : public TextWriterInterface
     boost::nowide::ofstream file;
 
 public:
-    FileWriter(const std::string& filePath);
+    explicit FileWriter(const std::string& filePath);
     void writeText(const std::string& txt, unsigned color) override;
 };
 

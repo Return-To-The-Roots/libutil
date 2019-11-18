@@ -24,7 +24,9 @@
 
 namespace bnw = boost::nowide;
 
-StdStreamWriter::StdStreamWriter(bool stdoutOrStderr) : stdoutOrStderr_(stdoutOrStderr), os(stdoutOrStderr_ ? bnw::cout : bnw::cerr) {}
+StdStreamWriter::StdStreamWriter(bool stdoutOrStderr) noexcept
+    : stdoutOrStderr_(stdoutOrStderr), os(stdoutOrStderr_ ? bnw::cout : bnw::cerr)
+{}
 
 void StdStreamWriter::writeText(const std::string& txt, unsigned color)
 {
