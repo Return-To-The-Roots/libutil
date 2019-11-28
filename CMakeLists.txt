@@ -6,15 +6,7 @@ project(s25util)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-set(NOWIDE_BUILD_STATIC ON CACHE INTERNAL "")
-set(NOWIDE_BUILD_SHARED OFF CACHE INTERNAL "")
-set(NOWIDE_USE_BOOST_FILESYSTEM ON CACHE INTERNAL "")
-add_subdirectory(nowide EXCLUDE_FROM_ALL)
-
-set(UTF8_TESTS OFF CACHE INTERNAL "")
-set(UTF8_INSTALL OFF CACHE INTERNAL "")
-set(UTF8_SAMPLES OFF CACHE INTERNAL "")
-add_subdirectory(utfcpp)
+add_subdirectory(external/nowide EXCLUDE_FROM_ALL)
 
 add_subdirectory(libs)
 if(ClangFormat_FOUND)
