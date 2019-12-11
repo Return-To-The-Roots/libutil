@@ -111,17 +111,17 @@ std::string Log::getLastError() const
 #endif
 }
 
-FormatedLogEntry Log::write(const std::string& format, LogTarget target /* = LogTarget::FileAndStdout*/)
+FormatedLogEntry Log::write(const char* format, LogTarget target /* = LogTarget::FileAndStdout*/)
 {
     return FormatedLogEntry(*this, target, format);
 }
 
-FormatedLogEntry Log::writeColored(const std::string& format, unsigned color, LogTarget target /* = LogTarget::FileAndStdout*/)
+FormatedLogEntry Log::writeColored(const char* format, unsigned color, LogTarget target /* = LogTarget::FileAndStdout*/)
 {
     return FormatedLogEntry(*this, target, format, color);
 }
 
-FormatedLogEntry Log::writeToFile(const std::string& format)
+FormatedLogEntry Log::writeToFile(const char* format)
 {
     return FormatedLogEntry(*this, LogTarget::File, format);
 }

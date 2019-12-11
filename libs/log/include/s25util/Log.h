@@ -50,11 +50,11 @@ public:
     std::string getLastError() const;
 
     /// Write formated text to target (default: File and Stdout)
-    FormatedLogEntry write(const std::string& format, LogTarget target = LogTarget::FileAndStdout);
+    FormatedLogEntry write(const char* format, LogTarget target = LogTarget::FileAndStdout);
     /// Write formated text to target (default: File and Stdout)
-    FormatedLogEntry writeColored(const std::string& format, unsigned color, LogTarget target = LogTarget::FileAndStdout);
+    FormatedLogEntry writeColored(const char* format, unsigned color, LogTarget target = LogTarget::FileAndStdout);
     /// Write formated text to file only
-    FormatedLogEntry writeToFile(const std::string& format);
+    FormatedLogEntry writeToFile(const char* format);
 
     std::shared_ptr<TextWriterInterface> getStdoutWriter() { return stdoutWriter; }
     std::shared_ptr<TextWriterInterface> getStderrWriter() { return stderrWriter; }

@@ -20,7 +20,6 @@
 
 #include "s25util/enumUtils.h"
 #include <boost/format.hpp>
-#include <string>
 
 class Log;
 
@@ -40,12 +39,15 @@ MAKE_BITSET_STRONG(LogTarget)
 class FormatedLogEntry
 {
 public:
-    FormatedLogEntry(Log& log, LogTarget target, const std::string& msg) : log_(log), target_(target), fmt(msg), useColor_(false), color_(0)
+    FormatedLogEntry(Log& log, LogTarget target, const char* msg, unsigned color = 0u) : log_(log), target_(target), fmt(msg), color_(color)
     {}
-    FormatedLogEntry(Log& log, LogTarget target, const std::string& msg, unsigned color)
-        : log_(log), target_(target), fmt(msg), useColor_(true), color_(color)
-    {}
-    ~FormatedLogEntry();
+    FormatedLogEntry(FormatedLogEntry&& rhs) noexcept : log_(rhs.log_), target_(rhs.target_), color_(rhs.color_) { fmt.swap(rhs.fmt); }
+    FormatedLogEntry(const FormatedLogEntry&) = delete;
+    FormatedLogEntry& operator=(const FormatedLogEntry&) = delete;
+    // The destructor constructs the final message from the format and flushs it to the log
+    // This may throw in either operation which is ok, as this is only intended to be used as a temporary
+    // NOLINTNEXTLINE(bugprone-exception-escape)
+    ~FormatedLogEntry() noexcept(false);
 
     template<typename T>
     FormatedLogEntry& operator%(const T& value)
@@ -65,7 +67,6 @@ private:
     Log& log_;
     LogTarget target_;
     boost::format fmt;
-    bool useColor_;
     unsigned color_;
 };
 

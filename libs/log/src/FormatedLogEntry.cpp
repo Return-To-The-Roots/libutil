@@ -18,7 +18,11 @@
 #include "FormatedLogEntry.h"
 #include "Log.h"
 
-FormatedLogEntry::~FormatedLogEntry()
+// NOLINTNEXTLINE(bugprone-exception-escape)
+FormatedLogEntry::~FormatedLogEntry() noexcept(false)
 {
-    log_.flush(fmt.str(), target_, useColor_ ? color_ : 0u);
+    std::string msg = fmt.str();
+    // Empty messages also occur when this has been moved from
+    if(!msg.empty())
+        log_.flush(msg, target_, color_);
 }
