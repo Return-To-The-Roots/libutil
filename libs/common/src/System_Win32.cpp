@@ -16,7 +16,7 @@
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
 #include "System.h"
-#include "ucString.h"
+#include <boost/nowide/convert.hpp>
 #include <windows.h>
 #include <shellapi.h>
 #include <shlobj.h>
@@ -79,66 +79,11 @@ static HRESULT mySHGetKnownFolderPath(REFKNOWNFOLDERID rfid, std::string& path)
 
     if(ppszPath)
     {
-        path = cvWideStringToUTF8(ppszPath);
+        path = boost::nowide::narrow(ppszPath);
         CoTaskMemFree(ppszPath);
     }
 
     return retval;
-}
-
-bool System::envVarExists(const std::string& name)
-{
-    return envVarExists(cvUTF8ToWideString(name));
-}
-
-bool System::envVarExists(const std::wstring& name)
-{
-    return GetEnvironmentVariableW(name.c_str(), nullptr, 0) > 0;
-}
-
-std::string System::getEnvVar(const std::string& name)
-{
-    return cvWideStringToUTF8(getEnvVar(cvUTF8ToWideString(name)));
-}
-
-std::wstring System::getEnvVar(const std::wstring& name)
-{
-    // Get number of chars including terminating nullptr
-    DWORD numChars = GetEnvironmentVariableW(name.c_str(), nullptr, 0);
-    if(!numChars)
-        return L"";
-    std::vector<wchar_t> tmpString(numChars);
-    numChars = GetEnvironmentVariableW(name.c_str(), tmpString.data(), static_cast<DWORD>(tmpString.size()));
-    // This does NOT include the terminating nullptr
-    if(numChars + 1 != static_cast<DWORD>(tmpString.size()))
-        throw std::runtime_error("Invalid size returned");
-    // Convert to wstring but do not include terminating 0
-    return std::wstring(tmpString.begin(), tmpString.begin() + numChars);
-}
-
-bfs::path System::getPathFromEnvVar(const std::string& name)
-{
-    return getEnvVar(cvUTF8ToWideString(name));
-}
-
-bool System::setEnvVar(const std::string& name, const std::string& value)
-{
-    return setEnvVar(cvUTF8ToWideString(name), cvUTF8ToWideString(value));
-}
-
-bool System::setEnvVar(const std::wstring& name, const std::wstring& value)
-{
-    return SetEnvironmentVariableW(name.c_str(), value.c_str()) != FALSE;
-}
-
-bool System::removeEnvVar(const std::string& name)
-{
-    return removeEnvVar(cvUTF8ToWideString(name));
-}
-
-bool System::removeEnvVar(const std::wstring& name)
-{
-    return SetEnvironmentVariableW(name.c_str(), nullptr) != FALSE;
 }
 
 bfs::path System::getHomePath()
@@ -182,5 +127,5 @@ std::string System::getUserName()
 
     userName.resize(nameLen - 1); // nameLen already contains terminating 0
 
-    return cvWideStringToUTF8(std::wstring(userName.begin(), userName.end()));
+    return boost::nowide::narrow(std::wstring(userName.begin(), userName.end()));
 }

@@ -5,8 +5,20 @@ endif()
 project(s25util)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+if(CMAKE_VERSION VERSION_LESS 3.14)
+    list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_3.14")
+endif()
 
-add_subdirectory(external/nowide EXCLUDE_FROM_ALL)
+include(FetchContent)
+FetchContent_Declare(
+  BoostNowide
+  GIT_REPOSITORY https://github.com/boostorg/nowide.git
+  GIT_TAG        v10.0.0
+)
+set(_oldBUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
+set(BUILD_SHARED_LIBS OFF)
+FetchContent_MakeAvailable(BoostNowide)
+set(BUILD_SHARED_LIBS ${_oldBUILD_SHARED_LIBS})
 
 add_subdirectory(libs)
 if(ClangFormat_FOUND)

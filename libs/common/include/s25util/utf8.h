@@ -1,4 +1,4 @@
-// Copyright (c) 2016 - 2017 Settlers Freaks (sf-team at siedler25.org)
+// Copyright (c) 2005 - 2017 Settlers Freaks (sf-team at siedler25.org)
 //
 // This file is part of Return To The Roots.
 //
@@ -15,21 +15,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#include "System.h"
+#ifndef ucString_h__
+#define ucString_h__
 
-bfs::path System::getHomePath()
-{
-    bfs::path homePath = getPathFromEnvVar("HOME");
-    // Emergency fallback. Should never happen but prevents "~/foo"->"/foo"
-    if(homePath.empty())
-    {
-        assert(false);
-        homePath = ".";
-    }
-    return homePath;
-}
+#include <string>
 
-std::string System::getUserName()
-{
-    return getEnvVar("USER");
-}
+namespace s25util {
+
+/// Convert an UTF-8 string to unicode string
+std::u32string utf8to32(const std::string& other);
+
+/// Convert an unicode string to UTF-8 string
+std::string utf32to8(const std::u32string& other);
+
+/// Return true if text is valid UTF-8
+bool isValidUTF8(const std::string& text);
+std::string::const_iterator findInvalidUTF8(const std::string& text);
+
+/// Convert ANSI (aka Windows-1252) encoded strings to UTF-8
+std::string ansiToUTF8(const std::string& other);
+
+} // namespace s25util
+
+#endif // ucString_h__

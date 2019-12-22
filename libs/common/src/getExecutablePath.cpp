@@ -28,7 +28,7 @@ namespace bfs = boost::filesystem;
 
 #if(BOOST_OS_CYGWIN || BOOST_OS_WINDOWS) // {
 
-#include "ucString.h"
+#include <boost/nowide/convert.hpp>
 #include <windows.h>
 #include <array>
 
@@ -48,7 +48,7 @@ std::string getExecutablePath()
     std::array<wchar_t, MAX_PATH> fullPath;
     if(!_wfullpath(&fullPath.front(), &buf.front(), fullPath.size()))
         return "";
-    return cvWideStringToUTF8(&fullPath.front());
+    return boost::nowide::narrow(&fullPath.front());
 }
 
 #elif(BOOST_OS_MACOS)

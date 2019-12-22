@@ -13,7 +13,7 @@ add_library(s25util_log STATIC
 add_library(s25util::log ALIAS s25util_log)
 
 target_include_directories(s25util_log PUBLIC include PRIVATE include/s25util)
-target_link_libraries(s25util_log PUBLIC s25util::common nowide::static Boost::disable_autolinking Boost::filesystem)
+target_link_libraries(s25util_log PUBLIC s25util::common Boost::nowide Boost::disable_autolinking Boost::filesystem)
 target_compile_features(s25util_log PUBLIC cxx_std_14)
 # PIC Required for linking into shared libs
 set_target_properties(s25util_log PROPERTIES CXX_EXTENSIONS OFF POSITION_INDEPENDENT_CODE ON)

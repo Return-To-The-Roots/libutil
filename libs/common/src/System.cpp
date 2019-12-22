@@ -18,9 +18,37 @@
 #include "System.h"
 #include "getExecutablePath.h"
 #include <boost/filesystem/operations.hpp>
-#include <boost/nowide/system.hpp>
+#include <boost/nowide/cstdlib.hpp>
 
 namespace bfs = boost::filesystem;
+namespace bnw = boost::nowide;
+
+bool System::envVarExists(const std::string& name)
+{
+    return bnw::getenv(name.c_str()) != nullptr;
+}
+
+std::string System::getEnvVar(const std::string& name)
+{
+    const char* value = bnw::getenv(name.c_str());
+    return value ? value : "";
+}
+
+bfs::path System::getPathFromEnvVar(const std::string& name)
+{
+    return getEnvVar(name);
+}
+
+bool System::setEnvVar(const std::string& name, const std::string& value)
+{
+    return bnw::setenv(name.c_str(), value.c_str(), 1) == 0;
+}
+
+bool System::removeEnvVar(const std::string& name)
+{
+    bnw::unsetenv(name.c_str());
+    return true;
+}
 
 bfs::path System::getExecutablePath()
 {
@@ -64,7 +92,7 @@ bool System::execute(const bfs::path& command, const std::string& arguments)
     if(executable.find(' ') != std::string::npos)
         throw std::runtime_error("Executable must not contain spaces!");
     ScopedCurrentPathChange tmp(folder);
-    int result = boost::nowide::system((executable + " " + arguments).c_str());
+    int result = bnw::system((executable + " " + arguments).c_str());
     return result == 0; // Assume 0 == OK
 }
 
