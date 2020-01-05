@@ -76,10 +76,8 @@ function(enable_warnings target)
         -Wnoexcept
         -Woverloaded-virtual
         -Wstrict-null-sentinel
-        -Wsuggest-override
         -Wno-maybe-uninitialized # False positives e.g. with variant/optional
         -Wno-error=inconsistent-missing-override
-        -Wno-error=suggest-override
     )
     if(NOT WIN32)
       # Lot's of false-positives on windows.
@@ -87,6 +85,10 @@ function(enable_warnings target)
       check_and_add_warnings(TARGET ${target} VISIBILITY ${visibility}
         CXX -Wredundant-decls
       )
+    endif()
+    # Prior to 9.2 "final" was not considered "override"
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 9.2)
+      target_compile_options(${target} ${visibility} $<$<COMPILE_LANGUAGE:CXX>:-Wsuggest-override -Wno-error=suggest-override>)
     endif()
     if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
       # Lot's of false-positives on for e.g. strcmp
