@@ -23,7 +23,7 @@
 
 class Log;
 
-enum class LogTarget
+enum class LogTarget : unsigned
 {
     Stdout = 1,
     Stderr = 2,
@@ -33,7 +33,7 @@ enum class LogTarget
     FileAndStderr = File | Stderr,
     All = Stdout | Stderr | File
 };
-MAKE_BITSET_STRONG(LogTarget)
+MAKE_BITSET_STRONG(LogTarget);
 
 /// Holds one log entry. Will be flushed on destruction
 class FormatedLogEntry
