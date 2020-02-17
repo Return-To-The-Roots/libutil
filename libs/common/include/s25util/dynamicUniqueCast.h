@@ -29,7 +29,7 @@ std::unique_ptr<T> dynamicUniqueCast(std::unique_ptr<U>&& src)
     static_assert(std::has_virtual_destructor<T>::value, "Can't cast this unique_ptr");
     auto* dst = dynamic_cast<T*>(src.get());
     if(dst)
-        src.release();
+        (void) src.release();
     return std::unique_ptr<T>(dst);
 }
 template<class T, class U>
