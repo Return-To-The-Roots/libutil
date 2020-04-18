@@ -19,7 +19,14 @@
 #include <boost/nowide/convert.hpp>
 #include <windows.h>
 #include <shellapi.h>
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4091) // "typedef ": Ignoriert auf der linken Seite von "tagGPFIDL_FLAGS"
+#endif
 #include <shlobj.h>
+#ifdef _MSC_VER
+#pragma warning(push)
+#endif
 #include <stdexcept>
 
 namespace bfs = boost::filesystem;
