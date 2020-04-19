@@ -17,9 +17,9 @@
 
 #include "System.h"
 
-bfs::path System::getHomePath()
+boost::filesystem::path System::getHomePath()
 {
-    bfs::path homePath = getPathFromEnvVar("HOME");
+    boost::filesystem::path homePath = getPathFromEnvVar("HOME");
     // Emergency fallback. Should never happen but prevents "~/foo"->"/foo"
     if(homePath.empty())
     {
