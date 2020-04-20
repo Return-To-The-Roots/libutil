@@ -18,10 +18,12 @@ if(NOT TARGET Boost::nowide)
     GIT_REPOSITORY https://github.com/boostorg/nowide.git
     GIT_TAG        v10.0.1
   )
-  set(_oldBUILD_SHARED_LIBS "${BUILD_SHARED_LIBS}")
+  include(SaveVariables)
+  save_variables(BUILD_SHARED_LIBS CMAKE_POSITION_INDEPENDENT_CODE)
   set(BUILD_SHARED_LIBS OFF)
+  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
   FetchContent_MakeAvailable(BoostNowide)
-  set(BUILD_SHARED_LIBS ${_oldBUILD_SHARED_LIBS})
+  pop_saved_variables()
 endif()
 
 add_subdirectory(libs)
