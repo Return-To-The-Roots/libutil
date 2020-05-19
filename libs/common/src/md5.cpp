@@ -77,7 +77,7 @@ void md5::process(const void* vdata, size_type len, bool add)
         ctx_.num_bits += bytes_to_copy * 8;
         if(len + bytes_in_buf >= 64)
         {
-            process(ctx_, ctx_.buffer.data());
+            process(ctx_.buffer.data());
             ctx_.num_bits += (len - index) * 8;
             bytes_in_buf = 0;
         } else
@@ -87,7 +87,7 @@ void md5::process(const void* vdata, size_type len, bool add)
 
     // now process the data in 64 byte chunks
     for(; len - index >= 64; index += 64)
-        process(ctx_, data + index);
+        process(data + index);
 
     const size_type remaining_bytes = len - index;
 
@@ -106,7 +106,7 @@ void md5::process(const void* vdata, size_type len, bool add)
     padding[bytes_in_buf + remaining_bytes] = 0x80;
     if(remaining_bytes >= 56)
     {
-        process(ctx_, padding.data());
+        process(padding.data());
         std::fill(padding.begin(), padding.end(), 0);
     }
 
@@ -114,8 +114,8 @@ void md5::process(const void* vdata, size_type len, bool add)
     for(int i = 0; i < 8; ++i)
         padding[56 + i] = (ctx_.num_bits >> 8 * i) & 0xff;
 
-    process(ctx_, padding.data());
-    store_msg_digest(ctx_);
+    process(padding.data());
+    store_msg_digest();
     ctx_.reset();
 }
 
@@ -126,17 +126,17 @@ void md5::clear()
 }
 
 // processes one chunk of 64 bytes
-void md5::process(context& ctx, const uint8_t* msg) const
+void md5::process(const uint8_t* msg)
 {
     // store msg in x buffer in little endian format
     std::array<uint32_t, 16> x;
     for(int i = 0, j = 0; i < 16; ++i, j += 4)
         x[i] = (uint32_t)msg[j] | ((uint32_t)msg[j + 1] << 8) | ((uint32_t)msg[j + 2] << 16) | ((uint32_t)msg[j + 3] << 24);
 
-    uint32_t a = ctx.state[0];
-    uint32_t b = ctx.state[1];
-    uint32_t c = ctx.state[2];
-    uint32_t d = ctx.state[3];
+    uint32_t a = ctx_.state[0];
+    uint32_t b = ctx_.state[1];
+    uint32_t c = ctx_.state[2];
+    uint32_t d = ctx_.state[3];
 
     // round 1
     transform<aux_f>(a, b, c, d, x[0], 7, 0xd76aa478);
@@ -210,21 +210,21 @@ void md5::process(context& ctx, const uint8_t* msg) const
     transform<aux_i>(c, d, a, b, x[2], 15, 0x2ad7d2bb);
     transform<aux_i>(b, c, d, a, x[9], 21, 0xeb86d391);
 
-    ctx.state[0] += a;
-    ctx.state[1] += b;
-    ctx.state[2] += c;
-    ctx.state[3] += d;
+    ctx_.state[0] += a;
+    ctx_.state[1] += b;
+    ctx_.state[2] += c;
+    ctx_.state[3] += d;
 }
 
 // store message digest in little endian format
-void md5::store_msg_digest(const context& ctx)
+void md5::store_msg_digest()
 {
     for(int i = 0, j = 0; i < 16; i += 4, ++j)
     {
-        msg_digest_[i] = ctx.state[j] & 0xff;
-        msg_digest_[i + 1] = (ctx.state[j] >> 8) & 0xff;
-        msg_digest_[i + 2] = (ctx.state[j] >> 16) & 0xff;
-        msg_digest_[i + 3] = (ctx.state[j] >> 24) & 0xff;
+        msg_digest_[i] = ctx_.state[j] & 0xff;
+        msg_digest_[i + 1] = (ctx_.state[j] >> 8) & 0xff;
+        msg_digest_[i + 2] = (ctx_.state[j] >> 16) & 0xff;
+        msg_digest_[i + 3] = (ctx_.state[j] >> 24) & 0xff;
     }
 }
 

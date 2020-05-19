@@ -173,9 +173,9 @@ public:
     /// Gets a reference to the Socket.
     SOCKET GetSocket() const;
 
-    void Sleep(unsigned ms);
+    static void Sleep(unsigned ms);
 
-    std::vector<HostAddr> HostToIp(const std::string& hostname, unsigned port, bool get_ipv6, bool useUDP = false);
+    static std::vector<HostAddr> HostToIp(const std::string& hostname, unsigned port, bool get_ipv6, bool useUDP = false);
 
     /// liefert einen string der übergebenen Ip.
     static std::string IpToString(const sockaddr* addr);

@@ -44,8 +44,8 @@ private:
 
     // resets internal context
     void clear();
-    void process(context& ctx, const uint8_t* msg) const;
-    void store_msg_digest(const context&);
+    void process(const uint8_t* msg);
+    void store_msg_digest();
 
     context ctx_, ctx_backup_;
     std::array<uint8_t, 16> msg_digest_;

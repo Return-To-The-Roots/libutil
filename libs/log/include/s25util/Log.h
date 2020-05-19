@@ -47,7 +47,7 @@ public:
     void setWriter(TextWriterInterface* writer, LogTarget target);
     /// Write the last occurred error description with "[text]: " at the front to stdOut and file
     void writeLastError(const std::string& text);
-    std::string getLastError() const;
+    static std::string getLastError();
 
     /// Write formated text to target (default: File and Stdout)
     FormatedLogEntry write(const char* format, LogTarget target = LogTarget::FileAndStdout);

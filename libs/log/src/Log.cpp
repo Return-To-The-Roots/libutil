@@ -95,7 +95,7 @@ void Log::writeLastError(const std::string& text)
     write("%s: %s\n") % text % getLastError();
 }
 
-std::string Log::getLastError() const
+std::string Log::getLastError()
 {
 #ifdef _WIN32
     LPVOID lpMsgBuf;
