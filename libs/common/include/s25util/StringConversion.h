@@ -20,7 +20,6 @@
 #ifndef StringConversion_h__
 #define StringConversion_h__
 
-#include <boost/config.hpp>
 #include <climits>
 #include <limits>
 #include <sstream>
