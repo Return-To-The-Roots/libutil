@@ -32,6 +32,15 @@ inline std::string toLower(std::string s)
     std::transform(s.begin(), s.end(), s.begin(), [](char c) { return toLower(c); });
     return s;
 }
+inline char toUpper(char ch)
+{
+    return static_cast<char>(std::toupper(static_cast<unsigned char>(ch)));
+}
+inline std::string toUpper(std::string s)
+{
+    std::transform(s.begin(), s.end(), s.begin(), [](char c) { return toUpper(c); });
+    return s;
+}
 } // namespace s25util
 
 #endif // strAlgos_h__
