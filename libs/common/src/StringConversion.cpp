@@ -16,9 +16,14 @@
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
 #include "StringConversion.h"
+#include <iomanip>
 #include <locale>
 
 namespace s25util { namespace detail {
     void imbueClassic(std::ios& stream) { stream.imbue(std::locale::classic()); }
+    void enableHexOutput(std::ostream& s, size_t typeSize)
+    {
+        s << "0x" << std::hex << std::uppercase << std::setfill('0') << std::setw(typeSize * 2);
+    }
 
 }} // namespace s25util::detail

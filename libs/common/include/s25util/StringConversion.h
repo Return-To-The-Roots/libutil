@@ -36,7 +36,7 @@ struct ConversionError : public std::runtime_error
 };
 
 namespace detail {
-    template<typename T, typename = void>
+    template<bool IsFloat>
     struct ToStringClassic;
     void imbueClassic(std::ios& stream);
 } // namespace detail
@@ -59,16 +59,16 @@ struct ClassicImbuedStream : public T_Base
 };
 
 template<typename T>
-inline std::string toStringClassic(const T value)
+inline std::string toStringClassic(const T value, bool toHex = false)
 {
     static_assert(std::is_arithmetic<T>::value, "Need an arithmetic value!");
-    return detail::ToStringClassic<T>::convert(value);
+    return detail::ToStringClassic<std::is_floating_point<T>::value>::convert(value, toHex);
 }
 
 /// Tries to convert from source to target type using either a static_cast or a locale independent string conversion
 /// Returns true on success
 template<typename T>
-inline bool tryFromStringClassic(const std::string& value, T& outVal)
+inline bool tryFromStringClassic(const std::string& value, T& outVal, bool fromHex = false)
 {
     static_assert(std::is_arithmetic<T>::value, "Need an arithmetic value!");
     // Empty = error
@@ -78,17 +78,29 @@ inline bool tryFromStringClassic(const std::string& value, T& outVal)
     if(std::is_unsigned<T>::value && value[0] == '-')
         return false;
     ClassicImbuedStream<std::istringstream> ss(value);
-    ss >> std::noskipws >> outVal;
-    return !!ss && ss.eof();
+    ss >> std::noskipws;
+    if(fromHex)
+        ss >> std::hex;
+    if(sizeof(T) == sizeof(char))
+    {
+        // Widen to int for char types to avoid printing it as character
+        int tmp;
+        if(!(ss >> tmp) || !ss.eof() || tmp < static_cast<int>(std::numeric_limits<T>::min())
+           || tmp > static_cast<int>(std::numeric_limits<T>::max()))
+            return false;
+        outVal = static_cast<T>(tmp);
+        return true;
+    } else
+        return (ss >> outVal) && ss.eof();
 }
 
 /// Tries to convert from source to target type using either a static_cast or a locale independent string conversion
 /// Throws ConversionError on failure.
 template<typename T>
-inline T fromStringClassic(const std::string& value)
+inline T fromStringClassic(const std::string& value, bool fromHex = false)
 {
     T outVal;
-    if(!tryFromStringClassic(value, outVal))
+    if(!tryFromStringClassic(value, outVal, fromHex))
         throw ConversionError("Could not convert " + value);
     return outVal;
 }
@@ -96,39 +108,49 @@ inline T fromStringClassic(const std::string& value)
 /// Tries to convert from source to target type using either a static_cast or a locale independent string conversion
 /// Returns the defaultValue on failure
 template<typename T>
-inline T fromStringClassicDef(const std::string& value, T defaultValue)
+inline T fromStringClassicDef(const std::string& value, T defaultValue, bool fromHex = false)
 {
     T outVal;
-    if(!tryFromStringClassic(value, outVal))
+    if(!tryFromStringClassic(value, outVal, fromHex))
         return defaultValue;
     return outVal;
 }
 
 namespace detail {
-    template<typename T>
-    struct ToStringClassic<T, std::enable_if_t<std::is_integral<T>::value>>
+    void enableHexOutput(std::ostream& stream, size_t typeSize);
+    template<>
+    struct ToStringClassic<false>
     {
-        static std::string convert(const T value)
+        template<typename T>
+        static std::string convert(const T value, bool toHex = false)
         {
+            static_assert(std::is_integral<T>::value, "Must be integral");
             ClassicImbuedStream<std::ostringstream> ss;
-            ss << std::noskipws << value;
+            if(toHex)
+                enableHexOutput(ss, sizeof(T));
+            // Widen to int for char types to avoid printing it as character
+            using U = std::conditional_t<sizeof(T) == sizeof(char), int, T>;
+            ss << static_cast<U>(value);
             return ss.str();
         }
     };
-    template<typename T>
-    struct ToStringClassic<T, std::enable_if_t<std::is_floating_point<T>::value>>
+    template<>
+    struct ToStringClassic<true>
     {
-        // Calculate required precision as done by Boost.Lexical_Cast
-        using limits = std::numeric_limits<T>;
-        static_assert(limits::radix == 2 && limits::digits > 0, "");
-        static constexpr unsigned long precision = 2UL + limits::digits * 30103UL / 100000UL;
-        static_assert(static_cast<unsigned long>(limits::digits) < ULONG_MAX / 30103UL
-                        && precision > static_cast<unsigned long>(limits::digits10),
-                      "");
-
-        static std::string convert(const T value)
+        template<typename T>
+        static std::string convert(const T value, bool toHex = false)
         {
+            // Calculate required precision as done by Boost.Lexical_Cast
+            using limits = std::numeric_limits<T>;
+            static_assert(limits::radix == 2 && limits::digits > 0, "");
+            constexpr unsigned long precision = 2UL + limits::digits * 30103UL / 100000UL;
+            static_assert(static_cast<unsigned long>(limits::digits) < ULONG_MAX / 30103UL
+                            && precision > static_cast<unsigned long>(limits::digits10),
+                          "");
+
             ClassicImbuedStream<std::ostringstream> ss;
+            if(toHex)
+                ss << std::hex;
             ss.precision(precision);
             ss << value;
             return ss.str();
