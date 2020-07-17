@@ -28,8 +28,7 @@ UPnP::~UPnP()
     {
         close();
     } catch(...)
-    {
-    }
+    {}
 }
 
 void UPnP::open(uint16_t port)

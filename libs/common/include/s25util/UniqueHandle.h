@@ -87,8 +87,7 @@ public:
 namespace traits {
     template<class T_Ptr>
     struct InvalidHandleValue<T_Ptr*> : std::integral_constant<T_Ptr*, nullptr>
-    {
-    };
+    {};
 } // namespace traits
 
 } // namespace s25util
