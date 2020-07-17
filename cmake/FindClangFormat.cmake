@@ -17,15 +17,13 @@
 
 set(names clang-format)
 set(min 4)
-set(max 7)
+set(max 20)
 if(ClangFormat_FIND_VERSION_MAJOR)
     set(min ${ClangFormat_FIND_VERSION_MAJOR})
-    if(max LESS ClangFormat_FIND_VERSION_MAJOR OR ClangFormat_FIND_VERSION_EXACT)
-        set(max ${ClangFormat_FIND_VERSION_MAJOR})
-    endif()
+    set(max ${ClangFormat_FIND_VERSION_MAJOR})
 endif()
 foreach(version RANGE ${min} ${max})
-    list(INSERT names 0 clang-format-${version}.0)
+    list(INSERT names 0 clang-format-${version}.0 clang-format-${version})
 endforeach()
 
 find_program(ClangFormat_BINARY
@@ -105,7 +103,7 @@ if(ClangFormat_FOUND)
 
                 list(APPEND format_files ${format_file})
             endforeach()
-     
+
             if(format_files)
                 add_custom_target(clangFormat DEPENDS ${format_files})
             endif()
