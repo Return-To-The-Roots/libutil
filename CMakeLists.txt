@@ -16,7 +16,7 @@ if(NOT TARGET Boost::nowide)
   FetchContent_Declare(
     BoostNowide
     GIT_REPOSITORY https://github.com/boostorg/nowide.git
-    GIT_TAG        v10.0.1
+    GIT_TAG        v11.0.0
   )
   include(SaveVariables)
   save_variables(BUILD_SHARED_LIBS CMAKE_POSITION_INDEPENDENT_CODE BUILD_TESTING)

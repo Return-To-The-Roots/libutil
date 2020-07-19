@@ -24,6 +24,7 @@
 #include <iphlpapi.h>
 #include <natupnp.h>
 #include <ole2.h>
+#include <system_error>
 #include <vector>
 #include <winsock2.h>
 
