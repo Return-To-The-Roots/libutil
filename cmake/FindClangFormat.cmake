@@ -33,6 +33,13 @@ find_program(ClangFormat_BINARY
 if(ClangFormat_BINARY)
     execute_process(COMMAND ${ClangFormat_BINARY} --version OUTPUT_VARIABLE out)
     string(REGEX REPLACE ".*clang-format version ([^ \n]+).*" "\\1" ClangFormat_VERSION_STRING "${out}")
+    string(REGEX MATCHALL "[0-9]+" version_components "${ClangFormat_VERSION_STRING}")
+    list(GET version_components 0 ClangFormat_VERSION_MAJOR)
+    if(ClangFormat_FIND_VERSION_MAJOR AND NOT ClangFormat_FIND_VERSION_MAJOR EQUAL ClangFormat_VERSION_MAJOR)
+        message(WARNING "${ClangFormat_BINARY} does not match version ${ClangFormat_FIND_VERSION_MAJOR}.x. Resetting..."
+                "Reconfigure or set manually to use the correct version")
+        unset(ClangFormat_BINARY CACHE)
+    endif()
 endif()
 
 include(FindPackageHandleStandardArgs)
