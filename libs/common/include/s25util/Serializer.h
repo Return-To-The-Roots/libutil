@@ -26,6 +26,7 @@
 #include <cstring>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 
 class BinaryFile;
 
@@ -178,13 +179,7 @@ inline void Serializer::PopRawData(void* data, unsigned length)
 template<typename T>
 inline T Serializer::Pop()
 {
-    if(sizeof(T) == 1)
-    {
-        CheckSize(sizeof(T));
-        T i = static_cast<T>(data_[pos_]);
-        pos_ += sizeof(T);
-        return i;
-    }
+    static_assert(std::is_trivial<T>::value && !std::is_pointer<T>::value, "Type must be a trivial, non-pointer type");
     T i;
     // Note: No casting allowed due to alignment
     PopRawData(&i, sizeof(i));
@@ -194,16 +189,9 @@ inline T Serializer::Pop()
 template<typename T>
 inline void Serializer::Push(T val)
 {
-    if(sizeof(T) == 1)
-    {
-        ExtendMemory(sizeof(T));
-        data_[length_] = static_cast<uint8_t>(val);
-        length_ += sizeof(T);
-    } else
-    {
-        val = Converter::fromNative(val);
-        PushRawData(&val, sizeof(val));
-    }
+    static_assert(std::is_trivial<T>::value && !std::is_pointer<T>::value, "Type must be a trivial, non-pointer type");
+    val = Converter::fromNative(val);
+    PushRawData(&val, sizeof(val));
 }
 
 template<>
