@@ -12,7 +12,6 @@ function(enable_warnings target)
       /MP # parallel compilation
       /w34062 # Enum not handled in switch
       /w34389 # Signed/Unsigned operations
-      /wd4100 # unreferenced formal parameter
       /wd4127 # conditional expr is constant
       /wd4250 # 'class1' : inherits 'class2::member' via dominance (virtual inheritance related)
       /wd4267 # 'var' : conversion from 'size_t' to 'type', possible loss of data
