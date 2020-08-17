@@ -19,6 +19,7 @@
 #define FileWriter_h__
 
 #include "TextWriterInterface.h"
+#include <boost/filesystem/path.hpp>
 #include <boost/nowide/fstream.hpp>
 
 class FileWriter : public TextWriterInterface
@@ -26,7 +27,7 @@ class FileWriter : public TextWriterInterface
     boost::nowide::ofstream file;
 
 public:
-    explicit FileWriter(const std::string& filePath);
+    explicit FileWriter(const boost::filesystem::path& filePath);
     void writeText(const std::string& txt, unsigned color) override;
 };
 

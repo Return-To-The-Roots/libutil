@@ -20,6 +20,7 @@
 #pragma once
 
 #include "libendian/libendian.h"
+#include <boost/filesystem/path.hpp>
 #include <cstdio>
 #include <string>
 
@@ -39,7 +40,7 @@ public:
     ~BinaryFile() { Close(); }
 
     /// Öffnet eine Datei: liefert true falls erfolgreich
-    bool Open(const std::string& filePath, OpenFileMode of);
+    bool Open(const boost::filesystem::path& filePath, OpenFileMode of);
     /// Schließt eine Datei: liefert true falls erfolgreich
     bool Close();
 
@@ -78,12 +79,12 @@ public:
     /// Datei gültig?
     bool IsValid() const { return file ? true : false; }
 
-    const std::string& getFilePath() const { return filePath_; }
+    const boost::filesystem::path& getFilePath() const { return filePath_; }
 
 private:
     /// File-Pointer
     FILE* file;
-    std::string filePath_;
+    boost::filesystem::path filePath_;
 };
 
 #endif // !BINARYFILE_H_INCLUDED

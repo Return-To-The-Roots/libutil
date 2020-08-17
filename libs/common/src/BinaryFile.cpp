@@ -23,15 +23,15 @@
 
 #define CHECKED_READ(...) \
     if(!(__VA_ARGS__))    \
-    throw std::runtime_error("Unknown error during reading " + filePath_)
+    throw std::runtime_error("Unknown error during reading " + filePath_.string())
 #define CHECKED_WRITE(...) \
     if(!(__VA_ARGS__))     \
-    throw std::runtime_error("Unknown error during writing " + filePath_)
+    throw std::runtime_error("Unknown error during writing " + filePath_.string())
 
-bool BinaryFile::Open(const std::string& filePath, const OpenFileMode of)
+bool BinaryFile::Open(const boost::filesystem::path& filePath, const OpenFileMode of)
 {
     static const std::array<const char*, 3> modes = {{"w+b", "a+b", "rb"}};
-    file = boost::nowide::fopen(filePath.c_str(), modes[of]);
+    file = boost::nowide::fopen(filePath.string().c_str(), modes[of]);
     if(file)
     {
         this->filePath_ = filePath;

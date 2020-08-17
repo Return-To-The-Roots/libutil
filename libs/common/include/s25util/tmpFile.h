@@ -15,13 +15,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
+#include <boost/filesystem/path.hpp>
 #include <boost/nowide/fstream.hpp>
 #include <string>
 
 /// Removes a file
 /// If the file is currently in use, it is registered for deletion
 /// (either on close or on reboot)
-void unlinkFile(const std::string& filePath);
+void unlinkFile(const boost::filesystem::path& filePath);
 
 /// RAII wrapper for a temporary file, that creates and opens it and deletes it on destruction
 class TmpFile
@@ -37,5 +38,5 @@ public:
     const std::ostream& getStream() const { return stream; }
     void close() { stream.close(); }
 
-    const std::string filePath;
+    const boost::filesystem::path filePath;
 };

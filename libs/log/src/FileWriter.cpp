@@ -18,11 +18,11 @@
 #include "FileWriter.h"
 #include <stdexcept>
 
-FileWriter::FileWriter(const std::string& filePath)
+FileWriter::FileWriter(const boost::filesystem::path& filePath)
 {
     file.open(filePath);
     if(!file)
-        throw std::runtime_error(std::string("Could not open ") + filePath + " for writing");
+        throw std::runtime_error(std::string("Could not open ") + filePath.string() + " for writing");
 }
 
 void FileWriter::writeText(const std::string& txt, unsigned /*color*/)

@@ -30,7 +30,7 @@ namespace bfs = boost::filesystem;
 namespace { /// Creates and opens a temporary binary file with the given extension
 /// file must be a closed file stream and open() will be called on it
 /// Returns the filename used or an empty string on error
-std::string createTempFile(bnw::ofstream& file, const std::string& ext /* = ".tmp"*/)
+bfs::path createTempFile(bnw::ofstream& file, const std::string& ext /* = ".tmp"*/)
 {
     static const unsigned MAX_TRIES = 50;
 
@@ -58,26 +58,25 @@ std::string createTempFile(bnw::ofstream& file, const std::string& ext /* = ".tm
             file.close();
             continue;
         }
-        return filePath.string();
+        return filePath;
     } while(++tries < MAX_TRIES);
     // Could not find a file :(
     return "";
 }
 } // namespace
 
-void unlinkFile(const std::string& filePath)
+void unlinkFile(const boost::filesystem::path& filePath)
 {
-    bfs::path filepathFull = filePath;
-    if(!bfs::exists(filepathFull))
+    if(!bfs::exists(filePath))
         return;
 #ifdef _WIN32
     // Try to remove it (works for non-open files and files in non-exclusive mode)
-    if(DeleteFileW(filepathFull.c_str()))
+    if(DeleteFileW(filePath.c_str()))
         return;
     // Fallback: Delete on reboot
-    MoveFileExW(filepathFull.c_str(), nullptr, MOVEFILE_DELAY_UNTIL_REBOOT);
+    MoveFileExW(filePath.c_str(), nullptr, MOVEFILE_DELAY_UNTIL_REBOOT);
 #else
-    unlink(filepathFull.c_str());
+    unlink(filePath.c_str());
 #endif // _WIN32
 }
 

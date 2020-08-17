@@ -23,6 +23,7 @@
 #include "FormatedLogEntry.h"
 #include "s25util/Singleton.h"
 #include <boost/config.hpp>
+#include <boost/filesystem/path.hpp>
 #include <memory>
 #include <string>
 
@@ -38,7 +39,7 @@ public:
 
     /// Sets the path where the log will be written to
     /// Must be done before the first write
-    void setLogFilepath(const std::string& filepath);
+    void setLogFilepath(boost::filesystem::path filepath);
 
     /// Open the log file if it is not yet open
     void open();
@@ -63,7 +64,7 @@ public:
 private:
     std::shared_ptr<TextWriterInterface> stdoutWriter, stderrWriter, fileWriter;
     /// Path where the log files are written to
-    std::string logFilepath;
+    boost::filesystem::path logFilepath;
 
     void flush(const std::string& txt, LogTarget target, unsigned color = 0);
     // This method is used by the log entry holder

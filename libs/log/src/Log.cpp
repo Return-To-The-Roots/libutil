@@ -37,19 +37,19 @@ Log::Log()
 
 Log::~Log() = default;
 
-void Log::setLogFilepath(const std::string& filepath)
+void Log::setLogFilepath(boost::filesystem::path filepath)
 {
     if(fileWriter)
         throw std::runtime_error("Cannot set log filepath after having already opened the log file");
-    logFilepath = filepath;
+    logFilepath = std::move(filepath);
 }
 
 void Log::open()
 {
     if(!fileWriter)
     {
-        bfs::path filePath = bfs::path(logFilepath) / (s25util::Time::FormatTime("%Y-%m-%d_%H-%i-%s") + ".log");
-        fileWriter = std::make_shared<FileWriter>(filePath.string());
+        const bfs::path filePath = logFilepath / (s25util::Time::FormatTime("%Y-%m-%d_%H-%i-%s") + ".log");
+        fileWriter = std::make_shared<FileWriter>(filePath);
     }
 }
 
