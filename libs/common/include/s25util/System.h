@@ -17,9 +17,6 @@
 
 #pragma once
 
-#ifndef System_h__
-#define System_h__
-
 #include <boost/filesystem/path.hpp>
 #include <string>
 
@@ -67,5 +64,3 @@ public:
     /// Arguments need to be properly quoted
     static bool execute(const boost::filesystem::path& command, const std::string& arguments = "");
 };
-
-#endif // System_h__

@@ -14,8 +14,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
-#ifndef MESSAGEQUEUE_H_INCLUDED
-#define MESSAGEQUEUE_H_INCLUDED
+
+#pragma once
 
 #include "MessageHandler.h"
 #include <boost/ptr_container/ptr_deque.hpp>
@@ -68,5 +68,3 @@ public:
 private:
     boost::ptr_deque<Message> messages;
 };
-
-#endif // LOBBYMESSAGEQUEUE_H_INCLUDED

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SingletonImp_h__
-#define SingletonImp_h__
+#pragma once
 
 #include <cassert>
 
@@ -75,5 +74,3 @@ T& Singleton<T, L>::inst()
         MakeInstance();
     return *me; // NOLINT
 }
-
-#endif // SingletonImp_h__

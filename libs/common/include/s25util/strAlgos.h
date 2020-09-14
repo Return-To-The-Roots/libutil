@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef strAlgos_h__
-#define strAlgos_h__
+#pragma once
 
 #include <algorithm>
 #include <cctype>
@@ -42,5 +41,3 @@ inline std::string toUpper(std::string s)
     return s;
 }
 } // namespace s25util
-
-#endif // strAlgos_h__

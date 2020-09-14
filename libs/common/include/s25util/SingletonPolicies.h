@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SingletonPolicies_h__
-#define SingletonPolicies_h__
+#pragma once
 
 #include <cstdlib>
 #include <stdexcept>
@@ -75,5 +74,3 @@ struct WithLongevity
 };
 
 } // namespace SingletonPolicies
-
-#endif // SingletonPolicies_h__

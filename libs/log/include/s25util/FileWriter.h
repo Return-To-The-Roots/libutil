@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef FileWriter_h__
-#define FileWriter_h__
+#pragma once
 
 #include "TextWriterInterface.h"
 #include <boost/filesystem/path.hpp>
@@ -30,5 +29,3 @@ public:
     explicit FileWriter(const boost::filesystem::path& filePath);
     void writeText(const std::string& txt, unsigned color) override;
 };
-
-#endif // FileWriter_h__

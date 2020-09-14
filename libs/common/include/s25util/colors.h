@@ -17,9 +17,6 @@
 
 #pragma once
 
-#ifndef COLORS_H_INCLUDED
-#define COLORS_H_INCLUDED
-
 #include "warningSuppression.h"
 #include <array>
 
@@ -108,5 +105,3 @@ inline unsigned MakeColor(const unsigned alpha, const unsigned red, const unsign
 {
     return ((alpha << 24) | (red << 16) | (green << 8) | blue);
 }
-
-#endif // COLORS_H_INCLUDED

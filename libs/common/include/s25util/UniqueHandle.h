@@ -14,8 +14,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
-#ifndef UNIQUE_HANDLE_H_INCLUDED
-#define UNIQUE_HANDLE_H_INCLUDED
+
+#pragma once
 
 #include <type_traits>
 #include <utility>
@@ -91,5 +91,3 @@ namespace traits {
 } // namespace traits
 
 } // namespace s25util
-
-#endif // !UNIQUE_HANDLE_H_INCLUDED

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef AvoidDuplicatesWriter_h__
-#define AvoidDuplicatesWriter_h__
+#pragma once
 
 #include "TextWriterInterface.h"
 #include <memory>
@@ -45,5 +44,3 @@ inline void AvoidDuplicatesWriter::writeText(const std::string& txt, unsigned co
         lastLine.clear();
     lastLine += txt;
 }
-
-#endif // AvoidDuplicatesWriter_h__

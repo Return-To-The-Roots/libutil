@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef IP_h_INCLUDED__
-#define IP_h_INCLUDED__
+#pragma once
 
 #include <cstdint>
 #include <string>
@@ -28,5 +27,3 @@ constexpr uint32_t makeIP(uint8_t a, uint8_t b, uint8_t c, uint8_t d)
 }
 uint32_t stringToIP(const std::string&);
 } // namespace s25util
-
-#endif // IP_h_INCLUDED__

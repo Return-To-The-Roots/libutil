@@ -8,8 +8,7 @@
 //
 // Modified for C++14 and usage in RTTR by the RTTR team 2019
 
-#ifndef BOOST_MD5_HPP
-#define BOOST_MD5_HPP
+#pragma once
 
 #include <array>
 #include <cstdint>
@@ -64,5 +63,3 @@ std::basic_ostream<charT, traits>& operator<<(std::basic_ostream<charT, traits>&
     return out << m.toString();
 }
 } // namespace s25util
-
-#endif

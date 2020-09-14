@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TextWriterInterface_h__
-#define TextWriterInterface_h__
+#pragma once
 
 #include <string>
 
@@ -27,5 +26,3 @@ public:
     virtual ~TextWriterInterface() = default;
     virtual void writeText(const std::string& txt, unsigned color) = 0;
 };
-
-#endif // TextWriterInterface_h__

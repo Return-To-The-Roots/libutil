@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef StdStreamWriter_h__
-#define StdStreamWriter_h__
+#pragma once
 
 #include "TextWriterInterface.h"
 #include <iosfwd>
@@ -33,5 +32,3 @@ public:
     void setColor(unsigned color);
     void resetColor();
 };
-
-#endif // StdStreamWriter_h__

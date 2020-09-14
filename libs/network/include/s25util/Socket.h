@@ -14,8 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
-#ifndef SOCKET_H_INCLUDED
-#define SOCKET_H_INCLUDED
 
 #pragma once
 
@@ -205,5 +203,3 @@ private:
     bool isBroadcast;
     int16_t upnpPort_; /// UPnP opened port or 0
 };
-
-#endif // SOCKET_H_INCLUDED

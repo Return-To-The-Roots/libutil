@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef FormatedLogEntry_h__
-#define FormatedLogEntry_h__
+#pragma once
 
 #include "s25util/enumUtils.h"
 #include <boost/format.hpp>
@@ -69,5 +68,3 @@ private:
     boost::format fmt;
     unsigned color_;
 };
-
-#endif // FormatedLogEntry_h__

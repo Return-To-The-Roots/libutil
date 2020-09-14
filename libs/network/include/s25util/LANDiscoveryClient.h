@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef LANDISCOVERY_CLIENT_H_INCLUDED
-#define LANDISCOVERY_CLIENT_H_INCLUDED
+#pragma once
 
 #include "LANDiscovery.h"
 #include <map>
@@ -49,5 +48,3 @@ private:
     bool isRunning;
     ServiceMap services;
 };
-
-#endif // !LANDISCOVERY_CLIENT_H_INCLUDED

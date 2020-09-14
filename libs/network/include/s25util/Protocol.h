@@ -14,8 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
-#ifndef PROTOCOL_H_INCLUDED
-#define PROTOCOL_H_INCLUDED
 
 #pragma once
 
@@ -25,5 +23,3 @@ enum
 
     NMS_DEAD_MSG = 0xFFFF
 };
-
-#endif //! PROTOCOL_H_INCLUDED

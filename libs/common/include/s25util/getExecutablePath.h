@@ -17,11 +17,6 @@
 
 #pragma once
 
-#ifndef getExecutablePath_h__
-#define getExecutablePath_h__
-
 #include <string>
 
 std::string getExecutablePath();
-
-#endif // getExecutablePath_h__

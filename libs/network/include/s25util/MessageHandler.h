@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MessageHandler_h__
-#define MessageHandler_h__
+#pragma once
 
 class Message;
 class Socket;
@@ -37,5 +36,3 @@ public:
     /// Blocks for about timeoutInMs ms if message is not available
     Message* recv(Socket& sock, int& error, unsigned timeoutInMs);
 };
-
-#endif // MessageHandler_h__

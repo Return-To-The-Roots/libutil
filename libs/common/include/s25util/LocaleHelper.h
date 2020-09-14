@@ -17,9 +17,6 @@
 
 #pragma once
 
-#ifndef Locale_h__
-#define Locale_h__
-
 #include <locale>
 
 namespace LocaleHelper {
@@ -29,5 +26,3 @@ bool init();
 /// Returns the default locale as found in boost::filesystem
 const std::locale& getBfsDefaultLocale();
 } // namespace LocaleHelper
-
-#endif // Locale_h__

@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef LANDISCOVERY_SERVICE_H_INCLUDED
-#define LANDISCOVERY_SERVICE_H_INCLUDED
+#pragma once
 
 #include "LANDiscovery.h"
 
@@ -37,5 +36,3 @@ public:
     /// Must be called in the main loop when the service is started. No-Op if it isn't
     void Run();
 };
-
-#endif // !LANDISCOVERY_SERVICE_H_INCLUDED

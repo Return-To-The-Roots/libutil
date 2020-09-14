@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef warningSuppression_h__
-#define warningSuppression_h__
+#pragma once
 
 #include <boost/predef/compiler.h>
 #include <boost/preprocessor/stringize.hpp>
@@ -56,5 +55,3 @@
 
 /// Silence unused variable warning
 #define RTTR_UNUSED(x) (void)(x)
-
-#endif // warningSuppression_h__

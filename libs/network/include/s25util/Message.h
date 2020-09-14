@@ -14,8 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
-#ifndef MESSAGE_H_INCLUDED
-#define MESSAGE_H_INCLUDED
 
 #pragma once
 
@@ -62,5 +60,3 @@ inline Message* new_clone(const Message& msg)
 {
     return msg.clone();
 }
-
-#endif //! MESSAGE_H_INCLUDED

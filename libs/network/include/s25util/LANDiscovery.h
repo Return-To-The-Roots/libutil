@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef LANDISCOVERY_H_INCLUDED
-#define LANDISCOVERY_H_INCLUDED
+#pragma once
 
 #include "Socket.h"
 #include <array>
@@ -75,5 +74,3 @@ protected:
 private:
     bool isServer;
 };
-
-#endif // !LANDISCOVERY_H_INCLUDED

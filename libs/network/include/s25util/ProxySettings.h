@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ProxySettings_h__
-#define ProxySettings_h__
+#pragma once
 
 #include <cstdint>
 #include <string>
@@ -36,5 +35,3 @@ struct ProxySettings
     std::string hostname;
     uint16_t port;
 };
-
-#endif // ProxySettings_h__

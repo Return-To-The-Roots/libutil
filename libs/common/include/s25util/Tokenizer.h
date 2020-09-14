@@ -15,9 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef TOKENIZER_HPP_INCLUDED
-#define TOKENIZER_HPP_INCLUDED
-
 #pragma once
 
 #include <string>
@@ -60,5 +57,3 @@ private:
     std::string delimiter;
     size_t curPos;
 };
-
-#endif // !TOKENIZER_HPP_INCLUDED

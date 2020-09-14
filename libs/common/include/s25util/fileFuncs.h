@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef FILE_FUNCS_H__
-#define FILE_FUNCS_H__
+#pragma once
 
 #include <string>
 
@@ -29,5 +28,3 @@ std::string makePortableFileName(const std::string& fileName);
 /// Remove all invalid chars so the name can be used for a directory. Result may be empty!
 /// --> bfs::portable_directory_name will return true
 std::string makePortableDirName(const std::string& fileName);
-
-#endif

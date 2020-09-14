@@ -14,8 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
-#ifndef SOCKETSET_H_INCLUDED
-#define SOCKETSET_H_INCLUDED
 
 #pragma once
 
@@ -50,5 +48,3 @@ private:
     fd_set set;     /// Das fd_set
     SOCKET highest; /// Höchste Socket des Sets
 };
-
-#endif // SOCKETSET_H_INCLUDED

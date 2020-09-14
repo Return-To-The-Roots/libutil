@@ -17,9 +17,6 @@
 
 #pragma once
 
-#ifndef ERROR_H_INCLUDED
-#define ERROR_H_INCLUDED
-
 #include <string>
 
 namespace s25util {
@@ -34,5 +31,3 @@ int error(const std::string& msg);
 int warning(const std::string& msg);
 
 } // namespace s25util
-
-#endif // !ERROR_H_INCLUDED

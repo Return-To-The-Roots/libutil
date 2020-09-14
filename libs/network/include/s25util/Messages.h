@@ -14,8 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
-#ifndef MESSAGES_H_INCLUDED
-#define MESSAGES_H_INCLUDED
 
 #pragma once
 
@@ -50,5 +48,3 @@ public:
     Message_Dead() : Message(NMS_DEAD_MSG) {}
     bool run(MessageInterface* callback, unsigned id) override { return callback->OnNMSDead(id); }
 };
-
-#endif // !MESSAGES_H_INCLUDED

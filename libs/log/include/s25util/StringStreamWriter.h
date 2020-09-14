@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef StringStreamWriter_h__
-#define StringStreamWriter_h__
+#pragma once
 
 #include "TextWriterInterface.h"
 #include <sstream>
@@ -31,5 +30,3 @@ public:
     std::string getText() const;
     std::stringstream& getStream() { return stream; }
 };
-
-#endif // StringStreamWriter_h__

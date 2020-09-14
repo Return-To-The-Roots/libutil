@@ -14,8 +14,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
-#ifndef STR_FUNCS_H_INCLUDED
-#define STR_FUNCS_H_INCLUDED
+
+#pragma once
 
 #include <array>
 #include <cassert>
@@ -49,5 +49,3 @@ std::string createRandString(size_t len, bool useLowercase = true, bool useUpper
 std::string createRandString(size_t len, const std::string& charset);
 /// Create a random string with chars from the given charset and seed
 std::string createRandString(size_t len, const std::string& charset, uint32_t seed);
-
-#endif // STR_FUNCS_H_INCLUDED

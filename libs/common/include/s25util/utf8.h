@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef ucString_h__
-#define ucString_h__
+#pragma once
 
 #include <string>
 
@@ -36,5 +35,3 @@ std::string::const_iterator findInvalidUTF8(const std::string& text);
 std::string ansiToUTF8(const std::string& other);
 
 } // namespace s25util
-
-#endif // ucString_h__

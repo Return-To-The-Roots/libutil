@@ -17,9 +17,6 @@
 
 #pragma once
 
-#ifndef LOG_H_INCLUDED
-#define LOG_H_INCLUDED
-
 #include "FormatedLogEntry.h"
 #include "s25util/Singleton.h"
 #include <boost/config.hpp>
@@ -72,5 +69,3 @@ private:
 };
 
 #define LOG Log::inst()
-
-#endif // LOG_H_INCLUDED

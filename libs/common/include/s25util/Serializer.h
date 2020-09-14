@@ -14,8 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
-#ifndef SERIALIZER_H_INCLUDED
-#define SERIALIZER_H_INCLUDED
 
 #pragma once
 
@@ -205,5 +203,3 @@ inline bool Serializer::Pop<bool>()
 {
     return PopBool();
 }
-
-#endif // !SERIALIZER_H_INCLUDED

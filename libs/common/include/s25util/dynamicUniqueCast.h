@@ -15,8 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef DYNAMIC_UNIQUE_CAST_H_INCLUDED
-#define DYNAMIC_UNIQUE_CAST_H_INCLUDED
+#pragma once
 
 #include <memory>
 #include <type_traits>
@@ -39,5 +38,3 @@ std::unique_ptr<T> dynamicUniqueCast(std::unique_ptr<U>& src)
 }
 
 } // namespace libutil
-
-#endif // DYNAMIC_UNIQUE_CAST_H_INCLUDED

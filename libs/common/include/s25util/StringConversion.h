@@ -17,9 +17,6 @@
 
 #pragma once
 
-#ifndef StringConversion_h__
-#define StringConversion_h__
-
 #include <climits>
 #include <limits>
 #include <sstream>
@@ -158,5 +155,3 @@ namespace detail {
     };
 } // namespace detail
 } // namespace s25util
-
-#endif // StringConversion_h__
