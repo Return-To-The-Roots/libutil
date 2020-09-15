@@ -16,6 +16,8 @@
 // along with Return To The Roots. If not, see <http://www.gnu.org/licenses/>.
 
 #include "System.h"
+#include <pwd.h>
+#include <unistd.h>
 
 boost::filesystem::path System::getHomePath()
 {
@@ -31,5 +33,7 @@ boost::filesystem::path System::getHomePath()
 
 std::string System::getUserName()
 {
-    return getEnvVar("USER");
+    const auto uid = geteuid();
+    const auto* pw = getpwuid(uid);
+    return pw ? pw->pw_name : "";
 }
