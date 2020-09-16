@@ -28,9 +28,9 @@ namespace bfs = boost::filesystem;
 
 #if(BOOST_OS_CYGWIN || BOOST_OS_WINDOWS) // {
 
-#include <boost/nowide/convert.hpp>
-#include <windows.h>
-#include <array>
+#    include <boost/nowide/convert.hpp>
+#    include <windows.h>
+#    include <array>
 
 std::string getExecutablePath()
 {
@@ -53,8 +53,8 @@ std::string getExecutablePath()
 
 #elif(BOOST_OS_MACOS)
 
-#include <iostream>
-#include <mach-o/dyld.h>
+#    include <iostream>
+#    include <mach-o/dyld.h>
 
 std::string getExecutablePath()
 {
@@ -92,7 +92,7 @@ std::string getExecutablePath()
 
 #elif(BOOST_OS_BSD)
 
-#include <sys/sysctl.h>
+#    include <sys/sysctl.h>
 
 std::string getExecutablePath()
 {
@@ -112,7 +112,7 @@ std::string getExecutablePath()
 
 #elif(BOOST_OS_LINUX)
 
-#include <unistd.h>
+#    include <unistd.h>
 
 std::string getExecutablePath()
 {
@@ -136,6 +136,6 @@ std::string getExecutablePath()
 
 #else
 
-#error Unsupported plattform!
+#    error Unsupported plattform!
 
 #endif

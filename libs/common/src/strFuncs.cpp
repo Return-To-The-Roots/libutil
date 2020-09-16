@@ -53,8 +53,11 @@ struct RandCharCreator
     const std::string charset;
     std::mt19937 rng;
     std::uniform_int_distribution<std::string::size_type> distr;
-    explicit RandCharCreator(const std::string& charset) : charset(charset), rng(std::random_device()()), distr(0, charset.length()) {}
-    RandCharCreator(const std::string& charset, uint32_t seed) : charset(charset), rng(seed), distr(0, charset.length()) {}
+    explicit RandCharCreator(const std::string& charset)
+        : charset(charset), rng(std::random_device()()), distr(0, charset.length())
+    {}
+    RandCharCreator(const std::string& charset, uint32_t seed) : charset(charset), rng(seed), distr(0, charset.length())
+    {}
     char operator()() { return charset[distr(rng)]; }
 };
 

@@ -29,24 +29,24 @@
 #include <stdexcept>
 
 #ifdef _WIN32
-#if defined(__CYGWIN__) || defined(__MINGW32__)
-#ifndef AI_ALL
-#define AI_ALL 0x0010
-#endif
-#ifndef AI_ADDRCONFIG
-#define AI_ADDRCONFIG 0x0020
-#endif
-#ifndef AI_V4MAPPED
-#define AI_V4MAPPED 0x0800
-#endif
-#endif
+#    if defined(__CYGWIN__) || defined(__MINGW32__)
+#        ifndef AI_ALL
+#            define AI_ALL 0x0010
+#        endif
+#        ifndef AI_ADDRCONFIG
+#            define AI_ADDRCONFIG 0x0020
+#        endif
+#        ifndef AI_V4MAPPED
+#            define AI_V4MAPPED 0x0800
+#        endif
+#    endif
 #else
-#include <arpa/inet.h>
-#include <cerrno>
-#include <netdb.h>
-#include <netinet/tcp.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
+#    include <arpa/inet.h>
+#    include <cerrno>
+#    include <netdb.h>
+#    include <netinet/tcp.h>
+#    include <sys/ioctl.h>
+#    include <unistd.h>
 #endif
 
 // do not use addr resolution for localhost
@@ -60,7 +60,8 @@ ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr, bool resolveAll) : lookup((
         {
             hints.ai_flags = AI_ADDRCONFIG;
 #ifndef __FreeBSD__
-            // Defined, but getaddrinfo complains about it on FreeBSD -> Check again with the combination with AI_V4MAPPED
+            // Defined, but getaddrinfo complains about it on FreeBSD -> Check again with the combination with
+            // AI_V4MAPPED
             hints.ai_flags |= AI_ALL | AI_V4MAPPED;
 #endif
         } else
@@ -144,7 +145,9 @@ const sockaddr* PeerAddr::GetAddr() const
     return reinterpret_cast<const sockaddr*>(&addr);
 }
 
-Socket::Socket() : socket_(INVALID_SOCKET), refCount_(nullptr), status_(Status::Invalid), isBroadcast(false), upnpPort_(0) {}
+Socket::Socket()
+    : socket_(INVALID_SOCKET), refCount_(nullptr), status_(Status::Invalid), isBroadcast(false), upnpPort_(0)
+{}
 
 /**
  *  Konstruktor von @p Socket.
@@ -152,7 +155,8 @@ Socket::Socket() : socket_(INVALID_SOCKET), refCount_(nullptr), status_(Status::
  *  @param[in] so Socket welches benutzt werden soll
  *  @param[in] st Status der gesetzt werden soll
  */
-Socket::Socket(const SOCKET so, Status st) : socket_(so), refCount_(new int32_t), status_(st), isBroadcast(false), upnpPort_(0)
+Socket::Socket(const SOCKET so, Status st)
+    : socket_(so), refCount_(new int32_t), status_(st), isBroadcast(false), upnpPort_(0)
 {
     *refCount_ = 1;
 }
@@ -166,7 +170,8 @@ Socket::Socket(const Socket& so)
 
 Socket::Socket(Socket&& so) noexcept
     : socket_(std::exchange(so.socket_, INVALID_SOCKET)), refCount_(std::exchange(so.refCount_, nullptr)),
-      status_(std::exchange(so.status_, Status::Invalid)), isBroadcast(so.isBroadcast), upnpPort_(std::exchange(so.upnpPort_, 0))
+      status_(std::exchange(so.status_, Status::Invalid)), isBroadcast(so.isBroadcast),
+      upnpPort_(std::exchange(so.upnpPort_, 0))
 {}
 
 Socket::~Socket()
@@ -580,8 +585,8 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
                             for(const auto& hostAddr : ips)
                             {
                                 if(!hostAddr.ipv6
-                                   && sscanf(hostAddr.host.c_str(), "%c.%c.%c.%c", &proxyinit[4], &proxyinit[5], &proxyinit[6],
-                                             &proxyinit[7])
+                                   && sscanf(hostAddr.host.c_str(), "%c.%c.%c.%c", &proxyinit[4], &proxyinit[5],
+                                             &proxyinit[6], &proxyinit[7])
                                         == 4)
                                     break;
                             }
@@ -606,7 +611,8 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
 
                             if(proxyinit[0] != 0 || proxyinit[1] != 90)
                             {
-                                LOG.write("Proxy error: got %d: connection rejected or failed or other error\n") % proxyinit[1];
+                                LOG.write("Proxy error: got %d: connection rejected or failed or other error\n")
+                                  % proxyinit[1];
                                 return false;
                             }
                         }

@@ -32,7 +32,7 @@ public:
     /// Sends that message. Returns number of bytes submitted (-1 for failure)
     static int send(Socket& sock, const Message& msg);
     /// Receives a message. Returns nullptr on error, or if nothing is available
-    /// Sets error: -1 = Fatal Error, 0 = socket busy, 1 = No msg available, 2 = incomplete, 3 = incomplete header, 4 = incomplete data
-    /// Blocks for about timeoutInMs ms if message is not available
+    /// Sets error: -1 = Fatal Error, 0 = socket busy, 1 = No msg available, 2 = incomplete, 3 = incomplete header, 4 =
+    /// incomplete data Blocks for about timeoutInMs ms if message is not available
     Message* recv(Socket& sock, int& error, unsigned timeoutInMs);
 };

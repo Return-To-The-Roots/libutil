@@ -31,9 +31,13 @@ class LifetimeTracker : public Singleton<LifetimeTracker, SingletonPolicies::Def
         const unsigned longevity_;
         DestructionFunPtr destFunc_;
 
-        LifetimeTrackerItem(unsigned longevity, DestructionFunPtr destFunc) : longevity_(longevity), destFunc_(destFunc) {}
+        LifetimeTrackerItem(unsigned longevity, DestructionFunPtr destFunc) : longevity_(longevity), destFunc_(destFunc)
+        {}
 
-        friend bool operator<(const LifetimeTrackerItem& lhs, const LifetimeTrackerItem& rhs) { return lhs.longevity_ < rhs.longevity_; }
+        friend bool operator<(const LifetimeTrackerItem& lhs, const LifetimeTrackerItem& rhs)
+        {
+            return lhs.longevity_ < rhs.longevity_;
+        }
     };
 
     // Queue that sorts items in ascending order (front() points to smallest element)
@@ -50,7 +54,8 @@ public:
     void add(unsigned longevity, DestructionFunPtr destFunc)
     {
         // Remove same entries first. Calling a dtor twice is not supported!
-        const auto it = std::find_if(items_.begin(), items_.end(), [destFunc](const auto& x) { return x.destFunc_ == destFunc; });
+        const auto it =
+          std::find_if(items_.begin(), items_.end(), [destFunc](const auto& x) { return x.destFunc_ == destFunc; });
         if(it != items_.end())
             items_.erase(it);
         items_.insert(LifetimeTrackerItem(longevity, destFunc));

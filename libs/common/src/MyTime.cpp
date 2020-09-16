@@ -20,9 +20,9 @@
 #include <iomanip>
 #include <iostream>
 #ifdef _WIN32
-#include <windows.h>
+#    include <windows.h>
 #else
-#include <sys/times.h>
+#    include <sys/times.h>
 #endif // _WIN32
 #include "StringConversion.h"
 
@@ -57,7 +57,8 @@ time64_t Time::CurrentTick()
 /**
  *  formatiert einen Zeitstring.
  *
- *  @param[in] format Formatstring (%Y=4 stelliges Jahr, %m 2 stelliges Monat, %D tag, %H Stunde, %i Minute, %s Sekunden)
+ *  @param[in] format Formatstring (%Y=4 stelliges Jahr, %m 2 stelliges Monat, %D tag, %H Stunde, %i Minute, %s
+ * Sekunden)
  *  @param[in] time   zu benutzender Timestamp.
  *
  *  @return Formatted string

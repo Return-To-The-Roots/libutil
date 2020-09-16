@@ -131,7 +131,8 @@ void md5::process(const uint8_t* msg)
     // store msg in x buffer in little endian format
     std::array<uint32_t, 16> x;
     for(int i = 0, j = 0; i < 16; ++i, j += 4)
-        x[i] = (uint32_t)msg[j] | ((uint32_t)msg[j + 1] << 8) | ((uint32_t)msg[j + 2] << 16) | ((uint32_t)msg[j + 3] << 24);
+        x[i] =
+          (uint32_t)msg[j] | ((uint32_t)msg[j + 1] << 8) | ((uint32_t)msg[j + 2] << 16) | ((uint32_t)msg[j + 3] << 24);
 
     uint32_t a = ctx_.state[0];
     uint32_t b = ctx_.state[1];

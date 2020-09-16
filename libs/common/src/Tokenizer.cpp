@@ -18,7 +18,9 @@
 #include "Tokenizer.h"
 #include <utility>
 
-Tokenizer::Tokenizer(std::string data, std::string delimiter) : data(std::move(data)), delimiter(std::move(delimiter)), curPos(0) {}
+Tokenizer::Tokenizer(std::string data, std::string delimiter)
+    : data(std::move(data)), delimiter(std::move(delimiter)), curPos(0)
+{}
 
 Tokenizer::operator bool() const
 {

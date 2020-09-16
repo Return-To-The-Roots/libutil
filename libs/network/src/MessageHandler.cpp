@@ -59,7 +59,8 @@ int MessageHandler::send(Socket& sock, const Message& msg)
         return ser.GetLength();
 }
 
-/// Helper function to determine if the timeout is reached to be used in a loop. Updates lasttime and the remaining timeout
+/// Helper function to determine if the timeout is reached to be used in a loop. Updates lasttime and the remaining
+/// timeout
 static inline bool timeoutReached(s25util::time64_t& lastTime, unsigned& remainingTimeoutInMs)
 {
     if(remainingTimeoutInMs == 0u)

@@ -19,7 +19,7 @@
 #include "s25util/colors.h"
 #include <boost/nowide/iostream.hpp>
 #ifdef _WIN32
-#include <windows.h>
+#    include <windows.h>
 #endif
 
 namespace bnw = boost::nowide;
@@ -43,8 +43,8 @@ void StdStreamWriter::setColor(unsigned color)
 #ifndef _WIN32
     const char* colorModifier;
 
-    // A switch statement doesn't work here because we compare against the array COLORS[] (although it's constant, it can't be dereferenced
-    // at compile time)
+    // A switch statement doesn't work here because we compare against the array COLORS[] (although it's constant, it
+    // can't be dereferenced at compile time)
     if(color == COLOR_BLUE)
         colorModifier = "\033[40m\033[1;34m";
     else if(color == COLOR_RED)
@@ -78,9 +78,11 @@ void StdStreamWriter::setColor(unsigned color)
         WORD colorAttr = 0;
         if(color == COLOR_BLUE || color == COLOR_MAGENTA || color == COLOR_CYAN || color == COLOR_WHITE)
             colorAttr |= FOREGROUND_BLUE;
-        if(color == COLOR_YELLOW || color == COLOR_GREEN || color == COLOR_CYAN || color == COLOR_WHITE || color == COLOR_BROWN)
+        if(color == COLOR_YELLOW || color == COLOR_GREEN || color == COLOR_CYAN || color == COLOR_WHITE
+           || color == COLOR_BROWN)
             colorAttr |= FOREGROUND_GREEN;
-        if(color == COLOR_RED || color == COLOR_YELLOW || color == COLOR_MAGENTA || color == COLOR_WHITE || color == COLOR_BROWN)
+        if(color == COLOR_RED || color == COLOR_YELLOW || color == COLOR_MAGENTA || color == COLOR_WHITE
+           || color == COLOR_BROWN)
             colorAttr |= FOREGROUND_RED;
         if(color == COLOR_BLACK)
             colorAttr |= BACKGROUND_BLUE;

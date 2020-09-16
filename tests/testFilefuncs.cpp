@@ -20,8 +20,9 @@
 
 BOOST_AUTO_TEST_CASE(PortableName)
 {
-    // Should be: windows_name(name) && portable_posix_name(name) && (name is "." or "..", and the first character not a period or hyphen)
-    // windows_name: !name.empty() && (name is "." or ".."  or does not end with a trailing space or period)
+    // Should be: windows_name(name) && portable_posix_name(name) && (name is "." or "..", and the first character not a
+    // period or hyphen) windows_name: !name.empty() && (name is "." or ".."  or does not end with a trailing space or
+    // period)
     //               The allowed characters are anything except 0x0-0x1F, '<', '>', ':', '"', '/', '\', and '|'.
     // portable_posix_name: !name.empty() The allowed characters are 0-9, a-z, A-Z, '.', '_', and '-'
     BOOST_TEST(makePortableName(".") == ".");

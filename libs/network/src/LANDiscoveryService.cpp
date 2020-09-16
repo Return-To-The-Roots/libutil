@@ -19,7 +19,8 @@
 #include <algorithm>
 #include <stdexcept>
 
-LANDiscoveryService::LANDiscoveryService(const Config& cfg) : LANDiscoveryBase(cfg, true), isRunning(false), dataChanged(false)
+LANDiscoveryService::LANDiscoveryService(const Config& cfg)
+    : LANDiscoveryBase(cfg, true), isRunning(false), dataChanged(false)
 {
     info.GetMagic() = cfg.magicResponse;
     info.GetVersion() = cfg.version;

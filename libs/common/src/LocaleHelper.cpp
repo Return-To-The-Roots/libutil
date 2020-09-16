@@ -21,11 +21,11 @@
 #include <boost/predef/os.h>
 #include <iostream>
 #if BOOST_OS_WINDOWS
-#include <boost/locale.hpp>
+#    include <boost/locale.hpp>
 #elif !BOOST_OS_MACOS
-#include "utf8.h"
-#include <iomanip>
-#include <sstream>
+#    include "utf8.h"
+#    include <iomanip>
+#    include <sstream>
 #endif
 
 namespace bfs = boost::filesystem;
@@ -97,7 +97,8 @@ bool LocaleHelper::init()
         // Call first to correctly init static variable
         getBfsDefaultLocale();
         // Check for errors and use system locale.
-        // So don't rely on string conversions to yield identical results on all systems as locale settings can be changed!
+        // So don't rely on string conversions to yield identical results on all systems as locale settings can be
+        // changed!
         std::locale newLocale = createUtf8Locale();
         std::locale::global(newLocale);
         // Use also the encoding (mostly UTF8) for bfs paths: http://stackoverflow.com/questions/23393870
@@ -108,10 +109,11 @@ bool LocaleHelper::init()
 #if BOOST_OS_WINDOWS
         std::cerr << "Check your system language configuration!";
 #else
-#if BOOST_OS_MACOS
-        std::cerr << "OS X has known problems when using libstdc++. Try setting LC_ALL and LANG to \"C\" or compile with libc++"
-                  << std::endl;
-#endif
+#    if BOOST_OS_MACOS
+        std::cerr
+          << "OS X has known problems when using libstdc++. Try setting LC_ALL and LANG to \"C\" or compile with libc++"
+          << std::endl;
+#    endif
         std::string lcAll = System::getEnvVar("LC_ALL");
         std::string lang = System::getEnvVar("LANG");
         std::cerr << "Check your environment for invalid settings (e.g. LC_ALL";

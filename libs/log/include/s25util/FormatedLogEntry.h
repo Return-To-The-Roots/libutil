@@ -38,9 +38,13 @@ MAKE_BITSET_STRONG(LogTarget);
 class FormatedLogEntry
 {
 public:
-    FormatedLogEntry(Log& log, LogTarget target, const char* msg, unsigned color = 0u) : log_(log), target_(target), fmt(msg), color_(color)
+    FormatedLogEntry(Log& log, LogTarget target, const char* msg, unsigned color = 0u)
+        : log_(log), target_(target), fmt(msg), color_(color)
     {}
-    FormatedLogEntry(FormatedLogEntry&& rhs) noexcept : log_(rhs.log_), target_(rhs.target_), color_(rhs.color_) { fmt.swap(rhs.fmt); }
+    FormatedLogEntry(FormatedLogEntry&& rhs) noexcept : log_(rhs.log_), target_(rhs.target_), color_(rhs.color_)
+    {
+        fmt.swap(rhs.fmt);
+    }
     FormatedLogEntry(const FormatedLogEntry&) = delete;
     FormatedLogEntry& operator=(const FormatedLogEntry&) = delete;
     // The destructor constructs the final message from the format and flushs it to the log

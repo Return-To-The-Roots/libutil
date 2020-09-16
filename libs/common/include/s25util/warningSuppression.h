@@ -23,26 +23,26 @@
 // Macro that can be used to suppress unused warnings. Required e.g. for const std::arrays defined in headers
 // Don't use this if not absolutely necessary!
 #ifdef __GNUC__
-#define SUPPRESS_UNUSED __attribute__((unused))
+#    define SUPPRESS_UNUSED __attribute__((unused))
 #else
-#define SUPPRESS_UNUSED
+#    define SUPPRESS_UNUSED
 #endif
 
 // Use for functions which use "unfixable" undefined behavior, but which is safe
 #if defined(__clang__)
-#define RTTR_ATTRIBUTE_NO_UBSAN(what) __attribute__((no_sanitize(BOOST_PP_STRINGIZE(what))))
+#    define RTTR_ATTRIBUTE_NO_UBSAN(what) __attribute__((no_sanitize(BOOST_PP_STRINGIZE(what))))
 #elif defined(__GNUC__)
-#define RTTR_ATTRIBUTE_NO_UBSAN(what) __attribute__((no_sanitize_undefined))
+#    define RTTR_ATTRIBUTE_NO_UBSAN(what) __attribute__((no_sanitize_undefined))
 #else
-#define RTTR_ATTRIBUTE_NO_UBSAN(what)
+#    define RTTR_ATTRIBUTE_NO_UBSAN(what)
 #endif
 
 #if BOOST_COMP_CLANG
-#define RTTR_DIAGNOSTIC(what) _Pragma(BOOST_PP_STRINGIZE(clang diagnostic what))
+#    define RTTR_DIAGNOSTIC(what) _Pragma(BOOST_PP_STRINGIZE(clang diagnostic what))
 #elif BOOST_COMP_MSVC || defined(__INTELLISENSE__)
-#define RTTR_DIAGNOSTIC(what)
+#    define RTTR_DIAGNOSTIC(what)
 #else
-#define RTTR_DIAGNOSTIC(what) _Pragma(BOOST_PP_STRINGIZE(GCC diagnostic what))
+#    define RTTR_DIAGNOSTIC(what) _Pragma(BOOST_PP_STRINGIZE(GCC diagnostic what))
 #endif
 
 #define RTTR_PUSH_DIAGNOSTIC RTTR_DIAGNOSTIC(push)

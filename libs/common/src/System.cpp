@@ -96,7 +96,8 @@ bool System::execute(const bfs::path& command, const std::string& arguments)
     return result == 0; // Assume 0 == OK
 }
 
-System::ScopedCurrentPathChange::ScopedCurrentPathChange(const boost::filesystem::path& newCurrentPath) : oldCurPath(bfs::current_path())
+System::ScopedCurrentPathChange::ScopedCurrentPathChange(const boost::filesystem::path& newCurrentPath)
+    : oldCurPath(bfs::current_path())
 {
     if(!newCurrentPath.empty())
         bfs::current_path(newCurrentPath);

@@ -82,18 +82,19 @@ inline std::string errorMessage(int hr)
     return "Unknown error";
 }
 
-inline DeviceList discover(int delay, const char* multicastIf = nullptr, const char* miniSSDPDSock = nullptr, bool samePort = false)
+inline DeviceList discover(int delay, const char* multicastIf = nullptr, const char* miniSSDPDSock = nullptr,
+                           bool samePort = false)
 {
     UPNPDev* devicelist = nullptr;
 #ifdef UPNPDISCOVER_SUCCESS
     int error = 0;
     const bool ipv6 = false;
-#if defined(MINIUPNPC_API_VERSION) && (MINIUPNPC_API_VERSION >= 14)
+#    if defined(MINIUPNPC_API_VERSION) && (MINIUPNPC_API_VERSION >= 14)
     const int ttl = 2;
     devicelist = upnpDiscover(delay, multicastIf, miniSSDPDSock, samePort, ipv6, ttl, &error);
-#else
+#    else
     devicelist = upnpDiscover(delay, multicastIf, miniSSDPDSock, samePort, ipv6, &error);
-#endif
+#    endif
 #else
     devicelist = upnpDiscover(delay, multicastIf, miniSSDPDSock, samePort);
 #endif
@@ -106,25 +107,26 @@ inline bool getValidIGD(const DeviceList& deviceList, Urls& urls, IGDdatas& data
     return UPNP_GetValidIGD(deviceList, &urls, &data, &lanAddr[0], lanAddr.size()) != 0;
 }
 
-inline void addPortMapping(const char* controlURL, const char* servicetype, const std::string& extPort, const std::string& inPort,
-                           const std::string& inClient, const std::string& desc, Protocol proto, const char* remoteHost = nullptr)
+inline void addPortMapping(const char* controlURL, const char* servicetype, const std::string& extPort,
+                           const std::string& inPort, const std::string& inClient, const std::string& desc,
+                           Protocol proto, const char* remoteHost = nullptr)
 {
 #ifdef UPNPDISCOVER_SUCCESS
-#define LEASE_DURATION_ARG , nullptr
+#    define LEASE_DURATION_ARG , nullptr
 #else
-#define LEASE_DURATION_ARG
+#    define LEASE_DURATION_ARG
 #endif
     const char* sProtocol = toString(proto);
-    const auto hr = UPNP_AddPortMapping(controlURL, servicetype, extPort.c_str(), inPort.c_str(), inClient.c_str(), desc.c_str(), sProtocol,
-                                        remoteHost LEASE_DURATION_ARG);
+    const auto hr = UPNP_AddPortMapping(controlURL, servicetype, extPort.c_str(), inPort.c_str(), inClient.c_str(),
+                                        desc.c_str(), sProtocol, remoteHost LEASE_DURATION_ARG);
     if(hr == 0)
         return;
     throw std::runtime_error("AddPortMapping failed with: " + errorMessage(hr));
 #undef LEASE_DURATION_ARG
 }
 
-inline void deletePortMapping(const char* controlURL, const char* servicetype, const std::string& extPort, Protocol proto,
-                              const char* remoteHost = nullptr)
+inline void deletePortMapping(const char* controlURL, const char* servicetype, const std::string& extPort,
+                              Protocol proto, const char* remoteHost = nullptr)
 {
     const char* sProtocol = toString(proto);
     const auto hr = UPNP_DeletePortMapping(controlURL, servicetype, extPort.c_str(), sProtocol, remoteHost);

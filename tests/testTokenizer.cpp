@@ -49,7 +49,8 @@ BOOST_AUTO_TEST_CASE(Explode)
 {
     Tokenizer t("a1;b123;c1234 d12.f1", "; .");
     BOOST_REQUIRE(t);
-    BOOST_TEST(t.explode() == (std::vector<std::string>{"a1", "b123", "c1234", "d12", "f1"}), boost::test_tools::per_element());
+    BOOST_TEST(t.explode() == (std::vector<std::string>{"a1", "b123", "c1234", "d12", "f1"}),
+               boost::test_tools::per_element());
 }
 
 BOOST_AUTO_TEST_CASE(ExtractWithEmpty)

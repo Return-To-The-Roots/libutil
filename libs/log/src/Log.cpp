@@ -23,16 +23,17 @@
 #include <stdexcept>
 
 #ifdef _WIN32
-#include <windows.h>
+#    include <windows.h>
 #else
-#include <cerrno>
-#include <cstring>
+#    include <cerrno>
+#    include <cstring>
 #endif
 
 namespace bfs = boost::filesystem;
 
 Log::Log()
-    : stdoutWriter(std::make_shared<StdStreamWriter>(true)), stderrWriter(std::make_shared<StdStreamWriter>(false)), logFilepath("logs")
+    : stdoutWriter(std::make_shared<StdStreamWriter>(true)), stderrWriter(std::make_shared<StdStreamWriter>(false)),
+      logFilepath("logs")
 {}
 
 Log::~Log() = default;
@@ -99,7 +100,8 @@ std::string Log::getLastError()
 {
 #ifdef _WIN32
     LPVOID lpMsgBuf;
-    FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr, GetLastError(),
+    FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr,
+                   GetLastError(),
                    0, // Default language
                    (LPSTR)&lpMsgBuf, 0, nullptr);
     std::string error = static_cast<const char*>(lpMsgBuf);

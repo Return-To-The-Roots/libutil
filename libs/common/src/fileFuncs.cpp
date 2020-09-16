@@ -29,7 +29,8 @@ std::string makePortableName(const std::string& fileName)
     for(char c : fileName)
     {
         // Characters allowed by portable_posix_name. These are also allowed by windows_name
-        if((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '.' || c == '_' || c == '-')
+        if((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '.' || c == '_'
+           || c == '-')
             result += c;
         else
             result += '_';

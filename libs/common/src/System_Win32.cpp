@@ -20,12 +20,12 @@
 #include <windows.h>
 #include <shellapi.h>
 #ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4091) // "typedef ": Ignoriert auf der linken Seite von "tagGPFIDL_FLAGS"
+#    pragma warning(push)
+#    pragma warning(disable : 4091) // "typedef ": Ignoriert auf der linken Seite von "tagGPFIDL_FLAGS"
 #endif
 #include <shlobj.h>
 #ifdef _MSC_VER
-#pragma warning(push)
+#    pragma warning(push)
 #endif
 #include <stdexcept>
 
@@ -34,12 +34,12 @@ namespace bfs = boost::filesystem;
 #if defined(__MINGW32__) && !defined(REFKNOWNFOLDERID)
 
 using KNOWNFOLDERID = GUID;
-#define REFKNOWNFOLDERID const KNOWNFOLDERID&
+#    define REFKNOWNFOLDERID const KNOWNFOLDERID&
 
-#define DEFINE_KNOWN_FOLDER(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
-    EXTERN_C const GUID DECLSPEC_SELECTANY name = {l, w1, w2, {b1, b2, b3, b4, b5, b6, b7, b8}}
+#    define DEFINE_KNOWN_FOLDER(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
+        EXTERN_C const GUID DECLSPEC_SELECTANY name = {l, w1, w2, {b1, b2, b3, b4, b5, b6, b7, b8}}
 
-#define KF_FLAG_CREATE 0x00008000
+#    define KF_FLAG_CREATE 0x00008000
 
 // {4C5C32FF-BB9D-43b0-B5B4-2D72E54EAAA4}
 DEFINE_KNOWN_FOLDER(FOLDERID_SavedGames, 0x4c5c32ff, 0xbb9d, 0x43b0, 0xb5, 0xb4, 0x2d, 0x72, 0xe5, 0x4e, 0xaa, 0xa4);
@@ -47,7 +47,7 @@ DEFINE_KNOWN_FOLDER(FOLDERID_SavedGames, 0x4c5c32ff, 0xbb9d, 0x43b0, 0xb5, 0xb4,
 DEFINE_KNOWN_FOLDER(FOLDERID_Documents, 0xFDD39AD0, 0x238F, 0x46AF, 0xAD, 0xB4, 0x6C, 0x85, 0x48, 0x03, 0x69, 0xC7);
 
 #elif(NTDDI_VERSION < NTDDI_VISTA)
-#define KF_FLAG_CREATE 0x00008000
+#    define KF_FLAG_CREATE 0x00008000
 #endif // __MINGW32__
 
 typedef HRESULT(WINAPI* LPSHGetKnownFolderPath)(REFKNOWNFOLDERID rfid, DWORD dwFlags, HANDLE hToken, PWSTR* ppszPath);

@@ -32,7 +32,8 @@ public:
     /// liefert die aktuellen Ticks.
     static time64_t CurrentTick();
     /// Format a time as a string
-    /// @param format Format to use  (%Y=4 year (4 digits), %m month, %D day, %H hour, %i minute, %s second (all 2 digits), %% -> %)
+    /// @param format Format to use  (%Y=4 year (4 digits), %m month, %D day, %H hour, %i minute, %s second (all 2
+    /// digits), %% -> %)
     /// @param time Pointer to time to format or nullptr to use current time
     static std::string FormatTime(const std::string& format, time64_t time);
     /// Format the current time as a string

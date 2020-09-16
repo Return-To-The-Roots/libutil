@@ -30,7 +30,9 @@ enum class ProxyType
 struct ProxySettings
 {
     ProxySettings() : type(ProxyType::None), port(0) {}
-    ProxySettings(ProxyType type, std::string hostname, uint16_t port) : type(type), hostname(std::move(hostname)), port(port) {}
+    ProxySettings(ProxyType type, std::string hostname, uint16_t port)
+        : type(type), hostname(std::move(hostname)), port(port)
+    {}
     ProxyType type;
     std::string hostname;
     uint16_t port;

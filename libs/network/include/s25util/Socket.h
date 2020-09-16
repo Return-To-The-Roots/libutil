@@ -19,19 +19,19 @@
 
 #ifdef _WIN32
 
-#include <winsock2.h>
-#include <ws2tcpip.h>
+#    include <winsock2.h>
+#    include <ws2tcpip.h>
 
 using socklen_t = int;
 #else
-#include <netinet/in.h>
-#include <sys/socket.h>
+#    include <netinet/in.h>
+#    include <sys/socket.h>
 
 using SOCKET = int;
 constexpr auto INVALID_SOCKET = -1;
 constexpr auto SOCKET_ERROR = -1;
 
-#define closesocket close
+#    define closesocket close
 struct addrinfo;
 #endif // !_WIN32
 
@@ -128,7 +128,8 @@ public:
     Socket Accept();
 
     /// versucht eine Verbindung mit einem externen Host aufzubauen.
-    bool Connect(const std::string& hostname, unsigned short port, bool use_ipv6, const ProxySettings& proxy = ProxySettings());
+    bool Connect(const std::string& hostname, unsigned short port, bool use_ipv6,
+                 const ProxySettings& proxy = ProxySettings());
 
     /// liest Daten vom Socket in einen Puffer.
     int Recv(void* buffer, int length, bool block = true);
@@ -173,7 +174,8 @@ public:
 
     static void Sleep(unsigned ms);
 
-    static std::vector<HostAddr> HostToIp(const std::string& hostname, unsigned port, bool get_ipv6, bool useUDP = false);
+    static std::vector<HostAddr> HostToIp(const std::string& hostname, unsigned port, bool get_ipv6,
+                                          bool useUDP = false);
 
     /// liefert einen string der übergebenen Ip.
     static std::string IpToString(const sockaddr* addr);
