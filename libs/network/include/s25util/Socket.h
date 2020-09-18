@@ -158,7 +158,7 @@ public:
     bool operator>(const Socket& sock) const;
 
     /// prüft auf wartende Bytes.
-    int BytesWaiting();
+    int BytesWaiting() const;
 
     /// prüft auf wartende Bytes.
     int BytesWaiting(unsigned* received) const;

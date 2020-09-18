@@ -751,7 +751,7 @@ bool Socket::operator>(const Socket& sock) const
  *
  *  @return liefert die Menge der wartenden Bytes
  */
-int Socket::BytesWaiting()
+int Socket::BytesWaiting() const
 {
     unsigned received;
     if(BytesWaiting(&received) != 0)
