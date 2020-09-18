@@ -298,7 +298,7 @@ void Socket::Close()
     refCount_ = nullptr;
 }
 
-bool Socket::Bind(unsigned short port, bool useIPv6)
+bool Socket::Bind(unsigned short port, bool useIPv6) const
 {
     union
     {
@@ -678,7 +678,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
  *
  *  @return -1 bei Fehler, Anzahl der empfangenen Bytes (max. @p length )
  */
-int Socket::Recv(void* buffer, const int length, bool block)
+int Socket::Recv(void* buffer, const int length, bool block) const
 {
     if(!isValid())
         return -1;
@@ -687,7 +687,7 @@ int Socket::Recv(void* buffer, const int length, bool block)
     return recv(socket_, reinterpret_cast<char*>(buffer), length, (block ? 0 : MSG_PEEK));
 }
 
-int Socket::Recv(void* const buffer, const int length, PeerAddr& addr)
+int Socket::Recv(void* const buffer, const int length, PeerAddr& addr) const
 {
     if(!isValid())
         return -1;
@@ -704,7 +704,7 @@ int Socket::Recv(void* const buffer, const int length, PeerAddr& addr)
  *
  *  @return -1 bei Fehler, Anzahl der gesendeten Bytes (max. @p length )
  */
-int Socket::Send(const void* const buffer, const int length)
+int Socket::Send(const void* const buffer, const int length) const
 {
     if(!isValid())
         return -1;
@@ -713,7 +713,7 @@ int Socket::Send(const void* const buffer, const int length)
     return send(socket_, reinterpret_cast<const char*>(buffer), length, 0);
 }
 
-int Socket::Send(const void* const buffer, const int length, const PeerAddr& addr)
+int Socket::Send(const void* const buffer, const int length, const PeerAddr& addr) const
 {
     if(!isValid())
         return -1;
@@ -729,7 +729,7 @@ int Socket::Send(const void* const buffer, const int length, const PeerAddr& add
  *
  *  @return @p true bei Erfolg, @p false bei Fehler
  */
-bool Socket::SetSockOpt(int nOptionName, const void* lpOptionValue, int nOptionLen, int nLevel)
+bool Socket::SetSockOpt(int nOptionName, const void* lpOptionValue, int nOptionLen, int nLevel) const
 {
     return (SOCKET_ERROR != setsockopt(socket_, nLevel, nOptionName, (const char*)lpOptionValue, nOptionLen));
 }
@@ -741,7 +741,7 @@ bool Socket::SetSockOpt(int nOptionName, const void* lpOptionValue, int nOptionL
  *
  *  @return liefert true falls @p this größer ist als @p sock
  */
-bool Socket::operator>(const Socket& sock)
+bool Socket::operator>(const Socket& sock) const
 {
     return this->socket_ > sock.socket_;
 }
@@ -767,7 +767,7 @@ int Socket::BytesWaiting()
  *
  *  @return liefert Null bei Erfolg, SOCKET_ERROR bei Fehler
  */
-int Socket::BytesWaiting(unsigned* received)
+int Socket::BytesWaiting(unsigned* received) const
 {
 #ifdef _WIN32
     DWORD dwReceived;
@@ -784,7 +784,7 @@ int Socket::BytesWaiting(unsigned* received)
  *
  *  @return liefert @p buffer zurück oder @p "" bei Fehler
  */
-std::string Socket::GetPeerIP()
+std::string Socket::GetPeerIP() const
 {
     sockaddr_storage peer;
     socklen_t length = sizeof(sockaddr_storage);
@@ -802,7 +802,7 @@ std::string Socket::GetPeerIP()
  *
  *  @return liefert @p buffer zurück oder @p "" bei Fehler
  */
-std::string Socket::GetSockIP()
+std::string Socket::GetSockIP() const
 {
     sockaddr_storage peer;
     socklen_t length = sizeof(sockaddr_storage);

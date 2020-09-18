@@ -119,7 +119,7 @@ public:
     void Close();
 
     /// Binds the socket to a specific port
-    bool Bind(unsigned short port, bool useIPv6);
+    bool Bind(unsigned short port, bool useIPv6) const;
 
     /// setzt das Socket auf Listen.
     bool Listen(unsigned short port, bool use_ipv6 = false, bool use_upnp = true);
@@ -132,9 +132,9 @@ public:
                  const ProxySettings& proxy = ProxySettings());
 
     /// liest Daten vom Socket in einen Puffer.
-    int Recv(void* buffer, int length, bool block = true);
+    int Recv(void* buffer, int length, bool block = true) const;
     /// Reads data from socket and returns peer address. Can be used for unbound sockets
-    int Recv(void* buffer, int length, PeerAddr& addr);
+    int Recv(void* buffer, int length, PeerAddr& addr) const;
     template<typename T, size_t T_size>
     int Recv(std::array<T, T_size>& buffer, const int length = T_size * sizeof(T), bool block = true)
     {
@@ -142,9 +142,9 @@ public:
     }
 
     /// schreibt Daten von einem Puffer auf das Socket.
-    int Send(const void* buffer, int length);
+    int Send(const void* buffer, int length) const;
     /// Sends data to the specified address (only for connectionless sockets!)
-    int Send(const void* buffer, int length, const PeerAddr& addr);
+    int Send(const void* buffer, int length, const PeerAddr& addr) const;
     template<typename T, size_t T_size>
     int Send(const std::array<T, T_size>& buffer)
     {
@@ -152,22 +152,22 @@ public:
     }
 
     /// setzt eine Socketoption.
-    bool SetSockOpt(int nOptionName, const void* lpOptionValue, int nOptionLen, int nLevel = IPPROTO_TCP);
+    bool SetSockOpt(int nOptionName, const void* lpOptionValue, int nOptionLen, int nLevel = IPPROTO_TCP) const;
 
     /// Größer-Vergleichsoperator.
-    bool operator>(const Socket& sock);
+    bool operator>(const Socket& sock) const;
 
     /// prüft auf wartende Bytes.
     int BytesWaiting();
 
     /// prüft auf wartende Bytes.
-    int BytesWaiting(unsigned* received);
+    int BytesWaiting(unsigned* received) const;
 
     /// liefert die IP des Remote-Hosts.
-    std::string GetPeerIP();
+    std::string GetPeerIP() const;
 
     /// liefert die IP des Lokalen-Hosts.
-    std::string GetSockIP();
+    std::string GetSockIP() const;
 
     /// Gets a reference to the Socket.
     SOCKET GetSocket() const;

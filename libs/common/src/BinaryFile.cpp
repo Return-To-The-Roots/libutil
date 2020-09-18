@@ -87,7 +87,7 @@ void BinaryFile::WriteRawData(const void* const data, const unsigned length) con
     CHECKED_WRITE(libendian::write((const char*)data, length, file));
 }
 
-void BinaryFile::WriteShortString(const std::string& str)
+void BinaryFile::WriteShortString(const std::string& str) const
 {
     if(str.length() + 1 > std::numeric_limits<unsigned char>::max())
         throw std::out_of_range("String '" + str + "' is to long for a short string");
@@ -96,7 +96,7 @@ void BinaryFile::WriteShortString(const std::string& str)
     WriteRawData(str.c_str(), length);
 }
 
-void BinaryFile::WriteLongString(const std::string& str)
+void BinaryFile::WriteLongString(const std::string& str) const
 {
     auto length = unsigned(str.length() + 1);
     WriteUnsignedInt(length);

@@ -51,8 +51,8 @@ public:
     void WriteUnsignedChar(unsigned char i) const;
     void WriteRawData(const void* data, unsigned length) const;
 
-    void WriteShortString(const std::string& str); /// Länge max 254
-    void WriteLongString(const std::string& str);  /// Länge max 2^32-2
+    void WriteShortString(const std::string& str) const; /// Länge max 254
+    void WriteLongString(const std::string& str) const;  /// Länge max 2^32-2
 
     /// Lesemethoden
     int ReadSignedInt();

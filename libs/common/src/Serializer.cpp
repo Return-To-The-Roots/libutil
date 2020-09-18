@@ -39,7 +39,7 @@ void Serializer::SetLength(const unsigned length)
         pos_ = length_;
 }
 
-void Serializer::WriteToFile(BinaryFile& file)
+void Serializer::WriteToFile(BinaryFile& file) const
 {
     file.WriteUnsignedInt(GetLength());
     file.WriteRawData(GetData(), GetLength());

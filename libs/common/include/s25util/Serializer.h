@@ -64,7 +64,7 @@ public:
     }
 
     /// Schreibt den Buffer in eine Datei
-    void WriteToFile(BinaryFile& file);
+    void WriteToFile(BinaryFile& file) const;
     /// Liest den Buffer aus einer Datei
     virtual void ReadFromFile(BinaryFile& file);
 
