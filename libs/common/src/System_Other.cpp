@@ -32,7 +32,7 @@ boost::filesystem::path System::getHomePath()
 
 std::string System::getUserName()
 {
-    const std::string name = getEnvVar("USER");
+    std::string name = getEnvVar("USER");
     if(name.empty())
         throw std::runtime_error("Could not get username");
     return name;

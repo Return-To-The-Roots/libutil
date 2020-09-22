@@ -33,7 +33,7 @@ std::string Tokenizer::next()
         return "";
 
     const auto newPos = data.find_first_of(delimiter, curPos);
-    const auto result = data.substr(curPos, newPos - curPos);
+    auto result = data.substr(curPos, newPos - curPos);
 
     curPos = (newPos == std::string::npos) ? newPos : newPos + 1;
     return result;
