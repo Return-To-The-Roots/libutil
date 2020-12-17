@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euo pipefail
+set -euxo pipefail
 
 VERSION="${1:?Missing Boost version}"
 INSTALL_DIR="${2:?Missing install dir}"
