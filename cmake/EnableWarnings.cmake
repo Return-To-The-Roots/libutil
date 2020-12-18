@@ -82,9 +82,7 @@ function(enable_warnings target)
     if(NOT WIN32)
       # Lot's of false-positives on windows.
       # E.g. __builtin_ia32_crc32qi on MinGW and SDL
-      check_and_add_warnings(TARGET ${target} VISIBILITY ${visibility}
-        CXX -Wredundant-decls
-      )
+      check_and_add_warnings(TARGET ${target} VISIBILITY ${visibility} CXX -Wredundant-decls)
     endif()
     # Prior to 9.2 "final" was not considered "override"
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 9.2)
@@ -92,12 +90,14 @@ function(enable_warnings target)
     endif()
     if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
       # Lot's of false-positives on for e.g. strcmp
-      check_and_add_warnings(TARGET ${target} VISIBILITY ${visibility}
-        CXX -Wunreachable-code
-      )
+      check_and_add_warnings(TARGET ${target} VISIBILITY ${visibility} CXX -Wunreachable-code)
     elseif(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "6" OR CMAKE_CXX_COMPILER_ID MATCHES "AppleClang")
       # Wrong warnings for std::array until clang 6
       target_compile_options(${target} ${visibility} -Wno-missing-braces)
+    endif()
+    if(CMAKE_CXX_COMPILER_ID MATCHES "AppleClang" OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 10.0))
+      # To many false positives until clang 10 fixed them
+      check_and_add_warnings(TARGET ${target} VISIBILITY ${visibility} CXX -Wno-range-loop-analysis)
     endif()
     # Not used:
       #-Wpadded
