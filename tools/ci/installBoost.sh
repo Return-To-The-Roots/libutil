@@ -32,6 +32,7 @@ if all_libs_exist; then
 fi
 
 BUILD_DIR=/tmp/boost
+BUILD_LOG=/tmp/boost.log
 
 mkdir -p "${BUILD_DIR}" && cd "${BUILD_DIR}"
 
@@ -54,5 +55,14 @@ else
 	TOOLSET=
 fi
 
-./bootstrap.sh --with-libraries=$(join , ${required_libs[@]}) threading=multi >/dev/null
-./b2 link=${link} ${TOOLSET} variant=release --prefix="${INSTALL_DIR}" -j${NPROC} install >/dev/null
+libraries=$(join , "${required_libs[@]}")
+
+if ! ./bootstrap.sh --with-libraries="$libraries" threading=multi > "$BUILD_LOG"; then
+    cat "$BUILD_LOG" || true
+    cat bootstrap.log
+    exit 1
+fi
+if ! ./b2 link="${link}" ${TOOLSET} variant=release --prefix="${INSTALL_DIR}" -j${NPROC} install > "$BUILD_LOG"; then
+    cat "$BUILD_LOG"
+    exit 1
+fi
