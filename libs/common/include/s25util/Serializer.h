@@ -108,20 +108,19 @@ public:
     std::string PopString();
     std::string PopLongString();
 
-protected:
     template<typename T>
     T Pop();
 
     template<typename T>
     void Push(T val);
 
+private:
     /// Erweitert ggf. Speicher um add_length
     void ExtendMemory(unsigned add_length) { EnsureSize(length_ + add_length); }
 
     /// Makes sure the internal buffer is at least length bytes long
     void EnsureSize(unsigned length);
 
-private:
     /// data mit den Daten
     boost::container::vector<uint8_t> data_;
     /// Logische Länge
