@@ -43,6 +43,15 @@ struct addrinfo;
 #include <string>
 #include <vector>
 
+/// used for type punning
+union address_t
+{
+    sockaddr sa;
+    sockaddr_in sa_in;
+    sockaddr_in6 sa_in6;
+    sockaddr_storage sa_stor;
+};
+
 /// liefert Ip-Adresse(n) für einen Hostnamen.
 struct HostAddr
 {
@@ -71,7 +80,7 @@ public:
 
 class PeerAddr
 {
-    sockaddr_storage addr;
+    address_t addr;
 
 public:
     /// Uninitilized value!

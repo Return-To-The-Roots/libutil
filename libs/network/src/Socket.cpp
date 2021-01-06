@@ -96,13 +96,13 @@ ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr, bool resolveAll) : lookup((
 
         if(hostAddr.ipv6)
         {
-            auto* addr6 = (sockaddr_in6*)addr->ai_addr;
+            auto* addr6 = reinterpret_cast<sockaddr_in6*>(addr->ai_addr);
             addr6->sin6_family = AF_INET6;
             addr6->sin6_port = htons(s25util::fromStringClassic<unsigned short>(hostAddr.port));
             addr6->sin6_addr = in6addr_loopback;
         } else
         {
-            auto* addr4 = (sockaddr_in*)addr->ai_addr;
+            auto* addr4 = reinterpret_cast<sockaddr_in*>(addr->ai_addr);
             addr4->sin_family = AF_INET;
             addr4->sin_port = htons(s25util::fromStringClassic<unsigned short>(hostAddr.port));
             addr4->sin_addr.s_addr = inet_addr("127.0.0.1");
@@ -125,9 +125,9 @@ ResolvedAddr::~ResolvedAddr()
 
 PeerAddr::PeerAddr(unsigned short port)
 {
-    addr.ss_family = AF_INET;
-    reinterpret_cast<sockaddr_in&>(addr).sin_addr.s_addr = INADDR_BROADCAST;
-    reinterpret_cast<sockaddr_in&>(addr).sin_port = htons(port);
+    addr.sa_in.sin_family = AF_INET;
+    addr.sa_in.sin_addr.s_addr = INADDR_BROADCAST;
+    addr.sa_in.sin_port = htons(port);
 }
 
 std::string PeerAddr::GetIp() const
@@ -137,12 +137,12 @@ std::string PeerAddr::GetIp() const
 
 sockaddr* PeerAddr::GetAddr()
 {
-    return reinterpret_cast<sockaddr*>(&addr);
+    return &addr.sa;
 }
 
 const sockaddr* PeerAddr::GetAddr() const
 {
-    return reinterpret_cast<const sockaddr*>(&addr);
+    return &addr.sa;
 }
 
 Socket::Socket()
@@ -786,15 +786,15 @@ int Socket::BytesWaiting(unsigned* received) const
  */
 std::string Socket::GetPeerIP() const
 {
-    sockaddr_storage peer;
-    socklen_t length = sizeof(sockaddr_storage);
+    address_t peer;
+    socklen_t length = sizeof(peer);
 
     // Remotehost-Adresse holen
-    if(getpeername(socket_, (sockaddr*)&peer, &length) == SOCKET_ERROR)
+    if(getpeername(socket_, &peer.sa, &length) == SOCKET_ERROR)
         return "";
 
     // in Text verwandeln
-    return IpToString((sockaddr*)&peer);
+    return IpToString(&peer.sa);
 }
 
 /**
@@ -804,15 +804,15 @@ std::string Socket::GetPeerIP() const
  */
 std::string Socket::GetSockIP() const
 {
-    sockaddr_storage peer;
-    socklen_t length = sizeof(sockaddr_storage);
+    address_t peer;
+    socklen_t length = sizeof(peer);
 
     // Localhost-Adresse holen
-    if(getsockname(socket_, (sockaddr*)&peer, &length) == SOCKET_ERROR)
+    if(getsockname(socket_, &peer.sa, &length) == SOCKET_ERROR)
         return "";
 
     // in Text verwandeln
-    return IpToString((sockaddr*)&peer);
+    return IpToString(&peer.sa);
 }
 
 /**
@@ -832,44 +832,31 @@ SOCKET Socket::GetSocket() const
 std::string Socket::IpToString(const sockaddr* addr)
 {
     std::array<char, 256> temp{};
-
-#ifdef _WIN32
-    union
-    {
-        sockaddr base;
-        sockaddr_in ipv4;
-        sockaddr_in6 ipv6;
-    } copy;
-    std::memset(&copy, 0, sizeof(copy));
+    address_t addrCopy{};
     size_t size;
     if(addr->sa_family == AF_INET)
     {
         size = sizeof(sockaddr_in);
-        std::memcpy(&copy.ipv4, addr, size);
-        copy.ipv4.sin_port = 0;
+        std::memcpy(&addrCopy.sa_in, addr, size);
     } else
     {
         size = sizeof(sockaddr_in6);
-        std::memcpy(&copy.ipv6, addr, size);
-        copy.ipv6.sin6_port = 0;
+        std::memcpy(&addrCopy.sa_in6, addr, size);
     }
 
-    DWORD le = GetLastError();
-    DWORD templen = sizeof(temp);
-    WSAAddressToStringA(&copy.base, static_cast<DWORD>(size), nullptr, temp.data(), &templen);
+#ifdef _WIN32
+    const auto le = GetLastError();
+    DWORD templen = temp.size();
+    WSAAddressToStringA(&addrCopy.sa, static_cast<DWORD>(size), nullptr, temp.data(), &templen);
     SetLastError(le);
 #else
     const void* ip;
-
     if(addr->sa_family == AF_INET)
-    {
-        ip = &(((const sockaddr_in*)addr)->sin_addr);
-    } else
-    {
-        ip = &(((const sockaddr_in6*)addr)->sin6_addr);
-    }
+        ip = &addrCopy.sa_in.sin_addr;
+    else
+        ip = &addrCopy.sa_in6.sin6_addr;
 
-    inet_ntop(addr->sa_family, ip, temp.data(), sizeof(temp));
+    inet_ntop(addr->sa_family, ip, temp.data(), temp.size());
 #endif
 
     return temp.data();

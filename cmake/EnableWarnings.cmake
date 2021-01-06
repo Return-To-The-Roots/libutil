@@ -40,6 +40,7 @@ function(enable_warnings target)
       ALL
         -Wno-unused-command-line-argument
       CXX
+        -fno-strict-aliasing
         -pedantic-errors
         -Qunused-arguments
         -Wcast-qual
