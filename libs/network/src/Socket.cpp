@@ -832,16 +832,27 @@ SOCKET Socket::GetSocket() const
 std::string Socket::IpToString(const sockaddr* addr)
 {
     std::array<char, 256> temp{};
-    address_t addrCopy{};
+    address_t addrCopy;
+
+    // a union is not initialized with zero
+    std::memset(&addrCopy, 0, sizeof(addrCopy));
+
     size_t size;
     if(addr->sa_family == AF_INET)
     {
         size = sizeof(sockaddr_in);
         std::memcpy(&addrCopy.sa_in, addr, size);
-    } else
+
+        // set port to zero
+        addrCopy.sa_in.sin_port = 0;
+    } 
+    else
     {
         size = sizeof(sockaddr_in6);
         std::memcpy(&addrCopy.sa_in6, addr, size);
+
+        // set port to zero
+        addrCopy.sa_in6.sin6_port = 0;
     }
 
 #ifdef _WIN32
