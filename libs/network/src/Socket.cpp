@@ -845,8 +845,7 @@ std::string Socket::IpToString(const sockaddr* addr)
 
         // set port to zero
         addrCopy.sa_in.sin_port = 0;
-    } 
-    else
+    } else
     {
         size = sizeof(sockaddr_in6);
         std::memcpy(&addrCopy.sa_in6, addr, size);
