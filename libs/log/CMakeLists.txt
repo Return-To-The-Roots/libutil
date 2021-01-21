@@ -1,4 +1,4 @@
-find_package(Boost 1.64 REQUIRED COMPONENTS filesystem)
+find_package(Boost 1.69 REQUIRED COMPONENTS filesystem)
 
 file(GLOB HEADER_FILES include/s25util/*.*)
 add_library(s25util_log STATIC

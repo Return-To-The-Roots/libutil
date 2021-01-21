@@ -1,5 +1,5 @@
 if(NOT TARGET Boost::unit_test_framework)
-    find_package(Boost 1.64 REQUIRED COMPONENTS unit_test_framework)
+    find_package(Boost 1.69 REQUIRED COMPONENTS unit_test_framework)
 endif()
 
 set(RTTR_UBSAN_SUPPRESSION_FILE ${CMAKE_CURRENT_LIST_DIR}/ubsan.supp)

@@ -3,7 +3,7 @@ if(WIN32)
 	# Locale only on windows
 	set(_BoostComponents ${_BoostComponents} locale)
 endif()
-find_package(Boost 1.64 REQUIRED COMPONENTS ${_BoostComponents})
+find_package(Boost 1.69 REQUIRED COMPONENTS ${_BoostComponents})
 
 
 FILE(GLOB SRC_FILES src/*.cpp)
