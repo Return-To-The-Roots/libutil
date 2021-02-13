@@ -1,4 +1,4 @@
-// Copyright (c) 2005 - 2017 Settlers Freaks (sf-team at siedler25.org)
+// Copyright (c) 2005 - 2021 Settlers Freaks (sf-team at siedler25.org)
 //
 // This file is part of Return To The Roots.
 //
@@ -38,39 +38,35 @@ public:
     Serializer() = default;
     Serializer(const void* data, unsigned initial_size);
 
-    virtual ~Serializer() = default;
-
-    /// Aufräumen
+    /// Remove all data
     void Clear();
+    /// Get current read position
+    unsigned GetPos() const noexcept { return pos_; }
 
-    unsigned GetPos() const { return pos_; }
-
-    /// Getter
-    unsigned GetLength() const { return length_; }
-
-    /// Schreibzugriff auf die Länge
+    /// Get current number of bytes contained
+    unsigned GetLength() const noexcept { return length_; }
+    /// Set the current length
     void SetLength(unsigned length);
 
-    unsigned GetBytesLeft() const;
+    unsigned GetBytesLeft() const noexcept;
 
-    /// Zugriff auf die Rohdaten
-    const unsigned char* GetData() const { return data_.data(); }
+    /// Access current data
+    const uint8_t* GetData() const noexcept { return data_.data(); }
 
-    /// Schreibzugriff auf die Rohdaten
-    unsigned char* GetDataWritable(unsigned length)
+    /// Writable access to data. E.g. to write directly to the buffer and call SetLength afterwards
+    uint8_t* GetDataWritable(unsigned length)
     {
         EnsureSize(length);
         return data_.data();
     }
 
-    /// Schreibt den Buffer in eine Datei
     void WriteToFile(BinaryFile& file) const;
-    /// Liest den Buffer aus einer Datei
-    virtual void ReadFromFile(BinaryFile& file);
+    void ReadFromFile(BinaryFile& file);
+
+    // Write methods
 
     void PushRawData(const void* data, unsigned length);
 
-    /// Sämtliche Integer
     void PushSignedInt(int32_t i) { Push(i); }
     void PushUnsignedInt(uint32_t i) { Push(i); }
 
@@ -87,12 +83,10 @@ public:
     void PushString(const std::string& str);
     void PushLongString(const std::string& str);
 
-    // Lesemethoden
+    // Read methods
 
-    /// Rohdaten kopieren
     void PopRawData(void* data, unsigned length);
 
-    /// Sämtliche Integer
     int32_t PopSignedInt() { return Pop<int32_t>(); }
     uint32_t PopUnsignedInt() { return Pop<uint32_t>(); }
 
@@ -115,24 +109,21 @@ public:
     void Push(T val);
 
 private:
-    /// Erweitert ggf. Speicher um add_length
-    void ExtendMemory(unsigned add_length) { EnsureSize(length_ + add_length); }
-
+    /// Adds the given number of bytes to the usable length
+    void ExtendMemory(unsigned numBytes) { EnsureSize(length_ + numBytes); }
+    /// Checks if data of size len can be popped
+    void CheckSize(unsigned len) const;
     /// Makes sure the internal buffer is at least length bytes long
     void EnsureSize(unsigned length);
 
-    /// data mit den Daten
     boost::container::vector<uint8_t> data_;
-    /// Logische Länge
+    /// Length (number of bytes) of valid data. Also the current write position
     unsigned length_ = 0;
-    /// Schreib/Leseposition
+    /// Current read position
     unsigned pos_ = 0;
-
-    /// Checks if data of size len can be popped
-    void CheckSize(unsigned len) const;
 };
 
-inline unsigned Serializer::GetBytesLeft() const
+inline unsigned Serializer::GetBytesLeft() const noexcept
 {
     assert(pos_ <= length_);
     return length_ - pos_;

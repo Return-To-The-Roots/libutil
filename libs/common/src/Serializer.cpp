@@ -119,6 +119,5 @@ std::string Serializer::PopLongString()
     std::string str;
     str.resize(PopUnsignedInt());
     PopRawData(&str[0], static_cast<unsigned>(str.length()));
-
     return str;
 }
