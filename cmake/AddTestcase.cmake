@@ -8,10 +8,12 @@ set(RTTR_LSAN_SUPPRESSION_FILE ${CMAKE_CURRENT_LIST_DIR}/lsan.supp)
 # Add a new test case for boost tests with working directory in the binary dir root
 # Params:
 # NAME <name>
+# COST <cost>, defaults to 10
 # LIBS/INCLUDES <value, value, ...>
+# CONFIGURATIONS <value, value...>
 function(add_testcase)
     set(options )
-    set(oneValueArgs NAME)
+    set(oneValueArgs NAME COST)
     set(multiValueArgs LIBS INCLUDES CONFIGURATIONS)
     cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
     string(MAKE_C_IDENTIFIER "Test_${ARG_NAME}" name)
@@ -20,7 +22,6 @@ function(add_testcase)
     target_link_libraries(${name} PRIVATE ${ARG_LIBS}
         PRIVATE Boost::unit_test_framework Boost::disable_autolinking
     )
-    get_cmake_property(_variableNames VARIABLES)
     target_include_directories(${name} PRIVATE ${ARG_INCLUDES})
     # Heuristically guess if we are compiling against dynamic boost
     if(NOT Boost_USE_STATIC_LIBS AND Boost_UNIT_TEST_FRAMEWORK_LIBRARY AND NOT Boost_UNIT_TEST_FRAMEWORK_LIBRARY MATCHES "\\${CMAKE_STATIC_LIBRARY_SUFFIX}\$")
@@ -34,6 +35,10 @@ function(add_testcase)
     if(MSVC)
         set_property(TARGET ${name} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
     endif()
+    if(NOT DEFINED ARG_COST)
+      set(ARG_COST 10)
+    endif()
+    set_tests_properties(${name} PROPERTIES COST "${ARG_COST}")
     if(RTTR_ENABLE_SANITIZERS)
         set(options
             ASAN_OPTIONS=detect_odr_violation=0
