@@ -18,6 +18,7 @@
 #include "LocaleHelper.h"
 #include "System.h"
 #include <boost/filesystem/path.hpp>
+#include <boost/optional/optional.hpp>
 #include <boost/predef/os.h>
 #include <iostream>
 #if BOOST_OS_WINDOWS
@@ -31,6 +32,32 @@
 namespace bfs = boost::filesystem;
 
 namespace {
+class LocaleResetter
+{
+    boost::optional<std::locale> originalLocale;
+
+public:
+    ~LocaleResetter()
+    {
+        if(originalLocale)
+        {
+            try
+            {
+                // Reset locale back to default to avoid memory leaks
+                std::locale::global(*originalLocale);
+            } catch(...)
+            {} // Ignore any error
+        }
+    }
+
+    std::locale changeGlobalLocale(std::locale locale)
+    {
+        std::locale oldLocale = std::locale::global(locale);
+        if(!originalLocale)
+            originalLocale = oldLocale;
+        return locale;
+    }
+};
 std::locale getBfsLocale()
 {
     std::locale result;
@@ -91,6 +118,7 @@ const std::locale& LocaleHelper::getBfsDefaultLocale()
 
 bool LocaleHelper::init()
 {
+    static LocaleResetter localeResetter;
     // Check and set locale (avoids errors caused by invalid locales later like #420)
     try
     {
@@ -100,7 +128,7 @@ bool LocaleHelper::init()
         // So don't rely on string conversions to yield identical results on all systems as locale settings can be
         // changed!
         std::locale newLocale = createUtf8Locale();
-        std::locale::global(newLocale);
+        localeResetter.changeGlobalLocale(newLocale);
         // Use also the encoding (mostly UTF8) for bfs paths: http://stackoverflow.com/questions/23393870
         bfs::path::imbue(newLocale);
     } catch(std::exception& e)
