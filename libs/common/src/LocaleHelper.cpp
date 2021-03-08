@@ -50,7 +50,7 @@ public:
         }
     }
 
-    std::locale changeGlobalLocale(std::locale locale)
+    std::locale changeGlobalLocale(const std::locale& locale)
     {
         std::locale oldLocale = std::locale::global(locale);
         if(!originalLocale)
