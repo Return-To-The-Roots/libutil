@@ -3,7 +3,7 @@
 set -euo pipefail
 
 if ! [ -f coverage.info ]; then
-    "$(basename "$0")/collectCoverageData.sh" "$@"
+    "$(dirname "$0")/collectCoverageData.sh" "$@"
 fi
 
 # Coverage.io
