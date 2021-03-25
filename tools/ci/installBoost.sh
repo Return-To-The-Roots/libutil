@@ -36,6 +36,7 @@ BUILD_LOG=/tmp/boost.log
 
 mkdir -p "${BUILD_DIR}" && cd "${BUILD_DIR}"
 
+echo "Downloading and extracting file..."
 FILE_NAME="boost_${VERSION//./_}"
 URL="https://sourceforge.net/projects/boost/files/boost/${VERSION}/${FILE_NAME}.tar.bz2/download"
 wget "${URL}" -qO- | tar jx
@@ -44,25 +45,30 @@ if [ ! -f "${FILE_NAME}/bootstrap.sh" ]; then
     exit 1
 fi
 
+echo "Downloaded and extracted file"
 cd "${FILE_NAME}"
 
 if [[ "${TRAVIS_OS_NAME:-}" == "windows" ]] || [[ "${RUNNER_OS:-}" == "Windows" ]]; then
+	NPROC=3
 	TOOLSET="toolset=msvc"
-	NPROC=2
+    VARIANT="debug,release"
 else
 	# Linux and OSX version
 	NPROC=$(nproc 2>/dev/null || sysctl -n hw.ncpu)
 	TOOLSET=
+    VARIANT="release"
 fi
 
 libraries=$(join , "${required_libs[@]}")
 
+echo "Bootstrapping B2..."
 if ! ./bootstrap.sh --with-libraries="$libraries" threading=multi > "$BUILD_LOG"; then
     cat "$BUILD_LOG" || true
     cat bootstrap.log
     exit 1
 fi
-if ! ./b2 link="${link}" ${TOOLSET} variant=release --prefix="${INSTALL_DIR}" -j${NPROC} install > "$BUILD_LOG"; then
+echo "Building ${libraries}, variants ${VARIANT} to ${INSTALL_DIR} using ${TOOLSET}"
+if ! ./b2 link="${link}" ${TOOLSET} variant="${VARIANT}" --prefix="${INSTALL_DIR}" -j${NPROC} install > "$BUILD_LOG"; then
     cat "$BUILD_LOG"
     exit 1
 fi
