@@ -46,7 +46,7 @@ fi
 
 cd "${FILE_NAME}"
 
-if [[ "${TRAVIS_OS_NAME:-}" == "windows" ]]; then
+if [[ "${TRAVIS_OS_NAME:-}" == "windows" ]] || [[ "${RUNNER_OS:-}" == "Windows" ]]; then
 	TOOLSET="toolset=msvc"
 	NPROC=2
 else
