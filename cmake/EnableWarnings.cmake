@@ -1,3 +1,7 @@
+# Copyright (C) 2005 - 2021 Settlers Freaks <sf-team at siedler25.org>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 option(RTTR_ENABLE_WERROR "Build with warnings turned into errors" ON)
 function(enable_warnings target)
   get_target_property(targetType ${target} TYPE)

@@ -1,3 +1,7 @@
+# Copyright (C) 2005 - 2021 Settlers Freaks <sf-team at siedler25.org>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   option(RTTR_ENABLE_SANITIZERS "Enable ASAN and UBSAN for compilers supporting this" OFF)
 

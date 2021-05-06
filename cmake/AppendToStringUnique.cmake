@@ -1,3 +1,7 @@
+# Copyright (C) 2005 - 2021 Settlers Freaks <sf-team at siedler25.org>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 # Add all arguments to the string variable if they are not already contained
 function(append_to_string_unique variable)
   set(newValue "${${variable}}")

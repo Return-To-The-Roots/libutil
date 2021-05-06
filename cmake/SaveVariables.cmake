@@ -1,3 +1,7 @@
+# Copyright (C) 2005 - 2021 Settlers Freaks <sf-team at siedler25.org>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 # Save the variables passed as arguments and pushes their current values to a stack
 # Restore all those with pop_saved_variables()
 macro(save_variables)

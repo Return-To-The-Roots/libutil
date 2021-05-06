@@ -1,3 +1,7 @@
+# Copyright (C) 2005 - 2021 Settlers Freaks <sf-team at siedler25.org>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 if(NOT TARGET Boost::unit_test_framework)
     find_package(Boost 1.69 REQUIRED COMPONENTS unit_test_framework)
 endif()

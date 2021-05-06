@@ -1,3 +1,7 @@
+# Copyright (C) 2005 - 2021 Settlers Freaks <sf-team at siedler25.org>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 # In Windows adds all dlls passed to this function if they exist. Converts to absolute path if relative path is given
 function(gather_dll_add)
     foreach(curFile ${ARGN})

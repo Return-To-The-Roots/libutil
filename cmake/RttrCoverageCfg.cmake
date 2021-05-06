@@ -1,3 +1,7 @@
+# Copyright (C) 2005 - 2021 Settlers Freaks <sf-team at siedler25.org>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 # VS does not support coverage analysis
 if(NOT MSVC)
     option(RTTR_ENABLE_COVERAGE "Generate coverage build" OFF)

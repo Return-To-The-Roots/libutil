@@ -1,7 +1,7 @@
 //          Copyright Kevin Sopp 2007.
-// Distributed under the Boost Software License, Version 1.0.
-//    (See accompanying file LICENSE_1_0.txt or copy at
-//          http://www.boost.org/LICENSE_1_0.txt)
+// Copyright (C) 2019 - 2021 Settlers Freaks <sf-team at siedler25.org>
+//
+// SPDX-License-Identifier: BSL-1.0
 
 #include "md5.hpp"
 #include <algorithm>

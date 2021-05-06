@@ -1,3 +1,7 @@
+# Copyright (C) 2005 - 2021 Settlers Freaks <sf-team at siedler25.org>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 # Detects all supported OSX architectures by reading libSystem.B.dylib
 # Sets the possible values in OSX_DETECTED_ARCHS
 # If a NO{ARCH} variable is set, then {ARCH} will be ignored
