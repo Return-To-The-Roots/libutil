@@ -25,25 +25,16 @@ void MessageQueue::push(Message* message)
     messages.push_back(message);
 }
 
-Message* MessageQueue::front()
+Message* MessageQueue::peek()
 {
-    return (!messages.empty() ? &messages.front() : nullptr);
+    return messages.empty() ? nullptr : &messages.front();
 }
 
-/**
- *  entfernt das vorderste Element aus der Queue.
- */
-void MessageQueue::pop()
-{
-    if(!messages.empty())
-        messages.pop_front();
-}
-
-Message* MessageQueue::popFront()
+std::unique_ptr<Message> MessageQueue::pop()
 {
     if(messages.empty())
         return nullptr;
-    return messages.pop_front().release();
+    return std::unique_ptr<Message>(messages.pop_front().release());
 }
 
 int MessageQueue::recv(Socket& sock, unsigned timeoutInMs)
@@ -98,7 +89,7 @@ bool MessageQueue::send(Socket& sock, int max, unsigned sizelimit)
     int count = 0;
     while(count <= max && !messages.empty())
     {
-        const Message& msg = *front(); //-V522
+        const Message& msg = *peek(); //-V522
 
         if(msg.getId() > 0)
         {

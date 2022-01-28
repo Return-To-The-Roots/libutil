@@ -4,13 +4,14 @@
 
 #pragma once
 
+#include "Message.h"
 #include "MessageHandler.h"
 #include <boost/ptr_container/ptr_deque.hpp>
 #include <cstddef>
 #include <deque>
+#include <memory>
 #include <queue>
 
-class Message;
 class Socket;
 
 // class Socket;
@@ -45,12 +46,9 @@ public:
     /// hängt ein Element hinten an.
     void push(Message* message);
     /// liefert das vorderste Element der Queue.
-    Message* front();
+    Message* peek();
     /// entfernt das vorderste Element aus der Queue.
-    void pop();
-    /// Returns the first element and removes it from the queue. Returns nullptr if there is none
-    /// Caller is responsible for deleting it!
-    Message* popFront();
+    std::unique_ptr<Message> pop();
 
 private:
     boost::ptr_deque<Message> messages;
