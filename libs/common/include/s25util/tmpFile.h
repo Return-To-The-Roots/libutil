@@ -29,3 +29,15 @@ public:
 
     const boost::filesystem::path filePath;
 };
+
+/// RAII wrapper for a temporary folder, that is created on construction and deleted on destruction
+class TmpFolder
+{
+    boost::filesystem::path filePath;
+
+public:
+    explicit TmpFolder(boost::filesystem::path parent);
+    ~TmpFolder();
+
+    operator boost::filesystem::path() const { return filePath; }
+};

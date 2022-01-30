@@ -14,20 +14,20 @@
 namespace bnw = boost::nowide;
 namespace bfs = boost::filesystem;
 
+constexpr unsigned MAX_TRIES = 50;
+
 namespace { /// Creates and opens a temporary binary file with the given extension
 /// file must be a closed file stream and open() will be called on it
 /// Returns the filename used or an empty string on error
 bfs::path createTempFile(bnw::ofstream& file, const std::string& ext /* = ".tmp"*/)
 {
-    static const unsigned MAX_TRIES = 50;
-
     if(file.is_open())
         throw std::runtime_error("Passed in an open file handle to createTempFile");
 
     // Temp directory (e.g. /tmp)
     bfs::path tmpPath = bfs::temp_directory_path();
-    unsigned tries = 0;
-    do
+
+    for(unsigned tries = 0; tries < MAX_TRIES; ++tries)
     {
         // Create a (hopefully) unique filePath
         bfs::path filePath = tmpPath / bfs::unique_path();
@@ -46,7 +46,7 @@ bfs::path createTempFile(bnw::ofstream& file, const std::string& ext /* = ".tmp"
             continue;
         }
         return filePath;
-    } while(++tries < MAX_TRIES);
+    }
     // Could not find a file :(
     return "";
 }
@@ -75,4 +75,29 @@ TmpFile::~TmpFile()
         return;
     stream.close();
     unlinkFile(filePath);
+}
+
+TmpFolder::TmpFolder(boost::filesystem::path parent)
+{
+    if(parent.empty())
+        parent = bfs::temp_directory_path();
+    for(unsigned tries = 0; tries < MAX_TRIES; ++tries)
+    {
+        // Create a (hopefully) unique filePath
+        filePath = parent / bfs::unique_path();
+        if(!bfs::exists(filePath))
+        {
+            boost::system::error_code ec;
+            bfs::create_directories(filePath, ec);
+            if(!ec)
+                return;
+        }
+    }
+    throw std::runtime_error("Can't create temporary folder");
+}
+
+TmpFolder::~TmpFolder()
+{
+    boost::system::error_code ec;
+    bfs::remove_all(filePath, ec);
 }
