@@ -78,6 +78,12 @@ std::locale createUtf8Locale()
     // Don't change the locale on OSX. Using "" fails with 'locale::facet::_S_create_c_locale name not valid'
     return LocaleHelper::getBfsDefaultLocale();
 }
+#elif BOOST_OS_HAIKU
+std::locale createUtf8Locale()
+{
+    // Don't change the locale on HAIKU. Using "" fails with 'locale::facet::_S_create_c_locale name not valid'
+    return LocaleHelper::getBfsDefaultLocale();
+}
 #else
 std::locale createUtf8Locale()
 {
