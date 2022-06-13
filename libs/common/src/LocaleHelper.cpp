@@ -72,16 +72,10 @@ std::locale createUtf8Locale()
     // On windows we want to enforce the encoding (mostly UTF8) so use boost to generate it
     return boost::locale::generator().generate("");
 }
-#elif BOOST_OS_MACOS
+#elif BOOST_OS_MACOS || BOOST_OS_HAIKU
 std::locale createUtf8Locale()
 {
-    // Don't change the locale on OSX. Using "" fails with 'locale::facet::_S_create_c_locale name not valid'
-    return LocaleHelper::getBfsDefaultLocale();
-}
-#elif BOOST_OS_HAIKU
-std::locale createUtf8Locale()
-{
-    // Don't change the locale on HAIKU. Using "" fails with 'locale::facet::_S_create_c_locale name not valid'
+    // Don't change the locale on OSX or HAIKU. Using "" fails with 'locale::facet::_S_create_c_locale name not valid'
     return LocaleHelper::getBfsDefaultLocale();
 }
 #else
