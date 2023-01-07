@@ -124,16 +124,16 @@ std::string getExecutablePath()
 #elif(BOOST_OS_HAIKU)
 std::string getExecutablePath()
 {
-	std::string ret;
-	int32 cookie = 0;
-	image_info info;
-	while (get_next_image_info(B_CURRENT_TEAM, &cookie, &info) == B_OK)
-	{
-		if (info.type == B_APP_IMAGE)
-		{
-			ret = info.name;
-		}
-	}
+    std::string ret;
+    int32 cookie = 0;
+    image_info info;
+    while(get_next_image_info(B_CURRENT_TEAM, &cookie, &info) == B_OK)
+    {
+        if(info.type == B_APP_IMAGE)
+        {
+            ret = info.name;
+        }
+    }
     return ret;
 }
 
