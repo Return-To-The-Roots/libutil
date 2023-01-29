@@ -85,7 +85,7 @@ inline T fromStringClassic(const std::string& value, bool fromHex = false)
 {
     T outVal;
     if(!tryFromStringClassic(value, outVal, fromHex))
-        throw ConversionError("Could not convert " + value);
+        throw ConversionError("Could not convert '" + value + "'");
     return outVal;
 }
 
