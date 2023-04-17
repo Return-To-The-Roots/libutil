@@ -59,8 +59,20 @@ static HRESULT mySHGetKnownFolderPath(REFKNOWNFOLDERID rfid, std::string& path)
     if(!gShell32DLLInst)
         gShell32DLLInst = LoadLibraryW(L"Shell32.dll");
 
+#if __GNUC__ >= 9
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-function-type"
+    // error: cast between incompatible function types from
+    // 'FARPROC'                {aka 'int (__attribute__((stdcall)) *)()'}
+    // to
+    // 'LPSHGetKnownFolderPath' {aka 'long int (__attribute__((stdcall)) *)(const GUID&, long unsigned int, void*, wchar_t**)'}
+    // [-Werror=cast-function-type]
+#endif
     if(gShell32DLLInst && !gSHGetKnownFolderPath)
         gSHGetKnownFolderPath = (LPSHGetKnownFolderPath)GetProcAddress(gShell32DLLInst, "SHGetKnownFolderPath");
+#if __GNUC__ >= 9
+#pragma GCC diagnostic pop
+#endif
 
     if(gSHGetKnownFolderPath)
         retval = gSHGetKnownFolderPath(rfid, KF_FLAG_CREATE, nullptr, &ppszPath);
