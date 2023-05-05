@@ -81,6 +81,7 @@ function(enable_warnings target)
         -Woverloaded-virtual
         -Wstrict-null-sentinel
         -Wno-maybe-uninitialized # False positives e.g. with variant/optional
+        -Wno-dangling-reference # To many false positives, see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=107532
         -Wno-error=inconsistent-missing-override
     )
     if(NOT WIN32)
