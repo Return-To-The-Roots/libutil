@@ -58,7 +58,7 @@ function(detect_osx_archs)
         set(cmdStdOut x86_64)
     endif()
 
-    set(OSX_POSSIBLE_ARCHS x86_64 i386 i686 ppc)
+    set(OSX_POSSIBLE_ARCHS x86_64 i386 i686 ppc arm64)
     set(OSX_DETECTED_ARCHS)
     foreach(arch IN LISTS OSX_POSSIBLE_ARCHS)
         if(cmdStdOut MATCHES "${arch}")
