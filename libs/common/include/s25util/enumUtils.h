@@ -12,10 +12,10 @@ struct IsBitset : std::false_type
 {};
 
 template<typename Enum>
-constexpr bool IsValidBitset = IsBitset<Enum>::value && std::is_unsigned<std::underlying_type_t<Enum>>::value;
+constexpr bool IsValidBitset_v = IsBitset<Enum>::value && std::is_unsigned<std::underlying_type_t<Enum>>::value;
 
 template<typename Enum>
-using require_validBitset = std::enable_if_t<IsValidBitset<Enum>>;
+using require_validBitset = std::enable_if_t<IsValidBitset_v<Enum>>;
 
 template<typename Enum, typename = require_validBitset<Enum>>
 constexpr auto operator&(Enum lhs, Enum rhs) noexcept

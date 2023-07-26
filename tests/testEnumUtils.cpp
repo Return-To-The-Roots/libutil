@@ -24,10 +24,10 @@ MAKE_BITSET_STRONG(Bitset);
 
 // Check type traits
 static_assert(IsBitset<InvalidBitset>::value);
-static_assert(!IsValidBitset<InvalidBitset>);
+static_assert(!IsValidBitset_v<InvalidBitset>);
 
 static_assert(IsBitset<Bitset>::value);
-static_assert(IsValidBitset<Bitset>);
+static_assert(IsValidBitset_v<Bitset>);
 
 BOOST_AUTO_TEST_SUITE(EnumUtils)
 
