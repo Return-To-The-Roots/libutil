@@ -41,8 +41,8 @@ BOOST_AUTO_TEST_CASE(Operators)
         BOOST_TEST(static_cast<unsigned>(b) == 0b001u);
         b |= Bitset::B;
         BOOST_TEST(static_cast<unsigned>(b) == 0b011u);
-	(b |= Bitset::A) = Bitset::C;
-	BOOST_CHECK(b == Bitset::C);
+        (b |= Bitset::A) = Bitset::C;
+        BOOST_CHECK(b == Bitset::C);
     }
 
     {
@@ -51,8 +51,8 @@ BOOST_AUTO_TEST_CASE(Operators)
         BOOST_TEST(static_cast<unsigned>(b) == 0b011u);
         b &= Bitset::B;
         BOOST_TEST(static_cast<unsigned>(b) == 0b010u);
-	(b &= Bitset::A) = Bitset::C;
-	BOOST_CHECK(b == Bitset::C);
+        (b &= Bitset::A) = Bitset::C;
+        BOOST_CHECK(b == Bitset::C);
     }
 }
 
