@@ -24,14 +24,14 @@ inline void freeHandle(UPNPUrls& p)
     FreeUPNPUrls(&p);
 }
 
-namespace s25util { namespace traits {
+namespace s25util::traits {
     template<>
     struct InvalidHandleValue<UPNPUrls>
     {
         static constexpr UPNPUrls value{};
         constexpr operator UPNPUrls() const { return UPNPUrls{}; }
     };
-}} // namespace s25util::traits
+} // namespace s25util::traits
 
 namespace miniupnp {
 using DeviceList = s25util::UniqueHandle<UPNPDev*>;
