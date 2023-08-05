@@ -18,7 +18,10 @@
 #pragma comment(lib, "iphlpapi.lib")
 
 namespace s25util::traits {
-    void freeHandle(BSTR p) { SysFreeString(p); }
+void freeHandle(BSTR p)
+{
+    SysFreeString(p);
+}
 } // namespace s25util::traits
 
 namespace {

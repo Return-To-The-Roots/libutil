@@ -25,12 +25,12 @@ inline void freeHandle(UPNPUrls& p)
 }
 
 namespace s25util::traits {
-    template<>
-    struct InvalidHandleValue<UPNPUrls>
-    {
-        static constexpr UPNPUrls value{};
-        constexpr operator UPNPUrls() const { return UPNPUrls{}; }
-    };
+template<>
+struct InvalidHandleValue<UPNPUrls>
+{
+    static constexpr UPNPUrls value{};
+    constexpr operator UPNPUrls() const { return UPNPUrls{}; }
+};
 } // namespace s25util::traits
 
 namespace miniupnp {
