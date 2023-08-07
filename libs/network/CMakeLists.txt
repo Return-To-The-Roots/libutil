@@ -18,7 +18,7 @@ add_library(s25util::network ALIAS s25util_network)
 
 target_include_directories(s25util_network PUBLIC include PRIVATE include/s25util)
 target_link_libraries(s25util_network PRIVATE s25util::common s25util::log)
-target_compile_features(s25util_network PUBLIC cxx_std_14)
+target_compile_features(s25util_network PUBLIC cxx_std_17)
 # PIC Required for linking into shared libs
 set_target_properties(s25util_network PROPERTIES CXX_EXTENSIONS OFF POSITION_INDEPENDENT_CODE ON)
 

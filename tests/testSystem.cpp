@@ -10,13 +10,13 @@
 
 namespace fs = boost::filesystem;
 
-namespace boost { namespace test_tools { namespace tt_detail {
-    template<>
-    struct print_log_value<std::wstring>
-    {
-        void operator()(std::ostream& out, const std::wstring& value) { out << boost::nowide::narrow(value); }
-    };
-}}} // namespace boost::test_tools::tt_detail
+namespace boost::test_tools::tt_detail {
+template<>
+struct print_log_value<std::wstring>
+{
+    void operator()(std::ostream& out, const std::wstring& value) { out << boost::nowide::narrow(value); }
+};
+} // namespace boost::test_tools::tt_detail
 
 BOOST_AUTO_TEST_SUITE(SystemTestSuite)
 

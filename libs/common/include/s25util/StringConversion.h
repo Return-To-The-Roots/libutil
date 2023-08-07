@@ -126,11 +126,10 @@ namespace detail {
         {
             // Calculate required precision as done by Boost.Lexical_Cast
             using limits = std::numeric_limits<T>;
-            static_assert(limits::radix == 2 && limits::digits > 0, "");
+            static_assert(limits::radix == 2 && limits::digits > 0);
             constexpr unsigned long precision = 2UL + limits::digits * 30103UL / 100000UL;
             static_assert(static_cast<unsigned long>(limits::digits) < ULONG_MAX / 30103UL
-                            && precision > static_cast<unsigned long>(limits::digits10),
-                          "");
+                          && precision > static_cast<unsigned long>(limits::digits10));
 
             ClassicImbuedStream<std::ostringstream> ss;
             if(toHex)

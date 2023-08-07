@@ -20,7 +20,7 @@ add_library(s25util::common ALIAS s25util_common)
 
 target_include_directories(s25util_common PUBLIC include PRIVATE include/s25util)
 target_link_libraries(s25util_common PUBLIC endian::static Boost::nowide Boost::filesystem)
-target_compile_features(s25util_common PUBLIC cxx_std_14)
+target_compile_features(s25util_common PUBLIC cxx_std_17)
 # PIC Required for linking into shared libs
 set_target_properties(s25util_common PROPERTIES CXX_EXTENSIONS OFF POSITION_INDEPENDENT_CODE ON)
 
