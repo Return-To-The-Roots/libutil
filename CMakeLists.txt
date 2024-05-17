@@ -15,20 +15,20 @@ endif()
 
 # The super project might e.g. call find_package(Boost ... nowide), if the target is not defined, download directly
 if(NOT TARGET Boost::nowide)
-  message(STATUS "Fetching Boost.Nowide from repository...")
-  include(FetchContent)
-  FetchContent_Declare(
-    BoostNowide
-    GIT_REPOSITORY https://github.com/boostorg/nowide.git
-    GIT_TAG        v11.1.1
-  )
-  include(SaveVariables)
-  save_variables(BUILD_SHARED_LIBS CMAKE_POSITION_INDEPENDENT_CODE BUILD_TESTING)
-  set(BUILD_SHARED_LIBS OFF)
-  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-  set(BUILD_TESTING OFF)
-  FetchContent_MakeAvailable(BoostNowide)
-  pop_saved_variables()
+    message(STATUS "Fetching Boost.Nowide from repository...")
+    include(FetchContent)
+    FetchContent_Declare(
+      BoostNowide
+      GIT_REPOSITORY https://github.com/boostorg/nowide.git
+      GIT_TAG        v11.1.1
+    )
+    include(SaveVariables)
+    save_variables(BUILD_SHARED_LIBS CMAKE_POSITION_INDEPENDENT_CODE BUILD_TESTING)
+    set(BUILD_SHARED_LIBS OFF)
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+    set(BUILD_TESTING OFF)
+    FetchContent_MakeAvailable(BoostNowide)
+    pop_saved_variables()
 endif()
 
 add_subdirectory(libs)

@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 if(NOT MSVC)
-	find_package(Miniupnpc REQUIRED)
+    find_package(Miniupnpc REQUIRED)
     include(GatherDll)
     gather_dll(MINIUPNPC)
 endif()
@@ -25,7 +25,7 @@ set_target_properties(s25util_network PROPERTIES CXX_EXTENSIONS OFF POSITION_IND
 if(MSVC)
     target_compile_definitions(s25util_network PRIVATE _WINSOCK_DEPRECATED_NO_WARNINGS)
 else()
-	target_link_libraries(s25util_network PRIVATE ${MINIUPNPC_LIBRARY})
+    target_link_libraries(s25util_network PRIVATE ${MINIUPNPC_LIBRARY})
     target_include_directories(s25util_network SYSTEM PRIVATE ${MINIUPNPC_INCLUDE_DIR})
 ENDIF()
 
@@ -33,7 +33,7 @@ IF (WIN32)
     target_compile_definitions(s25util_network PRIVATE WIN32_LEAN_AND_MEAN _WIN32_WINNT=0x0600) # Win Vista
     # Exclude some windows defines
     target_compile_definitions(s25util_network PRIVATE NOMINMAX NODRAWTEXT NOSOUND NOTEXTMETRIC NOCOMM NOMCX)
-	target_link_libraries(s25util_network PUBLIC ws2_32)
+    target_link_libraries(s25util_network PUBLIC ws2_32)
 ENDIF ()
 
 include(EnableWarnings)

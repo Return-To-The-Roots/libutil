@@ -4,8 +4,8 @@
 
 set(_BoostComponents filesystem)
 if(WIN32)
-	# Locale only on windows
-	set(_BoostComponents ${_BoostComponents} locale)
+    # Locale only on windows
+    set(_BoostComponents ${_BoostComponents} locale)
 endif()
 find_package(Boost 1.69 REQUIRED COMPONENTS ${_BoostComponents})
 
@@ -28,7 +28,7 @@ IF (WIN32)
     target_compile_definitions(s25util_common PRIVATE WIN32_LEAN_AND_MEAN _WIN32_WINNT=0x0600) # Win Vista
     # Exclude some windows defines
     target_compile_definitions(s25util_common PRIVATE NOMINMAX NODRAWTEXT NOSOUND NOTEXTMETRIC NOCOMM NOMCX)
-	target_link_libraries(s25util_common PUBLIC Boost::locale Boost::disable_autolinking iphlpapi)
+    target_link_libraries(s25util_common PUBLIC Boost::locale Boost::disable_autolinking iphlpapi)
 ENDIF ()
 
 include(EnableWarnings)
