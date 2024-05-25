@@ -40,9 +40,9 @@ BUILD_LOG=/tmp/boost.log
 
 mkdir -p "${BUILD_DIR}" && cd "${BUILD_DIR}"
 
-echo "Downloading and extracting file..."
 FILE_NAME="boost_${VERSION//./_}"
-URL="https://sourceforge.net/projects/boost/files/boost/${VERSION}/${FILE_NAME}.tar.bz2/download"
+URL="https://archives.boost.io/release/${VERSION}/source/${FILE_NAME}.tar.bz2"
+echo "Downloading and extracting file from $URL..."
 wget "${URL}" -qO- | tar jx
 if [ ! -f "${FILE_NAME}/bootstrap.sh" ]; then
     echo "Download failed or files invalid" >&2
