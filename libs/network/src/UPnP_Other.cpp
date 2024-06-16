@@ -91,7 +91,11 @@ inline DeviceList discover(int delay, const char* multicastIf = nullptr, const c
 inline bool getValidIGD(const DeviceList& deviceList, Urls& urls, IGDdatas& data, std::string& lanAddr)
 {
     lanAddr.resize(15); // Format: aaa.bbb.ccc.ddd
-    return UPNP_GetValidIGD(deviceList, &urls, &data, &lanAddr[0], lanAddr.size()) != 0;
+#if (MINIUPNPC_API_VERSION >= 18)
+    return UPNP_GetValidIGD(deviceList, &urls, &data, &lanAddr[0], lanAddr.size(), NULL, 0) == 1;
+#else
+    return UPNP_GetValidIGD(deviceList, &urls, &data, &lanAddr[0], lanAddr.size()) == 1;
+#endif
 }
 
 inline void addPortMapping(const char* controlURL, const char* servicetype, const std::string& extPort,
