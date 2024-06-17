@@ -10,12 +10,11 @@
 #include <cstdio>
 #include <string>
 
-// Öffnungsmethoden
-enum OpenFileMode
+enum class OpenFileMode : unsigned
 {
-    OFM_WRITE = 0,
-    OFM_WRITE_ADD,
-    OFM_READ
+    Write,
+    WriteAppend,
+    Read,
 };
 
 /// Class for reading and writing binary files with fixed endianness
