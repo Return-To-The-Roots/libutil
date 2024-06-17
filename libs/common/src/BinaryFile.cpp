@@ -1,4 +1,4 @@
-// Copyright (C) 2005 - 2021 Settlers Freaks (sf-team at siedler25.org)
+// Copyright (C) 2005 - 2024 Settlers Freaks (sf-team at siedler25.org)
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 
@@ -17,61 +17,56 @@
 
 bool BinaryFile::Open(const boost::filesystem::path& filePath, const OpenFileMode of)
 {
-    static const std::array<const char*, 3> modes = {{"w+b", "a+b", "rb"}};
-    file = boost::nowide::fopen(filePath.string().c_str(), modes[of]);
+    Close();
+    static constexpr std::array<const char*, 3> modes = {{"w+b", "a+b", "rb"}};
+    file.reset(boost::nowide::fopen(filePath.string().c_str(), modes[static_cast<unsigned>(of)]));
     if(file)
     {
-        this->filePath_ = filePath;
+        filePath_ = filePath;
         return true;
     } else
         return false;
 }
 
-bool BinaryFile::Close()
+void BinaryFile::Close()
 {
-    if(!file)
-        return true;
-
-    bool result = (fclose(file) == 0);
-    file = nullptr;
+    file.reset();
     filePath_.clear();
-
-    return result;
 }
 
 void BinaryFile::WriteSignedInt(int32_t i) const
 {
-    CHECKED_WRITE(libendian::le_write_i(i, file));
+    CHECKED_WRITE(libendian::le_write_i(i, *file));
 }
 
 void BinaryFile::WriteUnsignedInt(uint32_t i) const
 {
-    CHECKED_WRITE(libendian::le_write_ui(i, file));
+    CHECKED_WRITE(libendian::le_write_ui(i, *file));
 }
 
 void BinaryFile::WriteSignedShort(int16_t i) const
 {
-    CHECKED_WRITE(libendian::le_write_s(i, file));
+    CHECKED_WRITE(libendian::le_write_s(i, *file));
 }
 
 void BinaryFile::WriteUnsignedShort(uint16_t i) const
 {
-    CHECKED_WRITE(libendian::le_write_us(i, file));
+    CHECKED_WRITE(libendian::le_write_us(i, *file));
 }
 
 void BinaryFile::WriteSignedChar(char i) const
 {
-    CHECKED_WRITE(libendian::write(&i, 1, file));
+    CHECKED_WRITE(libendian::write(&i, 1, *file));
 }
 
 void BinaryFile::WriteUnsignedChar(unsigned char i) const
 {
-    CHECKED_WRITE(libendian::write(&i, 1, file));
+    CHECKED_WRITE(libendian::write(&i, 1, *file));
 }
 
 void BinaryFile::WriteRawData(const void* const data, const unsigned length) const
 {
-    CHECKED_WRITE(libendian::write((const char*)data, length, file));
+    CHECKED_WRITE(libendian::write((const char*)data, length, *file));
 }
 
 void BinaryFile::WriteShortString(const std::string& str) const
@@ -93,48 +88,48 @@ void BinaryFile::WriteLongString(const std::string& str) const
 int BinaryFile::ReadSignedInt()
 {
     int32_t i;
-    CHECKED_READ(libendian::le_read_i(&i, file));
+    CHECKED_READ(libendian::le_read_i(&i, *file));
     return i;
 }
 
 unsigned BinaryFile::ReadUnsignedInt()
 {
     uint32_t i;
-    CHECKED_READ(libendian::le_read_ui(&i, file));
+    CHECKED_READ(libendian::le_read_ui(&i, *file));
     return i;
 }
 
 short BinaryFile::ReadSignedShort()
 {
     int16_t i;
-    CHECKED_READ(libendian::le_read_s(&i, file));
+    CHECKED_READ(libendian::le_read_s(&i, *file));
     return i;
 }
 
 unsigned short BinaryFile::ReadUnsignedShort()
 {
     uint16_t i;
-    CHECKED_READ(libendian::le_read_us(&i, file));
+    CHECKED_READ(libendian::le_read_us(&i, *file));
     return i;
 }
 
 char BinaryFile::ReadSignedChar()
 {
     char i;
-    CHECKED_READ(libendian::read(&i, 1, file));
+    CHECKED_READ(libendian::read(&i, 1, *file));
     return i;
 }
 
 unsigned char BinaryFile::ReadUnsignedChar()
 {
     unsigned char i;
-    CHECKED_READ(libendian::read(&i, 1, file));
+    CHECKED_READ(libendian::read(&i, 1, *file));
     return i;
 }
 
 void BinaryFile::ReadRawData(void* const data, const unsigned length)
 {
-    CHECKED_READ(libendian::read((char*)data, length, file));
+    CHECKED_READ(libendian::read((char*)data, length, *file));
 }
 
 std::string BinaryFile::ReadShortString()
@@ -161,20 +156,20 @@ std::string BinaryFile::ReadLongString()
 
 void BinaryFile::Seek(const long pos, const int origin)
 {
-    fseek(file, pos, origin); //-V303
+    fseek(*file, pos, origin); //-V303
 }
 
-unsigned BinaryFile::Tell() const
+long BinaryFile::Tell() const
 {
-    return ftell(file); //-V303
+    return ftell(*file); //-V303
 }
 
 void BinaryFile::Flush()
 {
-    fflush(file);
+    fflush(*file);
 }
 
-bool BinaryFile::EndOfFile() const
+bool BinaryFile::IsEndOfFile() const
 {
-    return feof(file) != 0;
+    return feof(*file) != 0;
 }
