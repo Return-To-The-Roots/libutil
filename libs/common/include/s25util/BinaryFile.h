@@ -56,12 +56,8 @@ public:
     /// Flush buffer to disk
     void Flush();
     bool IsEndOfFile() const;
-    /// Deprecated: Use IsEndOfFile
-    bool EndOfFile() const { return IsEndOfFile(); }
     /// Is file opened
     bool IsOpen() const { return file ? true : false; }
-    /// Deprecated: Use IsOpen
-    bool IsValid() const { return IsOpen(); }
 
     const boost::filesystem::path& getFilePath() const { return filePath_; }
 
