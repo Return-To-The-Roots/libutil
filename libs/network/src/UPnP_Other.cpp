@@ -91,7 +91,7 @@ inline DeviceList discover(int delay, const char* multicastIf = nullptr, const c
 inline bool getValidIGD(const DeviceList& deviceList, Urls& urls, IGDdatas& data, std::string& lanAddr)
 {
     lanAddr.resize(15); // Format: aaa.bbb.ccc.ddd
-#if (MINIUPNPC_API_VERSION >= 18)
+#if(MINIUPNPC_API_VERSION >= 18)
     return UPNP_GetValidIGD(deviceList, &urls, &data, &lanAddr[0], lanAddr.size(), NULL, 0) == 1;
 #else
     return UPNP_GetValidIGD(deviceList, &urls, &data, &lanAddr[0], lanAddr.size()) == 1;
