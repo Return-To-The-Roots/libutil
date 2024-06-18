@@ -51,8 +51,8 @@ public:
 
     /// Move the file position
     void Seek(long pos, int origin);
-    /// Get file position
-    long Tell() const;
+    /// Get file position, throws on error
+    unsigned long Tell() const;
     /// Flush buffer to disk
     void Flush();
     bool IsEndOfFile() const;

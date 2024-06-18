@@ -5,6 +5,8 @@
 #include "BinaryFile.h"
 #include <boost/nowide/cstdio.hpp>
 #include <array>
+#include <cerrno>
+#include <cstring>
 #include <limits>
 #include <stdexcept>
 
@@ -159,9 +161,12 @@ void BinaryFile::Seek(const long pos, const int origin)
     fseek(*file, pos, origin); //-V303
 }
 
-long BinaryFile::Tell() const
+unsigned long BinaryFile::Tell() const
 {
-    return ftell(*file); //-V303
+    const auto res = ftell(*file);
+    if(res < 0)
+        throw std::runtime_error("Failed to get file position: " + std::string(strerror(errno)));
+    return static_cast<unsigned long>(res);
 }
 
 void BinaryFile::Flush()
