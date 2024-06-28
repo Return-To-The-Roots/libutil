@@ -1,4 +1,4 @@
-// Copyright (C) 2005 - 2021 Settlers Freaks (sf-team at siedler25.org)
+// Copyright (C) 2005 - 2024 Settlers Freaks (sf-team at siedler25.org)
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 
@@ -36,9 +36,8 @@ void Serializer::ReadFromFile(BinaryFile& file)
 {
     Clear();
 
-    unsigned buffer_size = file.ReadUnsignedInt();
+    const auto buffer_size = file.ReadUnsignedInt();
     file.ReadRawData(GetDataWritable(buffer_size), buffer_size);
-    SetLength(buffer_size);
 }
 
 void Serializer::PushVarSize(uint32_t i)
