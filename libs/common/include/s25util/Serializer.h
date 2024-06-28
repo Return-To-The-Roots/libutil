@@ -88,6 +88,10 @@ public:
     std::string PopString();
     std::string PopLongString();
 
+    /// Advance the read pointer by the given number of bytes
+    /// Return a pointer to the start of that data in the internal buffer
+    const uint8_t* PopAndDiscard(unsigned numBytes);
+
     template<typename T>
     T Pop();
 

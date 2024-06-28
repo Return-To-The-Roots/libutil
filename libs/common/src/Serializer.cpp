@@ -107,3 +107,11 @@ std::string Serializer::PopLongString()
     PopRawData(&str[0], static_cast<unsigned>(str.length()));
     return str;
 }
+
+const uint8_t* Serializer::PopAndDiscard(unsigned numBytes)
+{
+    const auto* const data = data_ + readPos_;
+    CheckSize(numBytes);
+    pos_ += numBytes;
+    return data;
+}
