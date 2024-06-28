@@ -1,4 +1,4 @@
-// Copyright (C) 2005 - 2021 Settlers Freaks (sf-team at siedler25.org)
+// Copyright (C) 2005 - 2024 Settlers Freaks (sf-team at siedler25.org)
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 
@@ -15,8 +15,7 @@
 
 class BinaryFile;
 
-/// Klasse die einen Buffer zum Serialisieren verwaltet und entsprechende Methoden zum Lesen/Schreiben bereitstellt.
-/// Implementiert einen FIFO (push fügt ans ende, pop entfernt am anfang)
+/// Class for serialization implementing a FIFO buffer (push adds to end, pop reads from front)
 class Serializer
 {
     using Converter = libendian::ConvertEndianess<true>;
@@ -34,16 +33,16 @@ public:
     unsigned GetLength() const noexcept { return length_; }
     /// Set the current length
     void SetLength(unsigned length);
-
+    /// Get remaining bytes to read
     unsigned GetBytesLeft() const noexcept;
 
     /// Access current data
     const uint8_t* GetData() const noexcept { return data_.data(); }
 
-    /// Writable access to data. E.g. to write directly to the buffer and call SetLength afterwards
+    /// Change the size of the buffer and provide writable access it
     uint8_t* GetDataWritable(unsigned length)
     {
-        EnsureSize(length);
+        SetLength(length);
         return data_.data();
     }
 
@@ -96,15 +95,18 @@ public:
     void Push(T val);
 
 private:
-    /// Adds the given number of bytes to the usable length
+    /// Add the given number of bytes to the usable length
     void ExtendMemory(unsigned numBytes) { EnsureSize(length_ + numBytes); }
-    /// Checks if data of size len can be popped
-    void CheckSize(unsigned len) const;
-    /// Makes sure the internal buffer is at least length bytes long
-    void EnsureSize(unsigned length);
+    /// Verify that the given number of bytes can be read/popped
+    /// Otherwise throws a length_error
+    void CheckSize(unsigned numBytes) const;
+    /// Make sure the internal buffer can hold the given number of bytes
+    /// potentially increasing the size
+    void EnsureSize(unsigned numBytes);
 
     boost::container::vector<uint8_t> data_;
-    /// Length (number of bytes) of valid data. Also the current write position
+    /// Number of bytes of valid data.
+    /// I.e. the current write position and the total number of readable bytes
     unsigned length_ = 0;
     /// Current read position
     unsigned pos_ = 0;
@@ -116,20 +118,20 @@ inline unsigned Serializer::GetBytesLeft() const noexcept
     return length_ - pos_;
 }
 
-inline void Serializer::EnsureSize(unsigned length)
+inline void Serializer::EnsureSize(const unsigned numBytes)
 {
-    if(data_.size() < length)
+    if(data_.size() < numBytes)
     {
         size_t newSize = 8u;
-        while(newSize < length)
+        while(newSize < numBytes)
             newSize *= 2u;
         data_.resize(newSize, boost::container::default_init);
     }
 }
 
-inline void Serializer::CheckSize(unsigned len) const
+inline void Serializer::CheckSize(unsigned numBytes) const
 {
-    if(GetBytesLeft() < len)
+    if(GetBytesLeft() < numBytes)
         throw std::range_error("Out of range during deserialization");
 }
 
