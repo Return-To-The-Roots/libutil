@@ -89,6 +89,9 @@ public:
     std::string PopString();
     std::string PopLongString();
 
+    /// Advance the read pointer by the given number of bytes without returning the data
+    void PopAndDiscard(unsigned numBytes);
+
     template<typename T>
     T Pop();
 
