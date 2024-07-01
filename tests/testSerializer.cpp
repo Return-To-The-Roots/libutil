@@ -1,8 +1,9 @@
-// Copyright (C) 2005 - 2021 Settlers Freaks (sf-team at siedler25.org)
+// Copyright (C) 2005 - 2024 Settlers Freaks (sf-team at siedler25.org)
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "s25util/Serializer.h"
+#include "s25util/VersionedDeserializer.h"
 #include <boost/test/unit_test.hpp>
 
 BOOST_AUTO_TEST_SUITE(SerializerSuite)
@@ -64,6 +65,88 @@ BOOST_AUTO_TEST_CASE(PushPopVarSize)
     BOOST_TEST_REQUIRE(ser.PopVarSize() == 0xFFFFFFFu);
     BOOST_TEST_REQUIRE(ser.PopVarSize() == 0x10000000u);
     BOOST_TEST_REQUIRE(ser.PopVarSize() == 0xFFFFFFFFu);
+}
+
+struct Deserializer : s25util::VersionedDeserializer<Deserializer>
+{
+    using s25util::VersionedDeserializer<Deserializer>::VersionedDeserializer;
+    static unsigned getCurrentVersion() { return 2; }
+};
+
+struct Example
+{
+    struct Sub
+    {
+        std::pair<unsigned, uint16_t> fieldsV0{01, 02};
+        std::pair<unsigned, uint16_t> fieldsV1{11, 12};
+        void save(Serializer& ser, const unsigned version) const
+        {
+            ser.Push(fieldsV0.first);
+            ser.Push(fieldsV0.second);
+            // Only for testing an old version
+            if(version >= 1)
+            {
+                ser.Push(fieldsV1.first);
+                ser.Push(fieldsV1.second);
+            }
+        }
+        void load(Deserializer& ser)
+        {
+            fieldsV0.first = ser.Pop<unsigned>();
+            fieldsV0.second = ser.Pop<uint16_t>();
+            if(ser.getDataVersion() >= 1)
+            {
+                fieldsV1.first = ser.Pop<unsigned>();
+                fieldsV1.second = ser.Pop<uint16_t>();
+            } else
+                fieldsV1 = {11, 12};
+        }
+    };
+    uint32_t field1 = 11111111;
+    Sub substruct;
+    uint32_t field2 = 22222222;
+
+    auto getFields() const { return std::tie(field1, field2, substruct.fieldsV0, substruct.fieldsV1); }
+    bool operator==(const Example& rhs) const { return getFields() == rhs.getFields(); }
+    void save(Serializer& ser, const unsigned version) const
+    { // Version passed only for testing
+        ser.Push(field1);
+        ser.Push(version);
+        substruct.save(ser, version);
+        ser.Push(field2);
+    }
+    void load(Serializer& ser, const unsigned version)
+    {
+        field1 = ser.Pop<uint32_t>();
+        BOOST_TEST_REQUIRE(ser.Pop<unsigned>() == version);
+        {
+            Deserializer deser(ser, version);
+            substruct.load(deser);
+        }
+        field2 = ser.Pop<uint32_t>();
+    }
+};
+
+BOOST_AUTO_TEST_CASE(VersionedDeserializer)
+{
+    const Example input;
+    Serializer ser0, ser1;
+    input.save(ser0, 0);
+    input.save(ser1, 1);
+    const std::vector<uint8_t> v0Data(ser0.GetData(), ser0.GetData() + ser0.GetLength());
+    const std::vector<uint8_t> v1Data(ser1.GetData(), ser1.GetData() + ser1.GetLength());
+    {
+        Example out{};
+        Serializer ser(v0Data.data(), v0Data.size());
+        out.load(ser, 0);
+        BOOST_TEST((out.getFields() == input.getFields()));
+    }
+    {
+        Example out{};
+        Serializer ser(v1Data.data(), v1Data.size());
+        out.load(ser, 1);
+        BOOST_TEST((out.getFields() == input.getFields()));
+    }
 }
 
 BOOST_AUTO_TEST_SUITE_END()
