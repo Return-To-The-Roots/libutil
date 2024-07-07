@@ -9,6 +9,7 @@
 #include <cassert>
 #include <cstdint>
 #include <cstring>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
@@ -21,8 +22,10 @@ class Serializer
     using Converter = libendian::ConvertEndianess<true>;
 
 public:
-    Serializer() = default;
-    Serializer(const void* data, unsigned initial_size);
+    /// Create for reading and writing
+    Serializer();
+    /// Create for deserializing the given data (read-only, view semantic, does not copy)
+    Serializer(const void* data, unsigned numBytes);
 
     /// Remove all data
     void Clear();
@@ -37,13 +40,13 @@ public:
     unsigned GetBytesLeft() const noexcept;
 
     /// Access current data
-    const uint8_t* GetData() const noexcept { return data_.data(); }
+    const uint8_t* GetData() const noexcept { return data_; }
 
     /// Change the size of the buffer and provide writable access it
     uint8_t* GetDataWritable(unsigned length)
     {
         SetLength(length);
-        return data_.data();
+        return data_;
     }
 
     void WriteToFile(BinaryFile& file) const;
@@ -51,7 +54,7 @@ public:
 
     // Write methods
 
-    void PushRawData(const void* data, unsigned length);
+    void PushRawData(const void* data, unsigned numBytes);
 
     void PushSignedInt(int32_t i) { Push(i); }
     void PushUnsignedInt(uint32_t i) { Push(i); }
@@ -71,7 +74,7 @@ public:
 
     // Read methods
 
-    void PopRawData(void* data, unsigned length);
+    void PopRawData(void* data, unsigned numBytes);
 
     int32_t PopSignedInt() { return Pop<int32_t>(); }
     uint32_t PopUnsignedInt() { return Pop<uint32_t>(); }
@@ -108,7 +111,8 @@ private:
     /// potentially increasing the size
     void EnsureSize(unsigned numBytes);
 
-    boost::container::vector<uint8_t> data_;
+    std::optional<boost::container::vector<uint8_t>> storage_;
+    uint8_t* data_ = nullptr;
     /// Number of bytes of valid data.
     /// I.e. the current write position and the total number of readable bytes
     unsigned length_ = 0;
@@ -122,39 +126,28 @@ inline unsigned Serializer::GetBytesLeft() const noexcept
     return length_ - readPos_;
 }
 
-inline void Serializer::EnsureSize(const unsigned numBytes)
-{
-    if(data_.size() < numBytes)
-    {
-        size_t newSize = 8u;
-        while(newSize < numBytes)
-            newSize *= 2u;
-        data_.resize(newSize, boost::container::default_init);
-    }
-}
-
 inline void Serializer::CheckSize(unsigned numBytes) const
 {
     if(GetBytesLeft() < numBytes)
         throw std::range_error("Out of range during deserialization");
 }
 
-inline void Serializer::PushRawData(const void* data, unsigned length)
+inline void Serializer::PushRawData(const void* data, unsigned numBytes)
 {
-    if(length == 0)
+    if(numBytes == 0)
         return;
-    ExtendMemory(length);
-    std::memcpy(&data_[length_], data, length);
-    this->length_ += length;
+    ExtendMemory(numBytes);
+    std::memcpy(&data_[length_], data, numBytes);
+    this->length_ += numBytes;
 }
 
-inline void Serializer::PopRawData(void* data, unsigned length)
+inline void Serializer::PopRawData(void* data, unsigned numBytes)
 {
-    if(length == 0)
+    if(numBytes == 0)
         return;
-    CheckSize(length);
-    std::memcpy(data, &data_[readPos_], length);
-    readPos_ += length;
+    CheckSize(numBytes);
+    std::memcpy(data, &data_[readPos_], numBytes);
+    readPos_ += numBytes;
 }
 
 template<typename T>

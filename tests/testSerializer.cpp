@@ -5,6 +5,7 @@
 #include "s25util/Serializer.h"
 #include "s25util/VersionedDeserializer.h"
 #include <boost/test/unit_test.hpp>
+#include <stdexcept>
 
 BOOST_AUTO_TEST_SUITE(SerializerSuite)
 
@@ -147,6 +148,36 @@ BOOST_AUTO_TEST_CASE(VersionedDeserializer)
         out.load(ser, 1);
         BOOST_TEST((out.getFields() == input.getFields()));
     }
+}
+
+BOOST_AUTO_TEST_CASE(SerializerView)
+{
+    Serializer ser;
+    const uint32_t value = 1337;
+    ser.Push(value);
+    Serializer deser(ser.GetData(), ser.GetLength());
+    // Can't write
+    BOOST_CHECK_THROW(deser.Push(42), std::logic_error);
+    // Only read
+    BOOST_TEST(deser.Pop<uint32_t>() == value);
+    // No overflow
+    BOOST_TEST(deser.GetBytesLeft() == 0u);
+    BOOST_CHECK_THROW(deser.PopBool(), std::range_error);
+    // Clear allows writing only if we could before.
+    // E.g. when the original data goes out of scope but the deserializer does not
+    deser.Clear();
+    BOOST_CHECK_THROW(deser.Push(value), std::logic_error);
+    BOOST_TEST(ser.GetLength() == sizeof(uint32_t));
+    ser.Clear();
+    BOOST_TEST(ser.GetLength() == 0u);
+    BOOST_REQUIRE_NO_THROW(ser.Push<uint16_t>(value));
+    BOOST_TEST(ser.Pop<uint16_t>() == value);
+    BOOST_TEST(ser.GetLength() == sizeof(uint16_t));
+    // But we can reinit a deserializer
+    deser = Serializer();
+    BOOST_REQUIRE_NO_THROW(deser.Push(value));
+    BOOST_TEST(deser.Pop<uint32_t>() == value);
+    BOOST_TEST(deser.GetLength() == sizeof(uint32_t));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

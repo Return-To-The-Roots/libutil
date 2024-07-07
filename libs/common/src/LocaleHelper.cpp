@@ -5,9 +5,9 @@
 #include "LocaleHelper.h"
 #include "System.h"
 #include <boost/filesystem/path.hpp>
-#include <boost/optional/optional.hpp>
 #include <boost/predef/os.h>
 #include <iostream>
+#include <optional>
 #if BOOST_OS_WINDOWS
 #    include <boost/locale.hpp>
 #elif !BOOST_OS_MACOS
@@ -21,7 +21,7 @@ namespace bfs = boost::filesystem;
 namespace {
 class LocaleResetter
 {
-    boost::optional<std::locale> originalLocale;
+    std::optional<std::locale> originalLocale;
 
 public:
     ~LocaleResetter()
