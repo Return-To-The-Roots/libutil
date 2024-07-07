@@ -27,7 +27,7 @@ public:
     /// Remove all data
     void Clear();
     /// Get current read position
-    unsigned GetPos() const noexcept { return pos_; }
+    unsigned GetReadPos() const noexcept { return readPos_; }
 
     /// Get current number of bytes contained
     unsigned GetLength() const noexcept { return length_; }
@@ -113,13 +113,13 @@ private:
     /// I.e. the current write position and the total number of readable bytes
     unsigned length_ = 0;
     /// Current read position
-    unsigned pos_ = 0;
+    unsigned readPos_ = 0;
 };
 
 inline unsigned Serializer::GetBytesLeft() const noexcept
 {
-    assert(pos_ <= length_);
-    return length_ - pos_;
+    assert(readPos_ <= length_);
+    return length_ - readPos_;
 }
 
 inline void Serializer::EnsureSize(const unsigned numBytes)
@@ -153,8 +153,8 @@ inline void Serializer::PopRawData(void* data, unsigned length)
     if(length == 0)
         return;
     CheckSize(length);
-    std::memcpy(data, &data_[pos_], length);
-    pos_ += length;
+    std::memcpy(data, &data_[readPos_], length);
+    readPos_ += length;
 }
 
 template<typename T>

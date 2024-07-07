@@ -6,7 +6,7 @@
 #include "BinaryFile.h"
 
 Serializer::Serializer(const void* const data, unsigned initial_size)
-    : data_(initial_size, boost::container::default_init), length_(0), pos_(0)
+    : data_(initial_size, boost::container::default_init), length_(0), readPos_(0)
 {
     PushRawData(data, initial_size);
 }
@@ -15,15 +15,15 @@ void Serializer::Clear()
 {
     data_.clear();
     length_ = 0;
-    pos_ = 0;
+    readPos_ = 0;
 }
 
 void Serializer::SetLength(const unsigned length)
 {
     EnsureSize(length);
     length_ = length;
-    if(pos_ > length_)
-        pos_ = length_;
+    if(readPos_ > length_)
+        readPos_ = length_;
 }
 
 void Serializer::WriteToFile(BinaryFile& file) const
@@ -112,6 +112,6 @@ const uint8_t* Serializer::PopAndDiscard(unsigned numBytes)
 {
     const auto* const data = data_ + readPos_;
     CheckSize(numBytes);
-    pos_ += numBytes;
+    readPos_ += numBytes;
     return data;
 }

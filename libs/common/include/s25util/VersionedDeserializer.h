@@ -27,7 +27,7 @@ public:
     /// When this serializer is destroyed the read position of the base is advanced by the read data.
     /// This allows to use a versioned serializer for some part of the deserialization
     explicit VersionedDeserializer(Serializer& base, unsigned dataVersion = SubClass::getCurrentVersion())
-        : Serializer(base.GetData() + base.GetPos(), base.GetBytesLeft()), dataVersion_(dataVersion), base_(base)
+        : Serializer(base.GetData() + base.GetReadPos(), base.GetBytesLeft()), dataVersion_(dataVersion), base_(base)
     {}
     VersionedDeserializer(const VersionedDeserializer&) = delete;
     VersionedDeserializer(VersionedDeserializer&&) noexcept = default;
@@ -36,7 +36,7 @@ public:
     ~VersionedDeserializer()
     {
         if(base_)
-            base_->get().PopAndDiscard(GetPos());
+            base_->get().PopAndDiscard(GetReadPos());
     }
 
     unsigned getDataVersion() const { return dataVersion_; }
