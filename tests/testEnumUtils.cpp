@@ -1,4 +1,4 @@
-// Copyright (C) 2005 - 2023 Settlers Freaks (sf-team at siedler25.org)
+// Copyright (C) 2005 - 2025 Settlers Freaks (sf-team at siedler25.org)
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 
@@ -23,10 +23,10 @@ enum class Bitset : unsigned
 MAKE_BITSET_STRONG(Bitset);
 
 // Check type traits
-static_assert(IsBitset<InvalidBitset>::value);
+static_assert(IsBitset_v<InvalidBitset>);
 static_assert(!IsValidBitset_v<InvalidBitset>);
 
-static_assert(IsBitset<Bitset>::value);
+static_assert(IsBitset_v<Bitset>);
 static_assert(IsValidBitset_v<Bitset>);
 
 BOOST_AUTO_TEST_SUITE(EnumUtils)

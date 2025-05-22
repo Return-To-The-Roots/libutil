@@ -1,4 +1,4 @@
-// Copyright (C) 2005 - 2024 Settlers Freaks (sf-team at siedler25.org)
+// Copyright (C) 2005 - 2025 Settlers Freaks (sf-team at siedler25.org)
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 
@@ -153,7 +153,7 @@ inline void Serializer::PopRawData(void* data, unsigned numBytes)
 template<typename T>
 inline T Serializer::Pop()
 {
-    static_assert(std::is_trivial<T>::value && !std::is_pointer<T>::value, "Type must be a trivial, non-pointer type");
+    static_assert(std::is_trivial_v<T> && !std::is_pointer_v<T>, "Type must be a trivial, non-pointer type");
     T i;
     // Note: No casting allowed due to alignment
     PopRawData(&i, sizeof(i));
@@ -163,7 +163,7 @@ inline T Serializer::Pop()
 template<typename T>
 inline void Serializer::Push(T val)
 {
-    static_assert(std::is_trivial<T>::value && !std::is_pointer<T>::value, "Type must be a trivial, non-pointer type");
+    static_assert(std::is_trivial_v<T> && !std::is_pointer_v<T>, "Type must be a trivial, non-pointer type");
     val = Converter::fromNative(val);
     PushRawData(&val, sizeof(val));
 }

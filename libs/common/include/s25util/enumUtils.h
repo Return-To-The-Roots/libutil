@@ -1,4 +1,4 @@
-// Copyright (C) 2005 - 2021 Settlers Freaks (sf-team at siedler25.org)
+// Copyright (C) 2005 - 2025 Settlers Freaks (sf-team at siedler25.org)
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 
@@ -11,7 +11,10 @@ struct IsBitset : std::false_type
 {};
 
 template<typename Enum>
-inline constexpr bool IsValidBitset_v = IsBitset<Enum>::value&& std::is_unsigned_v<std::underlying_type_t<Enum>>;
+constexpr bool IsBitset_v = IsBitset<Enum>::value;
+
+template<typename Enum>
+constexpr bool IsValidBitset_v = IsBitset_v<Enum>&& std::is_unsigned_v<std::underlying_type_t<Enum>>;
 
 template<typename Enum>
 using require_validBitset = std::enable_if_t<IsValidBitset_v<Enum>>;
