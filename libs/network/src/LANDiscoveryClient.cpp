@@ -55,5 +55,5 @@ void LANDiscoveryClient::Run()
 void LANDiscoveryClient::Refresh()
 {
     services.clear();
-    Broadcast(&request.data[0], sizeof(request));
+    Broadcast(request.data.data(), sizeof(request));
 }

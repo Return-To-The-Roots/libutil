@@ -181,7 +181,7 @@ public:
     /// Returns true, if this is a broadcast socket (only meaningfull if it is valid)
     bool IsBroadcast() const { return isBroadcast; }
 
-    friend void swap(Socket& s1, Socket& s2)
+    friend void swap(Socket& s1, Socket& s2) noexcept
     {
         using std::swap;
         swap(s1.status_, s2.status_);

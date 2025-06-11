@@ -94,7 +94,7 @@ inline bool getValidIGD(const DeviceList& deviceList, Urls& urls, IGDdatas& data
 #if(MINIUPNPC_API_VERSION >= 18)
     return UPNP_GetValidIGD(deviceList, &urls, &data, &lanAddr[0], lanAddr.size(), NULL, 0) == 1;
 #else
-    return UPNP_GetValidIGD(deviceList, &urls, &data, &lanAddr[0], lanAddr.size()) == 1;
+    return UPNP_GetValidIGD(deviceList, &urls, &data, lanAddr.data(), lanAddr.size()) == 1;
 #endif
 }
 

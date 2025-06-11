@@ -56,7 +56,7 @@ public:
     void Flush();
     bool IsEndOfFile() const;
     /// Is file opened
-    bool IsOpen() const { return file ? true : false; }
+    bool IsOpen() const { return static_cast<bool>(file); }
 
     const boost::filesystem::path& getFilePath() const { return filePath_; }
 
