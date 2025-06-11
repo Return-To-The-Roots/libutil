@@ -5,6 +5,8 @@
 
 #include "md5.hpp"
 #include <algorithm>
+#include <iomanip>
+#include <sstream>
 
 namespace s25util {
 namespace {
@@ -52,10 +54,11 @@ void md5::context::reset()
 
 std::string md5::toString() const
 {
-    std::string result(32, 0);
-    for(int i = 0; i < 16; ++i)
-        std::sprintf(&result[i * 2], "%02x", digest()[i]);
-    return result;
+    std::ostringstream result;
+    result << std::hex << std::setfill('0');
+    for(const uint8_t d : msg_digest_)
+        result << std::setw(2) << unsigned(d);
+    return result.str();
 }
 
 void md5::process(const void* vdata, size_type len, bool add)

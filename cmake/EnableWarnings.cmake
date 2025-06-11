@@ -77,10 +77,10 @@ function(enable_warnings target)
         -Wwrite-strings
         -Wno-unknown-pragmas
         -Wctor-dtor-privacy
-        -Wnoexcept
         -Woverloaded-virtual
         -Wstrict-null-sentinel
         -Wno-maybe-uninitialized # False positives e.g. with variant/optional
+        -Wno-dangling-reference # To many false positives, see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=107532
         -Wno-error=inconsistent-missing-override
     )
     if(NOT WIN32)
@@ -91,6 +91,10 @@ function(enable_warnings target)
     # Prior to 9.2 "final" was not considered "override"
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 9.2)
       target_compile_options(${target} ${visibility} $<$<COMPILE_LANGUAGE:CXX>:-Wsuggest-override -Wno-error=suggest-override>)
+    endif()
+    # GCC 9 wrongly shows a noexcept warning for in-class initializers
+    if(NOT (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 10))
+      check_and_add_warnings(TARGET ${target} VISIBILITY ${visibility} CXX -Wnoexcept)
     endif()
     if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
       # Lot's of false-positives on for e.g. strcmp

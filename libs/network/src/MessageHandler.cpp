@@ -34,16 +34,17 @@ int MessageHandler::send(Socket& sock, const Message& msg)
         return -1;
     }
 
-    unsigned char* data = ser.GetDataWritable(ser.GetLength());
+    const auto packetLen = ser.GetLength();
+    unsigned char* data = ser.GetDataWritable(packetLen);
     header.msgId = msg.getId();
-    header.msgLen = ser.GetLength() - sizeof(header);
+    header.msgLen = packetLen - sizeof(header);
 
     std::memcpy(data, &header, sizeof(header));
 
-    if(ser.GetLength() != (unsigned)sock.Send(data, ser.GetLength()))
+    if(packetLen != (unsigned)sock.Send(data, packetLen))
         return -1;
     else
-        return ser.GetLength();
+        return packetLen;
 }
 
 /// Helper function to determine if the timeout is reached to be used in a loop. Updates lasttime and the remaining
@@ -176,7 +177,6 @@ Message* MessageHandler::recv(Socket& sock, int& error, unsigned timeoutInMs)
             LOG.write("recv: data: only got %d bytes instead of %d\n") % read % header.msgLen;
             return nullptr;
         }
-        ser.SetLength(header.msgLen);
     }
 
     Message* msg = createMsg(header.msgId);

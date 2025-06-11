@@ -1,4 +1,4 @@
-// Copyright (C) 2005 - 2021 Settlers Freaks (sf-team at siedler25.org)
+// Copyright (C) 2005 - 2025 Settlers Freaks (sf-team at siedler25.org)
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 
@@ -49,22 +49,22 @@ public:
             traits::FreeHandle<T>{}(data_);
     }
     operator T() const { return data_; }
-    template<typename U = T, typename = std::enable_if_t<std::is_pointer<U>::value>>
+    template<typename U = T, typename = std::enable_if_t<std::is_pointer_v<U>>>
     T operator&()
     {
         return data_;
     }
-    template<typename U = T, typename = std::enable_if_t<!std::is_pointer<U>::value>>
+    template<typename U = T, typename = std::enable_if_t<!std::is_pointer_v<U>>>
     T* operator&()
     {
         return &data_;
     }
-    template<typename U = T, typename = std::enable_if_t<std::is_pointer<U>::value>>
+    template<typename U = T, typename = std::enable_if_t<std::is_pointer_v<U>>>
     T operator->()
     {
         return data_;
     }
-    template<typename U = T, typename = std::enable_if_t<!std::is_pointer<U>::value>>
+    template<typename U = T, typename = std::enable_if_t<!std::is_pointer_v<U>>>
     T* operator->()
     {
         return &data_;

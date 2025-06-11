@@ -1,4 +1,4 @@
-// Copyright (C) 2005 - 2021 Settlers Freaks (sf-team at siedler25.org)
+// Copyright (C) 2005 - 2025 Settlers Freaks (sf-team at siedler25.org)
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 
@@ -9,42 +9,44 @@
 #include <cassert>
 #include <cstdint>
 #include <cstring>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
 
 class BinaryFile;
 
-/// Klasse die einen Buffer zum Serialisieren verwaltet und entsprechende Methoden zum Lesen/Schreiben bereitstellt.
-/// Implementiert einen FIFO (push fügt ans ende, pop entfernt am anfang)
+/// Class for serialization implementing a FIFO buffer (push adds to end, pop reads from front)
 class Serializer
 {
     using Converter = libendian::ConvertEndianess<true>;
 
 public:
-    Serializer() = default;
-    Serializer(const void* data, unsigned initial_size);
+    /// Create for reading and writing
+    Serializer();
+    /// Create for deserializing the given data (read-only, view semantic, does not copy)
+    Serializer(const void* data, unsigned numBytes);
 
     /// Remove all data
     void Clear();
     /// Get current read position
-    unsigned GetPos() const noexcept { return pos_; }
+    unsigned GetReadPos() const noexcept { return readPos_; }
 
     /// Get current number of bytes contained
     unsigned GetLength() const noexcept { return length_; }
     /// Set the current length
     void SetLength(unsigned length);
-
+    /// Get remaining bytes to read
     unsigned GetBytesLeft() const noexcept;
 
     /// Access current data
-    const uint8_t* GetData() const noexcept { return data_.data(); }
+    const uint8_t* GetData() const noexcept { return data_; }
 
-    /// Writable access to data. E.g. to write directly to the buffer and call SetLength afterwards
+    /// Change the size of the buffer and provide writable access it
     uint8_t* GetDataWritable(unsigned length)
     {
-        EnsureSize(length);
-        return data_.data();
+        SetLength(length);
+        return data_;
     }
 
     void WriteToFile(BinaryFile& file) const;
@@ -52,7 +54,7 @@ public:
 
     // Write methods
 
-    void PushRawData(const void* data, unsigned length);
+    void PushRawData(const void* data, unsigned numBytes);
 
     void PushSignedInt(int32_t i) { Push(i); }
     void PushUnsignedInt(uint32_t i) { Push(i); }
@@ -72,7 +74,7 @@ public:
 
     // Read methods
 
-    void PopRawData(void* data, unsigned length);
+    void PopRawData(void* data, unsigned numBytes);
 
     int32_t PopSignedInt() { return Pop<int32_t>(); }
     uint32_t PopUnsignedInt() { return Pop<uint32_t>(); }
@@ -89,6 +91,10 @@ public:
     std::string PopString();
     std::string PopLongString();
 
+    /// Advance the read pointer by the given number of bytes
+    /// Return a pointer to the start of that data in the internal buffer
+    const uint8_t* PopAndDiscard(unsigned numBytes);
+
     template<typename T>
     T Pop();
 
@@ -96,65 +102,58 @@ public:
     void Push(T val);
 
 private:
-    /// Adds the given number of bytes to the usable length
+    /// Add the given number of bytes to the usable length
     void ExtendMemory(unsigned numBytes) { EnsureSize(length_ + numBytes); }
-    /// Checks if data of size len can be popped
-    void CheckSize(unsigned len) const;
-    /// Makes sure the internal buffer is at least length bytes long
-    void EnsureSize(unsigned length);
+    /// Verify that the given number of bytes can be read/popped
+    /// Otherwise throws a length_error
+    void CheckSize(unsigned numBytes) const;
+    /// Make sure the internal buffer can hold the given number of bytes
+    /// potentially increasing the size
+    void EnsureSize(unsigned numBytes);
 
-    boost::container::vector<uint8_t> data_;
-    /// Length (number of bytes) of valid data. Also the current write position
+    std::optional<boost::container::vector<uint8_t>> storage_;
+    uint8_t* data_ = nullptr;
+    /// Number of bytes of valid data.
+    /// I.e. the current write position and the total number of readable bytes
     unsigned length_ = 0;
     /// Current read position
-    unsigned pos_ = 0;
+    unsigned readPos_ = 0;
 };
 
 inline unsigned Serializer::GetBytesLeft() const noexcept
 {
-    assert(pos_ <= length_);
-    return length_ - pos_;
+    assert(readPos_ <= length_);
+    return length_ - readPos_;
 }
 
-inline void Serializer::EnsureSize(unsigned length)
+inline void Serializer::CheckSize(unsigned numBytes) const
 {
-    if(data_.size() < length)
-    {
-        size_t newSize = 8u;
-        while(newSize < length)
-            newSize *= 2u;
-        data_.resize(newSize, boost::container::default_init);
-    }
-}
-
-inline void Serializer::CheckSize(unsigned len) const
-{
-    if(GetBytesLeft() < len)
+    if(GetBytesLeft() < numBytes)
         throw std::range_error("Out of range during deserialization");
 }
 
-inline void Serializer::PushRawData(const void* data, unsigned length)
+inline void Serializer::PushRawData(const void* data, unsigned numBytes)
 {
-    if(length == 0)
+    if(numBytes == 0)
         return;
-    ExtendMemory(length);
-    std::memcpy(&data_[length_], data, length);
-    this->length_ += length;
+    ExtendMemory(numBytes);
+    std::memcpy(&data_[length_], data, numBytes);
+    this->length_ += numBytes;
 }
 
-inline void Serializer::PopRawData(void* data, unsigned length)
+inline void Serializer::PopRawData(void* data, unsigned numBytes)
 {
-    if(length == 0)
+    if(numBytes == 0)
         return;
-    CheckSize(length);
-    std::memcpy(data, &data_[pos_], length);
-    pos_ += length;
+    CheckSize(numBytes);
+    std::memcpy(data, &data_[readPos_], numBytes);
+    readPos_ += numBytes;
 }
 
 template<typename T>
 inline T Serializer::Pop()
 {
-    static_assert(std::is_trivial<T>::value && !std::is_pointer<T>::value, "Type must be a trivial, non-pointer type");
+    static_assert(std::is_trivial_v<T> && !std::is_pointer_v<T>, "Type must be a trivial, non-pointer type");
     T i;
     // Note: No casting allowed due to alignment
     PopRawData(&i, sizeof(i));
@@ -164,7 +163,7 @@ inline T Serializer::Pop()
 template<typename T>
 inline void Serializer::Push(T val)
 {
-    static_assert(std::is_trivial<T>::value && !std::is_pointer<T>::value, "Type must be a trivial, non-pointer type");
+    static_assert(std::is_trivial_v<T> && !std::is_pointer_v<T>, "Type must be a trivial, non-pointer type");
     val = Converter::fromNative(val);
     PushRawData(&val, sizeof(val));
 }

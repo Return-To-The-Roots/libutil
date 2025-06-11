@@ -1,4 +1,4 @@
-// Copyright (C) 2005 - 2021 Settlers Freaks (sf-team at siedler25.org)
+// Copyright (C) 2005 - 2025 Settlers Freaks (sf-team at siedler25.org)
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 
@@ -45,8 +45,8 @@ struct ClassicImbuedStream : public T_Base
 template<typename T>
 inline std::string toStringClassic(const T value, bool toHex = false)
 {
-    static_assert(std::is_arithmetic<T>::value, "Need an arithmetic value!");
-    return detail::ToStringClassic<std::is_floating_point<T>::value>::convert(value, toHex);
+    static_assert(std::is_arithmetic_v<T>, "Need an arithmetic value!");
+    return detail::ToStringClassic<std::is_floating_point_v<T>>::convert(value, toHex);
 }
 
 /// Tries to convert from source to target type using either a static_cast or a locale independent string conversion
@@ -54,12 +54,12 @@ inline std::string toStringClassic(const T value, bool toHex = false)
 template<typename T>
 inline bool tryFromStringClassic(const std::string& value, T& outVal, bool fromHex = false)
 {
-    static_assert(std::is_arithmetic<T>::value, "Need an arithmetic value!");
+    static_assert(std::is_arithmetic_v<T>, "Need an arithmetic value!");
     // Empty = error
     if(value.empty())
         return false;
     // Standard requires underflow when using negative numbers as input to unsigned values. We don't allow this
-    if(std::is_unsigned<T>::value && value[0] == '-')
+    if(std::is_unsigned_v<T> && value[0] == '-')
         return false;
     ClassicImbuedStream<std::istringstream> ss(value);
     ss >> std::noskipws;
@@ -85,7 +85,7 @@ inline T fromStringClassic(const std::string& value, bool fromHex = false)
 {
     T outVal;
     if(!tryFromStringClassic(value, outVal, fromHex))
-        throw ConversionError("Could not convert " + value);
+        throw ConversionError("Could not convert '" + value + "'");
     return outVal;
 }
 
@@ -108,7 +108,7 @@ namespace detail {
         template<typename T>
         static std::string convert(const T value, bool toHex = false)
         {
-            static_assert(std::is_integral<T>::value, "Must be integral");
+            static_assert(std::is_integral_v<T>, "Must be integral");
             ClassicImbuedStream<std::ostringstream> ss;
             if(toHex)
                 enableHexOutput(ss, sizeof(T));
@@ -126,11 +126,10 @@ namespace detail {
         {
             // Calculate required precision as done by Boost.Lexical_Cast
             using limits = std::numeric_limits<T>;
-            static_assert(limits::radix == 2 && limits::digits > 0, "");
+            static_assert(limits::radix == 2 && limits::digits > 0);
             constexpr unsigned long precision = 2UL + limits::digits * 30103UL / 100000UL;
             static_assert(static_cast<unsigned long>(limits::digits) < ULONG_MAX / 30103UL
-                            && precision > static_cast<unsigned long>(limits::digits10),
-                          "");
+                          && precision > static_cast<unsigned long>(limits::digits10));
 
             ClassicImbuedStream<std::ostringstream> ss;
             if(toHex)
