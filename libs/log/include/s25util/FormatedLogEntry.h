@@ -28,7 +28,7 @@ public:
     FormatedLogEntry(Log& log, LogTarget target, const char* msg, unsigned color = 0u)
         : log_(log), target_(target), fmt(msg), color_(color)
     {}
-    FormatedLogEntry(FormatedLogEntry&& rhs) noexcept : log_(rhs.log_), target_(rhs.target_), color_(rhs.color_)
+    FormatedLogEntry(FormatedLogEntry&& rhs) noexcept(false) : log_(rhs.log_), target_(rhs.target_), color_(rhs.color_)
     {
         fmt.swap(rhs.fmt);
     }
@@ -36,7 +36,6 @@ public:
     FormatedLogEntry& operator=(const FormatedLogEntry&) = delete;
     // The destructor constructs the final message from the format and flushs it to the log
     // This may throw in either operation which is ok, as this is only intended to be used as a temporary
-    // NOLINTNEXTLINE(bugprone-exception-escape)
     ~FormatedLogEntry() noexcept(false);
 
     template<typename T>

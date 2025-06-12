@@ -5,7 +5,6 @@
 #include "FormatedLogEntry.h"
 #include "Log.h"
 
-// NOLINTNEXTLINE(bugprone-exception-escape)
 FormatedLogEntry::~FormatedLogEntry() noexcept(false)
 {
     std::string msg = fmt.str();
