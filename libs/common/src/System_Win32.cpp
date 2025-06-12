@@ -6,6 +6,10 @@
 #include <boost/nowide/convert.hpp>
 #include <windows.h>
 #include <shellapi.h>
+#ifndef SECURITY_WIN32
+#    define SECURITY_WIN32
+#endif
+#include <security.h>
 #ifdef _MSC_VER
 #    pragma warning(push)
 #    pragma warning(disable : 4091) // "typedef ": Ignoriert auf der linken Seite von "tagGPFIDL_FLAGS"
@@ -125,14 +129,14 @@ std::string System::getUserName()
 {
     DWORD nameLen = 0;
     // Query required size
-    GetUserNameW(nullptr, &nameLen);
+    GetUserNameExW(EXTENDED_NAME_FORMAT::NameDisplay, nullptr, &nameLen); // nameLen contains terminating 0 here
     if(nameLen == 0)
         throw std::runtime_error("Could not query username length");
     std::vector<wchar_t> userName(nameLen);
-    if(GetUserNameW(userName.data(), &nameLen) == 0)
+    if(GetUserNameExW(EXTENDED_NAME_FORMAT::NameDisplay, userName.data(), &nameLen) == 0)
         throw std::runtime_error("Could not get username");
 
-    userName.resize(nameLen - 1); // nameLen already contains terminating 0
+    userName.resize(nameLen); // nameLen doesn't contain terminating 0 here
 
     return boost::nowide::narrow(std::wstring(userName.begin(), userName.end()));
 }
