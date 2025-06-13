@@ -97,6 +97,50 @@ static HRESULT mySHGetKnownFolderPath(REFKNOWNFOLDERID rfid, std::string& path)
     return retval;
 }
 
+/**
+ *  Old WinAPI way, returns shortened user name consistent with its directory name.
+ */
+static bool getOldUserName(std::vector<wchar_t>& outUserName)
+{
+    // GetUserNameW always returns nameLen taking null terminator into account.
+    DWORD nameLen = 0;
+    GetUserNameW(nullptr, &nameLen);
+    if(nameLen > 0)
+    {
+        outUserName.resize(nameLen);
+        if(GetUserNameW(outUserName.data(), &nameLen) > 0)
+        {
+            outUserName.resize(nameLen - 1);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ *  New WinAPI way, returns user name as displayed in OS UI. Fails on GitHub Actions!
+ */
+static bool getNewUserName(std::vector<wchar_t>& outUserName)
+{
+    DWORD nameLen = 0;
+
+    // returned nameLen in this case takes null terminator into account.
+    GetUserNameExW(EXTENDED_NAME_FORMAT::NameDisplay, nullptr, &nameLen);
+    if(nameLen > 0)
+    {
+        outUserName.resize(nameLen);
+        // returned nameLen in this case doesn't take null terminator into account.
+        if(GetUserNameExW(EXTENDED_NAME_FORMAT::NameDisplay, outUserName.data(), &nameLen) > 0)
+        {
+            outUserName.resize(nameLen);
+            return true;
+        }
+    }
+
+    return false;
+}
+
 bfs::path System::getHomePath()
 {
     bfs::path homePath;
@@ -127,16 +171,11 @@ bfs::path System::getHomePath()
 
 std::string System::getUserName()
 {
-    DWORD nameLen = 0;
-    // Query required size
-    GetUserNameExW(EXTENDED_NAME_FORMAT::NameDisplay, nullptr, &nameLen); // nameLen contains terminating 0 here
-    if(nameLen == 0)
-        throw std::runtime_error("Could not query username length");
-    std::vector<wchar_t> userName(nameLen);
-    if(GetUserNameExW(EXTENDED_NAME_FORMAT::NameDisplay, userName.data(), &nameLen) == 0)
+    std::vector<wchar_t> userName;
+    if(!getNewUserName(userName) && !getOldUserName(userName))
+    {
         throw std::runtime_error("Could not get username");
-
-    userName.resize(nameLen); // nameLen doesn't contain terminating 0 here
+    }
 
     return boost::nowide::narrow(std::wstring(userName.begin(), userName.end()));
 }
