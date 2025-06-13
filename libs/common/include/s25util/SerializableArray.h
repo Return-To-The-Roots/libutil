@@ -129,9 +129,9 @@ public:
     void resize(const unsigned count) { return elements.resize(count); }
 
     iterator begin() { return elements.begin(); }
-    const_iterator begin() const { return elements.begin(); }
+    const_iterator begin() const noexcept { return elements.begin(); }
     iterator end() { return elements.end(); }
-    const_iterator end() const { return elements.end(); }
+    const_iterator end() const noexcept { return elements.end(); }
 
 private:
     std::vector<Type> elements; /// Die Elemente
