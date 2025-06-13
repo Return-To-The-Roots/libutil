@@ -46,16 +46,16 @@ public:
      *  Einfügefunktion
      *
      */
-    inline void push_back(const Type& item) { elements.push_back(item); }
+    void push_back(const Type& item) { elements.push_back(item); }
 
-    inline Type& operator[](unsigned i) { return elements.at(i); }
-    inline const Type& operator[](unsigned i) const { return elements.at(i); }
+    Type& operator[](unsigned i) { return elements.at(i); }
+    const Type& operator[](unsigned i) const { return elements.at(i); }
 
     /**
      *  räumt die Liste auf.
      *
      */
-    inline void clear() { elements.clear(); }
+    void clear() { elements.clear(); }
 
     /**
      *  serialisiert die Daten.
@@ -65,7 +65,7 @@ public:
      *  @return liefert die Größe der Daten zurück.
      *
      */
-    inline void serialize(Serializer& ser) const
+    void serialize(Serializer& ser) const
     {
         ser.PushUnsignedInt(static_cast<unsigned>(elements.size()));
 
@@ -81,7 +81,7 @@ public:
      *  @return liefert die Größe der gelesenen Daten zurück.
      *
      */
-    inline void deserialize(Serializer& ser)
+    void deserialize(Serializer& ser)
     {
         clear();
         unsigned count = ser.PopUnsignedInt();
@@ -95,7 +95,7 @@ public:
      *  liefert ein Element der Liste.
      *
      */
-    inline const Type* getElement(unsigned i) const
+    const Type* getElement(unsigned i) const
     {
         if(i < elements.size())
             return &elements.at(i);
@@ -107,7 +107,7 @@ public:
      *  liefert ein Element der Liste.
      *
      */
-    inline Type* getElement(unsigned i)
+    Type* getElement(unsigned i)
     {
         if(i < elements.size())
             return &elements.at(i);
