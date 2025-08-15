@@ -7,8 +7,17 @@ if(WIN32)
     # Locale only on windows
     set(_BoostComponents ${_BoostComponents} locale)
 endif()
-find_package(Boost 1.69 REQUIRED COMPONENTS ${_BoostComponents})
 
+set(BOOST_SOURCE TRUE)
+foreach(BOOST_PACKAGE IN LISTS _BoostComponents)
+    if(NOT TARGET Boost::${_BoostComponents})
+        set(BOOST_SOURCE FALSE)
+    endif()
+endforeach()
+
+if(NOT BOOST_SOURCE)
+    find_package(Boost 1.69 REQUIRED COMPONENTS ${_BoostComponents})
+endif()
 
 FILE(GLOB SRC_FILES src/*.cpp)
 FILE(GLOB HEADER_FILES include/s25util/*.*)
