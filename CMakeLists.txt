@@ -6,9 +6,6 @@ cmake_minimum_required(VERSION 3.16..3.20)
 project(s25util)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-if(CMAKE_VERSION VERSION_LESS 3.14)
-    list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_3.14")
-endif()
 
 # The super project might e.g. call find_package(Boost ... nowide), if the target is not defined, download directly
 if(NOT TARGET Boost::nowide)
