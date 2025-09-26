@@ -2,7 +2,9 @@
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-find_package(Boost 1.69 REQUIRED COMPONENTS filesystem)
+if(NOT TARGET Boost::filesystem)
+    find_package(Boost 1.69 REQUIRED COMPONENTS filesystem)
+endif()
 
 file(GLOB HEADER_FILES include/s25util/*.*)
 add_library(s25util_log STATIC
