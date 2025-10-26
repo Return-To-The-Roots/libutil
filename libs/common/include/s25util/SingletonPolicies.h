@@ -16,7 +16,7 @@ using DestructionFunPtr = void (*)();
 template<typename T>
 struct DefaultLifetime
 {
-    static void OnDeadReference() { throw std::runtime_error("Access to dead singleton detected!"); }
+    [[noreturn]] static void OnDeadReference() { throw std::runtime_error("Access to dead singleton detected!"); }
 
     static void ScheduleDestruction(T*, DestructionFunPtr pFun) { std::atexit(pFun); }
 };
@@ -55,7 +55,7 @@ unsigned GetLongevity(T*)
 template<typename T>
 struct WithLongevity
 {
-    static void OnDeadReference() { throw std::runtime_error("Access to dead singleton detected!"); }
+    [[noreturn]] static void OnDeadReference() { throw std::runtime_error("Access to dead singleton detected!"); }
 
     static void ScheduleDestruction(T* inst, DestructionFunPtr pFun) { SetLongevity(GetLongevity(inst), pFun); }
 };
