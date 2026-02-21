@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(Operators)
         b |= Bitset::B;
         BOOST_TEST(static_cast<unsigned>(b) == 0b011u);
         (b |= Bitset::A) = Bitset::C;
-        BOOST_CHECK(b == Bitset::C);
+        BOOST_CHECK(static_cast<unsigned>(b) == static_cast<unsigned>(Bitset::C));
     }
 
     {
@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE(Operators)
         b &= Bitset::B;
         BOOST_TEST(static_cast<unsigned>(b) == 0b010u);
         (b &= Bitset::A) = Bitset::C;
-        BOOST_CHECK(b == Bitset::C);
+        BOOST_CHECK(static_cast<unsigned>(b) == static_cast<unsigned>(Bitset::C));
     }
 }
 
@@ -78,6 +78,17 @@ BOOST_AUTO_TEST_CASE(UtilityFunctions)
 
     b = bitset::toggle(b, Bitset::A | Bitset::B);
     BOOST_TEST(static_cast<unsigned>(b) == 0b110u);
+
+    BOOST_TEST(bitset::any(Bitset::A, Bitset::A));
+    BOOST_TEST(bitset::any(Bitset::B, Bitset::B));
+    BOOST_TEST(bitset::any(Bitset::A | Bitset::B, Bitset::A));
+    BOOST_TEST(bitset::any(Bitset::A | Bitset::B, Bitset::A | Bitset::B));
+    BOOST_TEST(bitset::any(Bitset::A | Bitset::B, Bitset::A | Bitset::C));
+    BOOST_TEST(bitset::any(Bitset::A | Bitset::B, Bitset::B | Bitset::C));
+    BOOST_TEST(!bitset::any(Bitset::A, Bitset::C));
+    BOOST_TEST(!bitset::any(Bitset::B, Bitset::C));
+    BOOST_TEST(!bitset::any(Bitset::A | Bitset::B, Bitset::C));
+    BOOST_TEST(!bitset::any(Bitset::C, Bitset::A | Bitset::B));
 }
 
 BOOST_AUTO_TEST_SUITE_END()
