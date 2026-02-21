@@ -45,39 +45,35 @@ void Log::setWriter(TextWriterInterface* writer, LogTarget target)
 {
     // Wrap in a shared so we can use it for more than 1 target
     std::shared_ptr<TextWriterInterface> sharedWriter(writer);
-    if((target & LogTarget::Stdout) == LogTarget::Stdout)
+    if(bitset::isSet(target, LogTarget::Stdout))
     {
         stdoutWriter = sharedWriter;
         if(!stdoutWriter)
             stdoutWriter = std::make_shared<StdStreamWriter>(true);
     }
-    if((target & LogTarget::Stderr) == LogTarget::Stderr)
+    if(bitset::isSet(target, LogTarget::Stderr))
     {
         stderrWriter = sharedWriter;
         if(!stderrWriter)
             stderrWriter = std::make_shared<StdStreamWriter>(false);
     }
-    if((target & LogTarget::File) == LogTarget::File)
+    if(bitset::isSet(target, LogTarget::File))
         fileWriter = sharedWriter;
 }
 
 void Log::flush(const std::string& txt, LogTarget target, unsigned color)
 {
-    if((target & LogTarget::Stdout) == LogTarget::Stdout)
+    if(bitset::isSet(target, LogTarget::Stdout))
         stdoutWriter->writeText(txt, color);
-    if((target & LogTarget::Stderr) == LogTarget::Stderr)
+    if(bitset::isSet(target, LogTarget::Stderr))
         stderrWriter->writeText(txt, color);
-    if((target & LogTarget::File) == LogTarget::File)
+    if(bitset::isSet(target, LogTarget::File))
     {
         open();
         fileWriter->writeText(txt, color);
     }
 }
 
-/**
- *  Schreibt den zuletzt aufgetretetenen Systemfehler in lesbarer Form in
- *  stdout und Log, fügt "$text:" davor ein.
- */
 void Log::writeLastError(const std::string& text)
 {
     write("%s: %s\n") % text % getLastError();

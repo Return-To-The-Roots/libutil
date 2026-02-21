@@ -62,14 +62,23 @@ template<typename Enum, typename = require_validBitset<Enum>>
 template<typename Enum, typename = require_validBitset<Enum>>
 [[nodiscard]] constexpr Enum toggle(const Enum val, const Enum flag)
 {
-    using Int = std::underlying_type_t<Enum>;
-    return Enum(static_cast<const Int>(val) ^ static_cast<const Int>(flag));
+    using Int = const std::underlying_type_t<Enum>;
+    return Enum(static_cast<Int>(val) ^ static_cast<Int>(flag));
 }
 
 template<typename Enum, typename = require_validBitset<Enum>>
 [[nodiscard]] constexpr bool isSet(const Enum val, const Enum flag)
 {
-    return (val & flag) == flag;
+    using Int = const std::underlying_type_t<Enum>;
+    return static_cast<Int>(val & flag) == static_cast<Int>(flag);
+}
+
+/// Check if any of the flags in flag are set in val, i.e. there is an intersection
+template<typename Enum, typename = require_validBitset<Enum>>
+[[nodiscard]] constexpr bool any(const Enum val, const Enum flag)
+{
+    using Int = const std::underlying_type_t<Enum>;
+    return static_cast<Int>(val & flag) != Int(0);
 }
 } // namespace bitset
 
@@ -78,6 +87,8 @@ template<typename Enum, typename = require_validBitset<Enum>>
     template<>                                                      \
     struct IsBitset<Type> : std::true_type                          \
     {};                                                             \
+    bool operator==(const Type& lhs, const Type& rhs) = delete;     \
+    bool operator!=(const Type& lhs, const Type& rhs) = delete;     \
     /* NOLINTNEXTLINE(bugprone-macro-parentheses) */                \
     static_assert(std::is_unsigned_v<std::underlying_type_t<Type>>, \
                   #Type " must use unsigned type as the underlying type")
