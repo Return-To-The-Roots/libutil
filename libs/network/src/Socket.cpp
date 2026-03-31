@@ -46,9 +46,10 @@ ResolvedAddr::ResolvedAddr(const HostAddr& hostAddr, bool resolveAll) : lookup((
         if(resolveAll)
         {
             hints.ai_flags = AI_ADDRCONFIG;
-#ifndef __FreeBSD__
+#if !defined(__FreeBSD__) && !defined(__ANDROID__)
             // Defined, but getaddrinfo complains about it on FreeBSD -> Check again with the combination with
             // AI_V4MAPPED
+            // Android's bionic libc also does not support these flags
             hints.ai_flags |= AI_ALL | AI_V4MAPPED;
 #endif
         } else
