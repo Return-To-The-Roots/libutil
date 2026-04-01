@@ -107,6 +107,10 @@ function(enable_warnings target)
       # To many false positives until clang 10 fixed them
       check_and_add_warnings(TARGET ${target} VISIBILITY ${visibility} CXX -Wno-range-loop-analysis)
     endif()
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 22)
+      # Clang 22 will throw errors since __COUNTER__ will be added to C2y
+      check_and_add_warnings(TARGET ${target} VISIBILITY ${visibility} CXX -Wno-c2y-extensions)
+    endif()
     # Not used:
       #-Wpadded
       #-Wstack-protector
