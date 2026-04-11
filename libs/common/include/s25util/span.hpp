@@ -1,20 +1,20 @@
+#pragma once
+
 /*
 Copyright 2019-2023 Glen Joseph Fernandes
 (glenjofe@gmail.com)
 
 Distributed under the Boost Software License, Version 1.0.
 (http://www.boost.org/LICENSE_1_0.txt)
-*/
-#ifndef BOOST_CORE_SPAN_HPP
-#define BOOST_CORE_SPAN_HPP
 
-#include <boost/core/detail/assert.hpp>
-#include <boost/core/data.hpp>
+From Boost 1.90, adapted to work with earlier Boost versions and use other namespace
+*/
+
 #include <array>
 #include <iterator>
 #include <type_traits>
 
-namespace boost {
+namespace s25util {
 
 constexpr std::size_t dynamic_extent = static_cast<std::size_t>(-1);
 
@@ -36,7 +36,7 @@ struct span_convertible<U, T, typename
 
 template<std::size_t E, std::size_t N>
 struct span_capacity {
-    static constexpr bool value = E == boost::dynamic_extent || E == N;
+    static constexpr bool value = E == s25util::dynamic_extent || E == N;
 };
 
 template<class T, std::size_t E, class U, std::size_t N>
@@ -55,7 +55,7 @@ struct span_is_span {
 };
 
 template<class T, std::size_t E>
-struct span_is_span<boost::span<T, E> > {
+struct span_is_span<s25util::span<T, E> > {
     static constexpr bool value = true;
 };
 
@@ -70,7 +70,7 @@ struct span_is_array<std::array<T, N> > {
 };
 
 template<class T>
-using span_ptr = decltype(boost::data(std::declval<T&>()));
+using span_ptr = decltype(std::data(std::declval<T&>()));
 
 template<class, class = void>
 struct span_data { };
@@ -117,20 +117,20 @@ struct span_is_range {
 
 template<std::size_t E, std::size_t N>
 struct span_implicit {
-    static constexpr bool value = E == boost::dynamic_extent ||
-        N != boost::dynamic_extent;
+    static constexpr bool value = E == s25util::dynamic_extent ||
+        N != s25util::dynamic_extent;
 };
 
 template<class T, std::size_t E, class U, std::size_t N>
 struct span_copyable {
-    static constexpr bool value = (N == boost::dynamic_extent ||
+    static constexpr bool value = (N == s25util::dynamic_extent ||
         span_capacity<E, N>::value) && span_convertible<U, T>::value;
 };
 
 template<std::size_t E, std::size_t O>
 struct span_sub {
-    static constexpr std::size_t value = E == boost::dynamic_extent ?
-        boost::dynamic_extent : E - O;
+    static constexpr std::size_t value = E == s25util::dynamic_extent ?
+        s25util::dynamic_extent : E - O;
 };
 
 template<class T, std::size_t E>
@@ -142,7 +142,7 @@ struct span_store {
 };
 
 template<class T>
-struct span_store<T, boost::dynamic_extent> {
+struct span_store<T, s25util::dynamic_extent> {
     constexpr span_store(T* p_, std::size_t n_) noexcept
         : p(p_)
         , n(n_) { }
@@ -156,8 +156,8 @@ struct span_bytes {
 };
 
 template<class T>
-struct span_bytes<T, boost::dynamic_extent> {
-    static constexpr std::size_t value = boost::dynamic_extent;
+struct span_bytes<T, s25util::dynamic_extent> {
+    static constexpr std::size_t value = s25util::dynamic_extent;
 };
 
 } /* detail */
@@ -230,16 +230,16 @@ public:
     template<class R,
         typename std::enable_if<E == dynamic_extent &&
             detail::span_is_range<R, T>::value, int>::type = 0>
-    constexpr span(R&& r) noexcept(noexcept(boost::data(r)) &&
+    constexpr span(R&& r) noexcept(noexcept(std::data(r)) &&
         noexcept(r.size()))
-        : s_(boost::data(r), r.size()) { }
+        : s_(std::data(r), r.size()) { }
 
     template<class R,
         typename std::enable_if<E != dynamic_extent &&
             detail::span_is_range<R, T>::value, int>::type = 0>
-    explicit constexpr span(R&& r) noexcept(noexcept(boost::data(r)) &&
+    explicit constexpr span(R&& r) noexcept(noexcept(std::data(r)) &&
         noexcept(r.size()))
-        : s_(boost::data(r), r.size()) { }
+        : s_(std::data(r), r.size()) { }
 
     template<class U, std::size_t N,
         typename std::enable_if<detail::span_implicit<E, N>::value &&
@@ -407,6 +407,4 @@ as_writable_bytes(span<T, E> s) noexcept
 }
 #endif
 
-} /* boost */
-
-#endif
+} /* s25util */
