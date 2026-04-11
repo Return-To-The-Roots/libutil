@@ -1,10 +1,12 @@
-// Copyright (C) 2005 - 2021 Settlers Freaks (sf-team at siedler25.org)
+// Copyright (C) 2005 - 2026 Settlers Freaks (sf-team at siedler25.org)
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #define BOOST_TEST_MODULE s25util_Test
 #include "s25util/boostTestHelpers.h"
+#include "s25util/span.hpp"
 #include <boost/test/unit_test.hpp>
+#include <array>
 #include <memory>
 #include <sstream>
 
@@ -24,3 +26,6 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(PrintSmartPtr, T, TestedTypes)
 
     BOOST_TEST(sBoost.str() == sOrig.str());
 }
+
+constexpr std::array<int, 3> testArray{};
+static_assert(s25util::span<const int>(testArray).size() == 3u);
