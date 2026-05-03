@@ -9,11 +9,6 @@ endif()
 set(RTTR_UBSAN_SUPPRESSION_FILE ${CMAKE_CURRENT_LIST_DIR}/ubsan.supp)
 set(RTTR_LSAN_SUPPRESSION_FILE ${CMAKE_CURRENT_LIST_DIR}/lsan.supp)
 
-# Turtle does not support override for mocked methods, so let's disable the warning
-include(CheckAndAddWarnings)
-
-check_warning(CXX "-Wno-suggest-override" CXX_WARNING__Wno_suggest_override_SUPPORTED)
-
 # Add a new test case for boost tests with working directory in the binary dir root
 # Params:
 # NAME <name>
@@ -34,7 +29,7 @@ function(add_testcase)
     target_include_directories(${name} PRIVATE ${ARG_INCLUDES})
 
     if (CXX_WARNING__Wno_suggest_override_SUPPORTED)
-        target_compile_options(${name} PRIVATE -Wno-suggest-override)
+        target_link_libraries(${name} PRIVATE no_suggest_override)
     endif()
 
     # Heuristically guess if we are compiling against dynamic boost
