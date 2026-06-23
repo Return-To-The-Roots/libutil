@@ -13,8 +13,17 @@ struct IsBitset : std::false_type
 template<typename Enum>
 constexpr bool IsBitset_v = IsBitset<Enum>::value;
 
+template<typename Enum, typename = void>
+struct IsValidBitset : std::false_type
+{};
+
 template<typename Enum>
-constexpr bool IsValidBitset_v = IsBitset_v<Enum>&& std::is_unsigned_v<std::underlying_type_t<Enum>>;
+struct IsValidBitset<Enum, std::enable_if_t<IsBitset_v<Enum> && std::is_unsigned_v<std::underlying_type_t<Enum>>>> :
+    std::true_type
+{};
+
+template<typename Enum>
+constexpr bool IsValidBitset_v = IsValidBitset<Enum>::value;
 
 template<typename Enum>
 using require_validBitset = std::enable_if_t<IsValidBitset_v<Enum>>;
