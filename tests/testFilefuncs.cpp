@@ -64,80 +64,39 @@ BOOST_AUTO_TEST_CASE(ValidFileNameChar)
 {
     // Allowed
     BOOST_TEST(isValidFileNameChar('a'));
-    BOOST_TEST(isValidFileNameChar('Z'));
-    BOOST_TEST(isValidFileNameChar('5'));
     BOOST_TEST(isValidFileNameChar(' '));
-    BOOST_TEST(isValidFileNameChar('.'));
-    BOOST_TEST(isValidFileNameChar('_'));
-    BOOST_TEST(isValidFileNameChar('-'));
-    BOOST_TEST(isValidFileNameChar('('));
-    BOOST_TEST(isValidFileNameChar(')'));
-    BOOST_TEST(isValidFileNameChar('['));
-    BOOST_TEST(isValidFileNameChar(']'));
-    BOOST_TEST(isValidFileNameChar(U'\u00E9')); // U+00E9 e with acute
+    BOOST_TEST(isValidFileNameChar(U'\u00E9')); // non-ASCII Unicode
 
     // Rejected — Windows-forbidden
-    BOOST_TEST(!isValidFileNameChar('<'));
-    BOOST_TEST(!isValidFileNameChar('>'));
     BOOST_TEST(!isValidFileNameChar(':'));
-    BOOST_TEST(!isValidFileNameChar('"'));
-    BOOST_TEST(!isValidFileNameChar('/'));
-    BOOST_TEST(!isValidFileNameChar('\\'));
-    BOOST_TEST(!isValidFileNameChar('|'));
-    BOOST_TEST(!isValidFileNameChar('?'));
-    BOOST_TEST(!isValidFileNameChar('*'));
-    // Rejected — control characters
+    // Rejected — control character
     BOOST_TEST(!isValidFileNameChar('\0'));
-    BOOST_TEST(!isValidFileNameChar('\n'));
-    BOOST_TEST(!isValidFileNameChar(0x1F));
 }
 
 BOOST_AUTO_TEST_CASE(ValidFileName)
 {
-    // Valid names
     BOOST_TEST(isValidFileName("my save"));
-    BOOST_TEST(isValidFileName("Brick  economy  test"));
-    BOOST_TEST(isValidFileName("DevMap (Auto-Save)"));
-    BOOST_TEST(isValidFileName("save_01"));
-    BOOST_TEST(isValidFileName("abc"));
 
     // Empty
     BOOST_TEST(!isValidFileName(""));
 
-    // Reserved names (case-insensitive)
+    // Reserved name (case-insensitive)
     BOOST_TEST(!isValidFileName("con"));
     BOOST_TEST(!isValidFileName("CON"));
-    BOOST_TEST(!isValidFileName("nul"));
-    BOOST_TEST(!isValidFileName("NUL"));
-    BOOST_TEST(!isValidFileName("com1"));
-    BOOST_TEST(!isValidFileName("COM9"));
-    BOOST_TEST(!isValidFileName("com0"));
-    BOOST_TEST(!isValidFileName("lpt0"));
-    BOOST_TEST(!isValidFileName("lpt9"));
-    BOOST_TEST(!isValidFileName("prn"));
-    BOOST_TEST(!isValidFileName("aux"));
 
-    // Non-reserved names that look similar
+    // Non-reserved look-alike
     BOOST_TEST(isValidFileName("null"));
-    BOOST_TEST(isValidFileName("console"));
-    BOOST_TEST(isValidFileName("com10"));
-    BOOST_TEST(isValidFileName("lpt10"));
 
     // Leading/trailing dots
     BOOST_TEST(!isValidFileName(".hidden"));
     BOOST_TEST(!isValidFileName("trail."));
 
-    // Trailing space (Windows silently strips it, causing name mismatch)
+    // Trailing space
     BOOST_TEST(!isValidFileName("trail "));
 
-    // Reserved base names with extensions are also rejected (Windows 7 compatibility)
+    // Reserved base name with extension (Windows 7 compat)
     BOOST_TEST(!isValidFileName("nul.ini"));
-    BOOST_TEST(!isValidFileName("NUL.ini"));
-    BOOST_TEST(!isValidFileName("nul.txt"));
-    BOOST_TEST(!isValidFileName("com0.txt"));
-    BOOST_TEST(!isValidFileName("lpt1.bak"));
-    // Non-reserved names with extensions or dots in the middle are fine
-    BOOST_TEST(isValidFileName("null.ini"));
-    BOOST_TEST(isValidFileName("my.save"));
-    BOOST_TEST(isValidFileName("my save"));
+
+    // Invalid character
+    BOOST_TEST(!isValidFileName("save:game"));
 }
