@@ -113,6 +113,11 @@ bool isValidFileName(const std::string& fileName)
     // the name the user typed and the file actually created on disk.
     if(fileName.back() == ' ')
         return false;
+    for(char c : fileName)
+    {
+        if(!isValidFileNameChar(static_cast<unsigned char>(c)))
+            return false;
+    }
     // On Windows 7 and earlier the device name is the part before the first dot — "nul.ini" is NUL thus forbidden.
     return !isReservedName(fileName.substr(0, fileName.find('.')));
 }
