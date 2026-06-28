@@ -4,6 +4,7 @@
 
 #include "fileFuncs.h"
 #include "s25util/strAlgos.h"
+#include "s25util/utf8.h"
 #include <boost/filesystem/path.hpp>
 #include <algorithm>
 #include <array>
@@ -106,6 +107,8 @@ bool isValidFileNameChar(char32_t c)
 bool isValidFileName(const std::string& fileName)
 {
     if(fileName.empty())
+        return false;
+    if(s25util::utf8to32(fileName).size() > 255)
         return false;
     if(fileName.front() == '.' || fileName.back() == '.')
         return false;
