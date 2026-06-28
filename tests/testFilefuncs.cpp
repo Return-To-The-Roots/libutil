@@ -64,18 +64,39 @@ BOOST_AUTO_TEST_CASE(ValidFileNameChar)
 {
     // Allowed
     BOOST_TEST(isValidFileNameChar('a'));
+    BOOST_TEST(isValidFileNameChar('Z'));
+    BOOST_TEST(isValidFileNameChar('5'));
     BOOST_TEST(isValidFileNameChar(' '));
+    BOOST_TEST(isValidFileNameChar('.'));
+    BOOST_TEST(isValidFileNameChar('_'));
+    BOOST_TEST(isValidFileNameChar('-'));
+    BOOST_TEST(isValidFileNameChar('('));
+    BOOST_TEST(isValidFileNameChar(']'));
     BOOST_TEST(isValidFileNameChar(U'\u00E9')); // non-ASCII Unicode
 
     // Rejected — Windows-forbidden
+    BOOST_TEST(!isValidFileNameChar('<'));
+    BOOST_TEST(!isValidFileNameChar('>'));
     BOOST_TEST(!isValidFileNameChar(':'));
-    // Rejected — control character
+    BOOST_TEST(!isValidFileNameChar('"'));
+    BOOST_TEST(!isValidFileNameChar('/'));
+    BOOST_TEST(!isValidFileNameChar('\\'));
+    BOOST_TEST(!isValidFileNameChar('|'));
+    BOOST_TEST(!isValidFileNameChar('?'));
+    BOOST_TEST(!isValidFileNameChar('*'));
+    // Rejected — control characters
     BOOST_TEST(!isValidFileNameChar('\0'));
+    BOOST_TEST(!isValidFileNameChar('\n'));
+    BOOST_TEST(!isValidFileNameChar(0x1F));
 }
 
 BOOST_AUTO_TEST_CASE(ValidFileName)
 {
-    BOOST_TEST(isValidFileName("my save"));
+    BOOST_TEST(isValidFileName("abc"));
+    BOOST_TEST(isValidFileName("Brick  economy  test"));
+    BOOST_TEST(isValidFileName("DevMap (Auto-Save)"));
+    BOOST_TEST(isValidFileName("save_01"));
+    BOOST_TEST(isValidFileName("my save.sav"));
 
     // Empty
     BOOST_TEST(!isValidFileName(""));
@@ -83,6 +104,9 @@ BOOST_AUTO_TEST_CASE(ValidFileName)
     // Reserved name (case-insensitive)
     BOOST_TEST(!isValidFileName("con"));
     BOOST_TEST(!isValidFileName("CON"));
+    BOOST_TEST(!isValidFileName("nul"));
+    BOOST_TEST(!isValidFileName("NUL"));
+    BOOST_TEST(!isValidFileName("Lpt0"));
 
     // Non-reserved look-alike
     BOOST_TEST(isValidFileName("null"));
@@ -99,6 +123,9 @@ BOOST_AUTO_TEST_CASE(ValidFileName)
 
     // Reserved base name with extension (Windows 7 compat)
     BOOST_TEST(!isValidFileName("nul.ini"));
+    BOOST_TEST(!isValidFileName("NUL.ini"));
+    BOOST_TEST(!isValidFileName("nul.txt"));
+    BOOST_TEST(!isValidFileName("com0.txt"));
 
     // Invalid character
     BOOST_TEST(!isValidFileName("save:game"));
