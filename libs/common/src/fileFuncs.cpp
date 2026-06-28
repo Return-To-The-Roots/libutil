@@ -44,7 +44,7 @@ std::string makePortableName(const std::string& fileName)
         while(!result.empty() && result.back() == '.')
             result.erase(result.end() - 1);
     }
-    if(!result.empty() && isReservedName(result))
+    if(isReservedName(result))
         result += '_';
     assert(result.empty() || bfs::portable_name(result));
     return result;

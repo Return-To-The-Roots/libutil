@@ -91,6 +91,8 @@ BOOST_AUTO_TEST_CASE(ValidFileName)
     // Leading/trailing dots
     BOOST_TEST(!isValidFileName(".hidden"));
     BOOST_TEST(!isValidFileName("trail."));
+    BOOST_TEST(!isValidFileName("."));
+    BOOST_TEST(!isValidFileName(".."));
 
     // Trailing space
     BOOST_TEST(!isValidFileName("trail "));
