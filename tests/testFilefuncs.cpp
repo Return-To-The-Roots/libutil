@@ -86,6 +86,7 @@ BOOST_AUTO_TEST_CASE(ValidFileName)
 
     // Non-reserved look-alike
     BOOST_TEST(isValidFileName("null"));
+    BOOST_TEST(isValidFileName("null.ini"));
 
     // Leading/trailing dots
     BOOST_TEST(!isValidFileName(".hidden"));
