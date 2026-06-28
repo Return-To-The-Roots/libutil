@@ -129,4 +129,16 @@ BOOST_AUTO_TEST_CASE(ValidFileName)
 
     // Invalid character
     BOOST_TEST(!isValidFileName("save:game"));
+
+    // Length limit (255 Unicode code points)
+    BOOST_TEST(isValidFileName(std::string(255, 'a')));
+    BOOST_TEST(!isValidFileName(std::string(256, 'a')));
+
+    // é (U+00E9): 2 UTF-8 bytes but 1 code point - verify length is counted in code points, not bytes.
+    const std::string eacute = "\xC3\xA9";
+    std::string e256;
+    for(int i = 0; i < 256; ++i)
+        e256 += eacute;
+    BOOST_TEST(isValidFileName(e256.substr(0, e256.size() - eacute.size()))); // 255 code points, 510 bytes
+    BOOST_TEST(!isValidFileName(e256));                                       // 256 code points, 512 bytes
 }
