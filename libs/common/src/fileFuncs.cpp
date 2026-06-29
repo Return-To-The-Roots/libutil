@@ -8,6 +8,7 @@
 #include <boost/filesystem/path.hpp>
 #include <algorithm>
 #include <array>
+#include <string_view>
 
 namespace bfs = boost::filesystem;
 
@@ -99,9 +100,8 @@ bool isValidFileNameChar(char32_t c)
         return false;
     // Reject characters forbidden on Windows (the most restrictive platform),
     // which covers all restrictions on Linux, macOS, and Android as well.
-    if(c == '<' || c == '>' || c == ':' || c == '"' || c == '/' || c == '\\' || c == '|' || c == '?' || c == '*')
-        return false;
-    return true;
+    static constexpr std::u32string_view forbidden = U"<>:\"/\\|?*";
+    return forbidden.find(c) == std::u32string_view::npos;
 }
 
 bool isValidFileName(const std::string& fileName)
