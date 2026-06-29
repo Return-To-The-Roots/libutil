@@ -106,11 +106,11 @@ bool isValidFileNameChar(char32_t c)
 
 bool isValidFileName(const std::string& fileName)
 {
-    if(fileName.empty())
+    if(fileName.empty() || !s25util::isValidUTF8(fileName))
+        return false;
+    if(fileName.size() > 255)
         return false;
     const auto asU32 = s25util::utf8to32(fileName);
-    if(asU32.size() > 255)
-        return false;
     if(asU32.front() == U'.' || asU32.back() == U'.')
         return false;
     // Windows silently strips trailing spaces, which would create a mismatch between
