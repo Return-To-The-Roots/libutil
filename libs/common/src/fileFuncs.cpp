@@ -108,17 +108,18 @@ bool isValidFileName(const std::string& fileName)
 {
     if(fileName.empty())
         return false;
-    if(s25util::utf8to32(fileName).size() > 255)
+    const auto asU32 = s25util::utf8to32(fileName);
+    if(asU32.size() > 255)
         return false;
-    if(fileName.front() == '.' || fileName.back() == '.')
+    if(asU32.front() == U'.' || asU32.back() == U'.')
         return false;
     // Windows silently strips trailing spaces, which would create a mismatch between
     // the name the user typed and the file actually created on disk.
-    if(fileName.back() == ' ')
+    if(asU32.back() == U' ')
         return false;
-    for(char c : fileName)
+    for(char32_t c : asU32)
     {
-        if(!isValidFileNameChar(static_cast<unsigned char>(c)))
+        if(!isValidFileNameChar(c))
             return false;
     }
     // On Windows 7 and earlier the device name is the part before the first dot — "nul.ini" is NUL thus forbidden.
