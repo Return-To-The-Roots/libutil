@@ -1,16 +1,32 @@
-// Copyright (C) 2005 - 2021 Settlers Freaks (sf-team at siedler25.org)
+// Copyright (C) 2005 - 2026 Settlers Freaks (sf-team at siedler25.org)
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "fileFuncs.h"
+#include "s25util/strAlgos.h"
+#include "s25util/utf8.h"
 #include <boost/filesystem/path.hpp>
+#include <algorithm>
+#include <array>
+#include <string_view>
 
 namespace bfs = boost::filesystem;
+
+// Windows reserved device names
+static constexpr std::array reservedNames{"con",  "prn",  "aux",  "nul",  "com0", "com1", "com2", "com3",
+                                          "com4", "com5", "com6", "com7", "com8", "com9", "lpt0", "lpt1",
+                                          "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9"};
+
+static bool isReservedName(const std::string& name)
+{
+    const std::string lower = s25util::toLower(name);
+    return std::find(reservedNames.begin(), reservedNames.end(), lower) != reservedNames.end();
+}
 
 std::string makePortableName(const std::string& fileName)
 {
     if(fileName.empty() || bfs::portable_name(fileName))
-        return fileName;
+        return isReservedName(fileName) ? fileName + '_' : fileName;
     std::string result;
     result.reserve(fileName.size());
     for(char c : fileName)
@@ -30,6 +46,8 @@ std::string makePortableName(const std::string& fileName)
         while(!result.empty() && result.back() == '.')
             result.erase(result.end() - 1);
     }
+    if(isReservedName(result))
+        result += '_';
     assert(result.empty() || bfs::portable_name(result));
     return result;
 }
@@ -73,4 +91,37 @@ std::string makePortableDirName(const std::string& fileName)
     }
     assert(result.empty() || bfs::portable_directory_name(result));
     return result;
+}
+
+bool isValidFileNameChar(char32_t c)
+{
+    // Reject control characters
+    if(c <= 0x1F || c == 0x7F)
+        return false;
+    // Reject characters forbidden on Windows (the most restrictive platform),
+    // which covers all restrictions on Linux, macOS, and Android as well.
+    static constexpr std::u32string_view forbidden = U"<>:\"/\\|?*";
+    return forbidden.find(c) == std::u32string_view::npos;
+}
+
+bool isValidFileName(const std::string& fileName)
+{
+    if(fileName.empty() || !s25util::isValidUTF8(fileName))
+        return false;
+    if(fileName.size() > 255)
+        return false;
+    const auto asU32 = s25util::utf8to32(fileName);
+    if(asU32.front() == U'.' || asU32.back() == U'.')
+        return false;
+    // Windows silently strips trailing spaces, which would create a mismatch between
+    // the name the user typed and the file actually created on disk.
+    if(asU32.back() == U' ')
+        return false;
+    for(char32_t c : asU32)
+    {
+        if(!isValidFileNameChar(c))
+            return false;
+    }
+    // On Windows 7 and earlier the device name is the part before the first dot — "nul.ini" is NUL thus forbidden.
+    return !isReservedName(fileName.substr(0, fileName.find('.')));
 }
