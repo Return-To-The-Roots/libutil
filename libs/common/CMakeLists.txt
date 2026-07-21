@@ -1,4 +1,4 @@
-# Copyright (C) 2005 - 2021 Settlers Freaks <sf-team at siedler25.org>
+# Copyright (C) 2005 - 2026 Settlers Freaks <sf-team at siedler25.org>
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
@@ -7,7 +7,7 @@ if(WIN32)
     # Locale only on windows
     set(_BoostComponents ${_BoostComponents} locale)
 endif()
-find_package(Boost 1.69 REQUIRED COMPONENTS ${_BoostComponents})
+find_package(Boost 1.71 REQUIRED COMPONENTS ${_BoostComponents})
 
 
 FILE(GLOB SRC_FILES src/*.cpp)

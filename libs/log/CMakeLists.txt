@@ -1,8 +1,8 @@
-# Copyright (C) 2005 - 2021 Settlers Freaks <sf-team at siedler25.org>
+# Copyright (C) 2005 - 2026 Settlers Freaks <sf-team at siedler25.org>
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-find_package(Boost 1.69 REQUIRED COMPONENTS filesystem)
+find_package(Boost 1.71 REQUIRED COMPONENTS filesystem)
 
 file(GLOB HEADER_FILES include/s25util/*.*)
 add_library(s25util_log STATIC
