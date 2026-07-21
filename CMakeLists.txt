@@ -1,8 +1,8 @@
-# Copyright (C) 2005 - 2025 Settlers Freaks <sf-team at siedler25.org>
+# Copyright (C) 2005 - 2026 Settlers Freaks <sf-team at siedler25.org>
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
-cmake_minimum_required(VERSION 3.16..3.20)
+cmake_minimum_required(VERSION 3.16..3.31)
 project(s25util)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
