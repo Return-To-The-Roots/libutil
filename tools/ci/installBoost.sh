@@ -67,12 +67,11 @@ endGroup
 
 if [[ "${TRAVIS_OS_NAME:-}" == "windows" ]] || [[ "${RUNNER_OS:-}" == "Windows" ]]; then
     NPROC=3
-    TOOLSET="toolset=msvc"
+    : "${TOOLSET:=toolset=msvc}"
     : "${VARIANT:=debug,release}"
 else
     # Linux and OSX version
     NPROC=$(nproc 2>/dev/null || sysctl -n hw.ncpu)
-    TOOLSET=
     : "${VARIANT:=release}"
 fi
 
@@ -84,8 +83,8 @@ echo "Bootstrapping B2..."
 endGroup
 
 startGroup "Building $link Boost in $VARIANT mode"
-echo "Installing ${libraries}, variants ${VARIANT} to ${INSTALL_DIR} using ${TOOLSET}"
-./b2 link="${link}" ${TOOLSET} variant="${VARIANT}" --prefix="${INSTALL_DIR}" -j${NPROC} install
+echo "Installing ${libraries}, variants ${VARIANT} to ${INSTALL_DIR} using ${TOOLSET:-default toolset}"
+./b2 link="${link}" ${TOOLSET:-} variant="${VARIANT}" --prefix="${INSTALL_DIR}" -j${NPROC} install
 endGroup
 
 echo "Boost build finished successfully"
