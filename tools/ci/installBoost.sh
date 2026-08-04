@@ -53,14 +53,14 @@ echo "Downloaded and extracted file"
 cd "${FILE_NAME}"
 
 if [[ "${TRAVIS_OS_NAME:-}" == "windows" ]] || [[ "${RUNNER_OS:-}" == "Windows" ]]; then
-	NPROC=3
-	TOOLSET="toolset=msvc"
-    VARIANT="debug,release"
+    NPROC=3
+    TOOLSET="toolset=msvc"
+    : "${VARIANT:=debug,release}"
 else
-	# Linux and OSX version
-	NPROC=$(nproc 2>/dev/null || sysctl -n hw.ncpu)
-	TOOLSET=
-    VARIANT="release"
+    # Linux and OSX version
+    NPROC=$(nproc 2>/dev/null || sysctl -n hw.ncpu)
+    TOOLSET=
+    : "${VARIANT:=release}"
 fi
 
 libraries=$(join , "${required_libs[@]}")
@@ -76,3 +76,4 @@ if ! ./b2 link="${link}" ${TOOLSET} variant="${VARIANT}" --prefix="${INSTALL_DIR
     cat "$BUILD_LOG"
     exit 1
 fi
+echo "Build finished successfully"
