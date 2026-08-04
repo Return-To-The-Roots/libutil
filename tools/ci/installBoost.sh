@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2005 - 2021 Settlers Freaks <sf-team at siedler25.org>
+# Copyright (C) 2005 - 2026 Settlers Freaks <sf-team at siedler25.org>
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
@@ -12,6 +12,16 @@ required_libs="${3:?Missing libs}"
 link="${4:-static}"
 
 required_libs=( ${required_libs//,/ } )
+
+function print_on_gha {
+    [[ "${GITHUB_ACTIONS:-false}" != "true" ]] || echo "$@"
+}
+function startGroup {
+	print_on_gha "::group::$1"
+}
+function endGroup {
+	print_on_gha "::endgroup::"
+}
 
 function all_libs_exist() {
     for lib in "${required_libs[@]}"; do
@@ -40,17 +50,20 @@ BUILD_LOG=/tmp/boost.log
 
 mkdir -p "${BUILD_DIR}" && cd "${BUILD_DIR}"
 
+startGroup "Download Boost"
 FILE_NAME="boost_${VERSION//./_}"
 URL="https://archives.boost.io/release/${VERSION}/source/${FILE_NAME}.tar.bz2"
 echo "Downloading and extracting file from $URL..."
 wget "${URL}" -qO- | tar jx
 if [ ! -f "${FILE_NAME}/bootstrap.sh" ]; then
     echo "Download failed or files invalid" >&2
+	endGroup
     exit 1
 fi
 
 echo "Downloaded and extracted file"
 cd "${FILE_NAME}"
+endGroup
 
 if [[ "${TRAVIS_OS_NAME:-}" == "windows" ]] || [[ "${RUNNER_OS:-}" == "Windows" ]]; then
     NPROC=3
@@ -65,15 +78,14 @@ fi
 
 libraries=$(join , "${required_libs[@]}")
 
+startGroup "Bootstrap B2"
 echo "Bootstrapping B2..."
-if ! ./bootstrap.sh --with-libraries="$libraries" threading=multi > "$BUILD_LOG"; then
-    cat "$BUILD_LOG" || true
-    cat bootstrap.log
-    exit 1
-fi
-echo "Building ${libraries}, variants ${VARIANT} to ${INSTALL_DIR} using ${TOOLSET}"
-if ! ./b2 link="${link}" ${TOOLSET} variant="${VARIANT}" --prefix="${INSTALL_DIR}" -j${NPROC} install > "$BUILD_LOG"; then
-    cat "$BUILD_LOG"
-    exit 1
-fi
-echo "Build finished successfully"
+./bootstrap.sh --with-libraries="$libraries" threading=multi
+endGroup
+
+startGroup "Building $link Boost in $VARIANT mode"
+echo "Installing ${libraries}, variants ${VARIANT} to ${INSTALL_DIR} using ${TOOLSET}"
+./b2 link="${link}" ${TOOLSET} variant="${VARIANT}" --prefix="${INSTALL_DIR}" -j${NPROC} install
+endGroup
+
+echo "Boost build finished successfully"
