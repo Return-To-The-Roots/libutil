@@ -1,4 +1,4 @@
-// Copyright (C) 2005 - 2021 Settlers Freaks (sf-team at siedler25.org)
+// Copyright (C) 2005 - 2026 Settlers Freaks (sf-team at siedler25.org)
 //
 // SPDX-License-Identifier: GPL-2.0-or-later
 
@@ -6,14 +6,6 @@
 
 #include <boost/predef/compiler.h>
 #include <boost/preprocessor/stringize.hpp>
-
-// Macro that can be used to suppress unused warnings. Required e.g. for const std::arrays defined in headers
-// Don't use this if not absolutely necessary!
-#ifdef __GNUC__
-#    define SUPPRESS_UNUSED __attribute__((unused))
-#else
-#    define SUPPRESS_UNUSED
-#endif
 
 // Use for functions which use "unfixable" undefined behavior, but which is safe
 #if defined(__clang__)
@@ -40,5 +32,6 @@
 #define RTTR_IGNORE_UNREACHABLE_CODE RTTR_IGNORE_DIAGNOSTIC("-Wunreachable-code")
 #define RTTR_IGNORE_OVERLOADED_VIRTUAL RTTR_IGNORE_DIAGNOSTIC("-Woverloaded-virtual")
 
-/// Silence unused variable warning
+/// Silence unused variable warning for conditional unused depending on preprocessor.
+/// For unused parameters remove the parameter name, else [[maybe_unused]] can be used.
 #define RTTR_UNUSED(x) (void)(x)
