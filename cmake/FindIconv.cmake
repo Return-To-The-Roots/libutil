@@ -8,6 +8,7 @@
 #  ICONV_FOUND - system has Iconv 
 #  ICONV_INCLUDE_DIR - the Iconv include directory 
 #  ICONV_LIBRARY - Link these to use Iconv 
+#  Iconv::Iconv - imported target (as created by CMake's own FindIconv, required e.g. by Boost.Locale's CMake config)
 # 
 
 SET(ICONV_DIR_SEARCH $ENV{ICONV_ROOT})
@@ -31,3 +32,10 @@ MARK_AS_ADVANCED(
   ICONV_INCLUDE_DIR
   ICONV_LIBRARY
 )
+
+if(Iconv_FOUND AND NOT TARGET Iconv::Iconv)
+  add_library(Iconv::Iconv INTERFACE IMPORTED)
+  set_target_properties(Iconv::Iconv PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${ICONV_INCLUDE_DIR}"
+    INTERFACE_LINK_LIBRARIES "${ICONV_LIBRARY}")
+endif()
