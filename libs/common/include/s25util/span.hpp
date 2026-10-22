@@ -214,19 +214,19 @@ public:
     constexpr span() noexcept : s_(0, 0)
     {}
 
-    template<class I, std::enable_if_t<E == dynamic_extent && detail::span_convertible_v<I, T>, int> = 0>
+    template<class I, std::enable_if_t<detail::span_convertible_v<I, T> && E == dynamic_extent, int> = 0>
     constexpr span(I* f, size_type c) : s_(f, c)
     {}
 
-    template<class I, std::enable_if_t<E != dynamic_extent && detail::span_convertible_v<I, T>, int> = 0>
+    template<class I, std::enable_if_t<detail::span_convertible_v<I, T> && E != dynamic_extent, int> = 0>
     explicit constexpr span(I* f, size_type c) : s_(f, c)
     {}
 
-    template<class I, class L, std::enable_if_t<E == dynamic_extent && detail::span_convertible_v<I, T>, int> = 0>
+    template<class I, class L, std::enable_if_t<detail::span_convertible_v<I, T> && E == dynamic_extent, int> = 0>
     constexpr span(I* f, L* l) : s_(f, l - f)
     {}
 
-    template<class I, class L, std::enable_if_t<E != dynamic_extent && detail::span_convertible_v<I, T>, int> = 0>
+    template<class I, class L, std::enable_if_t<detail::span_convertible_v<I, T> && E != dynamic_extent, int> = 0>
     explicit constexpr span(I* f, L* l) : s_(f, l - f)
     {}
 
@@ -242,11 +242,11 @@ public:
     constexpr span(const std::array<U, N>& a) noexcept : s_(a.data(), N)
     {}
 
-    template<class R, std::enable_if_t<E == dynamic_extent && detail::span_is_range_v<R, T>, int> = 0>
+    template<class R, std::enable_if_t<detail::span_is_range_v<R, T> && E == dynamic_extent, int> = 0>
     constexpr span(R&& r) noexcept(noexcept(std::data(r)) && noexcept(r.size())) : s_(std::data(r), r.size())
     {}
 
-    template<class R, std::enable_if_t<E != dynamic_extent && detail::span_is_range_v<R, T>, int> = 0>
+    template<class R, std::enable_if_t<detail::span_is_range_v<R, T> && E != dynamic_extent, int> = 0>
     explicit constexpr span(R&& r) noexcept(noexcept(std::data(r)) && noexcept(r.size())) : s_(std::data(r), r.size())
     {}
 
