@@ -1,0 +1,115 @@
+# Copyright (C) 2005 - 2026 Settlers Freaks <sf-team at siedler25.org>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+name: Unit tests
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{format('tests-{0}:{1}', github.repository, github.ref)}}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  StyleAndFormatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: git submodule update --init
+      - name: Validation
+        run: tools/ci/staticValidation.sh "$GITHUB_WORKSPACE"
+      - name: Formatting
+        uses: DoozyX/clang-format-lint-action@bcb4eb2cb0d707ee4f3e5cc3b456eb075f12cf73 # v0.20
+        with:
+          source: "examples include src tests"
+          clangFormatVersion: 10
+      - name: Lint markdown files
+        uses: avto-dev/markdown-lint@04d43ee9191307b50935a753da3b775ab695eceb # v1.5.0
+        with:
+          args: .
+      - name: Check licensing
+        run:
+          pip install --user reuse
+          reuse lint
+  UnitTests:
+    strategy:
+      matrix:
+        include:
+          - { compiler: gcc-9,    os: ubuntu-22.04, buildType: Debug,   boostVersion: 1.73.0 }
+          - { compiler: clang,    os: macos-26,     buildType: Debug,   boostVersion: 1.81.0 } # New libc++ only supported since 1.81
+          # Latest GCC
+          - { compiler: gcc-14,   os: ubuntu-24.04, buildType: Debug,   boostVersion: 1.87.0 }
+          # Latest Clang
+          - { compiler: clang-19, os: ubuntu-24.04, buildType: Debug,   boostVersion: 1.81.0 }
+          # Windows
+          - { compiler: msvc,     os: windows-2022, buildType: Debug,   boostVersion: 1.87.0, generator: 'Visual Studio 17 2022' }
+
+    runs-on: ${{matrix.os}}
+    env:
+      GENERATOR: ${{matrix.generator}}
+
+    steps:
+      - run: |
+          echo "DEPS_DIR=${{runner.temp}}/.cache" >> $GITHUB_ENV
+          echo "BOOST_VERSION=${{matrix.boostVersion}}" >> $GITHUB_ENV
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Cache dependencies
+        if: "!startsWith(runner.os, 'Windows')"
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{env.DEPS_DIR}}
+          key: ${{matrix.os}}-${{matrix.compiler}}-${{env.BOOST_VERSION}}
+
+      - name: Install Compiler
+        if: "startsWith(runner.os, 'Linux')"
+        run: |
+          pkgs=${{matrix.compiler}}
+          pkgs=${pkgs/gcc-/g++-}
+          sudo apt install $pkgs
+      - name: Setup compiler
+        if: "!startsWith(runner.os, 'Windows')"
+        run: tools/ci/setupCompiler.sh
+        env:
+          COMPILER: ${{matrix.compiler}}
+
+      - name: Install system packages (Linux)
+        if: "startsWith(runner.os, 'Linux')"
+        run: sudo apt install ccache libminiupnpc-dev
+      - name: Install system packages (OSX)
+        if: startsWith(runner.os, 'macOS')
+        run: brew install ccache cmake miniupnpc
+
+      - name: Setup cmake
+        if: "!startsWith(runner.os, 'Windows')"
+        uses: jwlawson/actions-setup-cmake@0d6a7d60b009d01c9e7523be22153ff8f19460d3  # v2.2.0
+        with:
+          cmake-version: '3.20.x'
+
+      - name: Setup CCache
+        if: "!startsWith(runner.os, 'Windows')"
+        uses: hendrikmuhs/ccache-action@d62db5f07c26379fc4b4e0916f098a92573c3b03  # v1.2.23
+        with:
+          key: ${{matrix.os}}-${{matrix.compiler}}-${{matrix.buildType}}-${{matrix.boostVersion}}
+          max-size: 200M
+
+      - name: Install Boost
+        shell: bash
+        run: |
+          BOOST_ROOT="${DEPS_DIR}/boost${BOOST_VERSION}"
+          echo "BOOST_ROOT=${BOOST_ROOT}" >> $GITHUB_ENV
+          echo "ADDITIONAL_CMAKE_FLAGS=${ADDITIONAL_CMAKE_FLAGS} -DBoost_NO_SYSTEM_PATHS=ON -DBoost_NO_BOOST_CMAKE=ON" >> $GITHUB_ENV
+          SHARED=""
+          if [[ "${{runner.os}}" == macOS ]]; then SHARED="shared"; fi # Seems to be required
+          tools/ci/installBoost.sh "${BOOST_VERSION}" "${BOOST_ROOT}" "filesystem,test" $SHARED
+
+      - name: Build
+        run: tools/ci/build.sh "${{matrix.buildType}}" "${ADDITIONAL_CMAKE_FLAGS}"
+        env:
+          GENERATOR: ${{matrix.generator}}
