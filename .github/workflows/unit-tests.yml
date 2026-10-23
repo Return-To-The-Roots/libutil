@@ -65,9 +65,7 @@ jobs:
       GENERATOR: ${{matrix.generator}}
 
     steps:
-      - run: |
-          echo "DEPS_DIR=${{runner.temp}}/.cache" >> $GITHUB_ENV
-          echo "BOOST_VERSION=${{matrix.boostVersion}}" >> $GITHUB_ENV
+      - run: echo "DEPS_DIR=${{runner.temp}}/.cache" >> $GITHUB_ENV
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -76,7 +74,7 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{env.DEPS_DIR}}
-          key: ${{matrix.os}}-${{matrix.compiler}}-${{env.BOOST_VERSION}}
+          key: ${{matrix.os}}-${{matrix.compiler}}-${{matrix.boostVersion}}-${{matrix.buildType}}
 
       - name: Install system packages (Linux)
         if: "startsWith(runner.os, 'Linux')"
@@ -112,6 +110,8 @@ jobs:
 
       - name: Install Boost
         shell: bash
+        env:
+          BOOST_VERSION: ${{matrix.boostVersion}}
         run: |
           BOOST_ROOT="${DEPS_DIR}/boost${BOOST_VERSION}"
           echo "BOOST_ROOT=${BOOST_ROOT}" >> $GITHUB_ENV
@@ -122,6 +122,7 @@ jobs:
           else
             LINK=shared
           fi
+          export VARIANT=${{matrix.buildType}}
           tools/ci/installBoost.sh "${BOOST_VERSION}" "${BOOST_ROOT}" "filesystem,locale,test" $LINK
 
       - name: Checkout libendian
