@@ -11,6 +11,7 @@ INSTALL_DIR="${2:?Missing install dir}"
 required_libs="${3:?Missing libs}"
 link="${4:-static}"
 
+# shellcheck disable=SC2206
 required_libs=( ${required_libs//,/ } )
 
 function print_on_gha {
@@ -46,7 +47,6 @@ if all_libs_exist; then
 fi
 
 BUILD_DIR=/tmp/boost
-BUILD_LOG=/tmp/boost.log
 
 mkdir -p "${BUILD_DIR}" && cd "${BUILD_DIR}"
 
@@ -74,6 +74,7 @@ else
     NPROC=$(nproc 2>/dev/null || sysctl -n hw.ncpu)
     : "${VARIANT:=release}"
 fi
+VARIANT=$(printf '%s' "$VARIANT" | tr '[:upper:]' '[:lower:]')
 
 libraries=$(join , "${required_libs[@]}")
 
@@ -84,6 +85,7 @@ endGroup
 
 startGroup "Building $link Boost in $VARIANT mode"
 echo "Installing ${libraries}, variants ${VARIANT} to ${INSTALL_DIR} using ${TOOLSET:-default toolset}"
+# shellcheck disable=SC2086
 ./b2 link="${link}" ${TOOLSET:-} variant="${VARIANT}" --prefix="${INSTALL_DIR}" -j${NPROC} install
 endGroup
 
