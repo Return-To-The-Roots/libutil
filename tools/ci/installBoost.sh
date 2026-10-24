@@ -85,6 +85,7 @@ endGroup
 
 startGroup "Building $link Boost in $VARIANT mode"
 echo "Installing ${libraries}, variants ${VARIANT} to ${INSTALL_DIR} using ${TOOLSET:-default toolset}"
+set -x
 # shellcheck disable=SC2086
 ./b2 address-model=64 link="${link}" ${TOOLSET+toolset=$TOOLSET} variant="${VARIANT}" --prefix="${INSTALL_DIR}" -j${NPROC} install
 endGroup
