@@ -6,6 +6,16 @@
 
 set -euo pipefail
 
+function print_on_gha {
+    [[ "${GITHUB_ACTIONS:-false}" != "true" ]] || echo "$@"
+}
+function startGroup {
+	print_on_gha "::group::$1"
+}
+function endGroup {
+	print_on_gha "::endgroup::"
+}
+
 # Required by the tests
 export USER="${USER:-TestUser}"
 
@@ -42,4 +52,14 @@ cmake --build . --target "$TARGET" --config "${BUILD_TYPE}" -- $BUILD_FLAGS
 export RTTR_DISABLE_ASSERT_BREAKPOINT=1
 export BOOST_TEST_LOG_LEVEL=message
 export BOOST_TEST_REPORT_LEVEL=detailed
-ctest --build-config "${BUILD_TYPE}" --output-on-failure -j2
+if ! ctest --output-on-failure -C "${BUILD_TYPE}" -j2; then
+    startGroup "CMake cache"
+    cat CMakeCache.txt
+    endGroup
+    echo "LD:${LD_LIBRARY_PATH:-}"
+    echo "DYLD:${DYLD_LIBRARY_PATH:-}"
+    echo "PATH:$PATH"
+    startGroup "Rerun failed tests only"
+    ctest --output-on-failure -C "${BUILD_TYPE}" --rerun-failed --extra-verbose
+    endGroup
+fi
