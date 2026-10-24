@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2005 - 2021 Settlers Freaks <sf-team at siedler25.org>
+# Copyright (C) 2005 - 2026 Settlers Freaks <sf-team at siedler25.org>
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
@@ -12,6 +12,9 @@ if [[ "$CC" =~ clang ]]; then
   CXX=${CC/clang/clang++}
 elif [[ "$CC" =~ gcc ]]; then
   CXX=${CC/gcc/g++}
+else
+  echo "Unknown compiler: $CC"
+  exit 1
 fi
 ver=7 # default
 if [[ "$CC" =~ gcc- ]]; then
