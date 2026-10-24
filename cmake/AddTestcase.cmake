@@ -1,4 +1,4 @@
-# Copyright (C) 2005 - 2021 Settlers Freaks <sf-team at siedler25.org>
+# Copyright (C) 2005 - 2026 Settlers Freaks <sf-team at siedler25.org>
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
@@ -56,4 +56,8 @@ function(add_testcase)
         )
         set_tests_properties(${name} PROPERTIES ENVIRONMENT "${options}")
     endif()
+    if(NOT TARGET tests)
+        add_custom_target(tests)
+    endif()
+    add_dependencies(tests ${name})
 endfunction()
