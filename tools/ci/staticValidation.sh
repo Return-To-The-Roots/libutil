@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2005 - 2021 Settlers Freaks <sf-team at siedler25.org>
+# Copyright (C) 2005 - 2026 Settlers Freaks <sf-team at siedler25.org>
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
@@ -11,9 +11,8 @@ scriptPath=$(dirname "$(readlink -f "$0")")
 
 cd "${SRC_DIR}"
 
-nonUTF8Files="$("$scriptPath/checkUTF8.sh")"
-if [[ "${nonUTF8Files}" != "" ]]; then
-  echo "Files not in UTF8 encoding: ${nonUTF8Files}"
+if ! "$scriptPath/checkUTF8.sh"; then
+  echo "Some files are not in UTF8 encoding (see filenames above)"
   exit 1
 fi
 
