@@ -52,9 +52,9 @@ mkdir -p "${BUILD_DIR}" && cd "${BUILD_DIR}"
 
 startGroup "Download Boost"
 FILE_NAME="boost_${VERSION//./_}"
-URL="https://archives.boost.io/release/${VERSION}/source/${FILE_NAME}.tar.bz2"
+URL="https://archives.boost.io/release/${VERSION}/source/${FILE_NAME}.tar.gz"
 echo "Downloading and extracting file from $URL..."
-wget "${URL}" -qO- | tar jx
+wget "${URL}" -qO- | tar zx
 if [ ! -f "${FILE_NAME}/bootstrap.sh" ]; then
     echo "Download failed or files invalid" >&2
 	endGroup
