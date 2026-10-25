@@ -26,11 +26,17 @@ TARGET="${3:-install}"
 [[ -d build ]] || mkdir build
 cd build
 
-if [[ "${TRAVIS_OS_NAME:-}" == "windows" ]] || [[ "${RUNNER_OS:-}" == "Windows" ]]; then
-    GENERATOR=${GENERATOR:-Visual Studio 17 2022}
+if [[ -z ${GENERATOR:-} ]]; then
+    if [[ "${RUNNER_OS:-}" == "Linux" ]] || [[ "${RUNNER_OS:-}" == "macOS" ]]; then
+        GENERATOR="Unix Makefiles"
+    else
+      echo 'Missing $GENERATOR!'
+      exit 1
+    fi
+fi
+if [[ $GENERATOR == "Visual Studio"* ]]; then
     BUILD_FLAGS=""
 else
-    GENERATOR="Unix Makefiles"
     BUILD_FLAGS="-j3"
 fi
 

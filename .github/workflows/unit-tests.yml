@@ -58,7 +58,7 @@ jobs:
           # Windows
           - { compiler: msvc-14.3,   os: windows-2022,         buildType: Debug,   boostVersion: 1.87.0, generator: 'Visual Studio 17 2022' }
           - { compiler: msvc-14.5,   os: windows-2025-vs2026,  buildType: Debug,   boostVersion: 1.91.0, generator: 'Visual Studio 18 2026' }
-          - { compiler: gcc, sys: MINGW64, os: windows-latest, buildType: Debug,   boostVersion: 1.91.0}
+          - { compiler: gcc, sys: MINGW64, os: windows-latest, buildType: Debug,   boostVersion: 1.91.0, generator: 'Ninja' }
 
     runs-on: ${{matrix.os}}
     defaults:
