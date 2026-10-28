@@ -7,7 +7,7 @@
 # Show message about boost config
 
 # Default boost libs are static on self-build windows versions and dynamic in the linux package repos
-if(WIN32 AND NOT MINGW)
+if(WIN32)
 	set(RTTR_USE_STATIC_BOOST_DEFAULT ON)
 else()
 	set(RTTR_USE_STATIC_BOOST_DEFAULT OFF)

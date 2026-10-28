@@ -7,6 +7,21 @@ project(s25util)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
+if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    set(isTopLevel TRUE)
+    find_path(RTTR_LIBENDIAN_DIR NAMES "include/libendian" HINTS ${CMAKE_CURRENT_SOURCE_DIR}/../libendian PATHS ENV LIBENDIAN_DIR PATH_SUFFIXES ".." libendian)
+    if(NOT RTTR_LIBENDIAN_DIR)
+        message(FATAL_ERROR "Path to libendian not found! You can set the full path in the env var LIBENDIAN_DIR ($ENV{LIBENDIAN_DIR})")
+    endif()
+    add_subdirectory(${RTTR_LIBENDIAN_DIR} libendian)
+    include(EnableCCache)
+    include(RttrBoostCfg)
+    # Boost 1.73 contains Boost.Nowide, 1.74 a required fix
+    find_package(Boost 1.74 COMPONENTS nowide)
+else()
+    set(isTopLevel FALSE)
+endif()
+
 # The super project might e.g. call find_package(Boost ... nowide), if the target is not defined, download directly
 if(NOT TARGET Boost::nowide)
     message(STATUS "Fetching Boost.Nowide from repository...")

@@ -1,0 +1,143 @@
+# Copyright (C) 2005 - 2026 Settlers Freaks <sf-team at siedler25.org>
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+name: Unit tests
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - bugfix/**
+      - feature/**
+      - fix/**
+      - github/**
+      - pr/**
+  pull_request:
+
+concurrency:
+  group: ${{format('tests-{0}:{1}', github.repository, github.ref)}}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  StyleAndFormatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: curl -sSL --retry 5 --connect-timeout 15 https://github.com/Return-To-The-Roots/s25client/raw/refs/heads/master/.clang-format --output .clang-format
+      - name: Validation
+        run: tools/ci/staticValidation.sh "$GITHUB_WORKSPACE"
+      - name: Formatting
+        uses: DoozyX/clang-format-lint-action@bcb4eb2cb0d707ee4f3e5cc3b456eb075f12cf73 # v0.20
+        with:
+          source: "libs tests"
+          clangFormatVersion: 10
+      - name: Lint markdown files
+        uses: avto-dev/markdown-lint@04d43ee9191307b50935a753da3b775ab695eceb # v1.5.0
+        with:
+          args: .
+      - name: Check licensing
+        run:
+          pip install --user reuse
+          reuse lint
+  UnitTests:
+    strategy:
+      matrix:
+        include:
+          - { compiler: gcc-9,       os: ubuntu-22.04,         buildType: Debug,   boostVersion: 1.73.0 } # Older ones fail due to PTHREAD_STACK_MIN use in Boost.Thread
+          - { compiler: clang,       os: macos-26,             buildType: Debug,   boostVersion: 1.81.0 } # New libc++ only supported since 1.81
+          # Latest GCC
+          - { compiler: gcc-14,      os: ubuntu-24.04,         buildType: Debug,   boostVersion: 1.87.0 }
+          # Latest Clang
+          - { compiler: clang-19,    os: ubuntu-24.04,         buildType: Debug,   boostVersion: 1.81.0 }
+          # Windows
+          - { compiler: msvc-14.3,   os: windows-2022,         buildType: Debug,   boostVersion: 1.87.0, generator: 'Visual Studio 17 2022' }
+          - { compiler: msvc-14.5,   os: windows-2025-vs2026,  buildType: Debug,   boostVersion: 1.91.0, generator: 'Visual Studio 18 2026' }
+          - { compiler: gcc, sys: MINGW64, os: windows-latest, buildType: Debug,   boostVersion: 1.91.0, generator: 'Ninja' }
+
+    runs-on: ${{matrix.os}}
+    defaults:
+      run:
+        shell: ${{matrix.sys && 'msys2 {0}' || 'bash'}}
+    steps:
+      - name: Setup MSYS2 environment for MinGW
+        if: matrix.sys
+        uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e # v2.33.0
+        with:
+          msystem: ${{matrix.sys}}
+          update: true
+          install: git python
+          pacboy: gcc:p cmake:p ninja:p miniupnpc:p
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install system packages (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          pkgs=${{matrix.compiler}}
+          pkgs=${pkgs/gcc-/g++-}
+          sudo apt install ccache libminiupnpc-dev $pkgs
+      - name: Install system packages (OSX)
+        if: runner.os == 'macOS'
+        run: brew install ccache cmake miniupnpc
+      - name: Install system packages (Windows)
+        if: runner.os == 'Windows' && ! matrix.sys
+        run: choco install wget
+
+      - name: Setup compiler
+        if: "!startsWith(matrix.compiler, 'msvc')"
+        run: tools/ci/setupCompiler.sh
+        env:
+          COMPILER: ${{matrix.compiler}}
+
+      - name: Setup cmake
+        if: runner.os != 'Windows'
+        uses: jwlawson/actions-setup-cmake@0d6a7d60b009d01c9e7523be22153ff8f19460d3  # v2.2.0
+        with:
+          cmake-version: '3.20.x'
+
+      - name: Setup CCache
+        if: runner.os != 'Windows'
+        uses: hendrikmuhs/ccache-action@d62db5f07c26379fc4b4e0916f098a92573c3b03  # v1.2.23
+        with:
+          key: ${{matrix.os}}-${{matrix.compiler}}-${{matrix.buildType}}-${{matrix.boostVersion}}
+          max-size: 200M
+
+      - run: echo "BOOST_ROOT=${{runner.temp}}/boost${{matrix.boostVersion}}" >> $GITHUB_ENV
+      - name: Cache Boost installation
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{env.BOOST_ROOT}}
+          key: ${{matrix.os}}-${{matrix.compiler}}-${{matrix.boostVersion}}-${{matrix.buildType}}
+
+      - name: Install Boost
+        env:
+          BOOST_VERSION: ${{matrix.boostVersion}}
+          TOOLSET: ${{matrix.compiler}}
+          VARIANT: ${{matrix.buildType}}
+        run: |
+          echo "ADDITIONAL_CMAKE_FLAGS=-DBoost_NO_SYSTEM_PATHS=ON" >> $GITHUB_ENV
+          LINK=""
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            LINK=static
+          else
+            LINK=shared
+          fi
+          tools/ci/installBoost.sh "${BOOST_VERSION}" "${BOOST_ROOT}" "filesystem,locale,test" $LINK
+
+      - name: Checkout libendian
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: Return-To-The-Roots/libendian
+          ref: master
+          path: ${{github.workspace}}/libendian
+      - name: Build
+        run: tools/ci/build.sh "${{matrix.buildType}}" "${ADDITIONAL_CMAKE_FLAGS}" "tests"
+        env:
+          GENERATOR: ${{matrix.generator}}
+          LIBENDIAN_DIR: ${{github.workspace}}/libendian
