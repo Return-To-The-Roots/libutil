@@ -65,15 +65,8 @@ echo "Downloaded and extracted file"
 cd "${FILE_NAME}"
 endGroup
 
-if [[ "${TRAVIS_OS_NAME:-}" == "windows" ]] || [[ "${RUNNER_OS:-}" == "Windows" ]]; then
-    NPROC=3
-    : "${TOOLSET:=msvc}"
-    : "${VARIANT:=debug,release}"
-else
-    # Linux and OSX version
-    NPROC=$(nproc 2>/dev/null || sysctl -n hw.ncpu)
-    : "${VARIANT:=release}"
-fi
+NPROC=$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 3)
+: "${VARIANT:=release}"
 VARIANT=$(printf '%s' "$VARIANT" | tr '[:upper:]' '[:lower:]')
 
 libraries=$(join , "${required_libs[@]}")
