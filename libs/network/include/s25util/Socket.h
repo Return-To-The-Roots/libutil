@@ -67,18 +67,24 @@ public:
 
 class PeerAddr
 {
-    address_t addr;
+    address_t addr{};
+    socklen_t addrLen = 0;
 
 public:
-    /// Uninitilized value!
-    PeerAddr() = default; //-V730
+    /// Empty address with room for any address type, e.g. to be filled by Socket::Recv
+    PeerAddr() = default;
     /// Initializes the address to a broadcast on the given port
     PeerAddr(unsigned short port);
 
     std::string GetIp() const;
     sockaddr* GetAddr();
     const sockaddr* GetAddr() const;
-    int GetSize() const { return sizeof(addr); }
+    /// Size of the contained address (suitable for sendto)
+    socklen_t GetSize() const { return addrLen; }
+    /// Capacity of the underlying storage (suitable for recvfrom)
+    static constexpr socklen_t GetCapacity() { return sizeof(address_t); }
+    /// Set the size of the contained address, e.g. after it has been filled by recvfrom
+    void SetSize(socklen_t size) { addrLen = size; }
 };
 
 /// Socket-Wrapper-Klasse für portable TCP/IP-Verbindungen
