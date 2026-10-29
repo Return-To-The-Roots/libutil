@@ -78,7 +78,7 @@ public:
     std::string GetIp() const;
     sockaddr* GetAddr();
     const sockaddr* GetAddr() const;
-    int GetSize() const { return sizeof(addr); }
+    int GetSize() const { return sizeof(addr.sa_in); }
 };
 
 /// Socket-Wrapper-Klasse für portable TCP/IP-Verbindungen
