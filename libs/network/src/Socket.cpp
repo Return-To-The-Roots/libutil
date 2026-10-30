@@ -111,7 +111,7 @@ ResolvedAddr::~ResolvedAddr()
     }
 }
 
-PeerAddr::PeerAddr(unsigned short port)
+PeerAddr::PeerAddr(unsigned short port) : addrLen(sizeof(sockaddr_in))
 {
     addr.sa_in.sin_family = AF_INET;
     addr.sa_in.sin_addr.s_addr = INADDR_BROADCAST;
@@ -680,8 +680,10 @@ int Socket::Recv(void* const buffer, const int length, PeerAddr& addr) const
     if(!isValid())
         return -1;
 
-    socklen_t addrLen = addr.GetSize();
-    return recvfrom(socket_, reinterpret_cast<char*>(buffer), length, 0, addr.GetAddr(), &addrLen);
+    socklen_t addrLen = PeerAddr::GetCapacity();
+    const int result = recvfrom(socket_, reinterpret_cast<char*>(buffer), length, 0, addr.GetAddr(), &addrLen);
+    addr.SetSize(result >= 0 ? addrLen : 0);
+    return result;
 }
 
 /**
