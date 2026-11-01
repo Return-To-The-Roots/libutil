@@ -128,9 +128,9 @@ public:
      */
     void resize(const unsigned count) { return elements.resize(count); }
 
-    iterator begin() { return elements.begin(); }
+    iterator begin() noexcept { return elements.begin(); }
     const_iterator begin() const noexcept { return elements.begin(); }
-    iterator end() { return elements.end(); }
+    iterator end() noexcept { return elements.end(); }
     const_iterator end() const noexcept { return elements.end(); }
 
 private:
