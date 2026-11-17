@@ -29,8 +29,8 @@ Message* Message::clone() const
 {
     Message* msg = create(msgId_);
     Serializer ser;
-    Serialize(ser);
-    msg->Deserialize(ser);
+    serialize(ser);
+    msg->deserialize(ser);
 
     return msg;
 }

@@ -17,8 +17,8 @@ public:
     Message(uint16_t id) : msgId_(id) {}
     virtual ~Message() = default;
 
-    virtual void Serialize(Serializer& /*ser*/) const {}
-    virtual void Deserialize(Serializer& /*ser*/) {}
+    virtual void serialize(Serializer& /*ser*/) const {}
+    virtual void deserialize(Serializer& /*ser*/) {}
 
     unsigned short getId() const { return msgId_; }
     static Message* create_base(unsigned short id);

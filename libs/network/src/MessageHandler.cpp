@@ -26,7 +26,7 @@ int MessageHandler::send(Socket& sock, const Message& msg)
 
     Serializer ser;
     ser.PushRawData(&header, sizeof(header)); // Updated later
-    msg.Serialize(ser);
+    msg.serialize(ser);
 
     if(ser.GetLength() > 64 * 1024) /// 64KB, ACHTUNG: IPV4 garantiert nur maximal 576!!
     {
@@ -183,7 +183,7 @@ Message* MessageHandler::recv(Socket& sock, int& error, unsigned timeoutInMs)
     if(!msg)
         return nullptr;
 
-    msg->Deserialize(ser);
+    msg->deserialize(ser);
     error = 0;
     return msg;
 }
