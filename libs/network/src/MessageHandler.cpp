@@ -25,17 +25,17 @@ int MessageHandler::send(Socket& sock, const Message& msg)
     MsgHeader header;
 
     Serializer ser;
-    ser.PushRawData(&header, sizeof(header)); // Updated later
+    ser.pushRawData(&header, sizeof(header)); // Updated later
     msg.serialize(ser);
 
-    if(ser.GetLength() > 64 * 1024) /// 64KB, ACHTUNG: IPV4 garantiert nur maximal 576!!
+    if(ser.getLength() > 64 * 1024) /// 64KB, ACHTUNG: IPV4 garantiert nur maximal 576!!
     {
-        LOG.write("BIG OOPS! Message with length %u exceeds maximum of %d!\n") % ser.GetLength() % (64 * 1024);
+        LOG.write("BIG OOPS! Message with length %u exceeds maximum of %d!\n") % ser.getLength() % (64 * 1024);
         return -1;
     }
 
-    const auto packetLen = ser.GetLength();
-    unsigned char* data = ser.GetDataWritable(packetLen);
+    const auto packetLen = ser.getLength();
+    unsigned char* data = ser.getDataWritable(packetLen);
     header.msgId = msg.getId();
     header.msgLen = packetLen - sizeof(header);
 
@@ -171,7 +171,7 @@ Message* MessageHandler::recv(Socket& sock, int& error, unsigned timeoutInMs)
     Serializer ser;
     if(header.msgLen)
     {
-        read = sock.Recv(ser.GetDataWritable(header.msgLen), header.msgLen);
+        read = sock.Recv(ser.getDataWritable(header.msgLen), header.msgLen);
         if(read < header.msgLen)
         {
             LOG.write("recv: data: only got %d bytes instead of %d\n") % read % header.msgLen;

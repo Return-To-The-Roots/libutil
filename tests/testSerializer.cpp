@@ -22,50 +22,50 @@ BOOST_AUTO_TEST_CASE(PushPopSimpleTypes)
     bool bt = true;
     bool bf = false;
     Serializer ser;
-    ser.Push(u8);
-    ser.Push(i8);
-    ser.Push(u16);
-    ser.Push(i16);
-    ser.Push(u32);
-    ser.Push(i32);
-    ser.Push(u64);
-    ser.Push(i64);
-    ser.Push(bt);
-    ser.Push(bf);
-    BOOST_TEST_REQUIRE(ser.Pop<uint8_t>() == u8);
-    BOOST_TEST_REQUIRE(ser.Pop<int8_t>() == i8);
-    BOOST_TEST_REQUIRE(ser.Pop<uint16_t>() == u16);
-    BOOST_TEST_REQUIRE(ser.Pop<int16_t>() == i16);
-    BOOST_TEST_REQUIRE(ser.Pop<uint32_t>() == u32);
-    BOOST_TEST_REQUIRE(ser.Pop<int32_t>() == i32);
-    BOOST_TEST_REQUIRE(ser.Pop<uint64_t>() == u64);
-    BOOST_TEST_REQUIRE(ser.Pop<int64_t>() == i64);
-    BOOST_TEST_REQUIRE(ser.Pop<bool>() == bt);
-    BOOST_TEST_REQUIRE(ser.Pop<bool>() == bf);
+    ser.push(u8);
+    ser.push(i8);
+    ser.push(u16);
+    ser.push(i16);
+    ser.push(u32);
+    ser.push(i32);
+    ser.push(u64);
+    ser.push(i64);
+    ser.push(bt);
+    ser.push(bf);
+    BOOST_TEST_REQUIRE(ser.pop<uint8_t>() == u8);
+    BOOST_TEST_REQUIRE(ser.pop<int8_t>() == i8);
+    BOOST_TEST_REQUIRE(ser.pop<uint16_t>() == u16);
+    BOOST_TEST_REQUIRE(ser.pop<int16_t>() == i16);
+    BOOST_TEST_REQUIRE(ser.pop<uint32_t>() == u32);
+    BOOST_TEST_REQUIRE(ser.pop<int32_t>() == i32);
+    BOOST_TEST_REQUIRE(ser.pop<uint64_t>() == u64);
+    BOOST_TEST_REQUIRE(ser.pop<int64_t>() == i64);
+    BOOST_TEST_REQUIRE(ser.pop<bool>() == bt);
+    BOOST_TEST_REQUIRE(ser.pop<bool>() == bf);
 }
 
 BOOST_AUTO_TEST_CASE(PushPopVarSize)
 {
     Serializer ser;
     // Test corner cases of var size
-    ser.PushVarSize(0);
-    ser.PushVarSize(0x7F);
-    ser.PushVarSize(0x80);
-    ser.PushVarSize(0x3FFF);
-    ser.PushVarSize(0x4000);
-    ser.PushVarSize(0x1FFFFF);
-    ser.PushVarSize(0xFFFFFFF);
-    ser.PushVarSize(0x10000000);
-    ser.PushVarSize(0xFFFFFFFF);
-    BOOST_TEST_REQUIRE(ser.PopVarSize() == 0u);
-    BOOST_TEST_REQUIRE(ser.PopVarSize() == 0x7Fu);
-    BOOST_TEST_REQUIRE(ser.PopVarSize() == 0x80u);
-    BOOST_TEST_REQUIRE(ser.PopVarSize() == 0x3FFFu);
-    BOOST_TEST_REQUIRE(ser.PopVarSize() == 0x4000u);
-    BOOST_TEST_REQUIRE(ser.PopVarSize() == 0x1FFFFFu);
-    BOOST_TEST_REQUIRE(ser.PopVarSize() == 0xFFFFFFFu);
-    BOOST_TEST_REQUIRE(ser.PopVarSize() == 0x10000000u);
-    BOOST_TEST_REQUIRE(ser.PopVarSize() == 0xFFFFFFFFu);
+    ser.pushVarSize(0);
+    ser.pushVarSize(0x7F);
+    ser.pushVarSize(0x80);
+    ser.pushVarSize(0x3FFF);
+    ser.pushVarSize(0x4000);
+    ser.pushVarSize(0x1FFFFF);
+    ser.pushVarSize(0xFFFFFFF);
+    ser.pushVarSize(0x10000000);
+    ser.pushVarSize(0xFFFFFFFF);
+    BOOST_TEST_REQUIRE(ser.popVarSize() == 0u);
+    BOOST_TEST_REQUIRE(ser.popVarSize() == 0x7Fu);
+    BOOST_TEST_REQUIRE(ser.popVarSize() == 0x80u);
+    BOOST_TEST_REQUIRE(ser.popVarSize() == 0x3FFFu);
+    BOOST_TEST_REQUIRE(ser.popVarSize() == 0x4000u);
+    BOOST_TEST_REQUIRE(ser.popVarSize() == 0x1FFFFFu);
+    BOOST_TEST_REQUIRE(ser.popVarSize() == 0xFFFFFFFu);
+    BOOST_TEST_REQUIRE(ser.popVarSize() == 0x10000000u);
+    BOOST_TEST_REQUIRE(ser.popVarSize() == 0xFFFFFFFFu);
 }
 
 struct Deserializer : s25util::VersionedDeserializer<Deserializer>
@@ -82,23 +82,23 @@ struct Example
         std::pair<unsigned, uint16_t> fieldsV1{11, 12};
         void save(Serializer& ser, const unsigned version) const
         {
-            ser.Push(fieldsV0.first);
-            ser.Push(fieldsV0.second);
+            ser.push(fieldsV0.first);
+            ser.push(fieldsV0.second);
             // Only for testing an old version
             if(version >= 1)
             {
-                ser.Push(fieldsV1.first);
-                ser.Push(fieldsV1.second);
+                ser.push(fieldsV1.first);
+                ser.push(fieldsV1.second);
             }
         }
         void load(Deserializer& ser)
         {
-            fieldsV0.first = ser.Pop<unsigned>();
-            fieldsV0.second = ser.Pop<uint16_t>();
+            fieldsV0.first = ser.pop<unsigned>();
+            fieldsV0.second = ser.pop<uint16_t>();
             if(ser.getDataVersion() >= 1)
             {
-                fieldsV1.first = ser.Pop<unsigned>();
-                fieldsV1.second = ser.Pop<uint16_t>();
+                fieldsV1.first = ser.pop<unsigned>();
+                fieldsV1.second = ser.pop<uint16_t>();
             } else
                 fieldsV1 = {11, 12};
         }
@@ -111,20 +111,20 @@ struct Example
     bool operator==(const Example& rhs) const { return getFields() == rhs.getFields(); }
     void save(Serializer& ser, const unsigned version) const
     { // Version passed only for testing
-        ser.Push(field1);
-        ser.Push(version);
+        ser.push(field1);
+        ser.push(version);
         substruct.save(ser, version);
-        ser.Push(field2);
+        ser.push(field2);
     }
     void load(Serializer& ser, const unsigned version)
     {
-        field1 = ser.Pop<uint32_t>();
-        BOOST_TEST_REQUIRE(ser.Pop<unsigned>() == version);
+        field1 = ser.pop<uint32_t>();
+        BOOST_TEST_REQUIRE(ser.pop<unsigned>() == version);
         {
             Deserializer deser(ser, version);
             substruct.load(deser);
         }
-        field2 = ser.Pop<uint32_t>();
+        field2 = ser.pop<uint32_t>();
     }
 };
 
@@ -134,8 +134,8 @@ BOOST_AUTO_TEST_CASE(VersionedDeserializer)
     Serializer ser0, ser1;
     input.save(ser0, 0);
     input.save(ser1, 1);
-    const std::vector<uint8_t> v0Data(ser0.GetData(), ser0.GetData() + ser0.GetLength());
-    const std::vector<uint8_t> v1Data(ser1.GetData(), ser1.GetData() + ser1.GetLength());
+    const std::vector<uint8_t> v0Data(ser0.getData(), ser0.getData() + ser0.getLength());
+    const std::vector<uint8_t> v1Data(ser1.getData(), ser1.getData() + ser1.getLength());
     {
         Example out{};
         Serializer ser(v0Data.data(), v0Data.size());
@@ -154,30 +154,30 @@ BOOST_AUTO_TEST_CASE(SerializerView)
 {
     Serializer ser;
     const uint32_t value = 1337;
-    ser.Push(value);
-    Serializer deser(ser.GetData(), ser.GetLength());
+    ser.push(value);
+    Serializer deser(ser.getData(), ser.getLength());
     // Can't write
-    BOOST_CHECK_THROW(deser.Push(42), std::logic_error);
+    BOOST_CHECK_THROW(deser.push(42), std::logic_error);
     // Only read
-    BOOST_TEST(deser.Pop<uint32_t>() == value);
+    BOOST_TEST(deser.pop<uint32_t>() == value);
     // No overflow
-    BOOST_TEST(deser.GetBytesLeft() == 0u);
-    BOOST_CHECK_THROW(deser.PopBool(), std::range_error);
-    // Clear allows writing only if we could before.
+    BOOST_TEST(deser.getBytesLeft() == 0u);
+    BOOST_CHECK_THROW(deser.popBool(), std::range_error);
+    // clear allows writing only if we could before.
     // E.g. when the original data goes out of scope but the deserializer does not
-    deser.Clear();
-    BOOST_CHECK_THROW(deser.Push(value), std::logic_error);
-    BOOST_TEST(ser.GetLength() == sizeof(uint32_t));
-    ser.Clear();
-    BOOST_TEST(ser.GetLength() == 0u);
-    BOOST_REQUIRE_NO_THROW(ser.Push<uint16_t>(value));
-    BOOST_TEST(ser.Pop<uint16_t>() == value);
-    BOOST_TEST(ser.GetLength() == sizeof(uint16_t));
+    deser.clear();
+    BOOST_CHECK_THROW(deser.push(value), std::logic_error);
+    BOOST_TEST(ser.getLength() == sizeof(uint32_t));
+    ser.clear();
+    BOOST_TEST(ser.getLength() == 0u);
+    BOOST_REQUIRE_NO_THROW(ser.push<uint16_t>(value));
+    BOOST_TEST(ser.pop<uint16_t>() == value);
+    BOOST_TEST(ser.getLength() == sizeof(uint16_t));
     // But we can reinit a deserializer
     deser = Serializer();
-    BOOST_REQUIRE_NO_THROW(deser.Push(value));
-    BOOST_TEST(deser.Pop<uint32_t>() == value);
-    BOOST_TEST(deser.GetLength() == sizeof(uint32_t));
+    BOOST_REQUIRE_NO_THROW(deser.push(value));
+    BOOST_TEST(deser.pop<uint32_t>() == value);
+    BOOST_TEST(deser.getLength() == sizeof(uint32_t));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

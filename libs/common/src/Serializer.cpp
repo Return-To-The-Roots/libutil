@@ -11,7 +11,7 @@ Serializer::Serializer(const void* data, unsigned numBytes)
     : data_(reinterpret_cast<uint8_t*>(const_cast<void*>(data))), length_(numBytes)
 {}
 
-void Serializer::Clear()
+void Serializer::clear()
 {
     if(storage_)
         storage_->clear();
@@ -20,15 +20,15 @@ void Serializer::Clear()
     readPos_ = 0;
 }
 
-void Serializer::SetLength(const unsigned length)
+void Serializer::setLength(const unsigned length)
 {
-    EnsureSize(length);
+    ensureSize(length);
     length_ = length;
     if(readPos_ > length_)
         readPos_ = length_;
 }
 
-void Serializer::EnsureSize(const unsigned numBytes)
+void Serializer::ensureSize(const unsigned numBytes)
 {
     if(!storage_)
         throw std::logic_error("Cannot write to deserializer");
@@ -42,21 +42,21 @@ void Serializer::EnsureSize(const unsigned numBytes)
     }
 }
 
-void Serializer::WriteToFile(BinaryFile& file) const
+void Serializer::writeToFile(BinaryFile& file) const
 {
-    file.WriteUnsignedInt(GetLength());
-    file.WriteRawData(GetData(), GetLength());
+    file.WriteUnsignedInt(getLength());
+    file.WriteRawData(getData(), getLength());
 }
 
-void Serializer::ReadFromFile(BinaryFile& file)
+void Serializer::readFromFile(BinaryFile& file)
 {
-    Clear();
+    clear();
 
     const auto buffer_size = file.ReadUnsignedInt();
-    file.ReadRawData(GetDataWritable(buffer_size), buffer_size);
+    file.ReadRawData(getDataWritable(buffer_size), buffer_size);
 }
 
-void Serializer::PushVarSize(uint32_t i)
+void Serializer::pushVarSize(uint32_t i)
 {
     do
     {
@@ -66,33 +66,33 @@ void Serializer::PushVarSize(uint32_t i)
         // Anything left? Set highest bit
         if(i)
             curVal |= 0x80;
-        Push(curVal);
+        push(curVal);
     } while(i);
 }
 
-void Serializer::PushBool(bool b)
+void Serializer::pushBool(bool b)
 {
-    PushUnsignedChar(b ? 1 : 0);
+    pushUnsignedChar(b ? 1 : 0);
 }
 
-void Serializer::PushString(const std::string& str)
+void Serializer::pushString(const std::string& str)
 {
-    PushVarSize(static_cast<unsigned>(str.length()));
-    PushRawData(str.c_str(), static_cast<unsigned>(str.length()));
+    pushVarSize(static_cast<unsigned>(str.length()));
+    pushRawData(str.c_str(), static_cast<unsigned>(str.length()));
 }
 
-void Serializer::PushLongString(const std::string& str)
+void Serializer::pushLongString(const std::string& str)
 {
-    PushUnsignedInt(static_cast<unsigned>(str.length()));
-    PushRawData(str.c_str(), static_cast<unsigned>(str.length()));
+    pushUnsignedInt(static_cast<unsigned>(str.length()));
+    pushRawData(str.c_str(), static_cast<unsigned>(str.length()));
 }
 
-uint32_t Serializer::PopVarSize()
+uint32_t Serializer::popVarSize()
 {
     uint32_t result = 0;
     for(int i = 0; i < 5; i++)
     {
-        const auto curVal = PopUnsignedChar();
+        const auto curVal = popUnsignedChar();
         result |= (curVal & 0x7F) << (i * 7);
         if(!(curVal & 0x80))
             return result;
@@ -101,33 +101,33 @@ uint32_t Serializer::PopVarSize()
     throw std::runtime_error("Invalid var size entry!");
 }
 
-bool Serializer::PopBool()
+bool Serializer::popBool()
 {
-    const auto value = PopUnsignedChar();
+    const auto value = popUnsignedChar();
     assert(value == 0 || value == 1);
     return (value != 0);
 }
 
-std::string Serializer::PopString()
+std::string Serializer::popString()
 {
     std::string str;
-    str.resize(PopVarSize());
-    PopRawData(str.data(), static_cast<unsigned>(str.length()));
+    str.resize(popVarSize());
+    popRawData(str.data(), static_cast<unsigned>(str.length()));
     return str;
 }
 
-std::string Serializer::PopLongString()
+std::string Serializer::popLongString()
 {
     std::string str;
-    str.resize(PopUnsignedInt());
-    PopRawData(str.data(), static_cast<unsigned>(str.length()));
+    str.resize(popUnsignedInt());
+    popRawData(str.data(), static_cast<unsigned>(str.length()));
     return str;
 }
 
-const uint8_t* Serializer::PopAndDiscard(unsigned numBytes)
+const uint8_t* Serializer::popAndDiscard(unsigned numBytes)
 {
     const auto* const data = data_ + readPos_;
-    CheckSize(numBytes);
+    checkSize(numBytes);
     readPos_ += numBytes;
     return data;
 }

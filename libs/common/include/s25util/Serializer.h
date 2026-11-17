@@ -28,88 +28,88 @@ public:
     Serializer(const void* data, unsigned numBytes);
 
     /// Remove all data
-    void Clear();
+    void clear();
     /// Get current read position
-    unsigned GetReadPos() const noexcept { return readPos_; }
+    unsigned getReadPos() const noexcept { return readPos_; }
 
     /// Get current number of bytes contained
-    unsigned GetLength() const noexcept { return length_; }
+    unsigned getLength() const noexcept { return length_; }
     /// Set the current length
-    void SetLength(unsigned length);
+    void setLength(unsigned length);
     /// Get remaining bytes to read
-    unsigned GetBytesLeft() const noexcept;
+    unsigned getBytesLeft() const noexcept;
 
     /// Access current data
-    const uint8_t* GetData() const noexcept { return data_; }
+    const uint8_t* getData() const noexcept { return data_; }
 
     /// Change the size of the buffer and provide writable access it
-    uint8_t* GetDataWritable(unsigned length)
+    uint8_t* getDataWritable(unsigned length)
     {
-        SetLength(length);
+        setLength(length);
         return data_;
     }
 
-    void WriteToFile(BinaryFile& file) const;
-    void ReadFromFile(BinaryFile& file);
+    void writeToFile(BinaryFile& file) const;
+    void readFromFile(BinaryFile& file);
 
     // Write methods
 
-    void PushRawData(const void* data, unsigned numBytes);
+    void pushRawData(const void* data, unsigned numBytes);
 
-    void PushSignedInt(int32_t i) { Push(i); }
-    void PushUnsignedInt(uint32_t i) { Push(i); }
+    void pushSignedInt(int32_t i) { push(i); }
+    void pushUnsignedInt(uint32_t i) { push(i); }
 
-    void PushSignedShort(int16_t i) { Push(i); }
-    void PushUnsignedShort(uint16_t i) { Push(i); }
+    void pushSignedShort(int16_t i) { push(i); }
+    void pushUnsignedShort(uint16_t i) { push(i); }
 
-    void PushSignedChar(int8_t i) { Push(i); }
-    void PushUnsignedChar(uint8_t i) { Push(i); }
-    /// Push a variable sized uint32_t. Uses less space when value is small
-    void PushVarSize(uint32_t i);
+    void pushSignedChar(int8_t i) { push(i); }
+    void pushUnsignedChar(uint8_t i) { push(i); }
+    /// push a variable sized uint32_t. Uses less space when value is small
+    void pushVarSize(uint32_t i);
 
-    void PushBool(bool b);
+    void pushBool(bool b);
 
-    void PushString(const std::string& str);
-    void PushLongString(const std::string& str);
+    void pushString(const std::string& str);
+    void pushLongString(const std::string& str);
 
     // Read methods
 
-    void PopRawData(void* data, unsigned numBytes);
+    void popRawData(void* data, unsigned numBytes);
 
-    int32_t PopSignedInt() { return Pop<int32_t>(); }
-    uint32_t PopUnsignedInt() { return Pop<uint32_t>(); }
+    int32_t popSignedInt() { return pop<int32_t>(); }
+    uint32_t popUnsignedInt() { return pop<uint32_t>(); }
 
-    int16_t PopSignedShort() { return Pop<int16_t>(); }
-    uint16_t PopUnsignedShort() { return Pop<uint16_t>(); }
+    int16_t popSignedShort() { return pop<int16_t>(); }
+    uint16_t popUnsignedShort() { return pop<uint16_t>(); }
 
-    int8_t PopSignedChar() { return Pop<int8_t>(); }
-    uint8_t PopUnsignedChar() { return Pop<uint8_t>(); }
-    uint32_t PopVarSize();
+    int8_t popSignedChar() { return pop<int8_t>(); }
+    uint8_t popUnsignedChar() { return pop<uint8_t>(); }
+    uint32_t popVarSize();
 
-    bool PopBool();
+    bool popBool();
 
-    std::string PopString();
-    std::string PopLongString();
+    std::string popString();
+    std::string popLongString();
 
     /// Advance the read pointer by the given number of bytes
     /// Return a pointer to the start of that data in the internal buffer
-    const uint8_t* PopAndDiscard(unsigned numBytes);
+    const uint8_t* popAndDiscard(unsigned numBytes);
 
     template<typename T>
-    T Pop();
+    T pop();
 
     template<typename T>
-    void Push(T val);
+    void push(T val);
 
 private:
     /// Add the given number of bytes to the usable length
-    void ExtendMemory(unsigned numBytes) { EnsureSize(length_ + numBytes); }
+    void extendMemory(unsigned numBytes) { ensureSize(length_ + numBytes); }
     /// Verify that the given number of bytes can be read/popped
     /// Otherwise throws a length_error
-    void CheckSize(unsigned numBytes) const;
+    void checkSize(unsigned numBytes) const;
     /// Make sure the internal buffer can hold the given number of bytes
     /// potentially increasing the size
-    void EnsureSize(unsigned numBytes);
+    void ensureSize(unsigned numBytes);
 
     std::optional<boost::container::vector<uint8_t>> storage_;
     uint8_t* data_ = nullptr;
@@ -120,62 +120,62 @@ private:
     unsigned readPos_ = 0;
 };
 
-inline unsigned Serializer::GetBytesLeft() const noexcept
+inline unsigned Serializer::getBytesLeft() const noexcept
 {
     assert(readPos_ <= length_);
     return length_ - readPos_;
 }
 
-inline void Serializer::CheckSize(unsigned numBytes) const
+inline void Serializer::checkSize(unsigned numBytes) const
 {
-    if(GetBytesLeft() < numBytes)
+    if(getBytesLeft() < numBytes)
         throw std::range_error("Out of range during deserialization");
 }
 
-inline void Serializer::PushRawData(const void* data, unsigned numBytes)
+inline void Serializer::pushRawData(const void* data, unsigned numBytes)
 {
     if(numBytes == 0)
         return;
-    ExtendMemory(numBytes);
+    extendMemory(numBytes);
     std::memcpy(&data_[length_], data, numBytes);
     this->length_ += numBytes;
 }
 
-inline void Serializer::PopRawData(void* data, unsigned numBytes)
+inline void Serializer::popRawData(void* data, unsigned numBytes)
 {
     if(numBytes == 0)
         return;
-    CheckSize(numBytes);
+    checkSize(numBytes);
     std::memcpy(data, &data_[readPos_], numBytes);
     readPos_ += numBytes;
 }
 
 template<typename T>
-inline T Serializer::Pop()
+inline T Serializer::pop()
 {
     static_assert(std::is_trivial_v<T> && !std::is_pointer_v<T>, "Type must be a trivial, non-pointer type");
     T i;
     // Note: No casting allowed due to alignment
-    PopRawData(&i, sizeof(i));
+    popRawData(&i, sizeof(i));
     return Converter::toNative(i);
 }
 
 template<typename T>
-inline void Serializer::Push(T val)
+inline void Serializer::push(T val)
 {
     static_assert(std::is_trivial_v<T> && !std::is_pointer_v<T>, "Type must be a trivial, non-pointer type");
     val = Converter::fromNative(val);
-    PushRawData(&val, sizeof(val));
+    pushRawData(&val, sizeof(val));
 }
 
 template<>
-inline void Serializer::Push(bool val)
+inline void Serializer::push(bool val)
 {
-    PushBool(val);
+    pushBool(val);
 }
 
 template<>
-inline bool Serializer::Pop<bool>()
+inline bool Serializer::pop<bool>()
 {
-    return PopBool();
+    return popBool();
 }

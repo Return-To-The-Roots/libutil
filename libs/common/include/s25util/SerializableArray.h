@@ -67,7 +67,7 @@ public:
      */
     void serialize(Serializer& ser) const
     {
-        ser.PushUnsignedInt(static_cast<unsigned>(elements.size()));
+        ser.pushUnsignedInt(static_cast<unsigned>(elements.size()));
 
         for(const auto& el : elements)
             el.serialize(ser);
@@ -84,7 +84,7 @@ public:
     void deserialize(Serializer& ser)
     {
         clear();
-        unsigned count = ser.PopUnsignedInt();
+        unsigned count = ser.popUnsignedInt();
         elements.reserve(count);
 
         for(unsigned i = 0; i < count; ++i)
