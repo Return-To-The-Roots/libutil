@@ -15,11 +15,11 @@ public:
     LANDiscoveryService(const Config& cfg);
     ~LANDiscoveryService();
     /// Sets the payload data to send
-    void SetPayload(const void* data, size_t len);
+    void setPayload(const void* data, size_t len);
     /// Initializes the service so it can be run
-    bool Start();
+    bool start();
     /// Closes the service sending a final close packet if it was running
-    void Stop();
+    void stop();
     /// Must be called in the main loop when the service is started. No-Op if it isn't
-    void Run();
+    void run();
 };

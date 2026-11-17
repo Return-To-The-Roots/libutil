@@ -118,23 +118,23 @@ PeerAddr::PeerAddr(unsigned short port) : addrLen(sizeof(sockaddr_in))
     addr.sa_in.sin_port = htons(port);
 }
 
-std::string PeerAddr::GetIp() const
+std::string PeerAddr::getIp() const
 {
-    return Socket::IpToString(GetAddr());
+    return Socket::ipToString(getAddr());
 }
 
-sockaddr* PeerAddr::GetAddr()
+sockaddr* PeerAddr::getAddr()
 {
     return &addr.sa;
 }
 
-const sockaddr* PeerAddr::GetAddr() const
+const sockaddr* PeerAddr::getAddr() const
 {
     return &addr.sa;
 }
 
 Socket::Socket()
-    : socket_(INVALID_SOCKET), refCount_(nullptr), status_(Status::Invalid), isBroadcast(false), upnpPort_(0)
+    : socket_(INVALID_SOCKET), refCount_(nullptr), status_(Status::Invalid), isBroadcast_(false), upnpPort_(0)
 {}
 
 /**
@@ -144,13 +144,13 @@ Socket::Socket()
  *  @param[in] st Status der gesetzt werden soll
  */
 Socket::Socket(const SOCKET so, Status st)
-    : socket_(so), refCount_(new int32_t), status_(st), isBroadcast(false), upnpPort_(0)
+    : socket_(so), refCount_(new int32_t), status_(st), isBroadcast_(false), upnpPort_(0)
 {
     *refCount_ = 1;
 }
 
 Socket::Socket(const Socket& so)
-    : socket_(so.socket_), refCount_(so.refCount_), status_(so.status_), isBroadcast(so.isBroadcast), upnpPort_(0)
+    : socket_(so.socket_), refCount_(so.refCount_), status_(so.status_), isBroadcast_(so.isBroadcast_), upnpPort_(0)
 {
     if(refCount_)
         ++*refCount_;
@@ -158,13 +158,13 @@ Socket::Socket(const Socket& so)
 
 Socket::Socket(Socket&& so) noexcept
     : socket_(std::exchange(so.socket_, INVALID_SOCKET)), refCount_(std::exchange(so.refCount_, nullptr)),
-      status_(std::exchange(so.status_, Status::Invalid)), isBroadcast(so.isBroadcast),
+      status_(std::exchange(so.status_, Status::Invalid)), isBroadcast_(so.isBroadcast_),
       upnpPort_(std::exchange(so.upnpPort_, 0))
 {}
 
 Socket::~Socket()
 {
-    Close();
+    close();
 }
 
 Socket& Socket::operator=(Socket rhs)
@@ -179,7 +179,7 @@ Socket& Socket::operator=(Socket rhs)
  *  @param[in] so Socket welches benutzt werden soll
  *  @param[in] st Status der gesetzt werden soll
  */
-void Socket::Set(const SOCKET socket, Status status)
+void Socket::set(const SOCKET socket, Status status)
 {
     socket_ = socket;
     status_ = status;
@@ -190,7 +190,7 @@ void Socket::Set(const SOCKET socket, Status status)
  *
  *  @return @p true bei Erfolg, @p false bei Fehler
  */
-bool Socket::Initialize()
+bool Socket::initialize()
 {
 #ifdef _WIN32
     // obligatorische WSAStartup unter Windows
@@ -206,7 +206,7 @@ bool Socket::Initialize()
 /**
  *  räumt die Socket-Bibliothek auf.
  */
-void Socket::Shutdown()
+void Socket::shutdown()
 {
 #ifdef _WIN32
     // obligatorische WSACleanup unter Windows
@@ -219,10 +219,10 @@ void Socket::Shutdown()
  *
  *  @return @p true bei Erfolg, @p false bei Fehler
  */
-bool Socket::Create(int family, bool asUDPBroadcast)
+bool Socket::create(int family, bool asUDPBroadcast)
 {
     // socket ggf. schließen
-    Close();
+    close();
 
     socket_ = asUDPBroadcast ? socket(family, SOCK_DGRAM, IPPROTO_UDP) : socket(family, SOCK_STREAM, 0);
 
@@ -232,19 +232,19 @@ bool Socket::Create(int family, bool asUDPBroadcast)
     if(asUDPBroadcast)
     {
         int enable = 1;
-        SetSockOpt(SO_BROADCAST, &enable, sizeof(enable), SOL_SOCKET);
+        setSockOpt(SO_BROADCAST, &enable, sizeof(enable), SOL_SOCKET);
     } else
     {
         // Nagle deaktivieren
         int disable = 1;
-        SetSockOpt(TCP_NODELAY, &disable, sizeof(int), IPPROTO_TCP);
+        setSockOpt(TCP_NODELAY, &disable, sizeof(int), IPPROTO_TCP);
 
         int enable = 1;
-        SetSockOpt(SO_REUSEADDR, &enable, sizeof(int), SOL_SOCKET);
+        setSockOpt(SO_REUSEADDR, &enable, sizeof(int), SOL_SOCKET);
     }
 
     refCount_ = new int32_t(1); //-V508
-    isBroadcast = asUDPBroadcast;
+    isBroadcast_ = asUDPBroadcast;
 
     return (status_ != Status::Invalid);
 }
@@ -252,7 +252,7 @@ bool Socket::Create(int family, bool asUDPBroadcast)
 /**
  *  schliesst das Socket.
  */
-void Socket::Close()
+void Socket::close()
 {
     // Check if we have a socket
     if(!refCount_)
@@ -266,14 +266,14 @@ void Socket::Close()
     {
         // Physically close socket, if no references left
         if(socket_ != INVALID_SOCKET)
-            closesocket(socket_);
+            ::closesocket(socket_);
         delete refCount_;
 
         if(upnpPort_)
         {
             try
             {
-                UPnP::ClosePort(upnpPort_);
+                UPnP::closePort(upnpPort_);
             } catch(const std::runtime_error& e)
             {
                 LOG.write("Failed to renove UPnP portforwarding: %1%") % e.what();
@@ -282,11 +282,11 @@ void Socket::Close()
     }
 
     // Cleanup (even if the socket is still open, we just don't "have" it anymore)
-    Set(INVALID_SOCKET, Status::Invalid);
+    set(INVALID_SOCKET, Status::Invalid);
     refCount_ = nullptr;
 }
 
-bool Socket::Bind(unsigned short port, bool useIPv6) const
+bool Socket::bind(unsigned short port, bool useIPv6) const
 {
     union
     {
@@ -311,17 +311,17 @@ bool Socket::Bind(unsigned short port, bool useIPv6) const
         size = sizeof(addrV4);
     }
 
-    return bind(socket_, (sockaddr*)&addrs, size) != SOCKET_ERROR;
+    return ::bind(socket_, (sockaddr*)&addrs, size) != SOCKET_ERROR;
 }
 
 /**
- *  setzt das Socket auf Listen.
+ *  setzt das Socket auf listen.
  *
  *  @param[in] port Port auf dem "gelauscht" werden soll.
  *
  *  @return @p true bei Erfolg, @p false bei Fehler
  */
-bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
+bool Socket::listen(unsigned short port, bool use_ipv6, bool use_upnp)
 {
     bool ipv6 = use_ipv6;
     bool error = false;
@@ -330,7 +330,7 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
     do
     {
         // Bei Fehler jeweils nochmal mit ipv4 probieren
-        if(!Create(ipv6 ? AF_INET6 : AF_INET))
+        if(!create(ipv6 ? AF_INET6 : AF_INET))
         {
             ipv6 = !ipv6;
             error = true;
@@ -342,7 +342,7 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
         }
 
         // Binden
-        if(!Bind(port, ipv6))
+        if(!bind(port, ipv6))
         {
             ipv6 = !ipv6;
             error = true;
@@ -354,7 +354,7 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
         }
 
         // und Horchen
-        if(listen(socket_, 10))
+        if(::listen(socket_, 10))
         {
             ipv6 = !ipv6;
             error = true;
@@ -373,7 +373,7 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
     {
         try
         {
-            UPnP::OpenPort(port);
+            UPnP::openPort(port);
         } catch(const std::runtime_error& e)
         {
             LOG.write("Failed to forward port via UPnP: %1%") % e.what();
@@ -394,13 +394,13 @@ bool Socket::Listen(unsigned short port, bool use_ipv6, bool use_upnp)
  *
  *  @return @p true bei Erfolg, @p false bei Fehler
  */
-Socket Socket::Accept()
+Socket Socket::accept()
 {
     if(status_ != Status::Listen)
         return Socket();
 
     // Verbindung annehmen
-    SOCKET tmp = accept(socket_, nullptr, nullptr);
+    SOCKET tmp = ::accept(socket_, nullptr, nullptr);
     if(tmp == INVALID_SOCKET)
         return Socket();
 
@@ -420,7 +420,7 @@ Socket Socket::Accept()
  *
  *  @param[in] hostname Ziel-Hostname/-ip
  */
-std::vector<HostAddr> Socket::HostToIp(const std::string& hostname, const unsigned port, bool get_ipv6, bool useUDP)
+std::vector<HostAddr> Socket::hostToIp(const std::string& hostname, const unsigned port, bool get_ipv6, bool useUDP)
 {
     std::vector<HostAddr> ips;
     std::string sPort = s25util::toStringClassic(port);
@@ -446,7 +446,7 @@ std::vector<HostAddr> Socket::HostToIp(const std::string& hostname, const unsign
     do
     {
         HostAddr h;
-        h.host = IpToString(addr->ai_addr);
+        h.host = ipToString(addr->ai_addr);
         h.port = sPort;
         h.ipv6 = (addr->ai_family == AF_INET6);
         h.isUDP = addr->ai_protocol == SOCK_DGRAM;
@@ -458,7 +458,7 @@ std::vector<HostAddr> Socket::HostToIp(const std::string& hostname, const unsign
     return ips;
 }
 
-void Socket::Sleep(unsigned ms)
+void Socket::sleep(unsigned ms)
 {
 #ifdef _WIN32
     ::Sleep(ms);
@@ -475,7 +475,7 @@ void Socket::Sleep(unsigned ms)
  *
  *  @p true bei Erfolg, @p false bei Fehler
  */
-bool Socket::Connect(const std::string& hostname, const unsigned short port, bool use_ipv6, const ProxySettings& proxy)
+bool Socket::connect(const std::string& hostname, const unsigned short port, bool use_ipv6, const ProxySettings& proxy)
 {
     if(proxy.type == ProxyType::Socks4)
         use_ipv6 = false;
@@ -483,13 +483,13 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
     std::vector<HostAddr> proxy_ips;
     if(proxy.type != ProxyType::None)
     {
-        proxy_ips = HostToIp(proxy.hostname, proxy.port, use_ipv6);
+        proxy_ips = hostToIp(proxy.hostname, proxy.port, use_ipv6);
         if(proxy_ips.empty())
             return false;
     }
 
     // TODO: socks v5 kann remote resolven
-    std::vector<HostAddr> ips = HostToIp(hostname, port, use_ipv6);
+    std::vector<HostAddr> ips = hostToIp(hostname, port, use_ipv6);
     if(ips.empty())
         return false;
 
@@ -503,7 +503,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
         if(it.isUDP)
             throw std::invalid_argument("Cannot connect to UDP (yet)");
 
-        if(!Create(it.ipv6 ? AF_INET6 : AF_INET))
+        if(!create(it.ipv6 ? AF_INET6 : AF_INET))
             continue;
 
         // aktiviere non-blocking
@@ -520,12 +520,12 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
             LOG.write("Could not resolve %s. Skipping...\n") % it.host;
             continue;
         }
-        std::string ip = IpToString(addr.getAddr().ai_addr); //-V807
+        std::string ip = ipToString(addr.getAddr().ai_addr); //-V807
         LOG.write("Connection to %s%s:%d\n") % (proxy.type != ProxyType::None ? "Proxy " : "") % ip
           % (proxy.type != ProxyType::None ? proxy.port : port);
 
         // Und schließlich Verbinden
-        if(connect(socket_, addr.getAddr().ai_addr, static_cast<int>(addr.getAddr().ai_addrlen)) != SOCKET_ERROR)
+        if(::connect(socket_, addr.getAddr().ai_addr, static_cast<int>(addr.getAddr().ai_addrlen)) != SOCKET_ERROR)
         {
             done = true;
             break;
@@ -540,10 +540,10 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
             while(!done)
             {
                 SocketSet sw, se;
-                sw.Add(*this);
-                se.Add(*this);
+                sw.add(*this);
+                se.add(*this);
 
-                if(sw.Select(0, 1) == 1 || se.Select(0, 2) != 0)
+                if(sw.select(0, 1) == 1 || se.select(0, 2) != 0)
                 {
                     unsigned err;
                     socklen_t len = sizeof(unsigned);
@@ -580,12 +580,12 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
                             }
                             strcpy_check(proxyinit, 8, "siedler25"); // userid
 
-                            Send(proxyinit);
+                            send(proxyinit);
 
                             int proxy_timeout = 0;
-                            while(BytesWaiting() < 8 && proxy_timeout < 8)
+                            while(bytesWaiting() < 8 && proxy_timeout < 8)
                             {
-                                Sleep(250);
+                                sleep(250);
                                 ++proxy_timeout;
                             }
 
@@ -595,7 +595,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
                                 return false;
                             }
 
-                            Recv(proxyinit, 8);
+                            recv(proxyinit, 8);
 
                             if(proxyinit[0] != 0 || proxyinit[1] != 90)
                             {
@@ -617,7 +617,7 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
                     done = true;
                 }
 
-                Sleep(50);
+                sleep(50);
 
                 ++timeout;
                 if(timeout > 8)
@@ -666,23 +666,23 @@ bool Socket::Connect(const std::string& hostname, const unsigned short port, boo
  *
  *  @return -1 bei Fehler, Anzahl der empfangenen Bytes (max. @p length )
  */
-int Socket::Recv(void* buffer, const int length, bool block) const
+int Socket::recv(void* buffer, const int length, bool block) const
 {
     if(!isValid())
         return -1;
 
     // und empfangen
-    return recv(socket_, reinterpret_cast<char*>(buffer), length, (block ? 0 : MSG_PEEK));
+    return ::recv(socket_, reinterpret_cast<char*>(buffer), length, (block ? 0 : MSG_PEEK));
 }
 
-int Socket::Recv(void* const buffer, const int length, PeerAddr& addr) const
+int Socket::recv(void* const buffer, const int length, PeerAddr& addr) const
 {
     if(!isValid())
         return -1;
 
-    socklen_t addrLen = PeerAddr::GetCapacity();
-    const int result = recvfrom(socket_, reinterpret_cast<char*>(buffer), length, 0, addr.GetAddr(), &addrLen);
-    addr.SetSize(result >= 0 ? addrLen : 0);
+    socklen_t addrLen = PeerAddr::getCapacity();
+    const int result = recvfrom(socket_, reinterpret_cast<char*>(buffer), length, 0, addr.getAddr(), &addrLen);
+    addr.setSize(result >= 0 ? addrLen : 0);
     return result;
 }
 
@@ -694,21 +694,21 @@ int Socket::Recv(void* const buffer, const int length, PeerAddr& addr) const
  *
  *  @return -1 bei Fehler, Anzahl der gesendeten Bytes (max. @p length )
  */
-int Socket::Send(const void* const buffer, const int length) const
+int Socket::send(const void* const buffer, const int length) const
 {
     if(!isValid())
         return -1;
 
     // und verschicken
-    return send(socket_, reinterpret_cast<const char*>(buffer), length, 0);
+    return ::send(socket_, reinterpret_cast<const char*>(buffer), length, 0);
 }
 
-int Socket::Send(const void* const buffer, const int length, const PeerAddr& addr) const
+int Socket::send(const void* const buffer, const int length, const PeerAddr& addr) const
 {
     if(!isValid())
         return -1;
 
-    return sendto(socket_, reinterpret_cast<const char*>(buffer), length, 0, addr.GetAddr(), addr.GetSize());
+    return sendto(socket_, reinterpret_cast<const char*>(buffer), length, 0, addr.getAddr(), addr.getSize());
 }
 
 /**
@@ -719,7 +719,7 @@ int Socket::Send(const void* const buffer, const int length, const PeerAddr& add
  *
  *  @return @p true bei Erfolg, @p false bei Fehler
  */
-bool Socket::SetSockOpt(int nOptionName, const void* lpOptionValue, int nOptionLen, int nLevel) const
+bool Socket::setSockOpt(int nOptionName, const void* lpOptionValue, int nOptionLen, int nLevel) const
 {
     return (SOCKET_ERROR != setsockopt(socket_, nLevel, nOptionName, (const char*)lpOptionValue, nOptionLen));
 }
@@ -741,10 +741,10 @@ bool Socket::operator>(const Socket& sock) const
  *
  *  @return liefert die Menge der wartenden Bytes
  */
-int Socket::BytesWaiting() const
+int Socket::bytesWaiting() const
 {
     unsigned received;
-    if(BytesWaiting(&received) != 0)
+    if(bytesWaiting(&received) != 0)
         return -1;
 
     return (int)received;
@@ -757,7 +757,7 @@ int Socket::BytesWaiting() const
  *
  *  @return liefert Null bei Erfolg, SOCKET_ERROR bei Fehler
  */
-int Socket::BytesWaiting(unsigned* received) const
+int Socket::bytesWaiting(unsigned* received) const
 {
 #ifdef _WIN32
     DWORD dwReceived;
@@ -774,7 +774,7 @@ int Socket::BytesWaiting(unsigned* received) const
  *
  *  @return liefert @p buffer zurück oder @p "" bei Fehler
  */
-std::string Socket::GetPeerIP() const
+std::string Socket::getPeerIP() const
 {
     address_t peer;
     socklen_t length = sizeof(peer);
@@ -784,7 +784,7 @@ std::string Socket::GetPeerIP() const
         return "";
 
     // in Text verwandeln
-    return IpToString(&peer.sa);
+    return ipToString(&peer.sa);
 }
 
 /**
@@ -792,7 +792,7 @@ std::string Socket::GetPeerIP() const
  *
  *  @return liefert @p buffer zurück oder @p "" bei Fehler
  */
-std::string Socket::GetSockIP() const
+std::string Socket::getSockIP() const
 {
     address_t peer;
     socklen_t length = sizeof(peer);
@@ -802,7 +802,7 @@ std::string Socket::GetSockIP() const
         return "";
 
     // in Text verwandeln
-    return IpToString(&peer.sa);
+    return ipToString(&peer.sa);
 }
 
 /**
@@ -810,7 +810,7 @@ std::string Socket::GetSockIP() const
  *
  *  @return reference to @p socket_
  */
-SOCKET Socket::GetSocket() const
+SOCKET Socket::getSocket() const
 {
     // Zeiger auf Socket liefern
     return socket_;
@@ -819,7 +819,7 @@ SOCKET Socket::GetSocket() const
 /**
  *  liefert einen string der übergebenen Ip.
  */
-std::string Socket::IpToString(const sockaddr* addr)
+std::string Socket::ipToString(const sockaddr* addr)
 {
     std::array<char, 256> temp{};
     address_t addrCopy;

@@ -15,8 +15,8 @@ public:
     void open(uint16_t port);
     void close();
 
-    static void OpenPort(uint16_t port);
-    static void ClosePort(uint16_t port);
+    static void openPort(uint16_t port);
+    static void closePort(uint16_t port);
 
 private:
     uint16_t port_ = 0;

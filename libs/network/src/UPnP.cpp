@@ -21,7 +21,7 @@ UPnP::~UPnP()
 void UPnP::open(uint16_t port)
 {
     close();
-    OpenPort(port);
+    openPort(port);
     port_ = port;
 }
 
@@ -29,7 +29,7 @@ void UPnP::close()
 {
     if(port_)
     {
-        ClosePort(port_);
+        closePort(port_);
         port_ = 0;
     }
 }

@@ -19,29 +19,29 @@ public:
         uint8_t version;
         uint16_t portQuery, portResponse;
 
-        static Magic_t MakeMagic(const std::string& str);
+        static Magic_t makeMagic(const std::string& str);
     };
 
     struct Request
     {
         // Struct must be send over network with a fixed size
         std::array<char, sizeof(Magic_t) + sizeof(uint8_t)> data;
-        Magic_t& GetMagic() { return reinterpret_cast<Magic_t&>(data[0]); }
-        uint8_t& GetVersion() { return reinterpret_cast<uint8_t&>(data[sizeof(Magic_t)]); }
+        Magic_t& getMagic() { return reinterpret_cast<Magic_t&>(data[0]); }
+        uint8_t& getVersion() { return reinterpret_cast<uint8_t&>(data[sizeof(Magic_t)]); }
     };
     struct Info
     {
         // Struct must be send over network with a fixed size
         using Payload = std::array<char, 192>;
         std::array<char, sizeof(Magic_t) + sizeof(uint8_t) * 2 + sizeof(Payload)> data;
-        Magic_t& GetMagic() { return reinterpret_cast<Magic_t&>(data[0]); }
-        uint8_t& GetVersion() { return reinterpret_cast<uint8_t&>(data[sizeof(Magic_t)]); }
-        uint8_t& GetIsActive() { return reinterpret_cast<uint8_t&>(data[sizeof(Magic_t) + sizeof(uint8_t)]); } //-V119
-        Payload& GetPayload()
+        Magic_t& getMagic() { return reinterpret_cast<Magic_t&>(data[0]); }
+        uint8_t& getVersion() { return reinterpret_cast<uint8_t&>(data[sizeof(Magic_t)]); }
+        uint8_t& getIsActive() { return reinterpret_cast<uint8_t&>(data[sizeof(Magic_t) + sizeof(uint8_t)]); } //-V119
+        Payload& getPayload()
         {
             return reinterpret_cast<Payload&>(data[sizeof(Magic_t) + sizeof(uint8_t) * 2]);
         } //-V119
-        const Payload& GetPayload() const
+        const Payload& getPayload() const
         {
             return reinterpret_cast<const Payload&>(data[sizeof(Magic_t) + sizeof(uint8_t) * 2]);
         } //-V119
@@ -51,13 +51,13 @@ public:
 
 protected:
     /// Inits the socket and starts listening for broadcasts
-    bool Start();
+    bool start();
     /// Closes the socket
-    void Stop();
+    void stop();
     /// Returns true if any data is available to read
-    bool IsDataAvailable();
+    bool isDataAvailable();
     /// Sends a broadcast
-    void Broadcast(const void* buffer, int len);
+    void broadcast(const void* buffer, int len);
 
     const Config config;
     Socket socket;

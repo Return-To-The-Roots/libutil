@@ -8,52 +8,52 @@ LANDiscoveryClient::LANDiscoveryClient(const Config& cfg) : LANDiscoveryBase(cfg
 
 LANDiscoveryClient::~LANDiscoveryClient() = default;
 
-bool LANDiscoveryClient::Start()
+bool LANDiscoveryClient::start()
 {
     if(isRunning)
         return true;
 
-    if(!LANDiscoveryBase::Start())
+    if(!LANDiscoveryBase::start())
         return false;
     isRunning = true;
 
-    Refresh();
+    refresh();
     return true;
 }
 
-void LANDiscoveryClient::Stop()
+void LANDiscoveryClient::stop()
 {
     if(!isRunning)
         return;
 
-    LANDiscoveryBase::Stop();
+    LANDiscoveryBase::stop();
     isRunning = false;
 }
 
-void LANDiscoveryClient::Run()
+void LANDiscoveryClient::run()
 {
     if(!isRunning)
         return;
-    while(IsDataAvailable())
+    while(isDataAvailable())
     {
         ServiceInfo curInfo;
         PeerAddr addr;
 
-        if(socket.Recv(&curInfo.info, sizeof(curInfo.info), addr) < static_cast<int>(sizeof(curInfo.info)))
+        if(socket.recv(&curInfo.info, sizeof(curInfo.info), addr) < static_cast<int>(sizeof(curInfo.info)))
             break;
-        if(curInfo.info.GetMagic() != config.magicResponse || curInfo.info.GetVersion() != config.version)
+        if(curInfo.info.getMagic() != config.magicResponse || curInfo.info.getVersion() != config.version)
             continue;
 
-        curInfo.ip = addr.GetIp();
-        if(curInfo.info.GetIsActive())
+        curInfo.ip = addr.getIp();
+        if(curInfo.info.getIsActive())
             services[curInfo.ip] = curInfo;
         else
             services.erase(curInfo.ip);
     }
 }
 
-void LANDiscoveryClient::Refresh()
+void LANDiscoveryClient::refresh()
 {
     services.clear();
-    Broadcast(request.data.data(), sizeof(request));
+    broadcast(request.data.data(), sizeof(request));
 }

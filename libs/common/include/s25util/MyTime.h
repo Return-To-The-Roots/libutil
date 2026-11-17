@@ -15,16 +15,16 @@ struct Time
 {
 public:
     /// liefert die aktuelle Zeit.
-    static time64_t CurrentTime();
+    static time64_t currentTime();
     /// liefert die aktuellen Ticks.
-    static time64_t CurrentTick();
+    static time64_t currentTick();
     /// Format a time as a string
     /// @param format Format to use  (%Y=4 year (4 digits), %m month, %D day, %H hour, %i minute, %s second (all 2
     /// digits), %% -> %)
     /// @param time Pointer to time to format or nullptr to use current time
-    static std::string FormatTime(const std::string& format, time64_t time);
+    static std::string formatTime(const std::string& format, time64_t time);
     /// Format the current time as a string
-    static std::string FormatTime(const std::string& format);
+    static std::string formatTime(const std::string& format);
 };
 
 } // namespace s25util

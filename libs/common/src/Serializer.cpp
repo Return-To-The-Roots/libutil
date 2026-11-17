@@ -44,16 +44,16 @@ void Serializer::ensureSize(const unsigned numBytes)
 
 void Serializer::writeToFile(BinaryFile& file) const
 {
-    file.WriteUnsignedInt(getLength());
-    file.WriteRawData(getData(), getLength());
+    file.writeUnsignedInt(getLength());
+    file.writeRawData(getData(), getLength());
 }
 
 void Serializer::readFromFile(BinaryFile& file)
 {
     clear();
 
-    const auto buffer_size = file.ReadUnsignedInt();
-    file.ReadRawData(getDataWritable(buffer_size), buffer_size);
+    const auto buffer_size = file.readUnsignedInt();
+    file.readRawData(getDataWritable(buffer_size), buffer_size);
 }
 
 void Serializer::pushVarSize(uint32_t i)

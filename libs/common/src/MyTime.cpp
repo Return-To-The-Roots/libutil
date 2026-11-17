@@ -19,7 +19,7 @@ namespace s25util {
  *
  *  @return Zeit als Timestamp
  */
-time64_t Time::CurrentTime()
+time64_t Time::currentTime()
 {
     return static_cast<time64_t>(time(nullptr));
 }
@@ -29,7 +29,7 @@ time64_t Time::CurrentTime()
  *
  *  @return Zeit als Ticks
  */
-time64_t Time::CurrentTick()
+time64_t Time::currentTick()
 {
     time64_t ticks;
 #ifdef _WIN32
@@ -50,7 +50,7 @@ time64_t Time::CurrentTick()
  *
  *  @return Formatted string
  */
-std::string Time::FormatTime(const std::string& format, time64_t time)
+std::string Time::formatTime(const std::string& format, time64_t time)
 {
     auto inTime = static_cast<time_t>(time);
 
@@ -94,8 +94,8 @@ std::string Time::FormatTime(const std::string& format, time64_t time)
     return res.str();
 }
 
-std::string Time::FormatTime(const std::string& format)
+std::string Time::formatTime(const std::string& format)
 {
-    return FormatTime(format, CurrentTime());
+    return formatTime(format, currentTime());
 }
 } // namespace s25util

@@ -130,7 +130,7 @@ inline void deletePortMapping(const char* controlURL, const char* servicetype, c
 /**
  *  Erstellt per UPnP ein Portforwarding.
  */
-void UPnP::OpenPort(uint16_t port)
+void UPnP::openPort(uint16_t port)
 {
     const auto deviceList = miniupnp::discover(2000);
     if(!deviceList)
@@ -147,7 +147,7 @@ void UPnP::OpenPort(uint16_t port)
                              miniupnp::Protocol::TCP);
 }
 
-void UPnP::ClosePort(uint16_t port)
+void UPnP::closePort(uint16_t port)
 {
     const auto deviceList = miniupnp::discover(2000);
     if(!deviceList)

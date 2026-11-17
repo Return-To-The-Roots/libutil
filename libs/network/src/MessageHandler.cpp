@@ -41,7 +41,7 @@ int MessageHandler::send(Socket& sock, const Message& msg)
 
     std::memcpy(data, &header, sizeof(header));
 
-    if(packetLen != (unsigned)sock.Send(data, packetLen))
+    if(packetLen != (unsigned)sock.send(data, packetLen))
         return -1;
     else
         return packetLen;
@@ -54,7 +54,7 @@ static inline bool timeoutReached(s25util::time64_t& lastTime, unsigned& remaini
     if(remainingTimeoutInMs == 0u)
         return true;
 
-    s25util::time64_t now = s25util::Time::CurrentTick();
+    s25util::time64_t now = s25util::Time::currentTick();
     s25util::time64_t elapsed = now - lastTime;
     lastTime = now;
     if(elapsed >= remainingTimeoutInMs)
@@ -72,16 +72,16 @@ Message* MessageHandler::recv(Socket& sock, int& error, unsigned timeoutInMs)
 {
     error = -1;
 
-    s25util::time64_t lastTime = s25util::Time::CurrentTick();
+    s25util::time64_t lastTime = s25util::Time::currentTick();
     MsgHeader header;
     do
     {
         SocketSet set;
         // Socket hinzufgen
-        set.Add(sock);
+        set.add(sock);
 
         // liegen Daten an?
-        int retval = set.Select(timeoutInMs, 0);
+        int retval = set.select(timeoutInMs, 0);
 
         if(retval <= 0)
         {
@@ -96,7 +96,7 @@ Message* MessageHandler::recv(Socket& sock, int& error, unsigned timeoutInMs)
 
         // liegen diese Daten an unserem Socket, bzw wieviele Bytes liegen an?
         unsigned numBytesAv;
-        if(!set.InSet(sock) || sock.BytesWaiting(&numBytesAv) != 0)
+        if(!set.inSet(sock) || sock.bytesWaiting(&numBytesAv) != 0)
         {
             if(timeoutInMs)
                 continue;
@@ -122,7 +122,7 @@ Message* MessageHandler::recv(Socket& sock, int& error, unsigned timeoutInMs)
     } while(!timeoutReached(lastTime, timeoutInMs));
 
     // block empfangen
-    int read = sock.Recv(&header, sizeof(header), false);
+    int read = sock.recv(&header, sizeof(header), false);
     if(read != sizeof(header))
     {
         LOG.write("recv: block: only got %d bytes instead of %d, waiting for next try\n") % read % sizeof(header);
@@ -137,15 +137,15 @@ Message* MessageHandler::recv(Socket& sock, int& error, unsigned timeoutInMs)
 
     do
     {
-        read = sock.BytesWaiting();
+        read = sock.bytesWaiting();
         if(read < 0)
             return nullptr;
         if(read >= static_cast<int>(header.msgLen + sizeof(header)) || !timeoutInMs)
             break;
         // Wait for socket again (non-blocking)
         SocketSet set;
-        set.Add(sock);
-        if(set.Select(0, 0) < 0)
+        set.add(sock);
+        if(set.select(0, 0) < 0)
             break;
     } while(!timeoutReached(lastTime, timeoutInMs));
 
@@ -161,7 +161,7 @@ Message* MessageHandler::recv(Socket& sock, int& error, unsigned timeoutInMs)
     blocktimeout = 0;
 
     // Block nochmals abrufen (um ihn aus dem Cache zu entfernen)
-    read = sock.Recv(&header, sizeof(header));
+    read = sock.recv(&header, sizeof(header));
     if(read != sizeof(header))
     {
         LOG.write("recv: id,length: only got %d bytes instead of %d\n") % read % sizeof(header);
@@ -171,7 +171,7 @@ Message* MessageHandler::recv(Socket& sock, int& error, unsigned timeoutInMs)
     Serializer ser;
     if(header.msgLen)
     {
-        read = sock.Recv(ser.getDataWritable(header.msgLen), header.msgLen);
+        read = sock.recv(ser.getDataWritable(header.msgLen), header.msgLen);
         if(read < header.msgLen)
         {
             LOG.write("recv: data: only got %d bytes instead of %d\n") % read % header.msgLen;

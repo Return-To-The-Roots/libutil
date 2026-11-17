@@ -9,53 +9,53 @@
 LANDiscoveryService::LANDiscoveryService(const Config& cfg)
     : LANDiscoveryBase(cfg, true), isRunning(false), dataChanged(false)
 {
-    info.GetMagic() = cfg.magicResponse;
-    info.GetVersion() = cfg.version;
-    info.GetIsActive() = 0;
+    info.getMagic() = cfg.magicResponse;
+    info.getVersion() = cfg.version;
+    info.getIsActive() = 0;
 }
 
 LANDiscoveryService::~LANDiscoveryService()
 {
-    Stop();
+    stop();
 }
 
-void LANDiscoveryService::SetPayload(const void* const data, size_t len)
+void LANDiscoveryService::setPayload(const void* const data, size_t len)
 {
-    if(len > info.GetPayload().size()) //-V807
+    if(len > info.getPayload().size()) //-V807
         throw std::invalid_argument("Payload size is to big");
     const auto* const buffer = static_cast<const char*>(data);
-    std::copy(buffer, buffer + std::min(len, info.GetPayload().size()), info.GetPayload().begin());
-    info.GetIsActive() = 1;
+    std::copy(buffer, buffer + std::min(len, info.getPayload().size()), info.getPayload().begin());
+    info.getIsActive() = 1;
     dataChanged = true;
 }
 
-bool LANDiscoveryService::Start()
+bool LANDiscoveryService::start()
 {
     if(isRunning)
         return true;
-    if(!LANDiscoveryBase::Start())
+    if(!LANDiscoveryBase::start())
         return false;
     isRunning = true;
     return true;
 }
 
-void LANDiscoveryService::Stop()
+void LANDiscoveryService::stop()
 {
     if(!isRunning)
         return;
 
-    if(info.GetIsActive())
+    if(info.getIsActive())
     {
         // Tell clients we are offline
-        info.GetIsActive() = 0;
-        Broadcast(&info, sizeof(info));
+        info.getIsActive() = 0;
+        broadcast(&info, sizeof(info));
     }
     dataChanged = false;
     isRunning = false;
-    LANDiscoveryBase::Stop();
+    LANDiscoveryBase::stop();
 }
 
-void LANDiscoveryService::Run()
+void LANDiscoveryService::run()
 {
     if(!isRunning)
         return;
@@ -63,16 +63,16 @@ void LANDiscoveryService::Run()
     if(dataChanged)
     {
         dataChanged = false;
-        Broadcast(&info, sizeof(info));
+        broadcast(&info, sizeof(info));
     }
-    while(IsDataAvailable())
+    while(isDataAvailable())
     {
         Request curReq;
         PeerAddr addr;
 
-        if(socket.Recv(&curReq, sizeof(curReq), addr) < static_cast<int>(sizeof(curReq)))
+        if(socket.recv(&curReq, sizeof(curReq), addr) < static_cast<int>(sizeof(curReq)))
             break;
-        if(curReq.GetMagic() == request.GetMagic() && curReq.GetVersion() == request.GetVersion())
-            socket.Send(&info, sizeof(info), addr);
+        if(curReq.getMagic() == request.getMagic() && curReq.getVersion() == request.getVersion())
+            socket.send(&info, sizeof(info), addr);
     }
 }

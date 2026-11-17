@@ -21,42 +21,42 @@ enum class OpenFileMode : unsigned
 class BinaryFile
 {
 public:
-    /// Open the file and return true on success
-    bool Open(const boost::filesystem::path& filePath, OpenFileMode of);
-    /// Close the file
-    void Close();
+    /// open the file and return true on success
+    bool open(const boost::filesystem::path& filePath, OpenFileMode of);
+    /// close the file
+    void close();
 
-    void WriteSignedInt(int32_t i) const;
-    void WriteUnsignedInt(uint32_t i) const;
-    void WriteSignedShort(int16_t i) const;
-    void WriteUnsignedShort(uint16_t i) const;
-    void WriteSignedChar(char i) const;
-    void WriteUnsignedChar(unsigned char i) const;
-    void WriteRawData(const void* data, unsigned length) const;
+    void writeSignedInt(int32_t i) const;
+    void writeUnsignedInt(uint32_t i) const;
+    void writeSignedShort(int16_t i) const;
+    void writeUnsignedShort(uint16_t i) const;
+    void writeSignedChar(char i) const;
+    void writeUnsignedChar(unsigned char i) const;
+    void writeRawData(const void* data, unsigned length) const;
 
-    void WriteShortString(const std::string& str) const; /// max length 254
-    void WriteLongString(const std::string& str) const;  /// max length 2^32-2
+    void writeShortString(const std::string& str) const; /// max length 254
+    void writeLongString(const std::string& str) const;  /// max length 2^32-2
 
-    int ReadSignedInt();
-    unsigned ReadUnsignedInt();
-    short ReadSignedShort();
-    unsigned short ReadUnsignedShort();
-    char ReadSignedChar();
-    unsigned char ReadUnsignedChar();
-    void ReadRawData(void* data, unsigned length);
+    int readSignedInt();
+    unsigned readUnsignedInt();
+    short readSignedShort();
+    unsigned short readUnsignedShort();
+    char readSignedChar();
+    unsigned char readUnsignedChar();
+    void readRawData(void* data, unsigned length);
 
-    std::string ReadShortString(); /// max length 254
-    std::string ReadLongString();  /// max length 2^32-2
+    std::string readShortString(); /// max length 254
+    std::string readLongString();  /// max length 2^32-2
 
     /// Move the file position
-    void Seek(long pos, int origin);
+    void seek(long pos, int origin);
     /// Get file position, throws on error
-    unsigned long Tell() const;
-    /// Flush buffer to disk
-    void Flush();
-    bool IsEndOfFile() const;
+    unsigned long tell() const;
+    /// flush buffer to disk
+    void flush();
+    bool isEndOfFile() const;
     /// Is file opened
-    bool IsOpen() const { return static_cast<bool>(file); }
+    bool isOpen() const { return static_cast<bool>(file); }
 
     const boost::filesystem::path& getFilePath() const { return filePath_; }
 

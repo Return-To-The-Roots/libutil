@@ -36,7 +36,7 @@ void Log::open()
 {
     if(!fileWriter)
     {
-        const bfs::path filePath = logFilepath / (s25util::Time::FormatTime("%Y-%m-%d_%H-%i-%s") + ".log");
+        const bfs::path filePath = logFilepath / (s25util::Time::formatTime("%Y-%m-%d_%H-%i-%s") + ".log");
         fileWriter = std::make_shared<FileWriter>(filePath);
     }
 }

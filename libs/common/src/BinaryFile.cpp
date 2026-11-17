@@ -17,9 +17,9 @@
     if(!(__VA_ARGS__))     \
     throw std::runtime_error("Unknown error during writing " + filePath_.string())
 
-bool BinaryFile::Open(const boost::filesystem::path& filePath, const OpenFileMode of)
+bool BinaryFile::open(const boost::filesystem::path& filePath, const OpenFileMode of)
 {
-    Close();
+    close();
     static constexpr std::array<const char*, 3> modes = {{"w+b", "a+b", "rb"}};
     file.reset(boost::nowide::fopen(filePath.string().c_str(), modes[static_cast<unsigned>(of)]));
     if(file)
@@ -30,138 +30,138 @@ bool BinaryFile::Open(const boost::filesystem::path& filePath, const OpenFileMod
         return false;
 }
 
-void BinaryFile::Close()
+void BinaryFile::close()
 {
     file.reset();
     filePath_.clear();
 }
 
-void BinaryFile::WriteSignedInt(int32_t i) const
+void BinaryFile::writeSignedInt(int32_t i) const
 {
     CHECKED_WRITE(libendian::le_write_i(i, *file));
 }
 
-void BinaryFile::WriteUnsignedInt(uint32_t i) const
+void BinaryFile::writeUnsignedInt(uint32_t i) const
 {
     CHECKED_WRITE(libendian::le_write_ui(i, *file));
 }
 
-void BinaryFile::WriteSignedShort(int16_t i) const
+void BinaryFile::writeSignedShort(int16_t i) const
 {
     CHECKED_WRITE(libendian::le_write_s(i, *file));
 }
 
-void BinaryFile::WriteUnsignedShort(uint16_t i) const
+void BinaryFile::writeUnsignedShort(uint16_t i) const
 {
     CHECKED_WRITE(libendian::le_write_us(i, *file));
 }
 
-void BinaryFile::WriteSignedChar(char i) const
+void BinaryFile::writeSignedChar(char i) const
 {
     CHECKED_WRITE(libendian::write(&i, 1, *file));
 }
 
-void BinaryFile::WriteUnsignedChar(unsigned char i) const
+void BinaryFile::writeUnsignedChar(unsigned char i) const
 {
     CHECKED_WRITE(libendian::write(&i, 1, *file));
 }
 
-void BinaryFile::WriteRawData(const void* const data, const unsigned length) const
+void BinaryFile::writeRawData(const void* const data, const unsigned length) const
 {
     CHECKED_WRITE(libendian::write((const char*)data, length, *file));
 }
 
-void BinaryFile::WriteShortString(const std::string& str) const
+void BinaryFile::writeShortString(const std::string& str) const
 {
     if(str.length() + 1 > std::numeric_limits<unsigned char>::max())
         throw std::out_of_range("String '" + str + "' is to long for a short string");
     auto length = static_cast<unsigned char>(str.length() + 1);
-    WriteUnsignedChar(length);
-    WriteRawData(str.c_str(), length);
+    writeUnsignedChar(length);
+    writeRawData(str.c_str(), length);
 }
 
-void BinaryFile::WriteLongString(const std::string& str) const
+void BinaryFile::writeLongString(const std::string& str) const
 {
     auto length = unsigned(str.length() + 1);
-    WriteUnsignedInt(length);
-    WriteRawData(str.c_str(), length);
+    writeUnsignedInt(length);
+    writeRawData(str.c_str(), length);
 }
 
-int BinaryFile::ReadSignedInt()
+int BinaryFile::readSignedInt()
 {
     int32_t i;
     CHECKED_READ(libendian::le_read_i(&i, *file));
     return i;
 }
 
-unsigned BinaryFile::ReadUnsignedInt()
+unsigned BinaryFile::readUnsignedInt()
 {
     uint32_t i;
     CHECKED_READ(libendian::le_read_ui(&i, *file));
     return i;
 }
 
-short BinaryFile::ReadSignedShort()
+short BinaryFile::readSignedShort()
 {
     int16_t i;
     CHECKED_READ(libendian::le_read_s(&i, *file));
     return i;
 }
 
-unsigned short BinaryFile::ReadUnsignedShort()
+unsigned short BinaryFile::readUnsignedShort()
 {
     uint16_t i;
     CHECKED_READ(libendian::le_read_us(&i, *file));
     return i;
 }
 
-char BinaryFile::ReadSignedChar()
+char BinaryFile::readSignedChar()
 {
     char i;
     CHECKED_READ(libendian::read(&i, 1, *file));
     return i;
 }
 
-unsigned char BinaryFile::ReadUnsignedChar()
+unsigned char BinaryFile::readUnsignedChar()
 {
     unsigned char i;
     CHECKED_READ(libendian::read(&i, 1, *file));
     return i;
 }
 
-void BinaryFile::ReadRawData(void* const data, const unsigned length)
+void BinaryFile::readRawData(void* const data, const unsigned length)
 {
     CHECKED_READ(libendian::read((char*)data, length, *file));
 }
 
-std::string BinaryFile::ReadShortString()
+std::string BinaryFile::readShortString()
 {
     unsigned char length;
-    length = ReadUnsignedChar();
+    length = readUnsignedChar();
     auto* tmp = new char[length];
-    ReadRawData(tmp, length);
+    readRawData(tmp, length);
     std::string str = tmp;
     delete[] tmp;
     return str;
 }
 
-std::string BinaryFile::ReadLongString()
+std::string BinaryFile::readLongString()
 {
     unsigned length;
-    length = ReadUnsignedInt();
+    length = readUnsignedInt();
     auto* tmp = new char[length];
-    ReadRawData(tmp, length);
+    readRawData(tmp, length);
     std::string str = tmp;
     delete[] tmp;
     return str;
 }
 
-void BinaryFile::Seek(const long pos, const int origin)
+void BinaryFile::seek(const long pos, const int origin)
 {
     fseek(*file, pos, origin); //-V303
 }
 
-unsigned long BinaryFile::Tell() const
+unsigned long BinaryFile::tell() const
 {
     const auto res = ftell(*file);
     if(res < 0)
@@ -169,12 +169,12 @@ unsigned long BinaryFile::Tell() const
     return static_cast<unsigned long>(res);
 }
 
-void BinaryFile::Flush()
+void BinaryFile::flush()
 {
     fflush(*file);
 }
 
-bool BinaryFile::IsEndOfFile() const
+bool BinaryFile::isEndOfFile() const
 {
     return feof(*file) != 0;
 }

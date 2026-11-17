@@ -7,13 +7,13 @@
 
 SocketSet::SocketSet() //-V730
 {
-    Clear();
+    clear();
 }
 
 /**
  *  räumt das @p SocketSet auf.
  */
-void SocketSet::Clear()
+void SocketSet::clear()
 {
     FD_ZERO(&set);
 
@@ -25,10 +25,10 @@ void SocketSet::Clear()
  *
  *  @param[in] sock Socket welches hinzugefügt werden soll
  */
-void SocketSet::Add(const Socket& sock)
+void SocketSet::add(const Socket& sock)
 {
     // Socket holen
-    SOCKET s = sock.GetSocket();
+    SOCKET s = sock.getSocket();
     if(s == INVALID_SOCKET)
         return;
 
@@ -41,14 +41,14 @@ void SocketSet::Add(const Socket& sock)
 }
 
 /**
- *  führt einen Select auf dem @p SocketSet aus.
+ *  führt einen select auf dem @p SocketSet aus.
  *
  *  @param[in] wait  Timeout des Aufrufs
  *  @param[in] which Welcher der "Kanäle" soll abgefragt werden? (0 = read, 1 = write, 2 = error)
  *
  *  @return liefert SOCKET_ERROR bei Fehler, Null bei Timeout, größer Null für die Anzahl der bereiten Sockets im Set
  */
-int SocketSet::Select(unsigned timeoutInMs, int which)
+int SocketSet::select(unsigned timeoutInMs, int which)
 {
     if(highest == INVALID_SOCKET)
         return SOCKET_ERROR;
@@ -69,8 +69,8 @@ int SocketSet::Select(unsigned timeoutInMs, int which)
         case 2: except = &set; break;
     }
 
-    // Select ausführen
-    return select((int)highest + 1, read, write, except, &tv);
+    // select ausführen
+    return ::select((int)highest + 1, read, write, except, &tv);
 }
 
 /**
@@ -80,9 +80,9 @@ int SocketSet::Select(unsigned timeoutInMs, int which)
  *
  *  @return liefert true falls das @p Socket im Set enthalten ist, false andernfalls
  */
-bool SocketSet::InSet(const Socket& sock)
+bool SocketSet::inSet(const Socket& sock)
 {
-    SOCKET s = sock.GetSocket();
+    SOCKET s = sock.getSocket();
 
     // Bei ungültigem Socket ists nicht drin!
     if(s == INVALID_SOCKET)

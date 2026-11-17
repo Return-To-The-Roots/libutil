@@ -21,15 +21,15 @@ public:
     LANDiscoveryClient(const Config& cfg);
     ~LANDiscoveryClient();
     /// Starts listening for services
-    bool Start();
+    bool start();
     /// Stops listing for services
-    void Stop();
+    void stop();
     /// Must be called in the main loop when this is listening. No-Op if it isn't
-    void Run();
+    void run();
     /// Refreshes the service list, clearing the old one
-    void Refresh();
+    void refresh();
 
-    const ServiceMap& GetServices() const { return services; }
+    const ServiceMap& getServices() const { return services; }
 
 private:
     bool isRunning;

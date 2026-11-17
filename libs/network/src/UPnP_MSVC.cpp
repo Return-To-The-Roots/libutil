@@ -109,7 +109,7 @@ std::vector<std::string> GetAllv4Addresses()
 }
 } // namespace
 
-void UPnP::OpenPort(uint16_t port)
+void UPnP::openPort(uint16_t port)
 {
     HRESULT hr;
 
@@ -174,7 +174,7 @@ void UPnP::OpenPort(uint16_t port)
     throwSystemError(hr);
 }
 
-void UPnP::ClosePort(uint16_t port)
+void UPnP::closePort(uint16_t port)
 {
     HRESULT hr;
 

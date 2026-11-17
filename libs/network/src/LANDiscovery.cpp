@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <stdexcept>
 
-LANDiscoveryBase::Magic_t LANDiscoveryBase::Config::MakeMagic(const std::string& str)
+LANDiscoveryBase::Magic_t LANDiscoveryBase::Config::makeMagic(const std::string& str)
 {
     if(str.empty())
         throw std::invalid_argument("String is empty");
@@ -21,32 +21,32 @@ LANDiscoveryBase::Magic_t LANDiscoveryBase::Config::MakeMagic(const std::string&
 
 LANDiscoveryBase::LANDiscoveryBase(const Config& cfg, bool isServer) : config(cfg), isServer(isServer)
 {
-    request.GetMagic() = cfg.magicQuery;
-    request.GetVersion() = cfg.version;
+    request.getMagic() = cfg.magicQuery;
+    request.getVersion() = cfg.version;
 }
 
-bool LANDiscoveryBase::Start()
+bool LANDiscoveryBase::start()
 {
-    if(!socket.Create(AF_INET, true))
+    if(!socket.create(AF_INET, true))
         return false;
 
-    return socket.Bind(isServer ? config.portQuery : config.portResponse, false);
+    return socket.bind(isServer ? config.portQuery : config.portResponse, false);
 }
 
-void LANDiscoveryBase::Stop()
+void LANDiscoveryBase::stop()
 {
-    socket.Close();
+    socket.close();
 }
 
-bool LANDiscoveryBase::IsDataAvailable()
+bool LANDiscoveryBase::isDataAvailable()
 {
     SocketSet set;
-    set.Add(socket);
-    return set.Select(0, 0) == 1;
+    set.add(socket);
+    return set.select(0, 0) == 1;
 }
 
-void LANDiscoveryBase::Broadcast(const void* const buffer, const int len)
+void LANDiscoveryBase::broadcast(const void* const buffer, const int len)
 {
     PeerAddr addr(!isServer ? config.portQuery : config.portResponse);
-    socket.Send(buffer, len, addr);
+    socket.send(buffer, len, addr);
 }
