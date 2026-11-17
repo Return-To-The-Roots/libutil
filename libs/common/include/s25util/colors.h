@@ -45,49 +45,49 @@ inline constexpr std::array PLAYER_COLORS = {
 };
 
 /// Liefert die transparente Farbkomponente zurück.
-constexpr unsigned GetAlpha(const unsigned color)
+constexpr unsigned getAlpha(const unsigned color)
 {
     return ((color & 0xFF000000) >> 24);
 }
 /// Liefert die rote Farbkomponente zurück.
-constexpr unsigned GetRed(const unsigned color)
+constexpr unsigned getRed(const unsigned color)
 {
     return ((color & 0x00FF0000) >> 16);
 }
 /// Liefert die grüne Farbkomponente zurück.
-constexpr unsigned GetGreen(const unsigned color)
+constexpr unsigned getGreen(const unsigned color)
 {
     return ((color & 0x0000FF00) >> 8);
 }
 /// Liefert die blaue Farbkomponente zurück.
-constexpr unsigned GetBlue(const unsigned color)
+constexpr unsigned getBlue(const unsigned color)
 {
     return ((color & 0x000000FF));
 }
 
 /// Setzt die transparente Farbkomponente.
-constexpr unsigned SetAlpha(const unsigned color, const unsigned alpha)
+constexpr unsigned setAlpha(const unsigned color, const unsigned alpha)
 {
     return ((color & 0x00FFFFFF) | (alpha << 24));
 }
 /// Setzt die rote Farbkomponente.
-constexpr unsigned SetRed(const unsigned color, const unsigned red)
+constexpr unsigned setRed(const unsigned color, const unsigned red)
 {
     return ((color & 0xFF00FFFF) | (red << 16));
 }
 /// Setzt die grüne Farbkomponente.
-constexpr unsigned SetGreen(const unsigned color, const unsigned green)
+constexpr unsigned setGreen(const unsigned color, const unsigned green)
 {
     return ((color & 0xFFFF00FF) | (green << 8));
 }
 /// Setzt die blaue Farbkomponente.
-constexpr unsigned SetBlue(const unsigned color, const unsigned blue)
+constexpr unsigned setBlue(const unsigned color, const unsigned blue)
 {
     return ((color & 0xFFFFFF00) | (blue));
 }
 
 /// Erzeugt eine fertige Farbe aus einzelnen Farbkomponenten
-constexpr unsigned MakeColor(const unsigned alpha, const unsigned red, const unsigned green, const unsigned blue)
+constexpr unsigned makeColor(const unsigned alpha, const unsigned red, const unsigned green, const unsigned blue)
 {
     return ((alpha << 24) | (red << 16) | (green << 8) | blue);
 }
