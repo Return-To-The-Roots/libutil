@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2005 - 2021 Settlers Freaks <sf-team at siedler25.org>
+# Copyright (C) 2005 - 2026 Settlers Freaks <sf-team at siedler25.org>
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 
@@ -9,8 +9,10 @@ set -euo pipefail
 EXCLUSIONS=("$@")
 
 # Install lcov if required
-LCOV_VERSION="1.15"
-if [[ ! "$(lcov --version 2> /dev/null || true)" =~ "version ${LCOV_VERSION}" ]]; then
+LCOV_VERSION="2.3"
+installed_lcov=$(lcov --version 2> /dev/null || true)
+echo "Installed lcov: $installed_lcov"
+if [[ ! "$installed_lcov" =~ "version ${LCOV_VERSION}" ]]; then
     LCOV_ROOT="/tmp/lcov"
     LCOV_URL="https://github.com/linux-test-project/lcov/releases/download/v${LCOV_VERSION}/lcov-${LCOV_VERSION}.tar.gz"
     mkdir -p "${LCOV_ROOT}"
