@@ -23,7 +23,7 @@ fi
 lcov --version || true
 
 # capture coverage info
-lcov --gcov-tool "${GCOV}" --directory build --capture --output-file coverage.info --rc lcov_branch_coverage=1 > /dev/null
+lcov --gcov-tool "${GCOV}" --directory build --capture --output-file coverage.info --rc lcov_branch_coverage=0 > /dev/null
 # Remove everything from /usr (unrelated), external folder (3rd party data), test code
 lcov --remove coverage.info '/usr/*' '*/.cache/*' --output-file coverage.info > /dev/null
 for excl in "${EXCLUSIONS[@]}"; do
