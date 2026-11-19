@@ -36,12 +36,15 @@ fi
 lcov --version || true
 "${GCOV}" --version
 
+LCOV_ARGS=(--ignore-errors inconsistent,inconsistent)
+
+set -x
 # capture coverage info
-lcov --gcov-tool "${GCOV}" --directory build --capture --output-file coverage.info --rc branch_coverage=0 > /dev/null
+lcov "${LCOV_ARGS[@]}" --gcov-tool "${GCOV}" --directory build --capture --output-file coverage.info --rc branch_coverage=0 > /dev/null
 # Remove everything from /usr (unrelated), external folder (3rd party data), test code
-lcov --remove coverage.info '/usr/*' '*/.cache/*' --output-file coverage.info > /dev/null
+lcov "${LCOV_ARGS[@]}" --remove coverage.info '/usr/*' '*/.cache/*' --output-file coverage.info > /dev/null
 for excl in "${EXCLUSIONS[@]}"; do
-    lcov --remove coverage.info "${excl}" --output-file coverage.info > /dev/null
+    lcov "${LCOV_ARGS[@]}" --remove coverage.info "${excl}" --output-file coverage.info > /dev/null
 done
 
 # Debug output
