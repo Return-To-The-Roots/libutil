@@ -25,8 +25,10 @@ if [[ ! "$installed_lcov" =~ "version ${LCOV_VERSION}" ]]; then
     wget --quiet -O - "${LCOV_URL}" | tar --strip-components=1 -xz -C "${LCOV_ROOT}"
     export PATH="${LCOV_ROOT}/bin:${PATH}"
     if [[ -n ${CI:-} ]]; then
+       echo "::group::Install LCOV dependencies"
        sudo apt-get -o Acquire::Retries=3 -y -q --no-install-suggests --no-install-recommends install \
          libcapture-tiny-perl libdatetime-perl libjson-xs-perl || true
+       echo "::endgroup::"
     fi
 fi
 
