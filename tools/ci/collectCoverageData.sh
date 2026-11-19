@@ -10,22 +10,32 @@ EXCLUSIONS=("$@")
 
 # Install lcov if required
 LCOV_VERSION="2.3"
-installed_lcov=$(lcov --version 2> /dev/null || true)
+if which lcov &> /dev/null; then
+  installed_lcov=$(lcov --version 2> /dev/null || true)
+else
+  installed_lcov="None"
+fi
 echo "Installed lcov: $installed_lcov"
+
 if [[ ! "$installed_lcov" =~ "version ${LCOV_VERSION}" ]]; then
+    echo "Downloading Lcov $LCOV_VERSION"
     LCOV_ROOT="/tmp/lcov"
     LCOV_URL="https://github.com/linux-test-project/lcov/releases/download/v${LCOV_VERSION}/lcov-${LCOV_VERSION}.tar.gz"
     mkdir -p "${LCOV_ROOT}"
     wget --quiet -O - "${LCOV_URL}" | tar --strip-components=1 -xz -C "${LCOV_ROOT}"
     export PATH="${LCOV_ROOT}/bin:${PATH}"
+    if [[ -n ${CI:-} ]]; then
+       sudo apt-get -o Acquire::Retries=3 -y -q --no-install-suggests --no-install-recommends install \
+         libcapture-tiny-perl libdatetime-perl libjson-xs-perl || true
+    fi
 fi
 
 # Information
-"${GCOV}" --version
 lcov --version || true
+"${GCOV}" --version
 
 # capture coverage info
-lcov --gcov-tool "${GCOV}" --directory build --capture --output-file coverage.info --rc lcov_branch_coverage=0 > /dev/null
+lcov --gcov-tool "${GCOV}" --directory build --capture --output-file coverage.info --rc branch_coverage=0 > /dev/null
 # Remove everything from /usr (unrelated), external folder (3rd party data), test code
 lcov --remove coverage.info '/usr/*' '*/.cache/*' --output-file coverage.info > /dev/null
 for excl in "${EXCLUSIONS[@]}"; do
