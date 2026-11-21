@@ -36,7 +36,7 @@ fi
 lcov --version || true
 "${GCOV}" --version
 
-LCOV_ARGS=(--ignore-errors inconsistent,inconsistent)
+LCOV_ARGS=(--ignore-errors inconsistent,inconsistent,unused)
 
 set -x
 # capture coverage info
